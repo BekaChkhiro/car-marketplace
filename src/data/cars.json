@@ -1,0 +1,339 @@
+{
+  "cars": [
+    {
+      "id": "1",
+      "make": "BMW",
+      "model": "M5",
+      "year": 2020,
+      "price": 75000,
+      "images": [
+        "/images/bmw-m5-1.jpg",
+        "/images/bmw-m5-2.jpg",
+        "/images/bmw-m5-3.jpg"
+      ],
+      "specifications": {
+        "engine": "4.4L V8",
+        "transmission": "Automatic",
+        "fuelType": "Petrol",
+        "mileage": 25000,
+        "color": "Black",
+        "drive": "4WD"
+      },
+      "location": {
+        "city": "თბილისი",
+        "region": "თბილისი"
+      },
+      "seller": {
+        "id": "seller1",
+        "name": "გიორგი",
+        "phone": "+995555555555"
+      },
+      "isVip": true,
+      "description": "იყიდება კარგ მდგომარეობაში მყოფი BMW M5"
+    },
+    {
+      "id": "2",
+      "make": "Mercedes-Benz",
+      "model": "C63 AMG",
+      "year": 2021,
+      "price": 85000,
+      "images": [
+        "/images/mercedes-c63-1.jpg",
+        "/images/mercedes-c63-2.jpg"
+      ],
+      "specifications": {
+        "engine": "4.0L V8",
+        "transmission": "Automatic",
+        "fuelType": "Petrol",
+        "mileage": 15000,
+        "color": "White",
+        "drive": "RWD"
+      },
+      "location": {
+        "city": "ბათუმი",
+        "region": "აჭარა"
+      },
+      "seller": {
+        "id": "seller2",
+        "name": "დავითი",
+        "phone": "+995555555556"
+      },
+      "isVip": true,
+      "description": "იყიდება იდეალურ მდგომარეობაში Mercedes-Benz C63 AMG"
+    },
+    {
+      "id": "3",
+      "make": "Toyota",
+      "model": "Camry",
+      "year": 2019,
+      "price": 35000,
+      "images": [
+        "/images/toyota-camry-1.jpg",
+        "/images/toyota-camry-2.jpg"
+      ],
+      "specifications": {
+        "engine": "2.5L I4",
+        "transmission": "Automatic",
+        "fuelType": "Hybrid",
+        "mileage": 45000,
+        "color": "Silver",
+        "drive": "FWD"
+      },
+      "location": {
+        "city": "ქუთაისი",
+        "region": "იმერეთი"
+      },
+      "seller": {
+        "id": "seller3",
+        "name": "ნიკა",
+        "phone": "+995555555557"
+      },
+      "isVip": false,
+      "description": "იყიდება Toyota Camry ჰიბრიდი"
+    },
+    {
+      "id": "4",
+      "make": "Lexus",
+      "model": "RX 450h",
+      "year": 2022,
+      "price": 65000,
+      "images": [
+        "/images/lexus-rx-1.jpg",
+        "/images/lexus-rx-2.jpg"
+      ],
+      "specifications": {
+        "engine": "3.5L V6 Hybrid",
+        "transmission": "CVT",
+        "fuelType": "Hybrid",
+        "mileage": 12000,
+        "color": "Pearl White",
+        "drive": "AWD"
+      },
+      "location": {
+        "city": "თბილისი",
+        "region": "თბილისი"
+      },
+      "seller": {
+        "id": "seller4",
+        "name": "ლევანი",
+        "phone": "+995555555558"
+      },
+      "isVip": true,
+      "description": "იყიდება პრემიუმ კლასის Lexus RX 450h"
+    },
+    {
+      "id": "5",
+      "make": "Porsche",
+      "model": "911",
+      "year": 2021,
+      "price": 145000,
+      "images": [
+        "/images/porsche-911-1.jpg",
+        "/images/porsche-911-2.jpg"
+      ],
+      "specifications": {
+        "engine": "3.0L Twin-Turbo",
+        "transmission": "PDK",
+        "fuelType": "Petrol",
+        "mileage": 8000,
+        "color": "Guards Red",
+        "drive": "RWD"
+      },
+      "location": {
+        "city": "თბილისი",
+        "region": "თბილისი"
+      },
+      "seller": {
+        "id": "seller5",
+        "name": "ზურაბი",
+        "phone": "+995555555559"
+      },
+      "isVip": true,
+      "description": "იყიდება სპორტული Porsche 911"
+    },
+    {
+      "id": "6",
+      "make": "Volkswagen",
+      "model": "Golf GTI",
+      "year": 2020,
+      "price": 32000,
+      "images": [
+        "/images/vw-golf-1.jpg",
+        "/images/vw-golf-2.jpg"
+      ],
+      "specifications": {
+        "engine": "2.0L Turbo",
+        "transmission": "DSG",
+        "fuelType": "Petrol",
+        "mileage": 35000,
+        "color": "Deep Black",
+        "drive": "FWD"
+      },
+      "location": {
+        "city": "ქუთაისი",
+        "region": "იმერეთი"
+      },
+      "seller": {
+        "id": "seller6",
+        "name": "თემური",
+        "phone": "+995555555560"
+      },
+      "isVip": false,
+      "description": "იყიდება სპორტული Golf GTI"
+    },
+    {
+      "id": "7",
+      "make": "Honda",
+      "model": "CR-V",
+      "year": 2021,
+      "price": 38000,
+      "images": [
+        "/images/honda-crv-1.jpg",
+        "/images/honda-crv-2.jpg"
+      ],
+      "specifications": {
+        "engine": "1.5L Turbo",
+        "transmission": "CVT",
+        "fuelType": "Petrol",
+        "mileage": 25000,
+        "color": "Modern Steel",
+        "drive": "AWD"
+      },
+      "location": {
+        "city": "ბათუმი",
+        "region": "აჭარა"
+      },
+      "seller": {
+        "id": "seller7",
+        "name": "ანა",
+        "phone": "+995555555561"
+      },
+      "isVip": false,
+      "description": "იყიდება Honda CR-V იდეალურ მდგომარეობაში"
+    },
+    {
+      "id": "8",
+      "make": "Audi",
+      "model": "RS6",
+      "year": 2022,
+      "price": 125000,
+      "images": [
+        "/images/audi-rs6-1.jpg",
+        "/images/audi-rs6-2.jpg"
+      ],
+      "specifications": {
+        "engine": "4.0L V8 Twin-Turbo",
+        "transmission": "Automatic",
+        "fuelType": "Petrol",
+        "mileage": 15000,
+        "color": "Nardo Gray",
+        "drive": "AWD"
+      },
+      "location": {
+        "city": "თბილისი",
+        "region": "თბილისი"
+      },
+      "seller": {
+        "id": "seller8",
+        "name": "გიორგი",
+        "phone": "+995555555562"
+      },
+      "isVip": true,
+      "description": "იყიდება სუპერ სპორტული Audi RS6"
+    },
+    {
+      "id": "9",
+      "make": "Tesla",
+      "model": "Model 3",
+      "year": 2022,
+      "price": 55000,
+      "images": [
+        "/images/tesla-3-1.jpg",
+        "/images/tesla-3-2.jpg"
+      ],
+      "specifications": {
+        "engine": "Electric",
+        "transmission": "Single-Speed",
+        "fuelType": "Electric",
+        "mileage": 10000,
+        "color": "Red",
+        "drive": "AWD"
+      },
+      "location": {
+        "city": "თბილისი",
+        "region": "თბილისი"
+      },
+      "seller": {
+        "id": "seller9",
+        "name": "ნინო",
+        "phone": "+995555555563"
+      },
+      "isVip": true,
+      "description": "იყიდება Tesla Model 3 Dual Motor"
+    },
+    {
+      "id": "10",
+      "make": "Hyundai",
+      "model": "Tucson",
+      "year": 2021,
+      "price": 29000,
+      "images": [
+        "/images/hyundai-tucson-1.jpg",
+        "/images/hyundai-tucson-2.jpg"
+      ],
+      "specifications": {
+        "engine": "2.5L I4",
+        "transmission": "Automatic",
+        "fuelType": "Petrol",
+        "mileage": 30000,
+        "color": "Amazon Gray",
+        "drive": "AWD"
+      },
+      "location": {
+        "city": "რუსთავი",
+        "region": "ქვემო ქართლი"
+      },
+      "seller": {
+        "id": "seller10",
+        "name": "ლაშა",
+        "phone": "+995555555564"
+      },
+      "isVip": false,
+      "description": "იყიდება Hyundai Tucson კარგ მდგომარეობაში"
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "ახალი მანქანები",
+      "icon": "new-car"
+    },
+    {
+      "id": "2",
+      "name": "ბიუჯეტური მანქანები",
+      "icon": "budget-car"
+    },
+    {
+      "id": "3",
+      "name": "პოპულარული ბრენდები",
+      "icon": "popular-brands"
+    }
+  ],
+  "brands": [
+    {
+      "id": "1",
+      "name": "BMW",
+      "models": ["M5", "M3", "X5", "3 Series", "5 Series"]
+    },
+    {
+      "id": "2",
+      "name": "Mercedes-Benz",
+      "models": ["C-Class", "E-Class", "S-Class", "GLE", "GLC"]
+    },
+    {
+      "id": "3",
+      "name": "Toyota",
+      "models": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Prius"]
+    }
+  ]
+}
