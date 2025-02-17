@@ -1,30 +1,37 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt, FaHeart } from 'react-icons/fa';
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.lg};
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.lg} 0;
 `;
 
 const CarCard = styled(Link)`
-  background: white;
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
+  background: ${({ theme }) => theme.colors.cardBg};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
   box-shadow: ${({ theme }) => theme.shadows.medium};
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: ${({ theme }) => theme.transition.default};
+  position: relative;
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: ${({ theme }) => theme.shadows.large};
+    transform: translateY(-8px);
+    box-shadow: ${({ theme }) => theme.shadows.xl};
+
+    img {
+      transform: scale(1.05);
+    }
   }
 `;
 
 const ImageContainer = styled.div`
   position: relative;
   padding-top: 66.67%; // 3:2 aspect ratio
+  overflow: hidden;
 `;
 
 const CarImage = styled.div<{ imageUrl: string }>`
@@ -36,28 +43,58 @@ const CarImage = styled.div<{ imageUrl: string }>`
   background-image: url(${props => props.imageUrl});
   background-size: cover;
   background-position: center;
+  transition: ${({ theme }) => theme.transition.default};
 `;
 
 const VipBadge = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing.sm};
-  right: ${({ theme }) => theme.spacing.sm};
-  background-color: ${({ theme }) => theme.colors.primary};
+  top: ${({ theme }) => theme.spacing.md};
+  right: ${({ theme }) => theme.spacing.md};
+  background: ${({ theme }) => theme.colors.gradient};
   color: white;
-  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.sm}`};
-  border-radius: ${({ theme }) => theme.borderRadius.small};
-  font-weight: bold;
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
+  border-radius: ${({ theme }) => theme.borderRadius.large};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   font-size: ${({ theme }) => theme.fontSizes.small};
+  box-shadow: ${({ theme }) => theme.shadows.medium};
+  backdrop-filter: blur(4px);
+`;
+
+const FavoriteButton = styled.button`
+  position: absolute;
+  top: ${({ theme }) => theme.spacing.md};
+  left: ${({ theme }) => theme.spacing.md};
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: ${({ theme }) => theme.borderRadius.round};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: ${({ theme }) => theme.transition.default};
+  
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+    font-size: ${({ theme }) => theme.fontSizes.large};
+  }
+  
+  &:hover {
+    background: white;
+    transform: scale(1.1);
+  }
 `;
 
 const CarInfo = styled.div`
-  padding: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.xl};
 `;
 
 const Title = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes.large};
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
 `;
 
 const Location = styled.div`
@@ -67,29 +104,40 @@ const Location = styled.div`
   color: ${({ theme }) => theme.colors.secondary};
   font-size: ${({ theme }) => theme.fontSizes.small};
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 const Price = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: bold;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  background: ${({ theme }) => theme.colors.gradient};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
 const Specifications = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing.sm};
+  gap: ${({ theme }) => theme.spacing.md};
   padding-top: ${({ theme }) => theme.spacing.md};
-  border-top: 1px solid ${({ theme }) => theme.colors.lightGray};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const Spec = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
+  gap: ${({ theme }) => theme.spacing.sm};
   font-size: ${({ theme }) => theme.fontSizes.small};
   color: ${({ theme }) => theme.colors.secondary};
+  
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+    font-size: ${({ theme }) => theme.fontSizes.medium};
+  }
 `;
 
 interface Car {
@@ -123,6 +171,12 @@ const CarGrid: React.FC<CarGridProps> = ({ cars }) => {
           <ImageContainer>
             <CarImage imageUrl={car.images[0]} />
             {car.isVip && <VipBadge>VIP</VipBadge>}
+            <FavoriteButton onClick={(e) => {
+              e.preventDefault();
+              // Add favorite functionality here
+            }}>
+              <FaHeart />
+            </FavoriteButton>
           </ImageContainer>
           
           <CarInfo>
