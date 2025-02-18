@@ -19,8 +19,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
   const [isOpen, setIsOpen] = useState(false);
   const { brands } = data;
   const years = Array.from({ length: 35 }, (_, i) => 2024 - i);
-  const fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
-  const transmissions = ['Automatic', 'Manual'];
+  const fuelTypes = ['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო'];
+  const transmissions = ['ავტომატიკა', 'მექანიკა'];
   const priceRanges = [
     '0-5000',
     '5000-10000',

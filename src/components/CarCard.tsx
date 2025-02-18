@@ -108,7 +108,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           {car.location.city}, {car.location.region}
         </div>
         <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
-          ${car.price.toLocaleString()}
+          {car.price.toLocaleString()} ₾
         </div>
         
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
@@ -118,7 +118,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <FaTachometerAlt className="text-primary" />
-            {car.specifications.mileage}km
+            {car.specifications.mileage.toLocaleString()} კმ
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <FaCog className="text-primary" />
