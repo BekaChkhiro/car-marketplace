@@ -6,12 +6,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#4CAF50',
-        secondary: '#388E3C',
+        primary: '#34A853',
+        secondary: '#2E7D32',
         background: '#F5F5F5',
         'text-dark': '#333333',
         'text-light': '#FFFFFF',
-        'gray-dark': '#444444',
+        'gray-dark': '#4A4A4A',
         'gray-light': '#F0F0F0',
         'green-light': '#E8F5E9',
         'green-lighter': '#C8E6C9',
@@ -30,10 +30,15 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(-10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' }
+        },
+        'modal-enter': {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
         }
       },
       animation: {
-        fadeIn: 'fadeIn 0.3s ease-out'
+        fadeIn: 'fadeIn 0.3s ease-out',
+        'modal-enter': 'modal-enter 0.2s ease-out'
       },
       fontSize: {
         'xs': '0.75rem',
