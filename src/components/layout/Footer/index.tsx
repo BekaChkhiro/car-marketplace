@@ -108,7 +108,7 @@ const Footer: React.FC = () => {
       {/* Copyright Section */}
       <div className="text-center mt-16 pt-8 border-t">
         <p className="text-gray-dark text-sm">
-          &copy; {new Date().getFullYear()} CarMarket. ყველა უფლება დაცულია. შექმნილია ❤️-ით საქართველოში
+          &copy; {new Date().getFullYear()} CarMarket. ყველა უფლება დაცულია.
         </p>
       </div>
     </footer>

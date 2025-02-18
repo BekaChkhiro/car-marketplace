@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, User, Plus } from 'lucide-react';
+import { Globe, User, Plus, Heart, UserPlus } from 'lucide-react';
 
 const Header = () => {
   const menuItems = [
@@ -52,6 +52,14 @@ const Header = () => {
             
             {/* User Controls */}
             <div className="flex items-center space-x-6">
+              {/* Wishlist Button */}
+              <button className="flex items-center space-x-1.5 text-gray-dark 
+                hover:text-primary transition-colors group relative">
+                <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs 
+                  rounded-full w-4 h-4 flex items-center justify-center">0</span>
+              </button>
+
               {/* Language Selector */}
               <button className="flex items-center space-x-1.5 text-gray-dark 
                 hover:text-primary transition-colors group">
@@ -59,13 +67,22 @@ const Header = () => {
                 <span className="text-sm">ქართული</span>
               </button>
               
-              {/* Login Button */}
-              <button className="flex items-center space-x-2 text-gray-dark 
-                hover:text-primary transition-colors px-3 py-1.5 rounded-lg
-                hover:bg-green-light">
-                <User className="w-5 h-5" />
-                <span className="text-sm font-medium">შესვლა</span>
-              </button>
+              {/* Auth Buttons */}
+              <div className="flex items-center space-x-3">
+                <button className="flex items-center space-x-2 text-gray-dark 
+                  hover:text-primary transition-colors px-3 py-1.5 rounded-lg
+                  hover:bg-green-light">
+                  <User className="w-5 h-5" />
+                  <span className="text-sm font-medium">შესვლა</span>
+                </button>
+                <button className="flex items-center space-x-2 text-sm font-medium bg-primary text-white 
+                  px-4 py-2 rounded-xl hover:bg-secondary transition-all duration-300 
+                  transform hover:scale-105 shadow-sm hover:shadow-md 
+                  border-2 border-transparent hover:border-secondary">
+                  <UserPlus className="w-5 h-5" />
+                  <span>რეგისტრაცია</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
