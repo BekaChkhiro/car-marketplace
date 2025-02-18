@@ -7,9 +7,8 @@
       "year": 2020,
       "price": 75000,
       "images": [
-        "/images/bmw-m5-1.jpg",
-        "/images/bmw-m5-2.jpg",
-        "/images/bmw-m5-3.jpg"
+        "https://media.autoexpress.co.uk/image/private/s--X-WVjvBW--/f_auto,t_content-image-full-desktop@1/v1729773746/evo/2024/10/G90%20BMW%20M5%20saloon-13.jpg",
+        "https://s.auto.drom.ru/i24300/c/photos/fullsize/bmw/m5/bmw_m5_1241074.jpg"
       ],
       "specifications": {
         "engine": "4.4L V8",
@@ -25,11 +24,11 @@
       },
       "seller": {
         "id": "seller1",
-        "name": "გიორგი",
+        "name": "გიორგი მაისურაძე",
         "phone": "+995555555555"
       },
       "isVip": true,
-      "description": "იყიდება კარგ მდგომარეობაში მყოფი BMW M5"
+      "description": "გთავაზობთ BMW M5-ს საუკეთესო მდგომარეობაში. მანქანა არის სრულად გამართული, ახალი გარბენით და იდეალურ ტექნიკურ მდგომარეობაში."
     },
     {
       "id": "2",
@@ -38,8 +37,8 @@
       "year": 2021,
       "price": 85000,
       "images": [
-        "/images/mercedes-c63-1.jpg",
-        "/images/mercedes-c63-2.jpg"
+        "https://hips.hearstapps.com/hmg-prod/images/2021-mercedes-amg-c63-mmp-1-1604525617.jpg",
+        "https://p.turbosquid.com/ts-thumb/Xk/RBtAQ2/Wz/image3748_101/jpeg/1649224337/1920x1080/fit_q87/d9949d98a35add13ba807cc99c7bc244be66e55b/image3748_101.jpg"
       ],
       "specifications": {
         "engine": "4.0L V8",
@@ -55,11 +54,11 @@
       },
       "seller": {
         "id": "seller2",
-        "name": "დავითი",
+        "name": "დავით კაპანაძე",
         "phone": "+995555555556"
       },
       "isVip": true,
-      "description": "იყიდება იდეალურ მდგომარეობაში Mercedes-Benz C63 AMG"
+      "description": "იყიდება Mercedes-Benz C63 AMG საუკეთესო მდგომარეობაში. მანქანა არის ერთი პატრონის და სრულად გამართული."
     },
     {
       "id": "3",
@@ -68,8 +67,8 @@
       "year": 2019,
       "price": 35000,
       "images": [
-        "/images/toyota-camry-1.jpg",
-        "/images/toyota-camry-2.jpg"
+        "https://d8a6a33f-3369-444b-9b5f-793c13ff0708.selcdn.net/uploads/projects/toyota_center_iat_pilot_test/uploads/images/c22bd3ec0f2488e1bc327f5d8f85776bacf7b0d0.jpeg",
+        "https://images.ctfassets.net/c9t6u0qhbv9e/2021ToyotaCamryTestDriveReviewsummary/0832587559802d054d5ce9caf2674220/2021_Toyota_Camry_Test_Drive_Review_summaryImage.jpeg"
       ],
       "specifications": {
         "engine": "2.5L I4",
@@ -89,7 +88,7 @@
         "phone": "+995555555557"
       },
       "isVip": false,
-      "description": "იყიდება Toyota Camry ჰიბრიდი"
+      "description": "იყიდება ეკონომიური Toyota Camry ჰიბრიდი. იდეალური ოჯახისთვის, დაბალი საწვავის ხარჯით."
     },
     {
       "id": "4",
@@ -98,8 +97,8 @@
       "year": 2022,
       "price": 65000,
       "images": [
-        "/images/lexus-rx-1.jpg",
-        "/images/lexus-rx-2.jpg"
+        "https://www.autotrader.ca/editorial/media/nsgjlbmi/2022-lexus-rx-450h-02-di.jpg?width=1920&height=1080&v=1d7d7a8b59e0a70",
+        "https://www.motortrend.com/uploads/sites/5/2021/02/2020-Lexus-RX-350-25.jpg?w=768&width=768&q=75&format=webp"
       ],
       "specifications": {
         "engine": "3.5L V6 Hybrid",
@@ -119,7 +118,7 @@
         "phone": "+995555555558"
       },
       "isVip": true,
-      "description": "იყიდება პრემიუმ კლასის Lexus RX 450h"
+      "description": "გთავაზობთ პრემიუმ კლასის Lexus RX 450h-ს. მანქანა არის იდეალურ მდგომარეობაში, სრული აღჭურვილობით."
     },
     {
       "id": "5",
@@ -128,8 +127,8 @@
       "year": 2021,
       "price": 145000,
       "images": [
-        "/images/porsche-911-1.jpg",
-        "/images/porsche-911-2.jpg"
+        "https://www.motortrend.com/uploads/sites/5/2020/12/2021-Porsche-911-Turbo-S-7.jpg",
+        "https://www.elcarrocolombiano.com/wp-content/uploads/2022/10/19102022-PORTADA-Porsche-911-Carrera-T-1.jpg"
       ],
       "specifications": {
         "engine": "3.0L Twin-Turbo",
@@ -149,7 +148,7 @@
         "phone": "+995555555559"
       },
       "isVip": true,
-      "description": "იყიდება სპორტული Porsche 911"
+      "description": "იყიდება ლეგენდარული Porsche 911. მანქანა არის კოლექციონერის მდგომარეობაში, მინიმალური გარბენით."
     },
     {
       "id": "6",
@@ -158,8 +157,8 @@
       "year": 2020,
       "price": 32000,
       "images": [
-        "/images/vw-golf-1.jpg",
-        "/images/vw-golf-2.jpg"
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfpKkrY_zJIXO1R565buaeZ4lDT0yxXld5yA&s",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfvxHexiVzUxIax1Ij667KaIVFfR6WWft1kQ&s"
       ],
       "specifications": {
         "engine": "2.0L Turbo",
@@ -179,7 +178,7 @@
         "phone": "+995555555560"
       },
       "isVip": false,
-      "description": "იყიდება სპორტული Golf GTI"
+      "description": "გთავაზობთ სპორტულ Volkswagen Golf GTI-ს. იდეალური მანქანა ყოველდღიური მართვისთვის."
     },
     {
       "id": "7",
@@ -188,8 +187,8 @@
       "year": 2021,
       "price": 38000,
       "images": [
-        "/images/honda-crv-1.jpg",
-        "/images/honda-crv-2.jpg"
+        "https://media.ed.edmunds-media.com/honda/cr-v/2020/oem/2020_honda_cr-v_4dr-suv_touring_fq_oem_1_1600.jpg",
+        "https://hips.hearstapps.com/hmg-prod/images/2021-honda-cr-v-hybrid-touring-106-1614324428.jpg?crop=0.591xw:0.500xh;0.293xw,0.358xh&resize=2048:*"
       ],
       "specifications": {
         "engine": "1.5L Turbo",
@@ -209,7 +208,7 @@
         "phone": "+995555555561"
       },
       "isVip": false,
-      "description": "იყიდება Honda CR-V იდეალურ მდგომარეობაში"
+      "description": "იყიდება კომფორტული Honda CR-V. საოჯახო ავტომობილი იდეალურ მდგომარეობაში."
     },
     {
       "id": "8",
@@ -218,8 +217,8 @@
       "year": 2022,
       "price": 125000,
       "images": [
-        "/images/audi-rs6-1.jpg",
-        "/images/audi-rs6-2.jpg"
+        "https://hips.hearstapps.com/hmg-prod/images/2024-audi-rs6-performance-motion-front-1669663114.jpg?crop=0.816xw:0.689xh;0.0961xw,0.274xh&resize=2048:*",
+        "https://www.ar-cars.cz/cache/images/project/010/10003/1920x1094-exact/default/46/79746-audi-rs6-abt-rs6-r-avant-1-of-5-720-ps-limited-edition-0.jpeg"
       ],
       "specifications": {
         "engine": "4.0L V8 Twin-Turbo",
@@ -239,7 +238,7 @@
         "phone": "+995555555562"
       },
       "isVip": true,
-      "description": "იყიდება სუპერ სპორტული Audi RS6"
+      "description": "გთავაზობთ სპორტულ უნივერსალს Audi RS6. უნიკალური მანქანა მაღალი წარმადობით."
     },
     {
       "id": "9",
@@ -248,8 +247,8 @@
       "year": 2022,
       "price": 55000,
       "images": [
-        "/images/tesla-3-1.jpg",
-        "/images/tesla-3-2.jpg"
+        "https://hips.hearstapps.com/hmg-prod/images/2022-tesla-model-3-mmp-1-1640025520.jpg?crop=0.755xw:0.637xh;0.106xw,0.159xh&resize=2048:*",
+        "https://www.motortrend.com/uploads/2022/02/2022-Tesla-Model-3-5.jpg"
       ],
       "specifications": {
         "engine": "Electric",
@@ -269,7 +268,7 @@
         "phone": "+995555555563"
       },
       "isVip": true,
-      "description": "იყიდება Tesla Model 3 Dual Motor"
+      "description": "იყიდება ელექტრო Tesla Model 3 Dual Motor. ნულოვანი გამონაბოლქვი და მაქსიმალური კომფორტი."
     },
     {
       "id": "10",
@@ -278,8 +277,8 @@
       "year": 2021,
       "price": 29000,
       "images": [
-        "/images/hyundai-tucson-1.jpg",
-        "/images/hyundai-tucson-2.jpg"
+        "https://media.ed.edmunds-media.com/hyundai/tucson/2020/oem/2020_hyundai_tucson_4dr-suv_ultimate_fq_oem_1_1600.jpg",
+        "https://media.drive.com.au/obj/tx_q:50,rs:auto:1920:1080:1/driveau/upload/cms/uploads/ufj8ozpznhf73nnuvjhw"
       ],
       "specifications": {
         "engine": "2.5L I4",
@@ -299,7 +298,7 @@
         "phone": "+995555555564"
       },
       "isVip": false,
-      "description": "იყიდება Hyundai Tucson კარგ მდგომარეობაში"
+      "description": "გთავაზობთ ეკონომიურ Hyundai Tucson-ს. იდეალური ქალაქში გადაადგილებისთვის."
     }
   ],
   "categories": [
@@ -310,12 +309,12 @@
     },
     {
       "id": "2",
-      "name": "ბიუჯეტური მანქანები",
+      "name": "ეკონომ კლასი",
       "icon": "budget-car"
     },
     {
       "id": "3",
-      "name": "პოპულარული ბრენდები",
+      "name": "პოპულარული მარკები",
       "icon": "popular-brands"
     }
   ],

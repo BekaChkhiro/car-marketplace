@@ -1,140 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
 import { FaSort, FaCar, FaChevronDown } from 'react-icons/fa';
-
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: ${({ theme }) => theme.spacing.xl};
-  background: ${({ theme }) => theme.colors.cardBg};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  transition: ${({ theme }) => theme.transition.default};
-
-  &:hover {
-    box-shadow: ${({ theme }) => theme.shadows.large};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    flex-direction: column;
-    gap: ${({ theme }) => theme.spacing.lg};
-  }
-`;
-
-const ResultCount = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text};
-
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  }
-
-  span {
-    background: ${({ theme }) => theme.colors.gradient};
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  }
-`;
-
-const SortingControl = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.lg};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const SortLabel = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  color: ${({ theme }) => theme.colors.secondary};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const SelectWrapper = styled.div`
-  position: relative;
-  
-  svg.chevron {
-    position: absolute;
-    right: ${({ theme }) => theme.spacing.lg};
-    top: 50%;
-    transform: translateY(-50%);
-    color: ${({ theme }) => theme.colors.primary};
-    pointer-events: none;
-    transition: ${({ theme }) => theme.transition.default};
-  }
-  
-  &:hover svg.chevron {
-    transform: translateY(-50%) rotate(180deg);
-  }
-`;
-
-const Select = styled.select`
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.xl}`};
-  padding-right: ${({ theme }) => theme.spacing.xxl};
-  border: 2px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.background};
-  cursor: pointer;
-  appearance: none;
-  transition: ${({ theme }) => theme.transition.default};
-  min-width: 200px;
-  
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primary}25;
-  }
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-  }
-`;
-
-const ViewOptions = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const ViewButton = styled.button<{ active?: boolean }>`
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  background: ${({ theme, active }) => 
-    active ? theme.colors.primary : theme.colors.lightGray};
-  color: ${({ theme, active }) => 
-    active ? 'white' : theme.colors.secondary};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &:hover {
-    background: ${({ theme, active }) => 
-      active ? theme.colors.primary : theme.colors.border};
-    transform: translateY(-2px);
-  }
-`;
 
 interface SortingHeaderProps {
   total: number;
@@ -148,33 +13,34 @@ const SortingHeader: React.FC<SortingHeaderProps> = ({
   onSortChange
 }) => {
   return (
-    <HeaderContainer>
-      <ResultCount>
-        <FaCar />
-        Found <span>{total}</span> {total === 1 ? 'car' : 'cars'}
-      </ResultCount>
+    <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm mb-6 transition-all duration-200 md:flex-row flex-col gap-4">
+      <div className="flex items-center gap-3 text-lg font-semibold text-gray-dark">
+        <FaCar className="text-xl text-primary" />
+        აღმოჩენილია <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-bold">{total}</span> {total === 1 ? 'მანქანა' : 'მანქანა'}
+      </div>
       
-      <SortingControl>
-        <SortLabel>
-          <FaSort /> Sort by
-        </SortLabel>
-        <SelectWrapper>
-          <Select 
+      <div className="flex items-center gap-6 sm:flex-row flex-col w-full sm:w-auto">
+        <span className="text-base text-gray-dark flex items-center gap-2">
+          <FaSort className="text-primary" /> დალაგება
+        </span>
+        <div className="relative w-full sm:w-auto">
+          <select 
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
+            className="w-full sm:w-[200px] py-2 px-4 border-2 border-gray-100 rounded-lg text-base font-medium text-gray-dark bg-white cursor-pointer appearance-none transition-colors hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           >
-            <option value="newest">Newest First</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="year-desc">Year: Newest First</option>
-            <option value="year-asc">Year: Oldest First</option>
-            <option value="mileage-asc">Mileage: Low to High</option>
-            <option value="mileage-desc">Mileage: High to Low</option>
-          </Select>
-          <FaChevronDown className="chevron" />
-        </SelectWrapper>
-      </SortingControl>
-    </HeaderContainer>
+            <option value="newest">უახლესი</option>
+            <option value="price-asc">ფასი: დაბლიდან მაღლა</option>
+            <option value="price-desc">ფასი: მაღლიდან დაბლა</option>
+            <option value="year-desc">წელი: ახლიდან ძველისკენ</option>
+            <option value="year-asc">წელი: ძველიდან ახლისკენ</option>
+            <option value="mileage-asc">გარბენი: დაბლიდან მაღლა</option>
+            <option value="mileage-desc">გარბენი: მაღლიდან დაბლა</option>
+          </select>
+          <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none transition-transform group-hover:rotate-180" />
+        </div>
+      </div>
+    </div>
   );
 };
 

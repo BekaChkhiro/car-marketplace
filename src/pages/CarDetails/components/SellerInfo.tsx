@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FaUser, FaPhone, FaEnvelope, FaWhatsapp, FaStar, FaShieldAlt } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
+import { Phone, Mail, MessageCircle, Shield, Star } from 'lucide-react';
 
 interface SellerInfoProps {
   seller: {
@@ -24,52 +25,51 @@ const SellerInfo: React.FC<SellerInfoProps> = ({ seller }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-[100px] transition-all hover:shadow-lg">
+    <div className="bg-white shadow-sm rounded-xl overflow-hidden sticky top-[100px]">
       <div className="p-6 space-y-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white text-xl shadow-md">
+        <div className="flex items-center space-x-4">
+          <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center text-white text-xl">
             <FaUser />
           </div>
           
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-bold text-gray-800 truncate">{seller.name}</h3>
-            <div className="flex items-center gap-3 mt-1.5">
+            <h3 className="text-xl font-bold text-gray-dark truncate">{seller.name}</h3>
+            <div className="flex items-center gap-3 mt-2">
               {seller.verified && (
-                <div className="inline-flex items-center gap-1 text-primary text-sm font-medium">
-                  <FaShieldAlt className="text-green-500" />
+                <div className="inline-flex items-center gap-1.5 text-primary text-sm font-medium">
+                  <Shield className="w-4 h-4" />
                   <span>Verified</span>
                 </div>
               )}
               {seller.rating && (
-                <div className="inline-flex items-center gap-1 text-amber-500 font-medium">
-                  <FaStar />
+                <div className="inline-flex items-center gap-1.5 text-gray-dark text-sm font-medium">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
                   <span>{seller.rating.toFixed(1)}</span>
                 </div>
               )}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Member since 2023</p>
           </div>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100" />
+        <div className="h-px bg-gray-100" />
 
         <div className="space-y-3">
           {!showPhone ? (
             <button 
               onClick={handleShowPhone}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-white
-                bg-gradient-to-r from-primary to-secondary font-semibold
-                transform transition-all active:scale-95 hover:-translate-y-0.5 hover:shadow-md"
+              className="w-full flex items-center justify-center space-x-2 bg-primary text-white px-4 py-2.5 
+                rounded-xl hover:bg-secondary transition-all duration-200 
+                transform hover:scale-[1.02] shadow-sm hover:shadow-md"
             >
-              <FaPhone className="text-sm" />
-              <span>Show Phone Number</span>
+              <Phone className="w-4 h-4" />
+              <span className="text-sm font-medium">Show Phone Number</span>
             </button>
           ) : (
             <div className="animate-fadeIn">
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="bg-green-light rounded-xl p-4">
                 <div className="text-center">
-                  <div className="text-xl font-bold text-primary mb-1">{seller.phone}</div>
-                  <div className="text-sm text-gray-500">Available 9:00 AM - 8:00 PM</div>
+                  <div className="text-lg font-bold text-primary">{seller.phone}</div>
+                  <div className="text-xs text-gray-600 mt-1">Available 9:00 AM - 8:00 PM</div>
                 </div>
               </div>
             </div>
@@ -77,27 +77,27 @@ const SellerInfo: React.FC<SellerInfoProps> = ({ seller }) => {
           
           <button 
             onClick={handleWhatsApp}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-white
-              bg-gradient-to-r from-[#25D366] to-[#128C7E] font-semibold
-              transform transition-all active:scale-95 hover:-translate-y-0.5 hover:shadow-md"
+            className="w-full flex items-center justify-center space-x-2 bg-[#25D366] text-white px-4 py-2.5 
+              rounded-xl hover:bg-[#128C7E] transition-all duration-200 
+              transform hover:scale-[1.02] shadow-sm hover:shadow-md"
           >
-            <FaWhatsapp className="text-lg" />
-            <span>WhatsApp</span>
+            <MessageCircle className="w-4 h-4" />
+            <span className="text-sm font-medium">WhatsApp</span>
           </button>
           
           <button 
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg
-              text-gray-700 bg-gray-50 font-semibold hover:bg-gray-100
-              transform transition-all active:scale-95 hover:-translate-y-0.5"
+            className="w-full flex items-center justify-center space-x-2 
+              text-gray-dark hover:text-primary transition-colors px-4 py-2.5 rounded-xl
+              hover:bg-green-light border border-gray-100"
           >
-            <FaEnvelope className="text-sm" />
-            <span>Send Message</span>
+            <Mail className="w-4 h-4" />
+            <span className="text-sm font-medium">Send Message</span>
           </button>
         </div>
 
-        <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
-          <FaShieldAlt className="text-blue-500 text-lg flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-gray-600 leading-relaxed">
+        <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
+          <Shield className="w-5 h-5 text-primary flex-shrink-0" />
+          <p className="text-xs text-gray-600 leading-relaxed">
             უსაფრთხოებისთვის, გთხოვთ შეხვედრა დანიშნოთ საზოგადოებრივ ადგილას და თანხის გადახდა 
             განახორციელოთ მხოლოდ დათვალიერების შემდეგ.
           </p>

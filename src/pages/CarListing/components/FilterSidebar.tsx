@@ -1,261 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { FaFilter, FaTimes, FaCar, FaGasPump, FaCog, FaCalendar, FaMapMarkerAlt, FaSearch, FaUndo } from 'react-icons/fa';
 import data from '../../../data/cars.json';
-
-const Overlay = styled.div<{ isOpen: boolean }>`
-  display: none;
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 999;
-    opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-    visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
-    transition: ${({ theme }) => theme.transition.default};
-  }
-`;
-
-const SidebarContainer = styled.aside<{ isOpen: boolean }>`
-  background: ${({ theme }) => theme.colors.cardBg};
-  padding: ${({ theme }) => theme.spacing.xl};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.large};
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-  
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.colors.lightGray};
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.primary};
-    border-radius: 4px;
-  }
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 320px;
-    z-index: 1000;
-    border-radius: 0;
-    transform: translateX(${({ isOpen }) => (isOpen ? '0' : '-100%')});
-    transition: ${({ theme }) => theme.transition.default};
-  }
-`;
-
-const FilterHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  padding-bottom: ${({ theme }) => theme.spacing.lg};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const FilterTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.text};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const CloseButton = styled.button`
-  display: none;
-  width: 36px;
-  height: 36px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  background: ${({ theme }) => theme.colors.lightGray};
-  color: ${({ theme }) => theme.colors.text};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.border};
-    transform: rotate(90deg);
-  }
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
-
-const FilterSection = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
-
-const SectionTitle = styled.h4`
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const SelectWrapper = styled.div`
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: ${({ theme }) => theme.spacing.md};
-    transform: translateY(-50%);
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid ${({ theme }) => theme.colors.secondary};
-    pointer-events: none;
-  }
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  border: 2px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  color: ${({ theme }) => theme.colors.text};
-  background: ${({ theme }) => theme.colors.background};
-  cursor: pointer;
-  appearance: none;
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primary}25;
-  }
-  
-  &:disabled {
-    background: ${({ theme }) => theme.colors.lightGray};
-    cursor: not-allowed;
-  }
-  
-  option {
-    padding: ${({ theme }) => theme.spacing.sm};
-  }
-`;
-
-const RangeContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.lg};
-`;
-
-const RangeInput = styled.input`
-  width: 100%;
-  height: 2px;
-  background: ${({ theme }) => theme.colors.border};
-  outline: none;
-  appearance: none;
-  
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: ${({ theme }) => theme.colors.gradient};
-    cursor: pointer;
-    transition: ${({ theme }) => theme.transition.default};
-    
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
-`;
-
-const RangeLabels = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: ${({ theme }) => theme.spacing.sm};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.xl};
-`;
-
-const Button = styled.button`
-  flex: 1;
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &.apply {
-    background: ${({ theme }) => theme.colors.gradient};
-    color: white;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: ${({ theme }) => theme.shadows.medium};
-    }
-  }
-  
-  &.reset {
-    background: ${({ theme }) => theme.colors.lightGray};
-    color: ${({ theme }) => theme.colors.text};
-    
-    &:hover {
-      background: ${({ theme }) => theme.colors.border};
-    }
-  }
-`;
-
-const MobileFilterButton = styled.button`
-  display: none;
-  position: fixed;
-  bottom: ${({ theme }) => theme.spacing.xl};
-  right: ${({ theme }) => theme.spacing.xl};
-  width: 56px;
-  height: 56px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  background: ${({ theme }) => theme.colors.gradient};
-  color: white;
-  box-shadow: ${({ theme }) => theme.shadows.large};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &:hover {
-    transform: scale(1.1);
-  }
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
 
 interface FilterSidebarProps {
   filters: {
@@ -301,125 +46,157 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
 
   return (
     <>
-      <Overlay isOpen={isOpen} onClick={toggleSidebar} />
-      <SidebarContainer isOpen={isOpen}>
-        <FilterHeader>
-          <FilterTitle>
-            <FaFilter /> Filters
-          </FilterTitle>
-          <CloseButton onClick={toggleSidebar}>
-            <FaTimes />
-          </CloseButton>
-        </FilterHeader>
-
-        <FilterSection>
-          <SectionTitle>
-            <FaCar /> Brand & Model
-          </SectionTitle>
-          <SelectWrapper>
-            <Select
-              value={filters.brand}
-              onChange={(e) => onFilterChange({ ...filters, brand: e.target.value, model: '' })}
-            >
-              <option value="">All Brands</option>
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.name}>
-                  {brand.name}
-                </option>
-              ))}
-            </Select>
-          </SelectWrapper>
-          
-          <SelectWrapper style={{ marginTop: '1rem' }}>
-            <Select
-              value={filters.model}
-              onChange={(e) => onFilterChange({ ...filters, model: e.target.value })}
-              disabled={!filters.brand}
-            >
-              <option value="">All Models</option>
-              {filters.brand && 
-                brands
-                  .find(b => b.name === filters.brand)
-                  ?.models.map((model) => (
-                    <option key={model} value={model}>
-                      {model}
-                    </option>
-                  ))
-              }
-            </Select>
-          </SelectWrapper>
-        </FilterSection>
-
-        <FilterSection>
-          <SectionTitle>
-            <FaCalendar /> Year
-          </SectionTitle>
-          <SelectWrapper>
-            <Select
-              value={filters.year}
-              onChange={(e) => onFilterChange({ ...filters, year: e.target.value })}
-            >
-              <option value="">Any Year</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </Select>
-          </SelectWrapper>
-        </FilterSection>
-
-        <FilterSection>
-          <SectionTitle>
-            <FaGasPump /> Fuel Type
-          </SectionTitle>
-          <SelectWrapper>
-            <Select
-              value={filters.fuelType}
-              onChange={(e) => onFilterChange({ ...filters, fuelType: e.target.value })}
-            >
-              <option value="">Any Fuel Type</option>
-              {fuelTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Select>
-          </SelectWrapper>
-        </FilterSection>
-
-        <FilterSection>
-          <SectionTitle>
-            <FaCog /> Transmission
-          </SectionTitle>
-          <SelectWrapper>
-            <Select
-              value={filters.transmission}
-              onChange={(e) => onFilterChange({ ...filters, transmission: e.target.value })}
-            >
-              <option value="">Any Transmission</option>
-              {transmissions.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Select>
-          </SelectWrapper>
-        </FilterSection>
-
-        <ActionButtons>
-          <Button className="reset" onClick={handleReset}>
-            <FaUndo /> Reset
-          </Button>
-          <Button className="apply" onClick={toggleSidebar}>
-            <FaSearch /> Apply
-          </Button>
-        </ActionButtons>
-      </SidebarContainer>
+      <div 
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden ${
+          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        } transition-all duration-200`}
+        onClick={toggleSidebar}
+      />
       
-      <MobileFilterButton onClick={toggleSidebar}>
+      <aside className={`bg-white p-4 rounded-xl shadow-sm max-h-[calc(100vh-100px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-primary md:translate-x-0 fixed md:static inset-y-0 left-0 w-[320px] md:w-auto z-50 transition-transform duration-200 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+          <h3 className="text-xl font-bold text-gray-dark flex items-center gap-2">
+            <FaFilter className="text-primary" /> ფილტრები
+          </h3>
+          <button 
+            onClick={toggleSidebar}
+            className="md:hidden w-9 h-9 rounded-full bg-gray-100 text-gray-dark hover:bg-gray-200 hover:rotate-90 transition-all flex items-center justify-center"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+              <FaCar className="text-primary" /> მარკა & მოდელი
+            </h4>
+            <div className="relative">
+              <select
+                value={filters.brand}
+                onChange={(e) => onFilterChange({ ...filters, brand: e.target.value, model: '' })}
+                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              >
+                <option value="">ყველა მარკა</option>
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.name}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+            </div>
+            
+            <div className="relative mt-4">
+              <select
+                value={filters.model}
+                onChange={(e) => onFilterChange({ ...filters, model: e.target.value })}
+                disabled={!filters.brand}
+                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                <option value="">ყველა მოდელი</option>
+                {filters.brand && 
+                  brands
+                    .find(b => b.name === filters.brand)
+                    ?.models.map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))
+                }
+              </select>
+              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+              <FaCalendar className="text-primary" /> წელი
+            </h4>
+            <div className="relative">
+              <select
+                value={filters.year}
+                onChange={(e) => onFilterChange({ ...filters, year: e.target.value })}
+                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              >
+                <option value="">ნებისმიერი წელი</option>
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+              <FaGasPump className="text-primary" /> საწვავის ტიპი
+            </h4>
+            <div className="relative">
+              <select
+                value={filters.fuelType}
+                onChange={(e) => onFilterChange({ ...filters, fuelType: e.target.value })}
+                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              >
+                <option value="">ნებისმიერი</option>
+                {fuelTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+              <FaCog className="text-primary" /> გადაცემათა კოლოფი
+            </h4>
+            <div className="relative">
+              <select
+                value={filters.transmission}
+                onChange={(e) => onFilterChange({ ...filters, transmission: e.target.value })}
+                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              >
+                <option value="">ნებისმიერი</option>
+                {transmissions.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+            </div>
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            <button 
+              className="flex-1 py-2 px-4 rounded-lg text-base font-medium bg-gray-100 text-gray-dark hover:bg-gray-200 transition-all duration-200 flex items-center justify-center gap-2"
+              onClick={handleReset}
+            >
+              <FaUndo /> გასუფთავება
+            </button>
+            <button 
+              className="flex-1 py-2 px-4 rounded-lg text-base font-medium bg-primary text-white hover:bg-secondary transition-all duration-200 flex items-center justify-center gap-2 transform hover:scale-105 shadow-sm hover:shadow-md"
+              onClick={toggleSidebar}
+            >
+              <FaSearch /> ძებნა
+            </button>
+          </div>
+        </div>
+      </aside>
+      
+      <button
+        onClick={toggleSidebar}
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white shadow-lg hover:bg-secondary hover:scale-110 transition-all duration-200 md:hidden flex items-center justify-center"
+      >
         <FaFilter />
-      </MobileFilterButton>
+      </button>
     </>
   );
 };

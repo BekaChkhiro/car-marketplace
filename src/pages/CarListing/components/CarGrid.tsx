@@ -1,144 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt, FaHeart } from 'react-icons/fa';
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: ${({ theme }) => theme.spacing.xl};
-  padding: ${({ theme }) => theme.spacing.lg} 0;
-`;
-
-const CarCard = styled(Link)`
-  background: ${({ theme }) => theme.colors.cardBg};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  overflow: hidden;
-  transition: ${({ theme }) => theme.transition.default};
-  position: relative;
-  
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-
-    img {
-      transform: scale(1.05);
-    }
-  }
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  padding-top: 66.67%; // 3:2 aspect ratio
-  overflow: hidden;
-`;
-
-const CarImage = styled.div<{ imageUrl: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${props => props.imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: ${({ theme }) => theme.transition.default};
-`;
-
-const VipBadge = styled.div`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.md};
-  right: ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.gradient};
-  color: white;
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  backdrop-filter: blur(4px);
-`;
-
-const FavoriteButton = styled.button`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.md};
-  left: ${({ theme }) => theme.spacing.md};
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: ${({ theme }) => theme.fontSizes.large};
-  }
-  
-  &:hover {
-    background: white;
-    transform: scale(1.1);
-  }
-`;
-
-const CarInfo = styled.div`
-  padding: ${({ theme }) => theme.spacing.xl};
-`;
-
-const Title = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-`;
-
-const Location = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const Price = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-`;
-
-const Specifications = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing.md};
-  padding-top: ${({ theme }) => theme.spacing.md};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const Spec = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.secondary};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-  }
-`;
 
 interface Car {
   id: string;
@@ -165,46 +27,64 @@ interface CarGridProps {
 
 const CarGrid: React.FC<CarGridProps> = ({ cars }) => {
   return (
-    <Grid>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
       {cars.map((car) => (
-        <CarCard key={car.id} to={`/cars/${car.id}`}>
-          <ImageContainer>
-            <CarImage imageUrl={car.images[0]} />
-            {car.isVip && <VipBadge>VIP</VipBadge>}
-            <FavoriteButton onClick={(e) => {
-              e.preventDefault();
-              // Add favorite functionality here
-            }}>
-              <FaHeart />
-            </FavoriteButton>
-          </ImageContainer>
+        <Link 
+          key={car.id} 
+          to={`/cars/${car.id}`}
+          className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md relative group"
+        >
+          <div className="relative pt-[66.67%] overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-200 group-hover:scale-[1.02]"
+              style={{ backgroundImage: `url(${car.images[0]})` }}
+            />
+            {car.isVip && (
+              <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-lg text-sm font-medium shadow-sm backdrop-blur-sm">
+                VIP
+              </div>
+            )}
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                // Add favorite functionality here
+              }}
+              className="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center transition-all duration-200 hover:scale-105 hover:bg-white"
+            >
+              <FaHeart className="text-primary text-lg" />
+            </button>
+          </div>
           
-          <CarInfo>
-            <Title>{car.year} {car.make} {car.model}</Title>
-            <Location>
-              <FaMapMarkerAlt />
+          <div className="p-4">
+            <h3 className="text-lg text-gray-dark font-semibold mb-2">
+              {car.year} {car.make} {car.model}
+            </h3>
+            <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+              <FaMapMarkerAlt className="text-primary" />
               {car.location.city}, {car.location.region}
-            </Location>
-            <Price>${car.price.toLocaleString()}</Price>
+            </div>
+            <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
+              ${car.price.toLocaleString()}
+            </div>
             
-            <Specifications>
-              <Spec>
-                <FaGasPump />
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <FaGasPump className="text-primary" />
                 {car.specifications.fuelType}
-              </Spec>
-              <Spec>
-                <FaTachometerAlt />
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <FaTachometerAlt className="text-primary" />
                 {car.specifications.mileage}km
-              </Spec>
-              <Spec>
-                <FaCog />
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <FaCog className="text-primary" />
                 {car.specifications.transmission}
-              </Spec>
-            </Specifications>
-          </CarInfo>
-        </CarCard>
+              </div>
+            </div>
+          </div>
+        </Link>
       ))}
-    </Grid>
+    </div>
   );
 };
 

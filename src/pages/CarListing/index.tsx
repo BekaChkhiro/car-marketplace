@@ -1,26 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { useSearchParams } from 'react-router-dom';
 import FilterSidebar from './components/FilterSidebar';
 import CarGrid from './components/CarGrid';
 import SortingHeader from './components/SortingHeader';
 import data from '../../data/cars.json';
-
-const PageContainer = styled.div`
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: ${({ theme }) => theme.spacing.xl};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const MainContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.lg};
-`;
 
 interface Filters {
   brand: string;
@@ -101,20 +84,24 @@ const CarListing: React.FC = () => {
   };
 
   return (
-    <PageContainer>
-      <FilterSidebar 
-        filters={filters} 
-        onFilterChange={handleFilterChange} 
-      />
-      <MainContent>
-        <SortingHeader 
-          total={filteredCars.length}
-          sortBy={sortBy}
-          onSortChange={handleSortChange}
-        />
-        <CarGrid cars={filteredCars} />
-      </MainContent>
-    </PageContainer>
+    <div className="w-full mx-auto px-4 py-6">
+      <div className="w-full grid grid-cols-1 md:grid-cols-[1.5fr,4.5fr] gap-8">
+        <div className="md:sticky md:top-[100px] md:h-[calc(100vh-2rem)]">
+          <FilterSidebar 
+            filters={filters} 
+            onFilterChange={handleFilterChange} 
+          />
+        </div>
+        <div className="flex flex-col">
+          <SortingHeader 
+            total={filteredCars.length}
+            sortBy={sortBy}
+            onSortChange={handleSortChange}
+          />
+          <CarGrid cars={filteredCars} />
+        </div>
+      </div>
+    </div>
   );
 };
 
