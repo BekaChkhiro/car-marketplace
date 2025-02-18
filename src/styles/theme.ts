@@ -1,19 +1,21 @@
 export const theme = {
   colors: {
-    primary: '#2563EB', // Modern blue
-    secondary: '#64748B', // Slate gray
-    background: '#FFFFFF',
-    text: '#1E293B', // Darker text for better readability
-    lightGray: '#F8FAFC', // Lighter background
-    darkGray: '#334155', // Darker gray for contrast
-    success: '#10B981', // Modern green
-    error: '#EF4444', // Modern red
-    warning: '#F59E0B', // Modern amber
-    info: '#3B82F6', // Modern blue
-    accent: '#8B5CF6', // Purple accent
-    border: '#E2E8F0', // Subtle border color
-    cardBg: '#FFFFFF',
-    gradient: 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)'
+    primary: '#4CAF50',
+    secondary: '#388E3C',
+    background: '#F5F5F5',
+    text: '#333333',
+    textLight: '#FFFFFF',
+    grayDark: '#444444',
+    grayLight: '#F0F0F0',
+    greenLight: '#E8F5E9',
+    greenLighter: '#C8E6C9',
+    success: '#45A049',
+    error: '#F44336',
+    warning: '#FFEB3B',
+    info: '#2E7D32',
+    accent: '#C8E6C9',
+    border: '#E8F5E9',
+    cardBg: '#FFFFFF'
   },
   fontSizes: {
     xs: '0.75rem',
@@ -39,19 +41,6 @@ export const theme = {
     desktop: '1024px',
     largeDesktop: '1440px'
   },
-  borderRadius: {
-    small: '0.375rem',
-    medium: '0.5rem',
-    large: '0.75rem',
-    xl: '1rem',
-    round: '50%'
-  },
-  shadows: {
-    small: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
-    medium: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-    large: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
-    xl: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)'
-  },
   typography: {
     fontFamily: {
       primary: '"Inter", system-ui, -apple-system, sans-serif',
@@ -73,6 +62,18 @@ export const theme = {
     default: 'all 0.3s ease',
     fast: 'all 0.15s ease',
     slow: 'all 0.45s ease'
+  },
+  borderRadius: {
+    small: '0.375rem',
+    medium: '0.5rem',
+    large: '0.75rem',
+    xl: '1rem'
+  },
+  shadows: {
+    small: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+    medium: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
+    large: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+    xl: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)'
   }
 } as const;
 
