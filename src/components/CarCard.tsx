@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt, FaHeart } from 'react-icons/fa';
 
@@ -27,11 +27,28 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const navigate = useNavigate();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate(`/cars/${car.id}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, width } = e.currentTarget.getBoundingClientRect();
+    const mouseX = e.clientX - left;
+    
+    // If mouse is on the right half of the image, show second image
+    if (mouseX > width / 2 && car.images.length > 1) {
+      setCurrentImageIndex(1);
+    } else {
+      setCurrentImageIndex(0);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setCurrentImageIndex(0);
   };
 
   return (
@@ -40,11 +57,32 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
       onClick={handleClick}
       className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md relative group"
     >
-      <div className="relative pt-[66.67%] overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-200 group-hover:scale-[1.02]"
-          style={{ backgroundImage: `url(${car.images[0]})` }}
-        />
+      <div 
+        className="relative pt-[66.67%] overflow-hidden"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="absolute inset-0 flex transition-transform duration-300 ease-in-out"
+          style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+        >
+          {car.images.slice(0, 2).map((image, index) => (
+            <div
+              key={index}
+              className="min-w-full h-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${image})` }}
+            />
+          ))}
+        </div>
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+          {[0, 1].map((index) => (
+            <div
+              key={index}
+              className={`h-1 w-8 rounded-full transition-all duration-300 ${
+                currentImageIndex === index ? 'bg-primary' : 'bg-white/70'
+              }`}
+            />
+          ))}
+        </div>
         {car.isVip && (
           <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-lg text-sm font-medium shadow-sm backdrop-blur-sm">
             VIP
