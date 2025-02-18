@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <LayoutWrapper>
       <Header />
-      <main className="max-w-[90%] mx-auto py-6">
+      <main className="w-[90%] mx-auto py-6">
         {children}
       </main>
       <Footer />

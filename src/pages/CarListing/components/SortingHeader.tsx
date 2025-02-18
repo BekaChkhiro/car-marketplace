@@ -13,7 +13,7 @@ const SortingHeader: React.FC<SortingHeaderProps> = ({
   onSortChange
 }) => {
   return (
-    <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm mb-6 transition-all duration-200 md:flex-row flex-col gap-4">
+    <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm transition-all duration-200 md:flex-row flex-col gap-4">
       <div className="flex items-center gap-3 text-lg font-semibold text-gray-dark">
         <FaCar className="text-xl text-primary" />
         აღმოჩენილია <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-bold">{total}</span> {total === 1 ? 'მანქანა' : 'მანქანა'}

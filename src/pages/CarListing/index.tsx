@@ -85,14 +85,15 @@ const CarListing: React.FC = () => {
 
   return (
     <div className="w-full mx-auto px-4 py-6">
-      <div className="w-full grid grid-cols-1 md:grid-cols-[1.5fr,4.5fr] gap-8">
-        <div className="md:sticky md:top-[100px] md:h-[calc(100vh-2rem)]">
+      <div className="w-full flex justify-between gap-7">
+        <div className="w-1/4 md:sticky md:top-[100px] md:h-[calc(100vh-2rem)]">
           <FilterSidebar 
             filters={filters} 
             onFilterChange={handleFilterChange} 
           />
         </div>
-        <div className="flex flex-col">
+        
+        <div className="w-3/4 flex flex-col min-h-[800px] gap-4">
           <SortingHeader 
             total={filteredCars.length}
             sortBy={sortBy}

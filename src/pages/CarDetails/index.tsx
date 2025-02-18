@@ -12,6 +12,10 @@ const CarDetails = () => {
   const [similarCars, setSimilarCars] = useState<any[]>([]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
     // Find the car from our mock data
     const selectedCar = data.cars.find(c => c.id === id);
     if (selectedCar) {
