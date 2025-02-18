@@ -1,197 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
 import { FaGasPump, FaTachometerAlt, FaCog, FaPalette, FaRoad, FaShare, FaHeart } from 'react-icons/fa';
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.colors.cardBg};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.large};
-  padding: ${({ theme }) => theme.spacing.xxl};
-  margin-bottom: ${({ theme }) => theme.spacing.section};
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.md};
-`;
-
-const TitleGroup = styled.div`
-  flex: 1;
-  min-width: 280px;
-`;
-
-const Title = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes.hero};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-  line-height: ${({ theme }) => theme.typography.lineHeight.tight};
-`;
-
-const PriceGroup = styled.div`
-  text-align: right;
-`;
-
-const Price = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.hero};
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  line-height: 1;
-`;
-
-const Actions = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.md};
-`;
-
-const ActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &.favorite {
-    background-color: ${({ theme }) => theme.colors.primary}15;
-    color: ${({ theme }) => theme.colors.primary};
-    
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.primary}25;
-    }
-  }
-  
-  &.share {
-    background-color: ${({ theme }) => theme.colors.secondary}15;
-    color: ${({ theme }) => theme.colors.secondary};
-    
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.secondary}25;
-    }
-  }
-`;
-
-const KeySpecs = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: ${({ theme }) => theme.spacing.xl};
-  margin: ${({ theme }) => `${theme.spacing.xxl} 0`};
-  padding: ${({ theme }) => theme.spacing.xl};
-  background: linear-gradient(to right, ${({ theme }) => theme.colors.primary}08, ${({ theme }) => theme.colors.primary}15);
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-`;
-
-const SpecItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => theme.spacing.md};
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
-  backdrop-filter: blur(8px);
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.95);
-  }
-`;
-
-const SpecIcon = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-`;
-
-const SpecValue = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.text};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-`;
-
-const SpecLabel = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
-const Description = styled.div`
-  margin: ${({ theme }) => `${theme.spacing.xxl} 0`};
-  
-  h2 {
-    font-size: ${({ theme }) => theme.fontSizes.xlarge};
-    color: ${({ theme }) => theme.colors.text};
-    margin-bottom: ${({ theme }) => theme.spacing.lg};
-    font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  }
-  
-  p {
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-    color: ${({ theme }) => theme.colors.text};
-    line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
-  }
-`;
-
-const DetailedSpecs = styled.div`
-  h2 {
-    font-size: ${({ theme }) => theme.fontSizes.xlarge};
-    color: ${({ theme }) => theme.colors.text};
-    margin-bottom: ${({ theme }) => theme.spacing.xl};
-    font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  }
-`;
-
-const SpecsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.xxl};
-`;
-
-const SpecGroup = styled.div`
-  background: ${({ theme }) => theme.colors.lightGray};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  padding: ${({ theme }) => theme.spacing.xl};
-`;
-
-const SpecGroupTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  padding-bottom: ${({ theme }) => theme.spacing.sm};
-  border-bottom: 2px solid ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-`;
-
-const SpecRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing.md} 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  
-  &:last-child {
-    border-bottom: none;
-  }
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.background};
-  }
-`;
-
-const SpecName = styled.div`
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const SpecDetail = styled.div`
-  color: ${({ theme }) => theme.colors.secondary};
-`;
 
 interface CarInfoProps {
   car: {
@@ -213,96 +21,108 @@ interface CarInfoProps {
 
 const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
   return (
-    <Container>
-      <Header>
-        <TitleGroup>
-          <Title>
-            {car.year} {car.make} {car.model}
-          </Title>
-          <Actions>
-            <ActionButton className="favorite">
-              <FaHeart /> Save
-            </ActionButton>
-            <ActionButton className="share">
-              <FaShare /> Share
-            </ActionButton>
-          </Actions>
-        </TitleGroup>
-        <PriceGroup>
-          <Price>${car.price.toLocaleString()}</Price>
-        </PriceGroup>
-      </Header>
+    <div className="bg-white rounded-lg shadow-sm">
+      <div className="p-8">
+        <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
+          <div className="flex-1 min-w-[280px]">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent leading-tight">
+              {car.year} {car.make} {car.model}
+            </h1>
+            <div className="flex gap-4 mt-4">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-primary bg-primary/10 hover:bg-primary/20 transition-colors">
+                <FaHeart /> Save
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-secondary bg-secondary/10 hover:bg-secondary/20 transition-colors">
+                <FaShare /> Share
+              </button>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-4xl text-primary font-bold leading-none">
+              ${car.price.toLocaleString()}
+            </div>
+          </div>
+        </div>
 
-      <KeySpecs>
-        <SpecItem>
-          <SpecIcon><FaGasPump /></SpecIcon>
-          <SpecValue>{car.specifications.fuelType}</SpecValue>
-          <SpecLabel>Fuel Type</SpecLabel>
-        </SpecItem>
-        <SpecItem>
-          <SpecIcon><FaTachometerAlt /></SpecIcon>
-          <SpecValue>{car.specifications.mileage.toLocaleString()} km</SpecValue>
-          <SpecLabel>Mileage</SpecLabel>
-        </SpecItem>
-        <SpecItem>
-          <SpecIcon><FaCog /></SpecIcon>
-          <SpecValue>{car.specifications.transmission}</SpecValue>
-          <SpecLabel>Transmission</SpecLabel>
-        </SpecItem>
-        <SpecItem>
-          <SpecIcon><FaPalette /></SpecIcon>
-          <SpecValue>{car.specifications.color}</SpecValue>
-          <SpecLabel>Color</SpecLabel>
-        </SpecItem>
-        <SpecItem>
-          <SpecIcon><FaRoad /></SpecIcon>
-          <SpecValue>{car.specifications.drive}</SpecValue>
-          <SpecLabel>Drive</SpecLabel>
-        </SpecItem>
-      </KeySpecs>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-6">
+          <div className="flex flex-col gap-2 p-4 bg-white/80 backdrop-blur rounded-md hover:translate-y-[-2px] hover:bg-white/95 transition-all">
+            <div className="text-2xl text-primary"><FaGasPump /></div>
+            <div className="text-lg text-gray-800 font-semibold">{car.specifications.fuelType}</div>
+            <div className="text-sm text-gray-600">Fuel Type</div>
+          </div>
+          <div className="flex flex-col gap-2 p-4 bg-white/80 backdrop-blur rounded-md hover:translate-y-[-2px] hover:bg-white/95 transition-all">
+            <div className="text-2xl text-primary"><FaTachometerAlt /></div>
+            <div className="text-lg text-gray-800 font-semibold">{car.specifications.mileage.toLocaleString()} km</div>
+            <div className="text-sm text-gray-600">Mileage</div>
+          </div>
+          <div className="flex flex-col gap-2 p-4 bg-white/80 backdrop-blur rounded-md hover:translate-y-[-2px] hover:bg-white/95 transition-all">
+            <div className="text-2xl text-primary"><FaCog /></div>
+            <div className="text-lg text-gray-800 font-semibold">{car.specifications.transmission}</div>
+            <div className="text-sm text-gray-600">Transmission</div>
+          </div>
+          <div className="flex flex-col gap-2 p-4 bg-white/80 backdrop-blur rounded-md hover:translate-y-[-2px] hover:bg-white/95 transition-all">
+            <div className="text-2xl text-primary"><FaPalette /></div>
+            <div className="text-lg text-gray-800 font-semibold">{car.specifications.color}</div>
+            <div className="text-sm text-gray-600">Color</div>
+          </div>
+          <div className="flex flex-col gap-2 p-4 bg-white/80 backdrop-blur rounded-md hover:translate-y-[-2px] hover:bg-white/95 transition-all">
+            <div className="text-2xl text-primary"><FaRoad /></div>
+            <div className="text-lg text-gray-800 font-semibold">{car.specifications.drive}</div>
+            <div className="text-sm text-gray-600">Drive</div>
+          </div>
+        </div>
 
-      <Description>
-        <h2>Description</h2>
-        <p>{car.description}</p>
-      </Description>
+        <div className="my-10">
+          <h2 className="text-2xl text-gray-800 mb-6 font-semibold">Description</h2>
+          <p className="text-base text-gray-700 leading-relaxed">{car.description}</p>
+        </div>
 
-      <DetailedSpecs>
-        <h2>Technical Specifications</h2>
-        <SpecsGrid>
-          <SpecGroup>
-            <SpecGroupTitle>Engine & Performance</SpecGroupTitle>
-            <SpecRow>
-              <SpecName>Engine</SpecName>
-              <SpecDetail>{car.specifications.engine}</SpecDetail>
-            </SpecRow>
-            <SpecRow>
-              <SpecName>Transmission</SpecName>
-              <SpecDetail>{car.specifications.transmission}</SpecDetail>
-            </SpecRow>
-            <SpecRow>
-              <SpecName>Drive Type</SpecName>
-              <SpecDetail>{car.specifications.drive}</SpecDetail>
-            </SpecRow>
-          </SpecGroup>
+        <div>
+          <h2 className="text-2xl text-gray-800 mb-8 font-semibold">Technical Specifications</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg text-gray-800 mb-6 pb-2 border-b-2 border-primary font-semibold">
+                Engine & Performance
+              </h3>
+              <div className="space-y-4">
+                <div className="flex justify-between py-2 border-b border-gray-200 hover:bg-white">
+                  <div className="font-medium text-gray-800">Engine</div>
+                  <div className="text-gray-600">{car.specifications.engine}</div>
+                </div>
+                <div className="flex justify-between py-2 border-b border-gray-200 hover:bg-white">
+                  <div className="font-medium text-gray-800">Transmission</div>
+                  <div className="text-gray-600">{car.specifications.transmission}</div>
+                </div>
+                <div className="flex justify-between py-2 hover:bg-white">
+                  <div className="font-medium text-gray-800">Drive Type</div>
+                  <div className="text-gray-600">{car.specifications.drive}</div>
+                </div>
+              </div>
+            </div>
 
-          <SpecGroup>
-            <SpecGroupTitle>General Information</SpecGroupTitle>
-            <SpecRow>
-              <SpecName>Mileage</SpecName>
-              <SpecDetail>{car.specifications.mileage.toLocaleString()} km</SpecDetail>
-            </SpecRow>
-            <SpecRow>
-              <SpecName>Fuel Type</SpecName>
-              <SpecDetail>{car.specifications.fuelType}</SpecDetail>
-            </SpecRow>
-            <SpecRow>
-              <SpecName>Color</SpecName>
-              <SpecDetail>{car.specifications.color}</SpecDetail>
-            </SpecRow>
-          </SpecGroup>
-        </SpecsGrid>
-      </DetailedSpecs>
-    </Container>
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg text-gray-800 mb-6 pb-2 border-b-2 border-primary font-semibold">
+                General Information
+              </h3>
+              <div className="space-y-4">
+                <div className="flex justify-between py-2 border-b border-gray-200 hover:bg-white">
+                  <div className="font-medium text-gray-800">Mileage</div>
+                  <div className="text-gray-600">{car.specifications.mileage.toLocaleString()} km</div>
+                </div>
+                <div className="flex justify-between py-2 border-b border-gray-200 hover:bg-white">
+                  <div className="font-medium text-gray-800">Fuel Type</div>
+                  <div className="text-gray-600">{car.specifications.fuelType}</div>
+                </div>
+                <div className="flex justify-between py-2 hover:bg-white">
+                  <div className="font-medium text-gray-800">Color</div>
+                  <div className="text-gray-600">{car.specifications.color}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

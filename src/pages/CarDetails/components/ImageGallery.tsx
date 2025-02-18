@@ -1,210 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight, FaExpand, FaTimes } from 'react-icons/fa';
-
-const GalleryContainer = styled.div`
-  position: relative;
-  margin-bottom: ${({ theme }) => theme.spacing.section};
-`;
-
-const MainImageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  height: 600px;
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.large};
-  
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 80%, rgba(0, 0, 0, 0.2));
-  }
-`;
-
-const MainImage = styled.div<{ imageUrl: string }>`
-  width: 100%;
-  height: 100%;
-  background-image: url(${props => props.imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.5s ease;
-
-  &:hover {
-    transform: scale(1.02);
-  }
-`;
-
-const ThumbnailContainer = styled.div`
-  position: relative;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.xl};
-  padding: ${({ theme }) => theme.spacing.md};
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.colors.lightGray};
-    border-radius: ${({ theme }) => theme.borderRadius.small};
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.primary};
-    border-radius: ${({ theme }) => theme.borderRadius.small};
-  }
-`;
-
-const Thumbnail = styled.div<{ imageUrl: string; isActive: boolean }>`
-  width: 120px;
-  height: 90px;
-  flex-shrink: 0;
-  background-image: url(${props => props.imageUrl});
-  background-size: cover;
-  background-position: center;
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  border: 3px solid ${props => props.isActive ? props.theme.colors.primary : 'transparent'};
-  opacity: ${props => props.isActive ? 1 : 0.7};
-  transform: ${props => props.isActive ? 'scale(1.05)' : 'scale(1)'};
-  box-shadow: ${props => props.isActive ? props.theme.shadows.medium : 'none'};
-  
-  &:hover {
-    opacity: 1;
-    transform: scale(1.05);
-    box-shadow: ${({ theme }) => theme.shadows.medium};
-  }
-`;
-
-const NavigationButton = styled.button<{ theme: any }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: ${({ theme }) => `${theme.colors.background}CC`};
-  color: ${({ theme }) => theme.colors.primary};
-  border: none;
-  width: 48px;
-  height: 48px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  backdrop-filter: blur(8px);
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.background};
-    transform: translateY(-50%) scale(1.1);
-  }
-  
-  &.prev {
-    left: ${({ theme }) => theme.spacing.lg};
-  }
-  
-  &.next {
-    right: ${({ theme }) => theme.spacing.lg};
-  }
-
-  svg {
-    font-size: ${({ theme }) => theme.fontSizes.large};
-  }
-`;
-
-const FullscreenButton = styled.button<{ theme: any }>`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.lg};
-  right: ${({ theme }) => theme.spacing.lg};
-  background: ${({ theme }) => `${theme.colors.background}CC`};
-  color: ${({ theme }) => theme.colors.primary};
-  border: none;
-  width: 48px;
-  height: 48px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  backdrop-filter: blur(8px);
-  z-index: 1;
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.background};
-    transform: scale(1.1);
-  }
-
-  svg {
-    font-size: ${({ theme }) => theme.fontSizes.large};
-  }
-`;
-
-const Modal = styled.div<{ theme: any }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: ${({ theme }) => `${theme.colors.background}F5`};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(10px);
-  padding: ${({ theme }) => theme.spacing.xl};
-`;
-
-const ModalContent = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ModalImage = styled.div<{ imageUrl: string }>`
-  width: 100%;
-  height: 100%;
-  background-image: url(${props => props.imageUrl});
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: transform 0.3s ease;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.lg};
-  right: ${({ theme }) => theme.spacing.lg};
-  background: ${({ theme }) => theme.colors.error};
-  color: white;
-  border: none;
-  width: 48px;
-  height: 48px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  z-index: 1;
-  
-  &:hover {
-    transform: scale(1.1);
-    background: ${({ theme }) => theme.colors.error};
-  }
-
-  svg {
-    font-size: ${({ theme }) => theme.fontSizes.large};
-  }
-`;
 
 interface ImageGalleryProps {
   images: string[];
@@ -238,54 +33,94 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [isModalOpen]);
 
   return (
-    <GalleryContainer>
-      <MainImageWrapper>
-        <MainImage imageUrl={images[currentIndex]} />
-        <NavigationButton className="prev" onClick={handlePrevious}>
-          <FaChevronLeft />
-        </NavigationButton>
-        <NavigationButton className="next" onClick={handleNext}>
-          <FaChevronRight />
-        </NavigationButton>
-        <FullscreenButton onClick={() => setIsModalOpen(true)}>
-          <FaExpand />
-        </FullscreenButton>
-      </MainImageWrapper>
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="relative w-full h-[600px] group">
+        <div 
+          className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-102"
+          style={{ backgroundImage: `url(${images[currentIndex]})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/20" />
+        
+        <button 
+          className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
+            hover:bg-white hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm
+            opacity-0 group-hover:opacity-100 transform -translate-x-4 group-hover:translate-x-0"
+          onClick={handlePrevious}
+        >
+          <FaChevronLeft className="text-xl" />
+        </button>
+        
+        <button 
+          className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
+            hover:bg-white hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm
+            opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0"
+          onClick={handleNext}
+        >
+          <FaChevronRight className="text-xl" />
+        </button>
+        
+        <button 
+          className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/90 text-primary 
+            hover:bg-white hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm
+            opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <FaExpand className="text-xl" />
+        </button>
+      </div>
 
-      <ThumbnailContainer>
+      <div className="relative flex gap-4 p-6 overflow-x-auto scroll-smooth bg-white">
         {images.map((image, index) => (
-          <Thumbnail
+          <div
             key={index}
-            imageUrl={image}
-            isActive={index === currentIndex}
+            className={`w-[120px] h-[90px] flex-shrink-0 bg-cover bg-center rounded-lg cursor-pointer transition-all
+              ${index === currentIndex 
+                ? 'ring-2 ring-primary ring-offset-2 opacity-100 scale-105 shadow-md' 
+                : 'ring-2 ring-transparent ring-offset-2 opacity-70 hover:opacity-100 hover:scale-105 hover:shadow-md'}`}
+            style={{ backgroundImage: `url(${image})` }}
             onClick={() => setCurrentIndex(index)}
           />
         ))}
-      </ThumbnailContainer>
+      </div>
 
       {isModalOpen && (
-        <Modal>
-          <ModalContent>
-            <ModalImage imageUrl={images[currentIndex]} />
-            <CloseButton onClick={() => setIsModalOpen(false)}>
-              <FaTimes />
-            </CloseButton>
-            <NavigationButton className="prev" onClick={handlePrevious}>
-              <FaChevronLeft />
-            </NavigationButton>
-            <NavigationButton className="next" onClick={handleNext}>
-              <FaChevronRight />
-            </NavigationButton>
-          </ModalContent>
-        </Modal>
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-8 backdrop-blur-lg">
+          <div className="relative w-full h-full flex items-center justify-center">
+            <div 
+              className="w-full h-full bg-contain bg-center bg-no-repeat transition-transform duration-300"
+              style={{ backgroundImage: `url(${images[currentIndex]})` }}
+            />
+            <button 
+              className="absolute top-6 right-6 w-12 h-12 rounded-full bg-red-500 text-white 
+                hover:bg-red-600 hover:scale-110 transition-all flex items-center justify-center z-10"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <FaTimes className="text-xl" />
+            </button>
+            <button 
+              className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
+                hover:bg-white hover:scale-110 transition-all flex items-center justify-center"
+              onClick={handlePrevious}
+            >
+              <FaChevronLeft className="text-xl" />
+            </button>
+            <button 
+              className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
+                hover:bg-white hover:scale-110 transition-all flex items-center justify-center"
+              onClick={handleNext}
+            >
+              <FaChevronRight className="text-xl" />
+            </button>
+          </div>
+        </div>
       )}
-    </GalleryContainer>
+    </div>
   );
 };
 

@@ -1,45 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import styled from 'styled-components';
 import ImageGallery from './components/ImageGallery';
 import CarInfo from './components/CarInfo';
 import SellerInfo from './components/SellerInfo';
 import SimilarCars from './components/SimilarCars';
 import data from '../../data/cars.json';
 
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.xl};
-`;
-
-const Breadcrumbs = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  color: ${({ theme }) => theme.colors.secondary};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  
-  a {
-    color: ${({ theme }) => theme.colors.primary};
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
-const MainContent = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: ${({ theme }) => theme.spacing.xl};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const CarDetails: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const CarDetails = () => {
+  const { id } = useParams();
   const [car, setCar] = useState<any>(null);
   const [similarCars, setSimilarCars] = useState<any[]>([]);
 
@@ -66,28 +34,35 @@ const CarDetails: React.FC = () => {
   }
 
   return (
-    <PageContainer>
-      <Breadcrumbs>
-        <Link to="/">Home</Link>
-        <span>/</span>
-        <Link to="/cars">Cars</Link>
-        <span>/</span>
-        <span>{car.year} {car.make} {car.model}</span>
-      </Breadcrumbs>
+    <div className="min-h-screen">
+      <div className="mx-auto px-4 py-6 space-y-6">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center space-x-2 text-sm text-gray-500">
+          <Link to="/" className="hover:text-gray-700 transition-colors">მთავარი</Link>
+          <span>/</span>
+          <Link to="/cars" className="hover:text-gray-700 transition-colors">მანქანები</Link>
+          <span>/</span>
+          <span className="text-gray-400">{car.year} {car.make} {car.model}</span>
+        </nav>
 
-      <MainContent>
-        <div>
-          <ImageGallery images={car.images} />
-          <CarInfo car={car} />
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-[3.5fr,1.5fr] gap-8">
+          {/* Left Column */}
+          <div className="space-y-6">
+            <ImageGallery images={car.images} />
+            <CarInfo car={car} />
+          </div>
+          
+          {/* Right Column */}
+          <div>
+            <SellerInfo seller={car.seller} />
+          </div>
         </div>
-        
-        <div>
-          <SellerInfo seller={car.seller} />
-        </div>
-      </MainContent>
 
-      <SimilarCars cars={similarCars} />
-    </PageContainer>
+        {/* Similar Cars */}
+        <SimilarCars cars={similarCars} />
+      </div>
+    </div>
   );
 };
 
