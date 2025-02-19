@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaGasPump, FaTachometerAlt, FaCog, FaTag, FaHeart, FaArrowRight, FaClock } from 'react-icons/fa';
+import { Tag, Heart, ArrowRight, Fuel, Gauge, Settings } from 'lucide-react';
 import data from '../../../data/cars.json';
 
 interface Car {
@@ -58,19 +58,19 @@ const DailyOffers: React.FC = () => {
                      style={{ backgroundImage: `url(${car.images[0]})` }}>
                 </div>
                 <div className="absolute top-4 left-4 bg-gradient-to-r from-primary to-primary-dark text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2">
-                  <FaTag /> {car.discount}% OFF
+                  <Tag className="w-4 h-4" /> {car.discount}% OFF
                 </div>
                 <button onClick={(e) => {
                   e.preventDefault();
                 }} className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center transition-all hover:scale-110 hover:bg-white">
-                  <FaHeart className="text-primary" />
+                  <Heart className="w-5 h-5 text-primary" />
                 </button>
               </div>
 
               <div className="p-6 flex flex-col">
                 <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center justify-between group-hover:text-primary">
                   {car.year} {car.make} {car.model}
-                  <FaArrowRight className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" />
                 </h3>
 
                 <div className="mb-8">
@@ -89,17 +89,17 @@ const DailyOffers: React.FC = () => {
 
                 <div className="grid grid-cols-3 gap-4 mt-auto pt-6 border-t border-gray-100">
                   <div className="flex flex-col items-center gap-1">
-                    <FaGasPump className="text-xl text-primary" />
+                    <Fuel className="w-6 h-6 text-primary" />
                     <span className="text-sm font-medium text-gray-900">{car.specifications.fuelType}</span>
                     <span className="text-xs text-secondary">საწვავის ტიპი</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <FaTachometerAlt className="text-xl text-primary" />
+                    <Gauge className="w-6 h-6 text-primary" />
                     <span className="text-sm font-medium text-gray-900">{car.specifications.mileage}კმ</span>
                     <span className="text-xs text-secondary">გარბენი</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <FaCog className="text-xl text-primary" />
+                    <Settings className="w-6 h-6 text-primary" />
                     <span className="text-sm font-medium text-gray-900">{car.specifications.transmission}</span>
                     <span className="text-xs text-secondary">გადაცემათა კოლოფი</span>
                   </div>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { FaUser } from 'react-icons/fa';
-import { Shield, Star } from 'lucide-react';
+import { User, Shield, Star } from 'lucide-react';
 
 interface SellerProfileProps {
   seller: {
@@ -14,7 +13,7 @@ const SellerProfile = ({ seller }: SellerProfileProps) => {
   return (
     <div className="flex items-center space-x-4">
       <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center text-white text-xl">
-        <FaUser />
+        <User size={24} />
       </div>
       
       <div className="flex-1 min-w-0">

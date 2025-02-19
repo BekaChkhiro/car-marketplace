@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt, FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { 
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  MapPin,
+  Fuel,
+  Gauge,
+  Settings
+} from 'lucide-react';
 
 interface Car {
   id: string;
@@ -71,13 +79,13 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           onClick={prevImage}
           className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
         >
-          <FaChevronLeft className="text-primary" />
+          <ChevronLeft className="text-primary w-5 h-5" />
         </button>
         <button
           onClick={nextImage}
           className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
         >
-          <FaChevronRight className="text-primary" />
+          <ChevronRight className="text-primary w-5 h-5" />
         </button>
 
         {/* Image Indicators */}
@@ -104,7 +112,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           }}
           className="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center transition-all duration-200 hover:scale-105 hover:bg-white"
         >
-          <FaHeart className="text-primary text-lg" />
+          <Heart className="text-primary w-5 h-5" />
         </button>
       </div>
       
@@ -113,7 +121,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           {car.year} {car.make} {car.model}
         </h3>
         <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-          <FaMapMarkerAlt className="text-primary" />
+          <MapPin className="text-primary w-4 h-4" />
           {car.location.city}, {car.location.region}
         </div>
         <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
@@ -122,15 +130,15 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <FaGasPump className="text-primary" />
+            <Fuel className="text-primary w-4 h-4" />
             {car.specifications.fuelType}
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <FaTachometerAlt className="text-primary" />
+            <Gauge className="text-primary w-4 h-4" />
             {car.specifications.mileage.toLocaleString()} კმ
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <FaCog className="text-primary" />
+            <Settings className="text-primary w-4 h-4" />
             {car.specifications.transmission}
           </div>
         </div>

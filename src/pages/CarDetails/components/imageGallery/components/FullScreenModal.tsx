@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface FullScreenModalProps {
   isOpen: boolean;
@@ -30,21 +30,21 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             hover:bg-red-600 hover:scale-110 transition-all flex items-center justify-center z-10"
           onClick={onClose}
         >
-          <FaTimes className="text-xl" />
+          <X size={24} />
         </button>
         <button 
           className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
             hover:bg-white hover:scale-110 transition-all flex items-center justify-center"
           onClick={onPrevious}
         >
-          <FaChevronLeft className="text-xl" />
+          <ChevronLeft size={24} />
         </button>
         <button 
           className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
             hover:bg-white hover:scale-110 transition-all flex items-center justify-center"
           onClick={onNext}
         >
-          <FaChevronRight className="text-xl" />
+          <ChevronRight size={24} />
         </button>
       </div>
     </div>

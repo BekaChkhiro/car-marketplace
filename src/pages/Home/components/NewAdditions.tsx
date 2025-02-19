@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowRight } from 'react-icons/fa';
+import { ArrowRight } from 'lucide-react';
 import data from '../../../data/cars.json';
 import CarCard from '../../../components/CarCard';
 
@@ -26,7 +26,7 @@ const NewAdditions: React.FC = () => {
             onClick={handleViewAllClick}
             className="flex items-center gap-2 px-6 py-3 text-primary font-semibold border-2 border-primary/30 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:-translate-y-0.5 group"
           >
-            ყველა განცხადება <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+            ყველა განცხადება <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaChevronLeft, FaChevronRight, FaExpand } from 'react-icons/fa';
+import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 
 interface GalleryControlsProps {
   onPrevious: () => void;
@@ -11,30 +11,27 @@ const GalleryControls: React.FC<GalleryControlsProps> = ({ onPrevious, onNext, o
   return (
     <>
       <button 
-        className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
-          hover:bg-white hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm
-          opacity-0 group-hover:opacity-100 transform -translate-x-4 group-hover:translate-x-0"
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-primary 
+          hover:bg-white hover:scale-110 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100"
         onClick={onPrevious}
       >
-        <FaChevronLeft className="text-xl" />
+        <ChevronLeft size={20} />
       </button>
       
       <button 
-        className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 text-primary 
-          hover:bg-white hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm
-          opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0"
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-primary 
+          hover:bg-white hover:scale-110 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100"
         onClick={onNext}
       >
-        <FaChevronRight className="text-xl" />
+        <ChevronRight size={20} />
       </button>
       
       <button 
-        className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/90 text-primary 
-          hover:bg-white hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm
-          opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0"
+        className="absolute right-4 bottom-4 w-10 h-10 rounded-full bg-white/90 text-primary 
+          hover:bg-white hover:scale-110 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100"
         onClick={onExpand}
       >
-        <FaExpand className="text-xl" />
+        <Maximize2 size={20} />
       </button>
     </>
   );

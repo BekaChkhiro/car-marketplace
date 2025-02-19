@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaSearch, FaCar, FaCalendar, FaDollarSign } from 'react-icons/fa';
+import { Car, DollarSign, Calendar, Search } from 'lucide-react';
 import data from '../../../data/cars.json';
 
 interface SearchFormData {
@@ -80,7 +80,7 @@ const HeroSection: React.FC = () => {
         <div className="w-full max-w-5xl mx-auto bg-white/95 backdrop-blur-xl p-10 rounded-3xl shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:shadow-3xl border border-green-lighter/20">
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="relative group">
-              <FaCar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+              <Car className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
               <select
                 value={formData.brand}
                 onChange={handleBrandChange}
@@ -96,7 +96,7 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="relative group">
-              <FaCar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+              <Car className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
               <select
                 value={formData.model}
                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
@@ -113,7 +113,7 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="relative group">
-              <FaDollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
               <select
                 value={formData.priceRange}
                 onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
@@ -129,7 +129,7 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="relative group">
-              <FaCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
               <select
                 value={formData.year}
                 onChange={(e) => setFormData({ ...formData, year: e.target.value })}
@@ -148,7 +148,7 @@ const HeroSection: React.FC = () => {
               type="submit"
               className="col-span-1 md:col-span-2 lg:col-span-4 flex items-center justify-center gap-3 py-5 px-10 bg-primary-gradient text-white text-xl font-semibold rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <FaSearch className="text-2xl" /> მოძებნე შენი იდეალური მანქანა
+              <Search className="text-2xl" /> მოძებნე შენი იდეალური მანქანა
             </button>
           </form>
         </div>

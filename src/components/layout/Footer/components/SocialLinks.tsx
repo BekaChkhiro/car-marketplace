@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const SocialLinks: React.FC = () => {
   return (
@@ -10,9 +10,9 @@ const SocialLinks: React.FC = () => {
       </p>
       <div className="flex gap-4">
         {[
-          { href: 'https://facebook.com', icon: <FaFacebook />, label: 'Facebook' },
-          { href: 'https://twitter.com', icon: <FaTwitter />, label: 'Twitter' },
-          { href: 'https://instagram.com', icon: <FaInstagram />, label: 'Instagram' },
+          { href: 'https://facebook.com', icon: Facebook, label: 'Facebook' },
+          { href: 'https://twitter.com', icon: Twitter, label: 'Twitter' },
+          { href: 'https://instagram.com', icon: Instagram, label: 'Instagram' },
         ].map((social) => (
           <a
             key={social.href}
@@ -22,7 +22,7 @@ const SocialLinks: React.FC = () => {
             aria-label={social.label}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 text-primary transition-all hover:bg-primary hover:text-white transform hover:scale-105"
           >
-            {social.icon}
+            {React.createElement(social.icon, { size: 20 })}
           </a>
         ))}
       </div>

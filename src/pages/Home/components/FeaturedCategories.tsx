@@ -1,13 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaCar, FaDollarSign, FaStar, FaArrowRight, FaClock, FaTrophy, FaShieldAlt } from 'react-icons/fa';
+import { Car, DollarSign, Trophy, ArrowRight } from 'lucide-react';
 
-const categories = [
+interface CategoryStat {
+  value: string;
+  label: string;
+}
+
+interface Category {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  link: string;
+  stats: CategoryStat[];
+}
+
+const categories: Category[] = [
   {
     id: 'new',
     title: 'ახალი ავტომობილები',
     description: 'აღმოაჩინეთ უახლესი მოდელები თანამედროვე ფუნქციებით და დიზაინით',
-    icon: <FaCar />,
+    icon: Car,
     link: '/cars?category=new',
     stats: [
       { value: '2024', label: 'მოდელები' },
@@ -18,7 +32,7 @@ const categories = [
     id: 'budget',
     title: 'ეკონომიური',
     description: 'იპოვეთ საუკეთესო ფასის მქონე საიმედო ავტომობილები',
-    icon: <FaDollarSign />,
+    icon: DollarSign,
     link: '/cars?category=budget',
     stats: [
       { value: '500+', label: 'მანქანა' },
@@ -29,7 +43,7 @@ const categories = [
     id: 'luxury',
     title: 'პრემიუმ კლასი',
     description: 'გამოცადეთ ლუქსი და მაღალი წარმადობა პრემიუმ კლასის ავტომობილებით',
-    icon: <FaTrophy />,
+    icon: Trophy,
     link: '/cars?category=luxury',
     stats: [
       { value: '50+', label: 'ბრენდი' },
@@ -61,13 +75,13 @@ const FeaturedCategories: React.FC = () => {
               <div className="relative before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-primary before:to-primary-dark before:scale-x-0 before:transition-transform before:duration-300 group-hover:before:scale-x-100">
                 <div className="w-24 h-24 mb-8 flex items-center justify-center rounded-2xl bg-primary/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary-dark">
                   <div className="text-3xl text-primary group-hover:text-white transition-colors duration-300">
-                    {category.icon}
+                    {React.createElement(category.icon, { size: 32 })}
                   </div>
                 </div>
 
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-between">
                   {category.title}
-                  <FaArrowRight className="text-lg text-primary opacity-0 transform transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2" />
+                  <ArrowRight className="text-lg text-primary opacity-0 transform transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2" />
                 </h3>
 
                 <p className="text-secondary mb-10 line-clamp-2 text-lg">

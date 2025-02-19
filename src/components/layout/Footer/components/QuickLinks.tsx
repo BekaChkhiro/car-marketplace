@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaChevronRight } from 'react-icons/fa';
+import { ChevronRight } from 'lucide-react';
 
 const QuickLinks: React.FC = () => {
   return (
@@ -20,7 +20,7 @@ const QuickLinks: React.FC = () => {
               to={link.to}
               className="text-gray-dark flex items-center gap-2 hover:text-primary transition-colors group"
             >
-              <FaChevronRight className="text-primary text-sm" />
+              <ChevronRight className="text-primary text-sm" />
               {link.text}
             </Link>
           </li>

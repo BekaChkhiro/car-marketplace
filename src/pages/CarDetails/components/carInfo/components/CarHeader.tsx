@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaShare, FaHeart } from 'react-icons/fa';
+import { Heart, Share } from 'lucide-react';
 
 interface CarHeaderProps {
   make: string;
@@ -19,13 +19,13 @@ const CarHeader: React.FC<CarHeaderProps> = ({ make, model, year, price }) => {
           <button className="flex items-center justify-center space-x-2 px-4 py-2.5 
             rounded-xl text-gray-dark hover:text-primary transition-colors
             hover:bg-green-light border border-gray-100">
-            <FaHeart className="w-4 h-4" />
+            <Heart className="w-4 h-4" />
             <span className="text-sm font-medium">Save</span>
           </button>
           <button className="flex items-center justify-center space-x-2 px-4 py-2.5 
             rounded-xl text-gray-dark hover:text-primary transition-colors
             hover:bg-green-light border border-gray-100">
-            <FaShare className="w-4 h-4" />
+            <Share className="w-4 h-4" />
             <span className="text-sm font-medium">Share</span>
           </button>
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { MapPin, Phone, Mail } from 'lucide-react';
 
 const ContactInfo: React.FC = () => {
   return (
@@ -8,19 +8,19 @@ const ContactInfo: React.FC = () => {
       <ul className="flex flex-col gap-4">
         <li>
           <div className="flex items-center gap-4 text-gray-dark hover:text-primary transition-colors">
-            <FaMapMarkerAlt className="text-primary text-xl" />
+            <MapPin className="text-primary" size={20} />
             <span>ჭავჭავაძის 123, თბილისი, საქართველო</span>
           </div>
         </li>
         <li>
           <div className="flex items-center gap-4 text-gray-dark hover:text-primary transition-colors">
-            <FaPhone className="text-primary text-xl" />
+            <Phone className="text-primary" size={20} />
             <span>+995 555 123 456</span>
           </div>
         </li>
         <li>
           <div className="flex items-center gap-4 text-gray-dark hover:text-primary transition-colors">
-            <FaEnvelope className="text-primary text-xl" />
+            <Mail className="text-primary" size={20} />
             <span>info@carmarket.ge</span>
           </div>
         </li>

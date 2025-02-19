@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { FaFilter, FaTimes, FaCar, FaGasPump, FaCog, FaCalendar, FaMapMarkerAlt, FaSearch, FaUndo } from 'react-icons/fa';
+import { 
+  SlidersHorizontal, 
+  X, 
+  Car, 
+  Calendar, 
+  Fuel, 
+  Settings,
+  RotateCcw,
+  Search 
+} from 'lucide-react';
 import data from '../../../data/cars.json';
 
 interface FilterSidebarProps {
@@ -58,20 +67,20 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
       }`}>
         <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
           <h3 className="text-xl font-bold text-gray-dark flex items-center gap-2">
-            <FaFilter className="text-primary" /> ფილტრები
+            <SlidersHorizontal className="text-primary" size={20} /> ფილტრები
           </h3>
           <button 
             onClick={toggleSidebar}
             className="md:hidden w-9 h-9 rounded-full bg-gray-100 text-gray-dark hover:bg-gray-200 hover:rotate-90 transition-all flex items-center justify-center"
           >
-            <FaTimes />
+            <X size={20} />
           </button>
         </div>
 
         <div className="space-y-6">
           <div>
             <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <FaCar className="text-primary" /> მარკა & მოდელი
+              <Car className="text-primary" size={18} /> მარკა & მოდელი
             </h4>
             <div className="relative">
               <select
@@ -113,7 +122,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
 
           <div>
             <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <FaCalendar className="text-primary" /> წელი
+              <Calendar className="text-primary" size={18} /> წელი
             </h4>
             <div className="relative">
               <select
@@ -134,7 +143,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
 
           <div>
             <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <FaGasPump className="text-primary" /> საწვავის ტიპი
+              <Fuel className="text-primary" size={18} /> საწვავის ტიპი
             </h4>
             <div className="relative">
               <select
@@ -155,7 +164,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
 
           <div>
             <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <FaCog className="text-primary" /> გადაცემათა კოლოფი
+              <Settings className="text-primary" size={18} /> გადაცემათა კოლოფი
             </h4>
             <div className="relative">
               <select
@@ -179,13 +188,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
               className="flex-1 py-2 px-4 rounded-lg text-base font-medium bg-gray-100 text-gray-dark hover:bg-gray-200 transition-all duration-200 flex items-center justify-center gap-2"
               onClick={handleReset}
             >
-              <FaUndo /> გასუფთავება
+              <RotateCcw size={16} /> გასუფთავება
             </button>
             <button 
               className="flex-1 py-2 px-4 rounded-lg text-base font-medium bg-primary text-white hover:bg-secondary transition-all duration-200 flex items-center justify-center gap-2 transform hover:scale-105 shadow-sm hover:shadow-md"
               onClick={toggleSidebar}
             >
-              <FaSearch /> ძებნა
+              <Search size={16} /> ძებნა
             </button>
           </div>
         </div>
@@ -195,7 +204,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
         onClick={toggleSidebar}
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white shadow-lg hover:bg-secondary hover:scale-110 transition-all duration-200 md:hidden flex items-center justify-center"
       >
-        <FaFilter />
+        <SlidersHorizontal size={24} />
       </button>
     </>
   );
