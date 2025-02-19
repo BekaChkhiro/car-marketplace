@@ -1,254 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaGasPump, FaTachometerAlt, FaCog, FaTag, FaHeart, FaArrowRight, FaClock } from 'react-icons/fa';
 import data from '../../../data/cars.json';
-
-const Container = styled.section`
-  padding: ${({ theme }) => theme.spacing.section} 0;
-  background: linear-gradient(to bottom, ${({ theme }) => theme.colors.background}, ${({ theme }) => theme.colors.lightGray}15);
-`;
-
-const ContentWrapper = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.spacing.xl};
-`;
-
-const SectionHeader = styled.div`
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto ${({ theme }) => theme.spacing.xxl};
-`;
-
-const Title = styled.h2`
-  font-size: ${({ theme }) => theme.fontSizes.hero};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-`;
-
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.secondary};
-  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
-`;
-
-const Timer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.xl};
-`;
-
-const TimeUnit = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: ${({ theme }) => theme.colors.cardBg};
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  min-width: 80px;
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  
-  .value {
-    font-size: ${({ theme }) => theme.fontSizes.xxlarge};
-    font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-  
-  .label {
-    font-size: ${({ theme }) => theme.fontSizes.small};
-    color: ${({ theme }) => theme.colors.secondary};
-    text-transform: uppercase;
-  }
-`;
-
-const OffersContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: ${({ theme }) => theme.spacing.xl};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const OfferCard = styled(Link)`
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  background: ${({ theme }) => theme.colors.cardBg};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  overflow: hidden;
-  transition: ${({ theme }) => theme.transition.default};
-  position: relative;
-  
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-    
-    .car-image {
-      transform: scale(1.05);
-    }
-    
-    .arrow-icon {
-      transform: translateX(4px);
-      opacity: 1;
-    }
-  }
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  overflow: hidden;
-`;
-
-const OfferImage = styled.div<{ imageUrl: string }>`
-  width: 100%;
-  height: 100%;
-  min-height: 300px;
-  background-image: url(${props => props.imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: ${({ theme }) => theme.transition.default};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    height: 250px;
-  }
-`;
-
-const FavoriteButton = styled.button`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.md};
-  right: ${({ theme }) => theme.spacing.md};
-  width: 36px;
-  height: 36px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  z-index: 1;
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-  
-  &:hover {
-    transform: scale(1.1);
-    background: white;
-  }
-`;
-
-const OfferInfo = styled.div`
-  padding: ${({ theme }) => theme.spacing.xl};
-  display: flex;
-  flex-direction: column;
-`;
-
-const OfferTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  
-  .arrow-icon {
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-    opacity: 0;
-    transition: ${({ theme }) => theme.transition.default};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const OfferPriceContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
-
-const OfferPrice = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const CurrentPrice = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.xxlarge};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-`;
-
-const OldPrice = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.secondary};
-  text-decoration: line-through;
-`;
-
-const SaveAmount = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.success};
-`;
-
-const Discount = styled.div`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.md};
-  left: ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.gradient};
-  color: white;
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  z-index: 1;
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-`;
-
-const Specifications = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-top: auto;
-  padding-top: ${({ theme }) => theme.spacing.lg};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const Spec = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: ${({ theme }) => theme.fontSizes.large};
-  }
-`;
-
-const SpecValue = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  color: ${({ theme }) => theme.colors.text};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-`;
-
-const SpecLabel = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.secondary};
-`;
 
 interface Car {
   id: string;
@@ -270,93 +23,93 @@ interface OfferCar extends Car {
 }
 
 const DailyOffers: React.FC = () => {
-  // Simulate daily offers by adding discounts to the first 2 cars
   const offerCars: OfferCar[] = data.cars.slice(0, 2).map(car => ({
     ...car,
     oldPrice: car.price,
-    price: Math.round(car.price * 0.85), // 15% discount
+    price: Math.round(car.price * 0.85),
     discount: 15
   }));
 
   return (
-    <Container>
-      <ContentWrapper>
-        <SectionHeader>
-          <Title>Daily Special Offers</Title>
-          <Subtitle>
+    <section className="py-20 bg-gradient-to-b from-background to-gray-50/15">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+            Daily Special Offers
+          </h2>
+          <p className="text-lg text-secondary mb-8">
             Don't miss out on these exclusive deals. Limited time offers on premium vehicles.
-          </Subtitle>
-          <Timer>
-            <TimeUnit>
-              <span className="value">23</span>
-              <span className="label">Hours</span>
-            </TimeUnit>
-            <TimeUnit>
-              <span className="value">45</span>
-              <span className="label">Minutes</span>
-            </TimeUnit>
-            <TimeUnit>
-              <span className="value">59</span>
-              <span className="label">Seconds</span>
-            </TimeUnit>
-          </Timer>
-        </SectionHeader>
+          </p>
+          <div className="flex justify-center gap-4">
+            {['Hours', 'Minutes', 'Seconds'].map((unit, i) => (
+              <div key={unit} className="flex flex-col items-center bg-white p-4 rounded-xl shadow-md min-w-[80px]">
+                <span className="text-2xl font-bold text-primary">{i === 0 ? '23' : i === 1 ? '45' : '59'}</span>
+                <span className="text-sm text-secondary uppercase">{unit}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <OffersContainer>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {offerCars.map((car) => (
-            <OfferCard key={car.id} to={`/cars/${car.id}`}>
-              <ImageContainer>
-                <OfferImage className="car-image" imageUrl={car.images[0]} />
-                <Discount>
+            <Link key={car.id} to={`/cars/${car.id}`} className="group grid grid-cols-1 md:grid-cols-[1fr,1.5fr] bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl relative">
+              <div className="relative overflow-hidden">
+                <div className="w-full h-full min-h-[300px] bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+                     style={{ backgroundImage: `url(${car.images[0]})` }}>
+                </div>
+                <div className="absolute top-4 left-4 bg-gradient-to-r from-primary to-primary-dark text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2">
                   <FaTag /> {car.discount}% OFF
-                </Discount>
-                <FavoriteButton onClick={(e) => {
+                </div>
+                <button onClick={(e) => {
                   e.preventDefault();
-                  // Add favorite functionality here
-                }}>
-                  <FaHeart />
-                </FavoriteButton>
-              </ImageContainer>
+                }} className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center transition-all hover:scale-110 hover:bg-white">
+                  <FaHeart className="text-primary" />
+                </button>
+              </div>
 
-              <OfferInfo>
-                <OfferTitle>
+              <div className="p-6 flex flex-col">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center justify-between group-hover:text-primary">
                   {car.year} {car.make} {car.model}
-                  <FaArrowRight className="arrow-icon" />
-                </OfferTitle>
+                  <FaArrowRight className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" />
+                </h3>
 
-                <OfferPriceContainer>
-                  <OfferPrice>
-                    <CurrentPrice>${car.price.toLocaleString()}</CurrentPrice>
-                    <OldPrice>${car.oldPrice.toLocaleString()}</OldPrice>
-                  </OfferPrice>
-                  <SaveAmount>
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-4 mb-2">
+                    <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+                      ${car.price.toLocaleString()}
+                    </span>
+                    <span className="text-lg text-secondary line-through">
+                      ${car.oldPrice.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="text-sm text-green-600">
                     You save ${(car.oldPrice - car.price).toLocaleString()}
-                  </SaveAmount>
-                </OfferPriceContainer>
+                  </div>
+                </div>
 
-                <Specifications>
-                  <Spec>
-                    <FaGasPump />
-                    <SpecValue>{car.specifications.fuelType}</SpecValue>
-                    <SpecLabel>Fuel Type</SpecLabel>
-                  </Spec>
-                  <Spec>
-                    <FaTachometerAlt />
-                    <SpecValue>{car.specifications.mileage}km</SpecValue>
-                    <SpecLabel>Mileage</SpecLabel>
-                  </Spec>
-                  <Spec>
-                    <FaCog />
-                    <SpecValue>{car.specifications.transmission}</SpecValue>
-                    <SpecLabel>Trans.</SpecLabel>
-                  </Spec>
-                </Specifications>
-              </OfferInfo>
-            </OfferCard>
+                <div className="grid grid-cols-3 gap-4 mt-auto pt-6 border-t border-gray-100">
+                  <div className="flex flex-col items-center gap-1">
+                    <FaGasPump className="text-xl text-primary" />
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.fuelType}</span>
+                    <span className="text-xs text-secondary">Fuel Type</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <FaTachometerAlt className="text-xl text-primary" />
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.mileage}km</span>
+                    <span className="text-xs text-secondary">Mileage</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <FaCog className="text-xl text-primary" />
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.transmission}</span>
+                    <span className="text-xs text-secondary">Trans.</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
           ))}
-        </OffersContainer>
-      </ContentWrapper>
-    </Container>
+        </div>
+      </div>
+    </section>
   );
 };
 

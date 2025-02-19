@@ -1,159 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { FaCar, FaDollarSign, FaStar, FaArrowRight, FaClock, FaTrophy, FaShieldAlt } from 'react-icons/fa';
-
-const Container = styled.section`
-  padding: ${({ theme }) => theme.spacing.section} 0;
-  background: linear-gradient(to bottom, ${({ theme }) => theme.colors.background}, ${({ theme }) => theme.colors.lightGray});
-`;
-
-const SectionHeader = styled.div`
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto ${({ theme }) => theme.spacing.xxl};
-`;
-
-const Title = styled.h2`
-  font-size: ${({ theme }) => theme.fontSizes.hero};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.secondary};
-  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
-`;
-
-const CategoriesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.xl};
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.spacing.xl};
-`;
-
-const CategoryCard = styled(Link)`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing.xxl};
-  background: ${({ theme }) => theme.colors.cardBg};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  transition: ${({ theme }) => theme.transition.default};
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: ${({ theme }) => theme.colors.gradient};
-    transform: scaleX(0);
-    transition: ${({ theme }) => theme.transition.default};
-  }
-  
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-    
-    &::before {
-      transform: scaleX(1);
-    }
-    
-    ${({ theme }) => `
-      .icon-wrapper {
-        transform: scale(1.1);
-        background: ${theme.colors.gradient};
-        
-        svg {
-          color: white;
-        }
-      }
-      
-      .arrow {
-        transform: translateX(5px);
-        opacity: 1;
-      }
-    `}
-  }
-`;
-
-const IconWrapper = styled.div`
-  width: 80px;
-  height: 80px;
-  background: ${({ theme }) => `${theme.colors.primary}15`};
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  svg {
-    font-size: 2.5rem;
-    color: ${({ theme }) => theme.colors.primary};
-    transition: ${({ theme }) => theme.transition.default};
-  }
-`;
-
-const CategoryTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  .arrow {
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-    opacity: 0;
-    transition: ${({ theme }) => theme.transition.default};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const CategoryDescription = styled.p`
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
-
-const Stats = styled.div`
-  margin-top: auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: ${({ theme }) => theme.spacing.md};
-`;
-
-const Stat = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.lightGray};
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
-  
-  .value {
-    font-size: ${({ theme }) => theme.fontSizes.large};
-    font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-    color: ${({ theme }) => theme.colors.primary};
-    margin-bottom: ${({ theme }) => theme.spacing.xs};
-  }
-  
-  .label {
-    font-size: ${({ theme }) => theme.fontSizes.small};
-    color: ${({ theme }) => theme.colors.secondary};
-  }
-`;
 
 const categories = [
   {
@@ -193,39 +40,54 @@ const categories = [
 
 const FeaturedCategories: React.FC = () => {
   return (
-    <Container>
-      <SectionHeader>
-        <Title>Find Your Perfect Match</Title>
-        <Subtitle>
-          Explore our carefully curated categories to find the vehicle that perfectly suits your needs and preferences
-        </Subtitle>
-      </SectionHeader>
-      
-      <CategoriesGrid>
-        {categories.map((category) => (
-          <CategoryCard key={category.id} to={category.link}>
-            <IconWrapper className="icon-wrapper">
-              {category.icon}
-            </IconWrapper>
-            <CategoryTitle>
-              {category.title}
-              <FaArrowRight className="arrow" />
-            </CategoryTitle>
-            <CategoryDescription>
-              {category.description}
-            </CategoryDescription>
-            <Stats>
-              {category.stats.map((stat, index) => (
-                <Stat key={index}>
-                  <div className="value">{stat.value}</div>
-                  <div className="label">{stat.label}</div>
-                </Stat>
-              ))}
-            </Stats>
-          </CategoryCard>
-        ))}
-      </CategoriesGrid>
-    </Container>
+    <section className="py-20 bg-gradient-to-b from-background to-gray-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+            Find Your Perfect Match
+          </h2>
+          <p className="text-lg text-secondary">
+            Explore our carefully curated categories to find the vehicle that perfectly suits your needs and preferences
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              to={category.link}
+              className="group relative flex flex-col p-8 bg-white rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl overflow-hidden"
+            >
+              <div className="relative before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-gradient-to-r before:from-primary before:to-primary-dark before:scale-x-0 before:transition-transform before:duration-300 group-hover:before:scale-x-100">
+                <div className="w-20 h-20 mb-8 flex items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary-dark">
+                  <div className="text-2xl text-primary group-hover:text-white transition-colors duration-300">
+                    {category.icon}
+                  </div>
+                </div>
+
+                <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center justify-between">
+                  {category.title}
+                  <FaArrowRight className="text-base text-primary opacity-0 transform transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1" />
+                </h3>
+
+                <p className="text-secondary mb-8 line-clamp-2">
+                  {category.description}
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 mt-auto">
+                  {category.stats.map((stat, index) => (
+                    <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-lg font-bold text-primary mb-1">{stat.value}</div>
+                      <div className="text-sm text-secondary">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 };
 

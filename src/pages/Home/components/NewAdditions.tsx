@@ -1,298 +1,91 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaGasPump, FaTachometerAlt, FaCog, FaArrowRight, FaHeart, FaClock } from 'react-icons/fa';
 import data from '../../../data/cars.json';
 
-const Container = styled.section`
-  padding: ${({ theme }) => theme.spacing.section} 0;
-  background: linear-gradient(to bottom, ${({ theme }) => theme.colors.background}, ${({ theme }) => theme.colors.lightGray}15);
-`;
-
-const ContentWrapper = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.spacing.xl};
-`;
-
-const SectionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xxl};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-    gap: ${({ theme }) => theme.spacing.lg};
-    text-align: center;
-  }
-`;
-
-const HeaderContent = styled.div`
-  max-width: 600px;
-`;
-
-const Title = styled.h2`
-  font-size: ${({ theme }) => theme.fontSizes.xxlarge};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-`;
-
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.large};
-  color: ${({ theme }) => theme.colors.secondary};
-  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
-`;
-
-const ViewAll = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  border: 2px solid ${({ theme }) => theme.colors.primary}30;
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  transition: ${({ theme }) => theme.transition.default};
-  
-  svg {
-    transition: ${({ theme }) => theme.transition.default};
-  }
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary}10;
-    transform: translateY(-2px);
-    
-    svg {
-      transform: translateX(4px);
-    }
-  }
-`;
-
-const CarsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.xl};
-`;
-
-const CarCard = styled(Link)`
-  position: relative;
-  background: ${({ theme }) => theme.colors.cardBg};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  overflow: hidden;
-  transition: ${({ theme }) => theme.transition.default};
-  
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-    
-    .car-image {
-      transform: scale(1.05);
-    }
-    
-    .arrow-icon {
-      transform: translateX(4px);
-      opacity: 1;
-    }
-  }
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  padding-top: 66.67%; // 3:2 aspect ratio
-  overflow: hidden;
-`;
-
-const CarImage = styled.div<{ imageUrl: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${props => props.imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: ${({ theme }) => theme.transition.default};
-`;
-
-const FavoriteButton = styled.button`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.md};
-  right: ${({ theme }) => theme.spacing.md};
-  width: 36px;
-  height: 36px;
-  border-radius: ${({ theme }) => theme.borderRadius.round};
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transition.default};
-  z-index: 1;
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-  
-  &:hover {
-    transform: scale(1.1);
-    background: white;
-  }
-`;
-
-const NewBadge = styled.div`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing.md};
-  left: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.md}`};
-  background: ${({ theme }) => theme.colors.gradient};
-  color: white;
-  border-radius: ${({ theme }) => theme.borderRadius.large};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
-  z-index: 1;
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-`;
-
-const CarInfo = styled.div`
-  padding: ${({ theme }) => theme.spacing.xl};
-`;
-
-const CarHeader = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-`;
-
-const CarTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.xs};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  
-  .arrow-icon {
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-    opacity: 0;
-    transition: ${({ theme }) => theme.transition.default};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const Price = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  background: ${({ theme }) => theme.colors.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-`;
-
-const Specifications = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing.md};
-  padding-top: ${({ theme }) => theme.spacing.lg};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const Spec = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
-  
-  svg {
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: ${({ theme }) => theme.fontSizes.large};
-  }
-`;
-
-const SpecValue = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  color: ${({ theme }) => theme.colors.text};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-`;
-
-const SpecLabel = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
 const NewAdditions: React.FC = () => {
-  // Get latest 4 cars from mock data
   const newCars = data.cars.slice(0, 4);
 
   return (
-    <Container>
-      <ContentWrapper>
-        <SectionHeader>
-          <HeaderContent>
-            <Title>Latest Additions</Title>
-            <Subtitle>
+    <section className="py-20 bg-gradient-to-b from-background to-gray-50/15">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+          <div className="max-w-xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+              Latest Additions
+            </h2>
+            <p className="text-lg text-secondary leading-relaxed">
               Discover our newest vehicles added to the marketplace
-            </Subtitle>
-          </HeaderContent>
-          <ViewAll to="/cars?sort=newest">
-            View All Listings <FaArrowRight />
-          </ViewAll>
-        </SectionHeader>
+            </p>
+          </div>
+          
+          <Link
+            to="/cars?sort=newest"
+            className="flex items-center gap-2 px-6 py-3 text-primary font-semibold border-2 border-primary/30 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:-translate-y-0.5 group"
+          >
+            View All Listings <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+        </div>
 
-        <CarsGrid>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {newCars.map((car) => (
-            <CarCard key={car.id} to={`/cars/${car.id}`}>
-              <ImageContainer>
-                <CarImage className="car-image" imageUrl={car.images[0]} />
-                <NewBadge>
+            <Link
+              key={car.id}
+              to={`/cars/${car.id}`}
+              className="group bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+            >
+              <div className="relative pt-[66.67%] overflow-hidden">
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+                  style={{ backgroundImage: `url(${car.images[0]})` }}
+                />
+                <div className="absolute top-4 left-4 px-3 py-1 bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold rounded-lg shadow-md flex items-center gap-1">
                   <FaClock /> Just Added
-                </NewBadge>
-                <FavoriteButton onClick={(e) => {
-                  e.preventDefault();
-                  // Add favorite functionality here
-                }}>
-                  <FaHeart />
-                </FavoriteButton>
-              </ImageContainer>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center transition-all hover:scale-110 hover:bg-white"
+                >
+                  <FaHeart className="text-primary" />
+                </button>
+              </div>
 
-              <CarInfo>
-                <CarHeader>
-                  <CarTitle>
+              <div className="p-6">
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1 flex items-center justify-between group-hover:text-primary">
                     {car.year} {car.make} {car.model}
-                    <FaArrowRight className="arrow-icon" />
-                  </CarTitle>
-                  <Price>${car.price.toLocaleString()}</Price>
-                </CarHeader>
+                    <FaArrowRight className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" />
+                  </h3>
+                  <div className="text-xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+                    ${car.price.toLocaleString()}
+                  </div>
+                </div>
 
-                <Specifications>
-                  <Spec>
-                    <FaGasPump />
-                    <SpecValue>{car.specifications.fuelType}</SpecValue>
-                    <SpecLabel>Fuel Type</SpecLabel>
-                  </Spec>
-                  <Spec>
-                    <FaTachometerAlt />
-                    <SpecValue>{car.specifications.mileage}km</SpecValue>
-                    <SpecLabel>Mileage</SpecLabel>
-                  </Spec>
-                  <Spec>
-                    <FaCog />
-                    <SpecValue>{car.specifications.transmission}</SpecValue>
-                    <SpecLabel>Trans.</SpecLabel>
-                  </Spec>
-                </Specifications>
-              </CarInfo>
-            </CarCard>
+                <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-100">
+                  <div className="flex flex-col items-center gap-1">
+                    <FaGasPump className="text-xl text-primary" />
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.fuelType}</span>
+                    <span className="text-xs text-secondary">Fuel Type</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <FaTachometerAlt className="text-xl text-primary" />
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.mileage}km</span>
+                    <span className="text-xs text-secondary">Mileage</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <FaCog className="text-xl text-primary" />
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.transmission}</span>
+                    <span className="text-xs text-secondary">Trans.</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
           ))}
-        </CarsGrid>
-      </ContentWrapper>
-    </Container>
+        </div>
+      </div>
+    </section>
   );
 };
 

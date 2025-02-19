@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import ImageGallery from './components/ImageGallery';
-import CarInfo from './components/CarInfo';
-import SellerInfo from './components/SellerInfo';
-import SimilarCars from './components/SimilarCars';
+import ImageGallery from './components/imageGallery/ImageGallery';
+import CarInfo from './components/carInfo/CarInfo';
+import SellerInfo from './components/sellerInfo/SellerInfo';
+import SimilarCars from './components/similarCars/SimilarCars';
 import data from '../../data/cars.json';
 
 const CarDetails = () => {
@@ -41,12 +41,12 @@ const CarDetails = () => {
     <div className="min-h-screen">
       <div className="mx-auto px-4 py-6 space-y-6">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500">
+        <nav className="flex flex-wrap items-center space-x-2 text-sm text-gray-500">
           <Link to="/" className="hover:text-gray-700 transition-colors">მთავარი</Link>
           <span>/</span>
           <Link to="/cars" className="hover:text-gray-700 transition-colors">მანქანები</Link>
           <span>/</span>
-          <span className="text-gray-400">{car.year} {car.make} {car.model}</span>
+          <span className="text-gray-700 font-medium">{car.make} {car.model} {car.year} - {car.title}</span>
         </nav>
 
         {/* Main Content */}
@@ -59,7 +59,11 @@ const CarDetails = () => {
           
           {/* Right Column */}
           <div>
-            <SellerInfo seller={car.seller} />
+            <SellerInfo 
+              seller={car.seller} 
+              price={car.price}
+              carId={car.id}
+            />
           </div>
         </div>
 
