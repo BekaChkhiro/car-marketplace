@@ -35,15 +35,15 @@ const DailyOffers: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-            Daily Special Offers
+            დღის სპეციალური შეთავაზებები
           </h2>
           <p className="text-lg text-secondary mb-8">
-            Don't miss out on these exclusive deals. Limited time offers on premium vehicles.
+            არ გამოტოვოთ ეს ექსკლუზიური შეთავაზებები. დროებითი ფასდაკლებები პრემიუმ ავტომობილებზე.
           </p>
           <div className="flex justify-center gap-4">
-            {['Hours', 'Minutes', 'Seconds'].map((unit, i) => (
+            {[['საათი', '23'], ['წუთი', '45'], ['წამი', '59']].map(([unit, value]) => (
               <div key={unit} className="flex flex-col items-center bg-white p-4 rounded-xl shadow-md min-w-[80px]">
-                <span className="text-2xl font-bold text-primary">{i === 0 ? '23' : i === 1 ? '45' : '59'}</span>
+                <span className="text-2xl font-bold text-primary">{value}</span>
                 <span className="text-sm text-secondary uppercase">{unit}</span>
               </div>
             ))}
@@ -91,17 +91,17 @@ const DailyOffers: React.FC = () => {
                   <div className="flex flex-col items-center gap-1">
                     <FaGasPump className="text-xl text-primary" />
                     <span className="text-sm font-medium text-gray-900">{car.specifications.fuelType}</span>
-                    <span className="text-xs text-secondary">Fuel Type</span>
+                    <span className="text-xs text-secondary">საწვავის ტიპი</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <FaTachometerAlt className="text-xl text-primary" />
-                    <span className="text-sm font-medium text-gray-900">{car.specifications.mileage}km</span>
-                    <span className="text-xs text-secondary">Mileage</span>
+                    <span className="text-sm font-medium text-gray-900">{car.specifications.mileage}კმ</span>
+                    <span className="text-xs text-secondary">გარბენი</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <FaCog className="text-xl text-primary" />
                     <span className="text-sm font-medium text-gray-900">{car.specifications.transmission}</span>
-                    <span className="text-xs text-secondary">Trans.</span>
+                    <span className="text-xs text-secondary">გადაცემათა კოლოფი</span>
                   </div>
                 </div>
               </div>

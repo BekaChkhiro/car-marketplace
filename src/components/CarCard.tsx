@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt, FaHeart } from 'react-icons/fa';
+import { FaGasPump, FaTachometerAlt, FaCog, FaMapMarkerAlt, FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface Car {
   id: string;
@@ -35,20 +35,16 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, width } = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - left;
-    
-    // If mouse is on the right half of the image, show second image
-    if (mouseX > width / 2 && car.images.length > 1) {
-      setCurrentImageIndex(1);
-    } else {
-      setCurrentImageIndex(0);
-    }
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % car.images.length);
   };
 
-  const handleMouseLeave = () => {
-    setCurrentImageIndex(0);
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + car.images.length) % car.images.length);
   };
 
   return (
@@ -57,15 +53,11 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
       onClick={handleClick}
       className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md relative group"
     >
-      <div 
-        className="relative pt-[66.67%] overflow-hidden"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
+      <div className="relative pt-[66.67%] overflow-hidden">
         <div className="absolute inset-0 flex transition-transform duration-300 ease-in-out"
           style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
         >
-          {car.images.slice(0, 2).map((image, index) => (
+          {car.images.map((image, index) => (
             <div
               key={index}
               className="min-w-full h-full bg-cover bg-center"
@@ -73,16 +65,33 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
             />
           ))}
         </div>
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-          {[0, 1].map((index) => (
+
+        {/* Navigation Buttons */}
+        <button
+          onClick={prevImage}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+        >
+          <FaChevronLeft className="text-primary" />
+        </button>
+        <button
+          onClick={nextImage}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+        >
+          <FaChevronRight className="text-primary" />
+        </button>
+
+        {/* Image Indicators */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+          {car.images.map((_, index) => (
             <div
               key={index}
-              className={`h-1 w-8 rounded-full transition-all duration-300 ${
-                currentImageIndex === index ? 'bg-primary' : 'bg-white/70'
+              className={`h-1 rounded-full transition-all duration-300 ${
+                currentImageIndex === index ? 'w-6 bg-primary' : 'w-2 bg-white/70'
               }`}
             />
           ))}
         </div>
+
         {car.isVip && (
           <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-lg text-sm font-medium shadow-sm backdrop-blur-sm">
             VIP

@@ -34,11 +34,22 @@ module.exports = {
         'modal-enter': {
           '0%': { transform: 'scale(0.95)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'slowly-move': {
+          '0%': { transform: 'scale(1.05) translate(0, 0)' },
+          '50%': { transform: 'scale(1.05) translate(-1%, -1%)' },
+          '100%': { transform: 'scale(1.05) translate(0, 0)' }
+        },
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
         }
       },
       animation: {
         fadeIn: 'fadeIn 0.3s ease-out',
-        'modal-enter': 'modal-enter 0.2s ease-out'
+        'modal-enter': 'modal-enter 0.2s ease-out',
+        'slowly-move': 'slowly-move 20s ease-in-out infinite',
+        'fade-in-up': 'fade-in-up 0.5s ease-out'
       },
       fontSize: {
         'xs': '0.75rem',

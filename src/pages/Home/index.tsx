@@ -16,8 +16,8 @@ const Home: React.FC = () => {
   return (
     <HomeContainer>
       <HeroSection />
-      <FeaturedCategories />
       <NewAdditions />
+      <FeaturedCategories />
       <DailyOffers />
     </HomeContainer>
   );
