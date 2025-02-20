@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Tag, Heart, ArrowRight, Fuel, Gauge, Settings } from 'lucide-react';
 import data from '../../../data/cars.json';
+import { usePrice } from '../../../context/usePrice';
 
 interface Car {
   id: string;
@@ -23,6 +24,7 @@ interface OfferCar extends Car {
 }
 
 const DailyOffers: React.FC = () => {
+  const { formatPrice } = usePrice();
   const offerCars: OfferCar[] = data.cars.slice(0, 2).map(car => ({
     ...car,
     oldPrice: car.price,
@@ -76,14 +78,14 @@ const DailyOffers: React.FC = () => {
                 <div className="mb-8">
                   <div className="flex items-baseline gap-4 mb-2">
                     <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-                      ${car.price.toLocaleString()}
+                      {formatPrice(car.price)}
                     </span>
                     <span className="text-lg text-secondary line-through">
-                      ${car.oldPrice.toLocaleString()}
+                      {formatPrice(car.oldPrice)}
                     </span>
                   </div>
                   <div className="text-sm text-green-600">
-                    You save ${(car.oldPrice - car.price).toLocaleString()}
+                    თქვენ ზოგავთ {formatPrice(car.oldPrice - car.price)}
                   </div>
                 </div>
 

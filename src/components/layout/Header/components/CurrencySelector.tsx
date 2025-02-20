@@ -1,12 +1,8 @@
 import { Switch, FormControlLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useCurrency } from '../../../../context/CurrencyContext';
 
-interface CurrencySelectorProps {
-  currentCurrency: string;
-  setCurrentCurrency: (currency: string) => void;
-}
-
-const CustomSwitch = styled(Switch)(({ theme }) => ({
+export const CustomSwitch = styled(Switch)(({ theme }) => ({
   width: 62,
   height: 34,
   padding: 0,
@@ -85,16 +81,18 @@ const CustomSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const CurrencySelector = ({ currentCurrency, setCurrentCurrency }: CurrencySelectorProps) => {
+const CurrencySelector = () => {
+  const { currency, setCurrency } = useCurrency();
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentCurrency(event.target.checked ? 'USD' : 'GEL');
+    setCurrency(event.target.checked ? 'USD' : 'GEL');
   };
 
   return (
     <FormControlLabel
       control={
         <CustomSwitch
-          checked={currentCurrency === 'USD'}
+          checked={currency === 'USD'}
           onChange={handleChange}
         />
       }

@@ -6,7 +6,7 @@ import SocialLinks from './components/SocialLinks';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-white text-gray-dark pt-16 pb-4 border-t">      
+    <footer className="relative bg-white text-gray-dark pt-16 p-4 border-t">      
       <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         <AboutSection />
         <QuickLinks />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, Share } from 'lucide-react';
+import { usePrice } from '../../../../../context/usePrice';
 
 interface CarHeaderProps {
   make: string;
@@ -9,6 +10,8 @@ interface CarHeaderProps {
 }
 
 const CarHeader: React.FC<CarHeaderProps> = ({ make, model, year, price }) => {
+  const { formatPrice } = usePrice();
+
   return (
     <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
       <div className="flex-1 min-w-[280px]">
@@ -32,7 +35,7 @@ const CarHeader: React.FC<CarHeaderProps> = ({ make, model, year, price }) => {
       </div>
       <div className="text-right">
         <div className="text-3xl text-primary font-bold leading-none">
-          ${price.toLocaleString()}
+          {formatPrice(price)}
         </div>
       </div>
     </div>

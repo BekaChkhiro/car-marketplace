@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import { usePrice } from '../../../../../context/usePrice';
+import { CustomSwitch } from '../../../../../components/layout/Header/components/CurrencySelector';
+import { useCurrency } from '../../../../../context/CurrencyContext';
 
 interface PriceSectionProps {
   price: number;
@@ -8,6 +11,8 @@ interface PriceSectionProps {
 
 const PriceSection = ({ price, carId }: PriceSectionProps) => {
   const [copied, setCopied] = useState(false);
+  const { formatPrice } = usePrice();
+  const { currency, setCurrency } = useCurrency();
 
   const handleCopyId = async () => {
     try {
@@ -20,9 +25,18 @@ const PriceSection = ({ price, carId }: PriceSectionProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className='flex flex-col gap-1'>
+      <div className='flex items-center justify-between'>
       <div className="text-2xl font-bold text-primary">
-        {price.toLocaleString()} ₾
+          {formatPrice(price)}
+        </div>
+        <CustomSwitch
+          checked={currency === 'USD'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrency(e.target.checked ? 'USD' : 'GEL')}
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        
       </div>
       <div className="flex items-center gap-2">
         <div className="text-sm text-gray-500">

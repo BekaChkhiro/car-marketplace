@@ -4,15 +4,18 @@ import AppRoutes from './routes';
 import Layout from './components/layout/Layout';
 import { GlobalStyles } from './styles/globalStyles';
 import { theme } from './styles/theme';
+import { CurrencyProvider } from './context/CurrencyContext';
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles theme={theme} />
       <BrowserRouter>
-        <Layout>
-          <AppRoutes />
-        </Layout>
+        <CurrencyProvider>
+          <Layout>
+            <AppRoutes />
+          </Layout>
+        </CurrencyProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

@@ -45,10 +45,7 @@ const Header = () => {
             {/* User Controls */}
             <div className="flex items-center space-x-6">
               <WishlistButton />
-              <CurrencySelector 
-                currentCurrency={currentCurrency}
-                setCurrentCurrency={setCurrentCurrency}
-              />
+              <CurrencySelector />
               <LanguageSelector 
                 currentLanguage={currentLanguage}
                 languages={languages}

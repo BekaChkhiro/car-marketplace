@@ -9,6 +9,9 @@ import {
   Gauge,
   Settings
 } from 'lucide-react';
+import { CustomSwitch } from './layout/Header/components/CurrencySelector';
+import { useCurrency } from '../context/CurrencyContext';
+import { usePrice } from '../context/usePrice';
 
 interface Car {
   id: string;
@@ -36,6 +39,8 @@ interface CarCardProps {
 const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { currency, setCurrency } = useCurrency();
+  const { formatPrice } = usePrice();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -124,8 +129,16 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           <MapPin className="text-primary w-4 h-4" />
           {car.location.city}, {car.location.region}
         </div>
-        <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
-          {car.price.toLocaleString()} ₾
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            {formatPrice(car.price)}
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomSwitch
+              checked={currency === 'USD'}
+              onChange={(e) => setCurrency(e.target.checked ? 'USD' : 'GEL')}
+            />
+          </div>
         </div>
         
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
