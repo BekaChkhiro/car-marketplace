@@ -8,13 +8,13 @@ import LanguageSelector from './components/LanguageSelector';
 import AuthButtons from './components/AuthButtons';
 
 const Header = () => {
-  const [currentLanguage, setCurrentLanguage] = useState('ქართული');
+  const [currentLanguage, setCurrentLanguage] = useState('ქარ');
   const [currentCurrency, setCurrentCurrency] = useState('GEL');
 
   const languages = [
-    { id: 'ka', name: 'ქართული' },
-    { id: 'ru', name: 'რუსული' },
-    { id: 'en', name: 'ინგლისური' },
+    { id: 'ka', name: 'ქარ' },
+    { id: 'ru', name: 'რუს' },
+    { id: 'en', name: 'ინგ' },
   ];
 
   const menuItems = [

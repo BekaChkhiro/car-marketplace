@@ -29,4 +29,10 @@ yarn-error.log*
 *.swo
 
 # TypeScript
-*.tsbui
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache

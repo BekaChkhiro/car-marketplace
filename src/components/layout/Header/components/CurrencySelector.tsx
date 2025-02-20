@@ -1,55 +1,105 @@
-import { CircleDollarSign, ChevronDown } from 'lucide-react';
+import { Switch, FormControlLabel } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 interface CurrencySelectorProps {
   currentCurrency: string;
   setCurrentCurrency: (currency: string) => void;
 }
 
+const CustomSwitch = styled(Switch)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 0,
+  position: 'relative',
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 2,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(28px)',
+      color: '#fff',
+      '& .MuiSwitch-thumb:before': {
+        content: '"$"',
+      },
+      '& + .MuiSwitch-track:before': {
+        color: '#fff',
+      },
+      '& + .MuiSwitch-track:after': {
+        color: '#000',
+      },
+    },
+    '& .MuiSwitch-thumb:before': {
+      content: '"₾"',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      left: 0,
+      top: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 14,
+      fontWeight: 500,
+      color: '#4CAF50',
+    },
+    '&:not(.Mui-checked) + .MuiSwitch-track:before': {
+      color: '#000',
+    },
+    '&:not(.Mui-checked) + .MuiSwitch-track:after': {
+      color: '#fff',
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 30,
+    height: 30,
+    position: 'relative',
+    backgroundColor: '#fff',
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 34 / 2,
+    backgroundColor: '#4CAF50 !important',
+    opacity: '1 !important',
+    transition: theme.transitions.create(['background-color', 'color'], {
+      duration: 500,
+    }),
+    '&:before, &:after': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      fontSize: 14,
+      fontWeight: 500,
+      transition: theme.transitions.create(['color'], {
+        duration: 300,
+      }),
+    },
+    '&:before': {
+      content: '"₾"',
+      left: 8,
+    },
+    '&:after': {
+      content: '"$"',
+      right: 8,
+    },
+  },
+}));
+
 const CurrencySelector = ({ currentCurrency, setCurrentCurrency }: CurrencySelectorProps) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentCurrency(event.target.checked ? 'USD' : 'GEL');
+  };
+
   return (
-    <div className="relative group">
-      <button 
-        className="flex items-center space-x-1.5 text-gray-dark 
-          hover:text-primary transition-colors group py-2 px-2
-          rounded-lg hover:bg-gray-50"
-      >
-        <CircleDollarSign className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-        <span className="text-sm font-medium min-w-[40px]">{currentCurrency}</span>
-        <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180 duration-300" />
-      </button>
-      
-      <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 
-        absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg 
-        border border-gray-100 py-3 w-48 transition-all duration-300
-        transform translate-y-2 group-hover:translate-y-0 z-50">
-        <div className="px-4 pb-2 mb-2 border-b border-gray-100">
-          <p className="text-sm text-gray-600">მიმდინარე კურსი</p>
-          <p className="text-sm font-medium flex items-center space-x-1">
-            <span>1 USD</span>
-            <span className="text-gray-400">=</span>
-            <span className="text-primary">2.65 GEL</span>
-          </p>
-        </div>
-        <button 
-          onClick={() => setCurrentCurrency('GEL')}
-          className={`w-full text-left px-4 py-2.5 text-sm flex items-center space-x-2
-            hover:bg-gray-50 hover:text-primary transition-all duration-200
-            ${currentCurrency === 'GEL' ? 'text-primary font-medium bg-gray-50' : 'text-gray-dark'}`}
-        >
-          <span className="text-lg">🇬🇪</span>
-          <span>ლარი (GEL)</span>
-        </button>
-        <button 
-          onClick={() => setCurrentCurrency('USD')}
-          className={`w-full text-left px-4 py-2.5 text-sm flex items-center space-x-2
-            hover:bg-gray-50 hover:text-primary transition-all duration-200
-            ${currentCurrency === 'USD' ? 'text-primary font-medium bg-gray-50' : 'text-gray-dark'}`}
-        >
-          <span className="text-lg">🇺🇸</span>
-          <span>დოლარი (USD)</span>
-        </button>
-      </div>
-    </div>
+    <FormControlLabel
+      control={
+        <CustomSwitch
+          checked={currentCurrency === 'USD'}
+          onChange={handleChange}
+        />
+      }
+      label=""
+    />
   );
 };
 
