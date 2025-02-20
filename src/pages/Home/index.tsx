@@ -18,8 +18,6 @@ const Home: React.FC = () => {
   return (
     <HomeContainer>
       <HeroSection />
-      <FeaturedSlider />
-      <VerticalSearchFilter />
       <NewAdditions />
       <FeaturedCategories />
       <DailyOffers />

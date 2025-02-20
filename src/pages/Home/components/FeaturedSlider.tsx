@@ -19,10 +19,10 @@ const FeaturedSlider: React.FC = () => {
   };
 
   return (
-    <section className="py-12">
-      <div className="w-full px-6">
-        <div className="relative">
-          <div className="overflow-hidden rounded-2xl h-[600px]">
+    <section className="h-full">
+      <div className="w-full h-full">
+        <div className="relative h-full">
+          <div className="overflow-hidden rounded-2xl h-full">
             <div 
               className="flex h-full transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}

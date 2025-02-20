@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, DollarSign, Calendar, Search } from 'lucide-react';
+import { Car, DollarSign, Calendar, Search, Settings, Fuel, Navigation, Palette } from 'lucide-react';
 import data from '../data/cars.json';
 
 interface SearchFormData {
@@ -8,6 +8,10 @@ interface SearchFormData {
   model: string;
   priceRange: string;
   year: string;
+  transmission: string;
+  fuelType: string;
+  drive: string;
+  color: string;
 }
 
 const VerticalSearchFilter: React.FC = () => {
@@ -18,7 +22,11 @@ const VerticalSearchFilter: React.FC = () => {
     brand: '',
     model: '',
     priceRange: '',
-    year: ''
+    year: '',
+    transmission: '',
+    fuelType: '',
+    drive: '',
+    color: ''
   });
   
   const [availableModels, setAvailableModels] = useState<string[]>([]);
@@ -55,8 +63,13 @@ const VerticalSearchFilter: React.FC = () => {
     '50000+'
   ];
 
+  const transmissions = ['Automatic', 'Manual', 'CVT', 'DSG', 'PDK', 'Single-Speed'];
+  const fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
+  const driveTypes = ['FWD', 'RWD', 'AWD', '4WD'];
+  const colors = ['Black', 'White', 'Silver', 'Gray', 'Red', 'Blue', 'Pearl White', 'Deep Black', 'Nardo Gray', 'Guards Red', 'Modern Steel', 'Amazon Gray'];
+
   return (
-    <div className="w-full bg-white/95 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-green-lighter/20">
+    <div className="w-full h-full bg-white/95 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-green-lighter/20 overflow-y-auto">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="relative group">
           <Car className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
@@ -86,6 +99,70 @@ const VerticalSearchFilter: React.FC = () => {
             {availableModels.map(model => (
               <option key={model} value={model}>
                 {model}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="relative group">
+          <Settings className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+          <select
+            value={formData.transmission}
+            onChange={(e) => setFormData({ ...formData, transmission: e.target.value })}
+            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+          >
+            <option value="">ტრანსმისია</option>
+            {transmissions.map(transmission => (
+              <option key={transmission} value={transmission}>
+                {transmission}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="relative group">
+          <Fuel className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+          <select
+            value={formData.fuelType}
+            onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
+            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+          >
+            <option value="">საწვავის ტიპი</option>
+            {fuelTypes.map(type => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="relative group">
+          <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+          <select
+            value={formData.drive}
+            onChange={(e) => setFormData({ ...formData, drive: e.target.value })}
+            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+          >
+            <option value="">წამყვანი თვლები</option>
+            {driveTypes.map(type => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="relative group">
+          <Palette className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+          <select
+            value={formData.color}
+            onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+          >
+            <option value="">ფერი</option>
+            {colors.map(color => (
+              <option key={color} value={color}>
+                {color}
               </option>
             ))}
           </select>
@@ -125,7 +202,7 @@ const VerticalSearchFilter: React.FC = () => {
         
         <button
           type="submit"
-          className="flex items-center justify-center gap-3 py-4 px-6 bg-primary-gradient text-white text-lg font-semibold rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+          className="flex items-center justify-center gap-3 py-3 px-4 bg-primary-gradient text-white text-lg font-semibold rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
         >
           <Search className="text-xl" /> მოძებნა
         </button>
