@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, DefaultTheme } from 'styled-components';
 import { Theme } from './theme';
 
 export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
@@ -16,34 +16,34 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   }
 
   body {
-    font-family: ${({ theme }) => theme.typography.fontFamily.primary};
+    font-family: ${props => props.theme.typography.fontFamily.primary};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-    line-height: ${({ theme }) => theme.typography.lineHeight.normal};
+    background-color: ${props => props.theme.colors.background};
+    color: ${props => props.theme.colors.text};
+    line-height: ${props => props.theme.typography.lineHeight.normal};
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: ${({ theme }) => theme.typography.fontFamily.heading};
-    font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-    line-height: ${({ theme }) => theme.typography.lineHeight.tight};
-    color: ${({ theme }) => theme.colors.text};
-    margin-bottom: ${({ theme }) => theme.spacing.md};
+    font-family: ${props => props.theme.typography.fontFamily.heading};
+    font-weight: ${props => props.theme.typography.fontWeight.bold};
+    line-height: ${props => props.theme.typography.lineHeight.tight};
+    color: ${props => props.theme.colors.text};
+    margin-bottom: ${props => props.theme.spacing.md};
   }
 
   p {
-    margin-bottom: ${({ theme }) => theme.spacing.md};
-    line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
+    margin-bottom: ${props => props.theme.spacing.md};
+    line-height: ${props => props.theme.typography.lineHeight.relaxed};
   }
 
   a {
     text-decoration: none;
-    color: ${({ theme }) => theme.colors.primary};
-    transition: ${({ theme }) => theme.transition.default};
+    color: ${props => props.theme.colors.primary};
+    transition: ${props => props.theme.transition.default};
 
     &:hover {
-      color: ${({ theme }) => theme.colors.accent};
+      color: ${props => props.theme.colors.accent};
     }
   }
 
@@ -52,7 +52,7 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
     background: none;
     cursor: pointer;
     font-family: inherit;
-    transition: ${({ theme }) => theme.transition.default};
+    transition: ${props => props.theme.transition.default};
 
     &:disabled {
       cursor: not-allowed;
@@ -62,7 +62,7 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 
   ul, ol {
     list-style: none;
-    margin-bottom: ${({ theme }) => theme.spacing.md};
+    margin-bottom: ${props => props.theme.spacing.md};
   }
 
   img {
@@ -73,41 +73,41 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 
   input, textarea, select {
     font-family: inherit;
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-    padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: ${({ theme }) => theme.borderRadius.medium};
-    background-color: ${({ theme }) => theme.colors.background};
-    transition: ${({ theme }) => theme.transition.default};
+    font-size: ${props => props.theme.fontSizes.medium};
+    padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+    border: 1px solid ${props => props.theme.colors.border};
+    border-radius: ${props => props.theme.borderRadius.medium};
+    background-color: ${props => props.theme.colors.background};
+    transition: ${props => props.theme.transition.default};
 
     &:focus {
       outline: none;
-      border-color: ${({ theme }) => theme.colors.primary};
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}25;
+      border-color: ${props => props.theme.colors.primary};
+      box-shadow: 0 0 0 2px ${props => props.theme.colors.primary}25;
     }
   }
 
   ::selection {
-    background-color: ${({ theme }) => theme.colors.primary}25;
-    color: ${({ theme }) => theme.colors.primary};
+    background-color: ${props => props.theme.colors.primary}25;
+    color: ${props => props.theme.colors.primary};
   }
 
   .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 ${({ theme }) => theme.spacing.md};
+    padding: 0 ${props => props.theme.spacing.md};
   }
 
   .card {
-    background: ${({ theme }) => theme.colors.cardBg};
-    border-radius: ${({ theme }) => theme.borderRadius.medium};
-    box-shadow: ${({ theme }) => theme.shadows.medium};
-    transition: ${({ theme }) => theme.transition.default};
+    background: ${props => props.theme.colors.cardBg};
+    border-radius: ${props => props.theme.borderRadius.medium};
+    box-shadow: ${props => props.theme.shadows.medium};
+    transition: ${props => props.theme.transition.default};
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: ${({ theme }) => theme.shadows.large};
+      box-shadow: ${props => props.theme.shadows.large};
     }
   }
 `;
