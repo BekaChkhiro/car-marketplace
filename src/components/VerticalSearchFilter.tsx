@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, DollarSign, Calendar, Search, Settings, Fuel, Navigation, Palette } from 'lucide-react';
+import { Car, DollarSign, Calendar, Search, Settings, Fuel, Navigation, Palette, ChevronsLeft } from 'lucide-react';
 import data from '../data/cars.json';
 
 interface SearchFormData {
@@ -69,8 +69,8 @@ const VerticalSearchFilter: React.FC = () => {
   const colors = ['Black', 'White', 'Silver', 'Gray', 'Red', 'Blue', 'Pearl White', 'Deep Black', 'Nardo Gray', 'Guards Red', 'Modern Steel', 'Amazon Gray'];
 
   return (
-    <div className="w-full h-full bg-white/95 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-green-lighter/20 overflow-y-auto">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <div className="w-full h-full bg-white/95 backdrop-blur-xl p-6 pb-0 flex flex-col justify-between items-center rounded-2xl shadow-lg border border-green-lighter/20 overflow-y-auto">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
         <div className="relative group">
           <Car className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
           <select
@@ -207,6 +207,11 @@ const VerticalSearchFilter: React.FC = () => {
           <Search className="text-xl" /> მოძებნა
         </button>
       </form>
+
+      <button className='flex gap-2 text-white text-sm bg-primary py-1 px-6 rounded-t-lg mt-6'>
+        <ChevronsLeft />
+        დამატებითი დეტალები
+      </button>
     </div>
   );
 };
