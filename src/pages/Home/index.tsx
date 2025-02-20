@@ -5,6 +5,7 @@ import FeaturedCategories from './components/FeaturedCategories';
 import NewAdditions from './components/NewAdditions';
 import DailyOffers from './components/DailyOffers';
 import FeaturedSlider from './components/FeaturedSlider';
+import VerticalSearchFilter from '../../components/VerticalSearchFilter';
 
 const HomeContainer = styled.div`
   display: flex;
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
     <HomeContainer>
       <HeroSection />
       <FeaturedSlider />
+      <VerticalSearchFilter />
       <NewAdditions />
       <FeaturedCategories />
       <DailyOffers />
