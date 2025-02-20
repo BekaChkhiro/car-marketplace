@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MessageCircle, Eye, EyeOff } from 'lucide-react';
+import { Phone, Mail, MessageCircle, Eye, EyeOff, Heart } from 'lucide-react';
 
 interface ContactButtonsProps {
   phone: string;
@@ -7,11 +7,6 @@ interface ContactButtonsProps {
 
 const ContactButtons = ({ phone }: ContactButtonsProps) => {
   const [showPhone, setShowPhone] = useState(false);
-
-  const handleWhatsApp = () => {
-    const phoneNumber = phone.replace(/\D/g, '');
-    window.open(`https://wa.me/${phoneNumber}`, '_blank');
-  };
 
   const togglePhone = () => {
     setShowPhone(!showPhone);
@@ -29,10 +24,10 @@ const ContactButtons = ({ phone }: ContactButtonsProps) => {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="flex gap-2">
       <button 
         onClick={togglePhone}
-        className="group w-full flex items-center justify-between bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 p-1"
+        className="group w-10/12 flex items-center justify-between bg-primary hover:bg-green-600 text-white rounded-lg transition-all duration-200 p-1"
       >
         <div className="flex items-center gap-2 py-2.5 pl-4">
           <Phone className="w-4 h-4" />
@@ -51,22 +46,11 @@ const ContactButtons = ({ phone }: ContactButtonsProps) => {
         )}
       </button>
       
-      <button 
-        onClick={handleWhatsApp}
-        className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-3
+      <button
+        className="w-2/12 flex items-center justify-center gap-2 bg-primary text-white px-4 py-3
           rounded-lg hover:bg-[#128C7E] transition-all duration-200"
       >
-        <MessageCircle className="w-5 h-5" />
-        <span className="font-medium">WhatsApp</span>
-      </button>
-      
-      <button 
-        className="w-full flex items-center justify-center gap-2 
-          text-gray-dark hover:text-primary transition-colors px-4 py-3 rounded-lg
-          hover:bg-green-50 border border-gray-200"
-      >
-        <Mail className="w-5 h-5" />
-        <span className="font-medium">Send Message</span>
+        <Heart className='text-2xl' />
       </button>
     </div>
   );

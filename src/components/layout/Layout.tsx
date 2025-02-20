@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
+import ScrollToTop from '../ScrollToTop';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ const LayoutWrapper = styled.div`
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <LayoutWrapper>
+      <ScrollToTop />
       <Header />
       <main className="w-[90%] mx-auto py-6">
         {children}

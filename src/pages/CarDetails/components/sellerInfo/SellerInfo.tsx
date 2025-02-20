@@ -2,7 +2,6 @@ import React from 'react';
 import PriceSection from './components/PriceSection';
 import SellerProfile from './components/SellerProfile';
 import ContactButtons from './components/ContactButtons';
-import SafetyNotice from './components/SafetyNotice';
 
 interface SellerInfoProps {
   seller: {
@@ -24,7 +23,6 @@ const SellerInfo = ({ seller, price, carId }: SellerInfoProps) => {
         <SellerProfile seller={seller} />
         <div className="h-px bg-gray-100" />
         <ContactButtons phone={seller.phone} />
-        <SafetyNotice />
       </div>
     </div>
   );

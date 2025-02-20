@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import HeroSection from './components/HeroSection';
 import NewAdditions from './components/NewAdditions';
-import FeaturedSlider from './components/FeaturedSlider';
-import VerticalSearchFilter from '../../components/VerticalSearchFilter';
 import VipListings from './components/VipListings';
 
 const HomeContainer = styled.div`
