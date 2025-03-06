@@ -79,10 +79,9 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
     <button
       type="button"
       onClick={handleClick}
-      className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-[#1877F2] text-[#1877F2] rounded-xl hover:bg-[#1877F2]/5 transition-colors"
+      className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-[#1877F2] text-[#1877F2] rounded-xl hover:bg-[#1877F2]/5 transition-colors bg-gray-100"
     >
       <img src="/images/facebook-icon.svg" alt="Facebook" className="w-5 h-5" />
-      <span>Facebook-ით შესვლა</span>
     </button>
   );
 };

@@ -72,10 +72,9 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess }) => {
     <button
       type="button"
       onClick={handleClick}
-      className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-[#4285F4] text-[#4285F4] rounded-xl hover:bg-[#4285F4]/5 transition-colors"
+      className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-[#4285F4] text-[#4285F4] rounded-xl hover:bg-[#4285F4]/5 transition-colors bg-gray-100"
     >
       <img src="/images/google-icon.svg" alt="Google" className="w-5 h-5" />
-      <span>Google-ით შესვლა</span>
     </button>
   );
 };
