@@ -24,6 +24,11 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
       document.body.style.overflow = 'unset';
       return () => clearTimeout(timer);
     }
+
+    // Cleanup function to ensure scroll is re-enabled when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   if (!isOpen && !isAnimating) return null;

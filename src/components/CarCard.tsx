@@ -12,25 +12,7 @@ import {
 import { CustomSwitch } from './layout/Header/components/CurrencySelector';
 import { useCurrency } from '../context/CurrencyContext';
 import { usePrice } from '../context/usePrice';
-
-interface Car {
-  id: string;
-  make: string;
-  model: string;
-  year: number;
-  price: number;
-  images: string[];
-  specifications: {
-    fuelType: string;
-    transmission: string;
-    mileage: number;
-  };
-  location: {
-    city: string;
-    region: string;
-  };
-  isVip: boolean;
-}
+import { Car } from '../types/car';
 
 interface CarCardProps {
   car: Car;

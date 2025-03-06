@@ -1,37 +1,30 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-type Currency = 'GEL' | 'USD';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getStoredPreferences, storePreferences } from '../utils/userPreferences';
 
 interface CurrencyContextType {
-  currency: Currency;
-  setCurrency: (currency: Currency) => void;
+  currency: string;
+  setCurrency: (currency: string) => void;
 }
 
-const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
+const CurrencyContext = createContext<CurrencyContextType>({
+  currency: 'GEL',
+  setCurrency: () => {},
+});
 
-export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize from localStorage or default to 'GEL'
-  const [currency, setCurrency] = useState<Currency>(() => {
-    const savedCurrency = localStorage.getItem('currency');
-    return (savedCurrency === 'USD' || savedCurrency === 'GEL') ? savedCurrency : 'GEL';
-  });
+export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [currency, setCurrency] = useState(() => getStoredPreferences().currency);
 
-  // Save to localStorage whenever currency changes
-  useEffect(() => {
-    localStorage.setItem('currency', currency);
-  }, [currency]);
+  // Update stored preferences when currency changes
+  const handleCurrencyChange = (newCurrency: string) => {
+    setCurrency(newCurrency);
+    storePreferences({ currency: newCurrency });
+  };
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency: handleCurrencyChange }}>
       {children}
     </CurrencyContext.Provider>
   );
 };
 
-export const useCurrency = () => {
-  const context = useContext(CurrencyContext);
-  if (context === undefined) {
-    throw new Error('useCurrency must be used within a CurrencyProvider');
-  }
-  return context;
-};
+export const useCurrency = () => useContext(CurrencyContext);

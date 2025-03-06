@@ -1,103 +1,104 @@
-import { Switch, FormControlLabel } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
 import { useCurrency } from '../../../../context/CurrencyContext';
 
-export const CustomSwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
-  height: 34,
-  padding: 0,
-  position: 'relative',
-  '& .MuiSwitch-switchBase': {
-    padding: 0,
-    margin: 2,
-    transitionDuration: '300ms',
-    '&.Mui-checked': {
-      transform: 'translateX(28px)',
-      color: '#fff',
-      '& .MuiSwitch-thumb:before': {
-        content: '"$"',
-      },
-      '& + .MuiSwitch-track:before': {
-        color: '#fff',
-      },
-      '& + .MuiSwitch-track:after': {
-        color: '#000',
-      },
-    },
-    '& .MuiSwitch-thumb:before': {
-      content: '"₾"',
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      left: 0,
-      top: 0,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: 14,
-      fontWeight: 500,
-      color: '#4CAF50',
-    },
-    '&:not(.Mui-checked) + .MuiSwitch-track:before': {
-      color: '#000',
-    },
-    '&:not(.Mui-checked) + .MuiSwitch-track:after': {
-      color: '#fff',
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    boxSizing: 'border-box',
-    width: 30,
-    height: 30,
-    position: 'relative',
-    backgroundColor: '#fff',
-  },
-  '& .MuiSwitch-track': {
-    borderRadius: 34 / 2,
-    backgroundColor: '#4CAF50 !important',
-    opacity: '1 !important',
-    transition: theme.transitions.create(['background-color', 'color'], {
-      duration: 500,
-    }),
-    '&:before, &:after': {
-      content: '""',
-      position: 'absolute',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      fontSize: 14,
-      fontWeight: 500,
-      transition: theme.transitions.create(['color'], {
-        duration: 300,
-      }),
-    },
-    '&:before': {
-      content: '"₾"',
-      left: 8,
-    },
-    '&:after': {
-      content: '"$"',
-      right: 8,
-    },
-  },
-}));
+interface CustomSwitchProps {
+  checked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange }) => {
+  return (
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input 
+        type="checkbox" 
+        className="sr-only peer"
+        checked={checked}
+        onChange={onChange}
+      />
+      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+        after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white 
+        after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+      </div>
+      <span className="ml-2 text-sm font-medium text-gray-700">
+        {checked ? 'USD' : 'GEL'}
+      </span>
+    </label>
+  );
+};
+
+const currencies = [
+  { id: 'GEL', symbol: '₾', name: 'ლარი' },
+  { id: 'USD', symbol: '$', name: 'დოლარი' },
+  { id: 'EUR', symbol: '€', name: 'ევრო' }
+];
 
 const CurrencySelector = () => {
   const { currency, setCurrency } = useCurrency();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrency(event.target.checked ? 'USD' : 'GEL');
+  const currentCurrency = currencies.find(c => c.id === currency) || currencies[0];
+
+  const handleCurrencyChange = (currencyId: string) => {
+    setCurrency(currencyId);
+    setIsOpen(false);
   };
 
-  return (
-    <FormControlLabel
-      control={
-        <CustomSwitch
-          checked={currency === 'USD'}
-          onChange={handleChange}
-        />
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.currency-selector')) {
+        setIsOpen(false);
       }
-      label=""
-    />
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="relative currency-selector">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+      >
+        <span>{currentCurrency.symbol}</span>
+        <svg
+          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 py-2 w-36 bg-white rounded-xl shadow-lg border border-gray-100">
+          {currencies.map((curr) => (
+            <button
+              key={curr.id}
+              onClick={() => handleCurrencyChange(curr.id)}
+              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                currency === curr.id ? 'text-primary font-medium' : 'text-gray-700'
+              }`}
+            >
+              <span className="flex items-center space-x-2">
+                <span>{curr.symbol}</span>
+                <span>{curr.name}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
