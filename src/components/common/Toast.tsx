@@ -43,7 +43,7 @@ const Toast: React.FC<ToastProps> = ({
 
   return (
     <div
-      className={`
+      className={`flex justify-between items-center
         fixed bottom-4 right-4 z-50 flex items-center p-4 rounded-xl shadow-lg border
         transition-all duration-300 ${styles[type]}
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
@@ -51,7 +51,7 @@ const Toast: React.FC<ToastProps> = ({
     >
       <div className="flex items-center gap-3">
         {icons[type]}
-        <p className="text-sm font-medium">{message}</p>
+        <p className="text-sm font-medium m-0">{message}</p>
       </div>
       <button
         onClick={() => {
