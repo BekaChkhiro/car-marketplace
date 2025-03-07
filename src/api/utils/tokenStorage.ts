@@ -59,7 +59,12 @@ export const setStoredToken = (accessToken: string, refreshToken?: string): void
 // Get access token
 export const getAccessToken = (): string | null => {
   try {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+    if (token && isTokenExpired(token)) {
+      removeStoredToken();
+      return null;
+    }
+    return token;
   } catch (error) {
     console.error('Error retrieving access token:', error);
     return null;
@@ -78,7 +83,8 @@ export const getRefreshToken = (): string | null => {
 
 // Check if token exists
 export const hasStoredToken = (): boolean => {
-  return !!getAccessToken();
+  const token = getAccessToken();
+  return !!token && !isTokenExpired(token);
 };
 
 // Remove stored tokens
@@ -91,10 +97,22 @@ export const removeStoredToken = (): void => {
   }
 };
 
+// Parse JWT token
+const parseJwt = (token: string): any => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(window.atob(base64));
+  } catch (error) {
+    console.error('Error parsing JWT:', error);
+    return null;
+  }
+};
+
 // Get token expiration
 export const getTokenExpiration = (token: string): number | null => {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = parseJwt(token);
     return payload.exp ? payload.exp * 1000 : null; // Convert to milliseconds
   } catch (error) {
     console.error('Error parsing token expiration:', error);
@@ -106,5 +124,8 @@ export const getTokenExpiration = (token: string): number | null => {
 export const isTokenExpired = (token: string): boolean => {
   const expiration = getTokenExpiration(token);
   if (!expiration) return true;
-  return Date.now() >= expiration;
+  
+  // Add a 60-second buffer to handle slight time differences
+  const buffer = 60 * 1000; // 60 seconds in milliseconds
+  return Date.now() >= (expiration - buffer);
 };

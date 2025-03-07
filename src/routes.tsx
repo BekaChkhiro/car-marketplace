@@ -10,6 +10,7 @@ import ProfileHome from './pages/Profile/pages/ProfileHome';
 import Favorites from './pages/Profile/pages/Favorites';
 import Notifications from './pages/Profile/pages/Notifications';
 import Settings from './pages/Profile/pages/Settings';
+import AddCar from './pages/Profile/pages/AddCar';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -33,6 +34,7 @@ const AppRoutes = () => {
         <Route path="favorites" element={<Favorites />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="add-car" element={<AddCar />} />
       </Route>
       
       {/* Redirect non-authenticated users trying to access protected pages */}

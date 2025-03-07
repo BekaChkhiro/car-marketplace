@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken, removeStoredToken } from '../utils/tokenStorage';
+import { getAccessToken, removeStoredToken, isTokenExpired } from '../utils/tokenStorage';
 import { getCsrfToken, refreshCsrfToken } from '../utils/csrfProtection';
 import { AuthResponse } from '../types/auth.types';
 
@@ -11,15 +11,21 @@ interface ApiErrorResponse {
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true
+  withCredentials: true,
+  maxContentLength: 100 * 1024 * 1024, // 100MB max
+  maxBodyLength: 100 * 1024 * 1024 // 100MB max
 });
 
 // Request interceptor
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // For multipart form data, let the browser handle the Content-Type
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    } else {
+      config.headers['Content-Type'] = 'application/json';
+    }
+
     // Only add CSRF token for non-GET requests that are not preflight
     if (config.method !== 'get' && config.method !== 'options') {
       const token = getCsrfToken();
@@ -28,11 +34,22 @@ api.interceptors.request.use(
       }
     }
 
+    // Check for auth token
     const authToken = getAccessToken();
-    if (authToken) {
-      config.headers.Authorization = `Bearer ${authToken}`;
+    if (!authToken) {
+      return Promise.reject(new Error('No authentication token found'));
     }
 
+    // Check if token is expired
+    if (isTokenExpired(authToken)) {
+      removeStoredToken();
+      window.dispatchEvent(new CustomEvent('auth:required', { 
+        detail: { message: 'Session expired. Please log in again.' }
+      }));
+      return Promise.reject(new Error('Authentication token expired'));
+    }
+
+    config.headers.Authorization = `Bearer ${authToken}`;
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
@@ -65,12 +82,16 @@ api.interceptors.response.use(
           // Handle CSRF token validation failure
           if (error.response.data?.message?.includes('CSRF')) {
             const newToken = refreshCsrfToken();
-            if (originalRequest.headers) {
+            if (originalRequest.headers && newToken) {
               originalRequest.headers['X-CSRF-Token'] = newToken;
               return api(originalRequest);
             }
           }
           break;
+
+        case 500:
+          console.error('Server error:', error.response.data);
+          return Promise.reject(new Error(error.response.data?.message || 'Internal server error occurred'));
       }
 
       // Convert error response to a more friendly format

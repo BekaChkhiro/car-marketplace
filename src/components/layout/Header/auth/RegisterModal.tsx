@@ -151,73 +151,104 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
 
   const renderStep1 = () => (
     <>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          სახელი
-        </label>
-        <input
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleInputChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-          required
-          placeholder="შეიყვანეთ სახელი"
-          disabled={isLoading}
-        />
-      </div>
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            სახელი
+          </label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+            required
+            placeholder="სახელი"
+            disabled={isLoading}
+          />
+        </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          გვარი
-        </label>
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleInputChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-          required
-          placeholder="შეიყვანეთ გვარი"
-          disabled={isLoading}
-        />
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            გვარი
+          </label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+            required
+            placeholder="გვარი"
+            disabled={isLoading}
+          />
+        </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           ასაკი
         </label>
-        <input
-          type="number"
+        <select
           name="age"
           value={formData.age}
           onChange={handleInputChange}
-          min="18"
-          max="100"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
           required
-          placeholder="შეიყვანეთ ასაკი"
           disabled={isLoading}
-        />
+        >
+          <option value="">აირჩიეთ ასაკი</option>
+          {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
+            <option key={age} value={age}>
+              {age} წელი
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           სქესი
         </label>
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleInputChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-          required
-          disabled={isLoading}
-        >
-          <option value="">აირჩიეთ სქესი</option>
-          <option value="male">მამრობითი</option>
-          <option value="female">მდედრობითი</option>
-          <option value="other">სხვა</option>
-        </select>
+        <div className="flex gap-4">
+          <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
+            <input
+              type="radio"
+              name="gender"
+              value="male"
+              checked={formData.gender === 'male'}
+              onChange={handleInputChange}
+              className="absolute opacity-0 w-0 h-0"
+              disabled={isLoading}
+            />
+            <div className={`w-full text-center py-3 px-4 rounded-xl border ${
+              formData.gender === 'male' 
+                ? 'border-primary bg-primary/5 text-primary' 
+                : 'border-gray-300 hover:bg-gray-50'
+            }`}>
+              მამრობითი
+            </div>
+          </label>
+          
+          <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
+            <input
+              type="radio"
+              name="gender"
+              value="female"
+              checked={formData.gender === 'female'}
+              onChange={handleInputChange}
+              className="absolute opacity-0 w-0 h-0"
+              disabled={isLoading}
+            />
+            <div className={`w-full text-center py-3 px-4 rounded-xl border ${
+              formData.gender === 'female' 
+                ? 'border-primary bg-primary/5 text-primary' 
+                : 'border-gray-300 hover:bg-gray-50'
+            }`}>
+              მდედრობითი
+            </div>
+          </label>
+        </div>
       </div>
 
       <div>

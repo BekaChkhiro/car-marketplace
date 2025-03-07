@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { User, Heart, Bell, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { User, Heart, Bell, Settings, LogOut, ChevronRight, PlusCircle } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
 interface NavItem {
@@ -21,6 +21,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({ activeTab, onTabChange 
 
   const navItems: NavItem[] = [
     { icon: <User size={20} />, label: 'პროფილი', path: '/profile' },
+    { icon: <PlusCircle size={20} />, label: 'მანქანის დამატება', path: '/profile/add-car' },
     { icon: <Heart size={20} />, label: 'ფავორიტები', path: '/profile/favorites', badge: 5 },
     { icon: <Bell size={20} />, label: 'შეტყობინებები', path: '/profile/notifications', badge: 3 },
     { icon: <Settings size={20} />, label: 'პარამეტრები', path: '/profile/settings' },
