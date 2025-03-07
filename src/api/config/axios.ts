@@ -9,6 +9,15 @@ interface ApiErrorResponse {
   error?: string;
 }
 
+// Define public endpoints that don't require authentication
+const publicEndpoints = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password',
+  '/auth/google',
+  '/auth/facebook'
+];
+
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   withCredentials: true,
@@ -34,22 +43,30 @@ api.interceptors.request.use(
       }
     }
 
-    // Check for auth token
-    const authToken = getAccessToken();
-    if (!authToken) {
-      return Promise.reject(new Error('No authentication token found'));
+    // Check if the endpoint requires authentication
+    const isPublicEndpoint = publicEndpoints.some(endpoint => 
+      config.url?.includes(endpoint)
+    );
+
+    if (!isPublicEndpoint) {
+      // Check for auth token only for protected endpoints
+      const authToken = getAccessToken();
+      if (!authToken) {
+        return Promise.reject(new Error('No authentication token found'));
+      }
+
+      // Check if token is expired
+      if (isTokenExpired(authToken)) {
+        removeStoredToken();
+        window.dispatchEvent(new CustomEvent('auth:required', { 
+          detail: { message: 'Session expired. Please log in again.' }
+        }));
+        return Promise.reject(new Error('Authentication token expired'));
+      }
+
+      config.headers.Authorization = `Bearer ${authToken}`;
     }
 
-    // Check if token is expired
-    if (isTokenExpired(authToken)) {
-      removeStoredToken();
-      window.dispatchEvent(new CustomEvent('auth:required', { 
-        detail: { message: 'Session expired. Please log in again.' }
-      }));
-      return Promise.reject(new Error('Authentication token expired'));
-    }
-
-    config.headers.Authorization = `Bearer ${authToken}`;
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
@@ -69,6 +86,13 @@ api.interceptors.response.use(
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
     
     if (error.response) {
+      // Log the error response for debugging
+      console.error('API Error Response:', {
+        status: error.response.status,
+        data: error.response.data,
+        url: originalRequest.url
+      });
+
       switch (error.response.status) {
         case 401:
           // Clear auth on 401 Unauthorized
