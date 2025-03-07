@@ -37,7 +37,9 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     phone: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    age: '',
+    gender: ''
   });
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -47,13 +49,19 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     setError(null);
     
     if (step === 1) {
-      if (!formData.firstName || !formData.lastName || !formData.phone) {
+      if (!formData.firstName || !formData.lastName || !formData.phone || !formData.age || !formData.gender) {
         setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
         return;
       }
 
-      if (!formData.phone.match(/^\+?995\d{9}$/)) {
-        setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX');
+      const age = parseInt(formData.age);
+      if (isNaN(age) || age < 18 || age > 100) {
+        setError('ასაკი უნდა იყოს 18-დან 100-მდე');
+        return;
+      }
+
+      if (!formData.phone.match(/^(\+995|0)\d{9}$/)) {
+        setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX');
         return;
       }
       
@@ -82,25 +90,26 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
       }
       
       try {
-        // Construct username from first and last name
         const username = `${formData.firstName} ${formData.lastName}`;
         
-        // Pass additional user data along with registration info
         await register(username, formData.email, formData.password, {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          age: parseInt(formData.age),
+          gender: formData.gender as 'male' | 'female' | 'other',
           phone: formData.phone
         });
 
         onClose();
-        // Reset form and return to first step
         setFormData({
           firstName: '',
           lastName: '',
           phone: '',
           email: '',
           password: '',
-          confirmPassword: ''
+          confirmPassword: '',
+          age: '',
+          gender: ''
         });
         setStep(1);
       } catch (err: any) {
@@ -110,7 +119,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -172,6 +181,43 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           placeholder="შეიყვანეთ გვარი"
           disabled={isLoading}
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          ასაკი
+        </label>
+        <input
+          type="number"
+          name="age"
+          value={formData.age}
+          onChange={handleInputChange}
+          min="18"
+          max="100"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          required
+          placeholder="შეიყვანეთ ასაკი"
+          disabled={isLoading}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          სქესი
+        </label>
+        <select
+          name="gender"
+          value={formData.gender}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          required
+          disabled={isLoading}
+        >
+          <option value="">აირჩიეთ სქესი</option>
+          <option value="male">მამრობითი</option>
+          <option value="female">მდედრობითი</option>
+          <option value="other">სხვა</option>
+        </select>
       </div>
 
       <div>

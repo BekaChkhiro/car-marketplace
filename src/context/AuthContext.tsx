@@ -14,10 +14,12 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
-  register: (username: string, email: string, password: string, additionalData?: { 
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
+  register: (username: string, email: string, password: string, additionalData: { 
+    first_name: string;
+    last_name: string;
+    age: number;
+    gender: 'male' | 'female' | 'other';
+    phone: string;
   }) => Promise<void>;
   logout: () => void;
   updateProfile: (data: { username?: string; email?: string; phone?: string }) => Promise<void>;
@@ -112,20 +114,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     username: string, 
     email: string, 
     password: string,
-    additionalData?: {
-      firstName?: string;
-      lastName?: string;
-      phone?: string;
+    additionalData: {
+      first_name: string;
+      last_name: string;
+      age: number;
+      gender: 'male' | 'female' | 'other';
+      phone: string;
     }
   ) => {
     showLoading();
     try {
-      const response = await authService.register({ username, email, password });
-      
-      // Store additional user data if provided
-      if (additionalData) {
-        storeUserData(additionalData);
-      }
+      const response = await authService.register({ 
+        username, 
+        email, 
+        password, 
+        ...additionalData 
+      });
       
       setUser(response.user);
       setIsAuthenticated(true);

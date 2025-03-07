@@ -29,7 +29,12 @@ class AuthService {
       const response = await api.post<AuthResponse>('/auth/register', {
         username: credentials.username.trim(),
         email: credentials.email.trim(),
-        password: credentials.password
+        password: credentials.password,
+        first_name: credentials.first_name.trim(),
+        last_name: credentials.last_name.trim(),
+        age: credentials.age,
+        gender: credentials.gender,
+        phone: credentials.phone.trim()
       });
       
       return response.data;

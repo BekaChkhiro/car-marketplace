@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { User, Mail, Shield, Calendar, Hash } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Hash, Phone } from 'lucide-react';
 
 interface User {
-  id: number;  // Changed from string to number
+  id: number;
   username: string;
   email: string;
-  role?: string;  // Made optional to match auth.types.ts
+  role?: string;
+  phone: string;
+  first_name: string;
+  last_name: string;
+  age: number;
+  gender: 'male' | 'female' | 'other';
   created_at?: string;
 }
 
@@ -160,7 +165,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
               <User size={40} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">{user.username}</h2>
+              <h2 className="text-2xl font-bold text-gray-800">{user.first_name} {user.last_name}</h2>
               <p className="text-gray-500 mt-1">{user.email}</p>
               {user.role && (
                 <div className="inline-flex items-center gap-2 mt-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
@@ -171,13 +176,56 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <Hash size={18} />
                 <h3 className="font-medium">ID</h3>
               </div>
               <p className="text-lg text-gray-900">{user.id}</p>
+            </div>
+
+            <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center gap-3 text-gray-500 mb-3">
+                <User size={18} />
+                <h3 className="font-medium">მომხმარებლის სახელი</h3>
+              </div>
+              <p className="text-lg text-gray-900">{user.username}</p>
+            </div>
+
+            <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center gap-3 text-gray-500 mb-3">
+                <Calendar size={18} />
+                <h3 className="font-medium">ასაკი</h3>
+              </div>
+              <p className="text-lg text-gray-900">{user.age} წლის</p>
+            </div>
+
+            <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center gap-3 text-gray-500 mb-3">
+                <Mail size={18} />
+                <h3 className="font-medium">ელ-ფოსტა</h3>
+              </div>
+              <p className="text-lg text-gray-900">{user.email}</p>
+            </div>
+
+            <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center gap-3 text-gray-500 mb-3">
+                <Phone size={18} />
+                <h3 className="font-medium">ტელეფონი</h3>
+              </div>
+              <p className="text-lg text-gray-900">{user.phone}</p>
+            </div>
+
+            <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center gap-3 text-gray-500 mb-3">
+                <User size={18} />
+                <h3 className="font-medium">სქესი</h3>
+              </div>
+              <p className="text-lg text-gray-900">
+                {user.gender === 'male' ? 'მამრობითი' : 
+                 user.gender === 'female' ? 'მდედრობითი' : 'სხვა'}
+              </p>
             </div>
 
             {user.created_at && (
