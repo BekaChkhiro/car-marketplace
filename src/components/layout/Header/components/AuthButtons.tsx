@@ -50,13 +50,13 @@ const AuthButtons = () => {
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 border border-gray-100">
             <button
               onClick={() => {
-                navigate('/profile');
+                navigate(user.role === 'admin' ? '/admin' : '/profile');
                 setIsMenuOpen(false);
               }}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
             >
               <User className="w-4 h-4" />
-              <span>პროფილი</span>
+              <span>{user.role === 'admin' ? 'ადმინ პანელი' : 'პროფილი'}</span>
             </button>
             <button
               onClick={handleLogout}

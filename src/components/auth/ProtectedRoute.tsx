@@ -6,23 +6,28 @@ import LoadingOverlay from '../common/LoadingOverlay';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   redirectTo?: string;
+  requiredRole?: 'admin' | 'user';
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  redirectTo = '/'
+  redirectTo = '/',
+  requiredRole
 }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
-  // Show loading overlay while checking authentication
   if (isLoading) {
     return <LoadingOverlay isVisible={true} />;
   }
 
-  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
+  }
+
+  // Check for role-based access
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to={user?.role === 'admin' ? '/admin' : '/'} replace />;
   }
 
   return <>{children}</>;

@@ -20,6 +20,22 @@ export const routeConfigs: { [key: string]: RouteConfig } = {
     path: '/profile',
     requiresAuth: true
   },
+  admin: {
+    path: '/admin',
+    requiresAuth: true
+  },
+  adminUsers: {
+    path: '/admin/users',
+    requiresAuth: true
+  },
+  adminCars: {
+    path: '/admin/cars',
+    requiresAuth: true
+  },
+  adminSettings: {
+    path: '/admin/settings',
+    requiresAuth: true
+  },
   addCar: {
     path: '/cars/add',
     requiresAuth: true
