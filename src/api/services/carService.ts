@@ -188,7 +188,7 @@ export const createCar = async (carData: NewCarData, images: File[]): Promise<Ca
     }
 
     // Send everything in one request
-    const { data } = await api.post('/cars', formData, {
+    const { data } = await api.post('/transports', formData, {
       headers: {
         'Accept': 'application/json',
         // Let browser set the content type for FormData
@@ -253,7 +253,7 @@ export const uploadCarImages = async (carId: string, images: File[]): Promise<Ca
 
   while (attempt < maxRetries) {
     try {
-      const { data } = await api.post(`/cars/${carId}/images`, formData, {
+      const { data } = await api.post(`/transports/${carId}/images`, formData, {
         headers: {
           'Accept': 'application/json',
           // Let browser set proper multipart boundary
@@ -339,7 +339,7 @@ export const updateCarWithImages = async (carId: string, carData: any, images?: 
     });
   }
 
-  const { data } = await api.put(`/cars/${carId}`, formData, {
+  const { data } = await api.put(`/transports/${carId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -351,7 +351,7 @@ export const updateCarWithImages = async (carId: string, carData: any, images?: 
 // Get all cars with filtering
 export const getCars = async (params: GetCarsParams = {}) => {
   try {
-    const { data } = await api.get('/cars', { params });
+    const { data } = await api.get('/transports', { params });
     // Return data directly since the API already returns the correct format
     return data;
   } catch (error: any) {
@@ -363,7 +363,7 @@ export const getCars = async (params: GetCarsParams = {}) => {
 // Get single car by ID
 export const getCarById = async (id: string): Promise<CarData> => {
   try {
-    const { data } = await api.get(`/cars/${id}`);
+    const { data } = await api.get(`/transports/${id}`);
     return data;
   } catch (error: any) {
     console.error('Error fetching car:', error);
@@ -374,7 +374,7 @@ export const getCarById = async (id: string): Promise<CarData> => {
 // Get similar cars
 export const getSimilarCars = async (carId: string, limit: number = 3): Promise<CarData[]> => {
   try {
-    const { data } = await api.get(`/cars/${carId}/similar`, {
+    const { data } = await api.get(`/transports/${carId}/similar`, {
       params: { limit }
     });
     return data;
@@ -387,7 +387,7 @@ export const getSimilarCars = async (carId: string, limit: number = 3): Promise<
 // Get VIP cars
 export const getVipCars = async (limit: number = 4): Promise<CarData[]> => {
   try {
-    const { data } = await api.get('/cars', {
+    const { data } = await api.get('/transports', {
       params: {
         isVip: true,
         limit

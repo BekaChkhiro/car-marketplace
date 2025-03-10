@@ -9,11 +9,11 @@ export const routeConfigs: { [key: string]: RouteConfig } = {
     requiresAuth: false
   },
   carListing: {
-    path: '/cars',
+    path: '/transports',
     requiresAuth: false
   },
   carDetails: {
-    path: '/cars/:id',
+    path: '/transports/:id',
     requiresAuth: false
   },
   profile: {
@@ -29,7 +29,7 @@ export const routeConfigs: { [key: string]: RouteConfig } = {
     requiresAuth: true
   },
   adminCars: {
-    path: '/admin/cars',
+    path: '/admin/transports',
     requiresAuth: true
   },
   adminSettings: {
@@ -37,11 +37,11 @@ export const routeConfigs: { [key: string]: RouteConfig } = {
     requiresAuth: true
   },
   addCar: {
-    path: '/cars/add',
+    path: '/transports/add',
     requiresAuth: true
   },
   editCar: {
-    path: '/cars/edit/:id',
+    path: '/transports/edit/:id',
     requiresAuth: true
   },
   wishlist: {

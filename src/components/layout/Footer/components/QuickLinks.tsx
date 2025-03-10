@@ -9,7 +9,7 @@ const QuickLinks: React.FC = () => {
       <ul className="flex flex-col gap-4">
         {[
           { to: '/', text: 'მთავარი' },
-          { to: '/cars', text: 'მანქანები' },
+          { to: '/transports', text: 'მანქანები' },
           { to: '/about', text: 'ჩვენს შესახებ' },
           { to: '/contact', text: 'კონტაქტი' },
           { to: '/terms', text: 'წესები და პირობები' },

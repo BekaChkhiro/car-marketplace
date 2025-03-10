@@ -20,8 +20,8 @@ const publicEndpoints = [
 
 // Define endpoints that are public only for GET requests
 const publicGetEndpoints = [
-  '/cars',
-  '/cars/'
+  '/transports',
+  '/transports/'
 ];
 
 const api = axios.create({

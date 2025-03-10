@@ -19,7 +19,7 @@ const Header = () => {
 
   const menuItems = [
     { id: 1, text: 'მთავარი', href: '/' },
-    { id: 2, text: 'მანქანები', href: '/cars' },
+    { id: 2, text: 'მანქანები', href: '/transports' },
     { id: 3, text: 'კომპანიის შესახებ', href: '/about' },
     { id: 4, text: 'კონტაქტი', href: '/contact' },
   ];

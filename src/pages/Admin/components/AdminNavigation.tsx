@@ -16,7 +16,7 @@ const AdminNavigation: React.FC = () => {
   const navItems = [
     { icon: <LayoutDashboard size={20} />, label: 'დეშბორდი', path: '/admin' },
     { icon: <Users size={20} />, label: 'მომხმარებლები', path: '/admin/users' },
-    { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/cars' },
+    { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/transports' },
     { icon: <Settings size={20} />, label: 'პარამეტრები', path: '/admin/settings' },
   ];
 

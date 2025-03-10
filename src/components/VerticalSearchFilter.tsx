@@ -50,7 +50,7 @@ const VerticalSearchFilter: React.FC = () => {
         params.append(key, value);
       }
     });
-    navigate(`/cars?${params.toString()}`);
+    navigate(`/transports?${params.toString()}`);
   };
   
   const years = Array.from({ length: 35 }, (_, i) => 2024 - i);

@@ -26,8 +26,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
     const fetchData = async () => {
       try {
         const [brandsResponse, categoriesResponse] = await Promise.all([
-          axios.get('/cars/brands'),
-          axios.get('/cars/categories')
+          axios.get('/transports/brands'),
+          axios.get('/transports/categories')
         ]);
         
         setBrands(brandsResponse.data);

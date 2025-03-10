@@ -154,7 +154,7 @@ const AddCar: React.FC = () => {
 
       const response = await carService.createCar(carDataToSend, images);
       showToast('მანქანა წარმატებით დაემატა', 'success');
-      navigate(`/cars/${response.id}`);
+      navigate(`/transports/${response.id}`);
     } catch (err: any) {
       console.error('Error creating car:', err);
       const errorMessage = err.message === 'No authentication token found' || err.message === 'Authentication token expired'

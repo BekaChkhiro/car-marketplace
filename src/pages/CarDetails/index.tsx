@@ -62,7 +62,7 @@ const CarDetails = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-dark mb-4">მანქანა ვერ მოიძებნა</h2>
-          <Link to="/cars" className="text-primary hover:underline">
+          <Link to="/transports" className="text-primary hover:underline">
             დაბრუნდი მანქანების სიაში
           </Link>
         </div>
@@ -77,7 +77,7 @@ const CarDetails = () => {
         <nav className="flex flex-wrap items-center space-x-2 text-sm text-gray-500">
           <Link to="/" className="hover:text-gray-700 transition-colors">მთავარი</Link>
           <span>/</span>
-          <Link to="/cars" className="hover:text-gray-700 transition-colors">მანქანები</Link>
+          <Link to="/transports" className="hover:text-gray-700 transition-colors">მანქანები</Link>
           <span>/</span>
           <span className="text-gray-700 font-medium">{car.make} {car.model} {car.year}</span>
         </nav>

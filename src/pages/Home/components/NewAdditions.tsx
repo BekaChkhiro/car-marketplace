@@ -22,7 +22,7 @@ const NewAdditions: React.FC = () => {
           </div>
           
           <Link
-            to="/cars?sort=newest"
+            to="/transports?sort=newest"
             onClick={handleViewAllClick}
             className="flex items-center gap-2 px-6 py-3 text-primary font-semibold border-2 border-primary/30 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:-translate-y-0.5 group"
           >

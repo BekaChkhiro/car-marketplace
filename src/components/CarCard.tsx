@@ -29,7 +29,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/cars/${car.id}`);
+    navigate(`/transports/${car.id}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -51,7 +51,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
 
   return (
     <Link 
-      to={`/cars/${car.id}`}
+      to={`/transports/${car.id}`}
       onClick={handleClick}
       className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md relative group"
     >

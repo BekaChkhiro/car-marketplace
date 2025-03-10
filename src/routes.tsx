@@ -47,7 +47,7 @@ const AppRoutes = () => {
       >
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<UsersPage />} />
-        <Route path="cars" element={<CarsPage />} />
+        <Route path="transports" element={<CarsPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       
