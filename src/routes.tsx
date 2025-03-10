@@ -6,6 +6,9 @@ import CarDetails from './pages/CarDetails';
 import ProfilePage from './pages/Profile';
 import AdminLayout from './pages/Admin/components/AdminLayout';
 import AdminDashboard from './pages/Admin/Dashboard';
+import UsersPage from './pages/Admin/Users';
+import CarsPage from './pages/Admin/Cars';
+import SettingsPage from './pages/Admin/Settings';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { routeConfigs } from './config/routes';
 import { useAuth } from './context/AuthContext';
@@ -43,9 +46,9 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<AdminDashboard />} />
-        <Route path="users" element={<div className="p-6">Users Page</div>} />
-        <Route path="cars" element={<div className="p-6">Cars Page</div>} />
-        <Route path="settings" element={<div className="p-6">Settings Page</div>} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="cars" element={<CarsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
       
       {/* Protected Profile Routes - Only for non-admin users */}
