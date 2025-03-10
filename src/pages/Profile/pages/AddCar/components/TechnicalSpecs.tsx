@@ -28,23 +28,22 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
   errors 
 }) => {
   const handleChange = (field: string, value: string | number) => {
-    // Convert empty strings to empty values for number fields
-    if (value === '' && ['mileage', 'engine_size', 'horsepower'].includes(field)) {
+    // Handle empty values
+    if (value === '') {
       onChange(`specifications.${field}`, '');
       return;
     }
 
-    // Handle numeric validation
-    if (field === 'engine_size') {
-      const parsed = parseFloat(value as string);
-      if (!isNaN(parsed)) {
-        // Round to 1 decimal place
-        value = Math.round(parsed * 10) / 10;
-      }
-    } else if (field === 'mileage' || field === 'horsepower') {
-      const parsed = parseInt(value as string);
-      if (!isNaN(parsed)) {
-        value = parsed;
+    // Handle numeric fields
+    if (['mileage', 'engine_size', 'horsepower', 'doors'].includes(field)) {
+      const numValue = Number(value);
+      if (!isNaN(numValue)) {
+        // Round to integers except engine_size
+        if (field === 'engine_size') {
+          value = Math.round(numValue * 10) / 10; // Round to 1 decimal place
+        } else {
+          value = Math.round(numValue);
+        }
       }
     }
 
@@ -81,7 +80,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
 
         <div>
           <label htmlFor="transmission" className="block text-sm font-medium text-gray-700 mb-2">
-            გადაცემათა კოლოფი
+            ტრანსმისია
           </label>
           <select
             id="transmission"
@@ -93,7 +92,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
                 : 'border-gray-100 focus:border-primary focus:ring-primary/20'
             } focus:outline-none focus:ring-2 transition-colors`}
           >
-            <option value="">აირჩიეთ გადაცემათა კოლოფი</option>
+            <option value="">აირჩიეთ ტრანსმისია</option>
             {TRANSMISSION_OPTIONS.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -182,13 +181,12 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
 
         <div>
           <label htmlFor="horsepower" className="block text-sm font-medium text-gray-700 mb-2">
-            ცხენის ძალა
+            ცხენის ძალა (HP)
           </label>
           <input
             type="number"
             id="horsepower"
             min="0"
-            max="2000"
             step="1"
             value={specifications.horsepower || ''}
             onChange={(e) => handleChange('horsepower', e.target.value)}
@@ -198,7 +196,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                 : 'border-gray-100 focus:border-primary focus:ring-primary/20'
             } focus:outline-none focus:ring-2 transition-colors`}
-            placeholder="მაგ: 180"
+            placeholder="მაგ: 150"
           />
           {errors?.['specifications.horsepower'] && (
             <p className="mt-1 text-sm text-red-600">{errors['specifications.horsepower']}</p>
@@ -212,7 +210,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
           <select
             id="doors"
             value={specifications.doors || ''}
-            onChange={(e) => handleChange('doors', e.target.value)}
+            onChange={(e) => handleChange('doors', Number(e.target.value))}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
               errors?.['specifications.doors']
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -220,9 +218,9 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({
             } focus:outline-none focus:ring-2 transition-colors`}
           >
             <option value="">აირჩიეთ კარების რაოდენობა</option>
-            {[2, 3, 4, 5].map((door) => (
-              <option key={door} value={door}>
-                {door}
+            {[2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num}
               </option>
             ))}
           </select>

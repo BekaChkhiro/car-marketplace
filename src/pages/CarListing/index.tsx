@@ -3,7 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import FilterSidebar from './components/FilterSidebar';
 import CarGrid from './components/CarGrid';
 import SortingHeader from './components/SortingHeader';
-import data from '../../data/cars.json';
+import { getCars } from '../../api/services/carService';
+import { useLoading } from '../../context/LoadingContext';
+import { useToast } from '../../context/ToastContext';
+import { Car } from '../../types/car';
 
 interface Filters {
   brand: string;
@@ -15,8 +18,18 @@ interface Filters {
   location: string;
 }
 
+interface PaginatedResponse {
+  cars: Car[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+}
+
 const CarListing: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const { showLoading, hideLoading } = useLoading();
+  const { showToast } = useToast();
+  
   const [filters, setFilters] = useState<Filters>({
     brand: searchParams.get('brand') || '',
     model: searchParams.get('model') || '',
@@ -26,54 +39,62 @@ const CarListing: React.FC = () => {
     transmission: searchParams.get('transmission') || '',
     location: searchParams.get('location') || ''
   });
+  
+  const [cars, setCars] = useState<Car[] | null>(null);
+  const [totalCars, setTotalCars] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState('newest');
-  const [filteredCars, setFilteredCars] = useState(data.cars);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let result = data.cars;
-
-    // Apply filters
-    if (filters.brand) {
-      result = result.filter(car => car.make === filters.brand);
-    }
-    if (filters.model) {
-      result = result.filter(car => car.model === filters.model);
-    }
-    if (filters.year) {
-      result = result.filter(car => car.year.toString() === filters.year);
-    }
-    if (filters.fuelType) {
-      result = result.filter(car => car.specifications.fuelType === filters.fuelType);
-    }
-    if (filters.transmission) {
-      result = result.filter(car => car.specifications.transmission === filters.transmission);
-    }
-    if (filters.location) {
-      result = result.filter(car => car.location.city === filters.location);
-    }
-    if (filters.priceRange) {
-      const [min, max] = filters.priceRange.split('-').map(Number);
-      result = result.filter(car => car.price >= min && (!max || car.price <= max));
-    }
-
-    // Apply sorting
-    result = [...result].sort((a, b) => {
-      switch (sortBy) {
-        case 'price-asc':
-          return a.price - b.price;
-        case 'price-desc':
-          return b.price - a.price;
-        case 'year-desc':
-          return b.year - a.year;
-        case 'year-asc':
-          return a.year - b.year;
-        default: // 'newest'
-          return Number(b.id) - Number(a.id);
-      }
-    });
-
-    setFilteredCars(result);
+    setCurrentPage(1); // Reset to first page when filters change
+    fetchCars();
   }, [filters, sortBy]);
+
+  useEffect(() => {
+    fetchCars();
+  }, [currentPage]);
+
+  const fetchCars = async () => {
+    try {
+      showLoading();
+      setIsLoading(true);
+
+      // პარამეტრების მომზადება API-სთვის
+      const [priceFrom, priceTo] = filters.priceRange ? filters.priceRange.split('-').map(Number) : [];
+      
+      const params = {
+        page: currentPage,
+        limit: 12, // თითო გვერდზე 12 მანქანა
+        sort: sortBy,
+        brand: filters.brand,
+        model: filters.model,
+        yearFrom: filters.year ? Number(filters.year) : undefined,
+        yearTo: filters.year ? Number(filters.year) : undefined,
+        priceFrom,
+        priceTo,
+        transmission: filters.transmission,
+        fuelType: filters.fuelType,
+        city: filters.location
+      };
+
+      const response = await getCars(params);
+      const data = response as PaginatedResponse;
+      
+      setCars(data.cars || []);
+      setTotalCars(data.total || 0);
+      setTotalPages(data.totalPages || 1);
+    } catch (error: any) {
+      showToast(error.message || 'მანქანების ჩატვირთვა ვერ მოხერხდა', 'error');
+      setCars(null);
+      setTotalCars(0);
+      setTotalPages(1);
+    } finally {
+      hideLoading();
+      setIsLoading(false);
+    }
+  };
 
   const handleFilterChange = (newFilters: Partial<Filters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -81,6 +102,11 @@ const CarListing: React.FC = () => {
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -95,11 +121,39 @@ const CarListing: React.FC = () => {
         
         <div className="w-3/4 flex flex-col min-h-[800px] gap-4">
           <SortingHeader 
-            total={filteredCars.length}
+            total={totalCars}
             sortBy={sortBy}
             onSortChange={handleSortChange}
           />
-          <CarGrid cars={filteredCars} />
+          
+          {isLoading ? (
+            <div className="flex items-center justify-center h-96">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <>
+              <CarGrid cars={cars} />
+              
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-8 gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        currentPage === page
+                          ? 'bg-primary text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-100'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -23,6 +23,9 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { currency, setCurrency } = useCurrency();
   const { formatPrice } = usePrice();
+  
+  // Ensure images is always an array
+  const images = car.images || [];
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,13 +36,17 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev + 1) % car.images.length);
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev - 1 + car.images.length) % car.images.length);
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    }
   };
 
   return (
@@ -52,40 +59,54 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         <div className="absolute inset-0 flex transition-transform duration-300 ease-in-out"
           style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
         >
-          {car.images.map((image, index) => (
+          {images.length > 0 ? (
+            images.map((image, index) => (
+              <div
+                key={index}
+                className="min-w-full h-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${image})` }}
+              />
+            ))
+          ) : (
             <div
-              key={index}
-              className="min-w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${image})` }}
-            />
-          ))}
+              className="min-w-full h-full bg-cover bg-center bg-gray-100 flex items-center justify-center"
+            >
+              <span className="text-gray-400">No image available</span>
+            </div>
+          )}
         </div>
 
-        {/* Navigation Buttons */}
-        <button
-          onClick={prevImage}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
-        >
-          <ChevronLeft className="text-primary w-5 h-5" />
-        </button>
-        <button
-          onClick={nextImage}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
-        >
-          <ChevronRight className="text-primary w-5 h-5" />
-        </button>
+        {/* Navigation Buttons - Only show if there are multiple images */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+            >
+              <ChevronLeft className="text-primary w-5 h-5" />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+            >
+              <ChevronRight className="text-primary w-5 h-5" />
+            </button>
+          </>
+        )}
 
-        {/* Image Indicators */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {car.images.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1 rounded-full transition-all duration-300 ${
-                currentImageIndex === index ? 'w-6 bg-primary' : 'w-2 bg-white/70'
-              }`}
-            />
-          ))}
-        </div>
+        {/* Image Indicators - Only show if there are multiple images */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {images.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  currentImageIndex === index ? 'w-6 bg-primary' : 'w-2 bg-white/70'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {car.isVip && (
           <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-lg text-sm font-medium shadow-sm backdrop-blur-sm">
@@ -109,7 +130,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         </h3>
         <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
           <MapPin className="text-primary w-4 h-4" />
-          {car.location.city}, {car.location.region}
+          {car.location?.city || ''}, {car.location?.region || ''}
         </div>
         <div className="flex items-center justify-between mb-4">
           <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -126,15 +147,15 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Fuel className="text-primary w-4 h-4" />
-            {car.specifications.fuelType}
+            {car.specifications?.fuelType || 'N/A'}
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Gauge className="text-primary w-4 h-4" />
-            {car.specifications.mileage.toLocaleString()} კმ
+            {car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Settings className="text-primary w-4 h-4" />
-            {car.specifications.transmission}
+            {car.specifications?.transmission || 'N/A'}
           </div>
         </div>
       </div>

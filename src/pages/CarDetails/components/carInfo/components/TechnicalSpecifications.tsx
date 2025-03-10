@@ -1,12 +1,12 @@
 import React from 'react';
 
 interface Specifications {
-  engine: string;
-  transmission: string;
-  drive: string;
-  mileage: number;
-  fuelType: string;
-  color: string;
+  engine?: string;
+  transmission?: string;
+  drive?: string;
+  mileage?: number;
+  fuelType?: string;
+  color?: string;
 }
 
 interface TechnicalSpecificationsProps {
@@ -25,15 +25,15 @@ const TechnicalSpecifications: React.FC<TechnicalSpecificationsProps> = ({ speci
           <div className="space-y-4">
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Engine</div>
-              <div className="text-gray-600">{specifications.engine}</div>
+              <div className="text-gray-600">{specifications?.engine || 'N/A'}</div>
             </div>
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Transmission</div>
-              <div className="text-gray-600">{specifications.transmission}</div>
+              <div className="text-gray-600">{specifications?.transmission || 'N/A'}</div>
             </div>
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Drive Type</div>
-              <div className="text-gray-600">{specifications.drive}</div>
+              <div className="text-gray-600">{specifications?.drive || 'N/A'}</div>
             </div>
           </div>
         </div>
@@ -45,15 +45,17 @@ const TechnicalSpecifications: React.FC<TechnicalSpecificationsProps> = ({ speci
           <div className="space-y-4">
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Mileage</div>
-              <div className="text-gray-600">{specifications.mileage.toLocaleString()} km</div>
+              <div className="text-gray-600">
+                {specifications?.mileage ? `${specifications.mileage.toLocaleString()} km` : 'N/A'}
+              </div>
             </div>
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Fuel Type</div>
-              <div className="text-gray-600">{specifications.fuelType}</div>
+              <div className="text-gray-600">{specifications?.fuelType || 'N/A'}</div>
             </div>
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Color</div>
-              <div className="text-gray-600">{specifications.color}</div>
+              <div className="text-gray-600">{specifications?.color || 'N/A'}</div>
             </div>
           </div>
         </div>

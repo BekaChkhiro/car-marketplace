@@ -9,8 +9,34 @@ interface CarImage {
 
 interface CarData {
   id: string;
+  brand_id: number;
+  category_id: number;
+  model: string;
+  year: number;
+  price: number;
+  description?: string;
   images: CarImage[];
-  // ... other car properties
+  specifications: {
+    engine_type?: string;
+    transmission?: string;
+    fuel_type?: string;
+    mileage?: number;
+    engine_size?: number;
+    horsepower?: number;
+    doors?: number;
+    color?: string;
+    body_type?: string;
+  };
+  city: string;
+  state: string;
+  country: string;
+  isVip?: boolean;
+  seller?: {
+    id: string;
+    name: string;
+    phone?: string;
+    email?: string;
+  };
 }
 
 interface NewCarData {
@@ -36,6 +62,22 @@ interface NewCarData {
   city: string;
   state: string;
   country: string;
+}
+
+interface GetCarsParams {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  brand?: string;
+  model?: string;
+  yearFrom?: number;
+  yearTo?: number;
+  priceFrom?: number;
+  priceTo?: number;
+  transmission?: string;
+  fuelType?: string;
+  city?: string;
+  isVip?: boolean;
 }
 
 const validateNewCarData = (data: any): void => {
@@ -106,37 +148,82 @@ export const createCar = async (carData: NewCarData, images: File[]): Promise<Ca
       country: carData.country.trim(),
       status: carData.status || 'available',
       featured: carData.featured || false,
-      description: carData.description?.trim(),
-      specifications
+      description: carData.description?.trim()
     };
+
+    // Log data before validation
+    console.log('Data before validation:', jsonData);
 
     // Validate the data structure
     validateNewCarData(jsonData);
 
-    // Create FormData for images
+    // Create FormData
     const formData = new FormData();
     
-    // Append each image
-    images.forEach((image) => {
+    // Append each field individually
+    Object.entries(jsonData).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formData.append(key, String(value));
+      }
+    });
+
+    // Append specifications fields individually
+    if (specifications) {
+      Object.entries(specifications).forEach(([key, value]) => {
+        if (value !== undefined) {
+          formData.append(`specifications[${key}]`, String(value));
+        }
+      });
+    }
+    
+    // Add each image with standard field name format
+    images.forEach(image => {
       formData.append('images', image);
     });
 
-    // First create the car without images
-    const { data: carResponse } = await api.post('/cars', jsonData);
-
-    // Then upload images if car creation was successful
-    if (carResponse.id) {
-      await uploadCarImages(carResponse.id, images);
+    // Log formData contents (for debugging)
+    console.log('FormData entries:');
+    for (const pair of formData.entries()) {
+      console.log(pair[0], ':', pair[1]);
     }
 
-    return carResponse;
+    // Send everything in one request
+    const { data } = await api.post('/cars', formData, {
+      headers: {
+        'Accept': 'application/json',
+        // Let browser set the content type for FormData
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 60000,
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded));
+        console.log(`Upload Progress: ${percentCompleted}%`);
+      }
+    });
+
+    return data;
   } catch (error: any) {
-    console.error('Error creating car:', {
+    // Enhanced error logging
+    const errorDetails = {
       message: error.response?.data?.message || error.message,
       data: error.response?.data,
       status: error.response?.status,
-      originalError: error
-    });
+      originalError: error,
+      validationErrors: error.response?.data?.errors,
+      requestData: error.config?.data
+    };
+    console.error('Error creating car:', errorDetails);
+
+    // If we have specific validation errors, include them in the error message
+    if (error.response?.data?.errors) {
+      const validationMessages = Object.entries(error.response.data.errors)
+        .map(([field, message]) => `${field}: ${message}`)
+        .join(', ');
+      throw new Error(`Validation failed: ${validationMessages}`);
+    }
+
     throw error;
   }
 };
@@ -261,8 +348,64 @@ export const updateCarWithImages = async (carId: string, carData: any, images?: 
   return data;
 };
 
+// Get all cars with filtering
+export const getCars = async (params: GetCarsParams = {}) => {
+  try {
+    const { data } = await api.get('/cars', { params });
+    // Return data directly since the API already returns the correct format
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching cars:', error);
+    throw error;
+  }
+};
+
+// Get single car by ID
+export const getCarById = async (id: string): Promise<CarData> => {
+  try {
+    const { data } = await api.get(`/cars/${id}`);
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching car:', error);
+    throw error;
+  }
+};
+
+// Get similar cars
+export const getSimilarCars = async (carId: string, limit: number = 3): Promise<CarData[]> => {
+  try {
+    const { data } = await api.get(`/cars/${carId}/similar`, {
+      params: { limit }
+    });
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching similar cars:', error);
+    throw error;
+  }
+};
+
+// Get VIP cars
+export const getVipCars = async (limit: number = 4): Promise<CarData[]> => {
+  try {
+    const { data } = await api.get('/cars', {
+      params: {
+        isVip: true,
+        limit
+      }
+    });
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching VIP cars:', error);
+    throw error;
+  }
+};
+
 export default {
   createCar,
   uploadCarImages,
-  updateCarWithImages
+  updateCarWithImages,
+  getCars,
+  getCarById,
+  getSimilarCars,
+  getVipCars
 };

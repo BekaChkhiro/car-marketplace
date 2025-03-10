@@ -18,6 +18,12 @@ const publicEndpoints = [
   '/auth/facebook'
 ];
 
+// Define endpoints that are public only for GET requests
+const publicGetEndpoints = [
+  '/cars',
+  '/cars/'
+];
+
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   withCredentials: true,
@@ -48,7 +54,11 @@ api.interceptors.request.use(
       config.url?.includes(endpoint)
     );
 
-    if (!isPublicEndpoint) {
+    const isPublicGetEndpoint = config.method === 'get' && publicGetEndpoints.some(endpoint =>
+      config.url?.includes(endpoint)
+    );
+
+    if (!isPublicEndpoint && !isPublicGetEndpoint) {
       // Check for auth token only for protected endpoints
       const authToken = getAccessToken();
       if (!authToken) {

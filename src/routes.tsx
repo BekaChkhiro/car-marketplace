@@ -18,6 +18,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path={routeConfigs.home.path} element={<Home />} />
+      
+      {/* Public Car Routes */}
       <Route path={routeConfigs.carListing.path} element={<CarListing />} />
       <Route path={routeConfigs.carDetails.path} element={<CarDetails />} />
       
@@ -36,25 +38,6 @@ const AppRoutes = () => {
         <Route path="settings" element={<Settings />} />
         <Route path="add-car" element={<AddCar />} />
       </Route>
-      
-      {/* Redirect non-authenticated users trying to access protected pages */}
-      {Object.entries(routeConfigs)
-        .filter(([_, config]) => config.requiresAuth)
-        .map(([key, config]) => (
-          <Route
-            key={key}
-            path={config.path}
-            element={
-              isAuthenticated ? (
-                <ProtectedRoute>
-                  <div>Protected Page: {key}</div>
-                </ProtectedRoute>
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-        ))}
 
       {/* Catch all unmatched routes */}
       <Route path="*" element={<Navigate to="/" replace />} />

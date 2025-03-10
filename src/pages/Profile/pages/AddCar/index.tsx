@@ -130,10 +130,33 @@ const AddCar: React.FC = () => {
     showLoading();
 
     try {
-      const response = await carService.createCar(formData, images);
+      // Convert form data to proper types before sending
+      const carDataToSend = {
+        ...formData,
+        brand_id: Number(formData.brand_id),
+        category_id: Number(formData.category_id),
+        year: Number(formData.year),
+        price: Number(formData.price),
+        specifications: formData.specifications ? {
+          ...formData.specifications,
+          mileage: formData.specifications.mileage ? Number(formData.specifications.mileage) : undefined,
+          engine_size: formData.specifications.engine_size ? Number(formData.specifications.engine_size) : undefined,
+          horsepower: formData.specifications.horsepower ? Number(formData.specifications.horsepower) : undefined,
+          doors: formData.specifications.doors ? Number(formData.specifications.doors) : undefined
+        } : undefined,
+        // Ensure strings are trimmed
+        model: formData.model.trim(),
+        description: formData.description?.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        country: formData.country.trim()
+      };
+
+      const response = await carService.createCar(carDataToSend, images);
       showToast('მანქანა წარმატებით დაემატა', 'success');
       navigate(`/cars/${response.id}`);
     } catch (err: any) {
+      console.error('Error creating car:', err);
       const errorMessage = err.message === 'No authentication token found' || err.message === 'Authentication token expired'
         ? 'გთხოვთ გაიაროთ ავტორიზაცია მანქანის დასამატებლად'
         : err.response?.data?.message || 'დაფიქსირდა შეცდომა მანქანის დამატებისას';

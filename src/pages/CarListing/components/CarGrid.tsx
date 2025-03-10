@@ -1,30 +1,20 @@
 import React from 'react';
 import CarCard from '../../../components/CarCard';
-
-interface Car {
-  id: string;
-  make: string;
-  model: string;
-  year: number;
-  price: number;
-  images: string[];
-  specifications: {
-    fuelType: string;
-    transmission: string;
-    mileage: number;
-  };
-  location: {
-    city: string;
-    region: string;
-  };
-  isVip: boolean;
-}
+import { Car } from '../../../types/car';
 
 interface CarGridProps {
-  cars: Car[];
+  cars: Car[] | null;
 }
 
 const CarGrid: React.FC<CarGridProps> = ({ cars }) => {
+  if (!cars || cars.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-gray-500 text-lg">მანქანები ვერ მოიძებნა</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       {cars.map((car) => (

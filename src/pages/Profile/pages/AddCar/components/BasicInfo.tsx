@@ -44,24 +44,20 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
   }, []);
 
   const handleChange = (field: string, value: string | number) => {
-    // Handle price as integer
-    if (field === 'price') {
-      const numValue = parseInt(value as string);
+    // Handle empty values
+    if (value === '') {
+      onChange(field, '');
+      return;
+    }
+
+    // Handle numeric fields
+    if (['brand_id', 'category_id', 'price', 'year'].includes(field)) {
+      const numValue = Number(value);
       if (!isNaN(numValue)) {
-        value = numValue;
-      } else if (value === '') {
-        value = '';
+        value = numValue; // Keep as number
       }
     }
-    
-    // Handle year as integer
-    if (field === 'year') {
-      const numValue = parseInt(value as string);
-      if (!isNaN(numValue)) {
-        value = numValue;
-      }
-    }
-    
+
     onChange(field, value);
   };
 
@@ -107,7 +103,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
           <select
             id="brand_id"
             value={formData.brand_id}
-            onChange={(e) => onChange('brand_id', e.target.value)}
+            onChange={(e) => handleChange('brand_id', Number(e.target.value))}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
               errors?.brand_id 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -133,7 +129,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
           <select
             id="category_id"
             value={formData.category_id}
-            onChange={(e) => onChange('category_id', e.target.value)}
+            onChange={(e) => handleChange('category_id', Number(e.target.value))}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
               errors?.category_id 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -160,7 +156,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
             type="text"
             id="model"
             value={formData.model}
-            onChange={(e) => onChange('model', e.target.value)}
+            onChange={(e) => handleChange('model', e.target.value)}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
               errors?.model 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -209,7 +205,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
             min="0"
             step="100"
             value={formData.price}
-            onChange={(e) => handleChange('price', e.target.value)}
+            onChange={(e) => handleChange('price', Number(e.target.value))}
             onWheel={(e) => e.currentTarget.blur()}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
               errors?.price 
