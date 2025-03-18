@@ -6,7 +6,7 @@ import { hasStoredToken, getAccessToken, isTokenExpired, getRefreshToken } from 
 import { useToast } from './ToastContext';
 import { useLoading } from './LoadingContext';
 import { getStoredPreferences } from '../utils/userPreferences';
-import { storeUserData, clearUserData } from '../utils/userStorage';
+import { storeUserData, clearUserData, getCachedUserData } from '../utils/userStorage';
 
 // Auth context state interface
 interface AuthState {
@@ -53,8 +53,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [initRetries, setInitRetries] = useState(0);
-  const MAX_RETRIES = 3;
+  const [serverErrorCount, setServerErrorCount] = useState(0);
+  const MAX_SERVER_RETRIES = 3;
+  const RETRY_DELAY = 2000; // 2 seconds
 
   // Listen for auth:required events
   useEffect(() => {
@@ -76,6 +77,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     navigate('/', { replace: true });
   };
 
+  const handleServerError = async (error: any, retryFn: () => Promise<any>) => {
+    if (error?.response?.status === 500 && serverErrorCount < MAX_SERVER_RETRIES) {
+      setServerErrorCount(prev => prev + 1);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return retryFn();
+    }
+    throw error;
+  };
+
+  const initializeWithCachedData = () => {
+    const cachedUser = getCachedUserData();
+    if (cachedUser) {
+      setUser(cachedUser);
+      setIsAuthenticated(true);
+      showToast('Using cached profile data. Some features may be limited.', 'warning');
+      return true;
+    }
+    return false;
+  };
+
   // Initialize auth state
   useEffect(() => {
     const initializeAuth = async () => {
@@ -93,36 +114,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (accessToken && isTokenExpired(accessToken) && refreshToken) {
           try {
             await authService.refreshToken();
-          } catch (refreshError) {
-            if (initRetries >= MAX_RETRIES) {
-              throw new Error('Failed to refresh authentication');
+          } catch (refreshError: any) {
+            // If token refresh fails with 500, try using cached data
+            if (refreshError?.response?.status === 500 && initializeWithCachedData()) {
+              hideLoading();
+              setIsInitializing(false);
+              return;
             }
-            // Increment retry counter and try again after a delay
-            setInitRetries(prev => prev + 1);
-            setTimeout(() => initializeAuth(), 1000);
-            return;
+            throw refreshError;
           }
         }
 
-        const userData = await authService.getProfile();
-        if (userData) {
-          setUser(userData);
-          setIsAuthenticated(true);
-          storeUserData(userData);
+        try {
+          const userData = await authService.getProfile();
+          if (userData) {
+            setUser(userData);
+            setIsAuthenticated(true);
+            storeUserData(userData);
+            setServerErrorCount(0); // Reset error count on success
+          }
+        } catch (profileError: any) {
+          // If profile fetch fails with 500, try using cached data
+          if (profileError?.response?.status === 500) {
+            if (initializeWithCachedData()) {
+              return;
+            }
+            // If no cached data, retry with exponential backoff
+            return handleServerError(profileError, initializeAuth);
+          }
+          throw profileError;
         }
       } catch (error: any) {
         console.error('Error initializing auth:', error);
-        
-        // Only clear auth state if it's a fatal error
-        if (initRetries >= MAX_RETRIES || 
-            error.message.includes('authentication') || 
-            error.message.includes('token')) {
+        // Only clear auth if it's not a server error or we've exceeded retries
+        if (error?.response?.status !== 500 || serverErrorCount >= MAX_SERVER_RETRIES) {
           clearAuthState();
-        } else {
-          // Retry initialization
-          setInitRetries(prev => prev + 1);
-          setTimeout(() => initializeAuth(), 1000);
-          return;
         }
       } finally {
         hideLoading();
