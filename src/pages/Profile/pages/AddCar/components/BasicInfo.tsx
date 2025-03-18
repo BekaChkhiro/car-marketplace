@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../../../../api/config/axios';
 import type { BrandOption, CategoryOption } from '../types';
+import { TRANSPORT_TYPE_OPTIONS } from '../types';
 
 interface BasicInfoProps {
   formData: {
@@ -9,6 +10,7 @@ interface BasicInfoProps {
     model: string;
     year: number;
     price: string | number;
+    transport_type: string;
   };
   onChange: (field: string, value: string | number) => void;
   errors?: Record<string, string>;
@@ -17,6 +19,8 @@ interface BasicInfoProps {
 const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => {
   const [brands, setBrands] = useState<BrandOption[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<CategoryOption[]>([]);
+  const [models, setModels] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -32,6 +36,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
         
         setBrands(brandsResponse.data);
         setCategories(categoriesResponse.data);
+        setFilteredCategories(categoriesResponse.data);
       } catch (err) {
         console.error('Error fetching form data:', err);
         setError('მონაცემების ჩატვირთვა ვერ მოხერხდა');
@@ -43,19 +48,67 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (!formData.brand_id) {
+        setModels([]);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`/transports/brands/${formData.brand_id}/models`);
+        setModels(response.data);
+      } catch (err) {
+        console.error('Error fetching models:', err);
+        setError('მოდელების ჩატვირთვა ვერ მოხერხდა');
+      }
+    };
+
+    fetchModels();
+  }, [formData.brand_id]);
+
+  useEffect(() => {
+    // როცა ტრანსპორტის ტიპი იცვლება, გავფილტროთ კატეგორიები
+    if (formData.transport_type && categories.length > 0) {
+      try {
+        // გავფილტროთ კატეგორიები ტრანსპორტის ტიპის მიხედვით
+        const filtered = categories.filter(category => 
+          category.transport_type === formData.transport_type
+        );
+        setFilteredCategories(filtered);
+        
+        // თუ არჩეული კატეგორია არ არის ახალ ფილტრირებულ სიაში, გავასუფთაოთ
+        if (!filtered.find(cat => cat.id === formData.category_id)) {
+          onChange('category_id', '');
+        }
+      } catch (err) {
+        console.error('Error filtering categories:', err);
+      }
+    } else {
+      setFilteredCategories([]);
+      onChange('category_id', '');
+    }
+  }, [formData.transport_type, categories]);
+
   const handleChange = (field: string, value: string | number) => {
-    // Handle empty values
     if (value === '') {
       onChange(field, '');
       return;
     }
 
-    // Handle numeric fields
     if (['brand_id', 'category_id', 'price', 'year'].includes(field)) {
       const numValue = Number(value);
       if (!isNaN(numValue)) {
-        value = numValue; // Keep as number
+        value = numValue;
       }
+    }
+
+    if (field === 'brand_id') {
+      onChange('model', '');
+    }
+
+    if (field === 'transport_type') {
+      onChange('category_id', '');
     }
 
     onChange(field, value);
@@ -91,11 +144,48 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
     );
   }
 
+  const transportTypeLabels = {
+    car: 'მანქანა',
+    motorcycle: 'მოტოციკლი',
+    truck: 'სატვირთო'
+  };
+
   return (
     <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
       <h2 className="text-lg font-semibold text-gray-dark border-b pb-4">ძირითადი ინფორმაცია</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            ტრანსპორტის ტიპი *
+          </label>
+          <div className="grid grid-cols-3 gap-4">
+            {TRANSPORT_TYPE_OPTIONS.map((type) => (
+              <label
+                key={type}
+                className={`flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer border-2 transition-all ${
+                  formData.transport_type === type
+                    ? 'border-primary bg-green-light text-primary'
+                    : 'border-gray-100 hover:border-primary/50'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="transport_type"
+                  value={type}
+                  checked={formData.transport_type === type}
+                  onChange={(e) => handleChange('transport_type', e.target.value)}
+                  className="hidden"
+                />
+                <span className="text-sm font-medium">{transportTypeLabels[type]}</span>
+              </label>
+            ))}
+          </div>
+          {errors?.transport_type && (
+            <p className="mt-1 text-sm text-red-600">{errors.transport_type}</p>
+          )}
+        </div>
+
         <div>
           <label htmlFor="brand_id" className="block text-sm font-medium text-gray-700 mb-2">
             მარკა *
@@ -135,9 +225,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                 : 'border-gray-100 focus:border-primary focus:ring-primary/20'
             } focus:outline-none focus:ring-2 transition-colors`}
+            disabled={!formData.transport_type}
           >
             <option value="">აირჩიეთ კატეგორია</option>
-            {categories.map((category) => (
+            {filteredCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -152,18 +243,24 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, onChange, errors }) => 
           <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-2">
             მოდელი *
           </label>
-          <input
-            type="text"
+          <select
             id="model"
             value={formData.model}
             onChange={(e) => handleChange('model', e.target.value)}
+            disabled={!formData.brand_id}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
               errors?.model 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                 : 'border-gray-100 focus:border-primary focus:ring-primary/20'
-            } focus:outline-none focus:ring-2 transition-colors`}
-            placeholder="მაგ: Camry"
-          />
+            } focus:outline-none focus:ring-2 transition-colors ${!formData.brand_id ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+          >
+            <option value="">აირჩიეთ მოდელი</option>
+            {models.map((model) => (
+              <option key={model} value={model}>
+                {model}
+              </option>
+            ))}
+          </select>
           {errors?.model && (
             <p className="mt-1 text-sm text-red-600">{errors.model}</p>
           )}

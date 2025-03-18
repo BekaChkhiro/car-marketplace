@@ -1,47 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, DollarSign, Calendar, Search, Settings, Fuel, Navigation, Palette, ChevronsLeft } from 'lucide-react';
-import data from '../data/cars.json';
+import axios from '../api/config/axios';
+import { Fuel, Car, Settings2, MapPin } from 'lucide-react';
+import { TRANSPORT_TYPE_OPTIONS } from '../pages/Profile/pages/AddCar/types';
+import { getCategories } from '../api/services/carService';
 
-interface SearchFormData {
-  brand: string;
-  model: string;
-  priceRange: string;
-  year: string;
-  transmission: string;
-  fuelType: string;
-  drive: string;
-  color: string;
+interface BrandData {
+  id: number;
+  name: string;
+  models: string[];
 }
 
-const VerticalSearchFilter: React.FC = () => {
+interface CategoryData {
+  id: number;
+  name: string;
+  transport_type: 'car' | 'motorcycle' | 'truck';
+}
+
+interface FormData {
+  transport_type: string;
+  brand: string;
+  model: string;
+  category: string;
+  priceRange: string;
+  year: string;
+  fuelType: string;
+  transmission: string;
+  location: string;
+}
+
+interface VerticalSearchFilterProps {
+  onFilterChange: (filters: any) => void;
+}
+
+const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterChange }) => {
   const navigate = useNavigate();
-  const { brands } = data;
-  
-  const [formData, setFormData] = useState<SearchFormData>({
+  const [formData, setFormData] = useState<FormData>({
+    transport_type: '',
     brand: '',
     model: '',
+    category: '',
     priceRange: '',
     year: '',
-    transmission: '',
     fuelType: '',
-    drive: '',
-    color: ''
+    transmission: '',
+    location: ''
   });
-  
+
+  const [brands, setBrands] = useState<BrandData[]>([]);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<CategoryData[]>([]);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
-  
-  const handleBrandChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedBrand = e.target.value;
-    const brandData = brands.find(brand => brand.name === selectedBrand);
-    setFormData({
-      ...formData,
-      brand: selectedBrand,
-      model: ''
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [brandsResponse, categoriesResponse] = await Promise.all([
+          axios.get('/transports/brands'),
+          axios.get('/transports/categories')
+        ]);
+
+        setBrands(brandsResponse.data);
+        setCategories(categoriesResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // ფილტრავს კატეგორიებს ტრანსპორტის ტიპის მიხედვით
+    if (formData.transport_type && categories.length > 0) {
+      const filtered = categories.filter(category => 
+        category.transport_type === formData.transport_type
+      );
+      setFilteredCategories(filtered);
+      
+      // თუ არჩეული კატეგორია არ არის ახალ ფილტრირებულ სიაში, გავასუფთაოთ
+      if (!filtered.find(cat => cat.id.toString() === formData.category)) {
+        setFormData(prev => ({ ...prev, category: '' }));
+      }
+    } else {
+      setFilteredCategories([]);
+      setFormData(prev => ({ ...prev, category: '' }));
+    }
+  }, [formData.transport_type, categories]);
+
+  useEffect(() => {
+    if (!formData.brand) {
+      setAvailableModels([]);
+      return;
+    }
+
+    const selectedBrand = brands.find(b => b.id.toString() === formData.brand);
+    setAvailableModels(selectedBrand?.models || []);
+  }, [formData.brand, brands]);
+
+  const handleChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // გავასუფთაოთ დამოკიდებული ველები
+      if (field === 'brand') {
+        newData.model = '';
+      }
+      if (field === 'transport_type') {
+        newData.category = '';
+      }
+      
+      return newData;
     });
-    setAvailableModels(brandData?.models || []);
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -65,70 +137,142 @@ const VerticalSearchFilter: React.FC = () => {
 
   const transmissions = ['Automatic', 'Manual', 'CVT', 'DSG', 'PDK', 'Single-Speed'];
   const fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
-  const driveTypes = ['FWD', 'RWD', 'AWD', '4WD'];
-  const colors = ['Black', 'White', 'Silver', 'Gray', 'Red', 'Blue', 'Pearl White', 'Deep Black', 'Nardo Gray', 'Guards Red', 'Modern Steel', 'Amazon Gray'];
+  const transportTypeLabels = {
+    car: 'მანქანა',
+    motorcycle: 'მოტოციკლი',
+    truck: 'სატვირთო'
+  };
 
   return (
-    <div className="w-full h-full bg-white/95 backdrop-blur-xl p-6 pb-0 flex flex-col justify-between items-center rounded-2xl shadow-lg border border-green-lighter/20 overflow-y-auto">
-      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-        <div className="relative group">
-          <Car className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
-          <select
-            value={formData.brand}
-            onChange={handleBrandChange}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
-          >
-            <option value="">აირჩიე მარკა</option>
-            {brands.map(brand => (
-              <option key={brand.id} value={brand.name}>
-                {brand.name}
-              </option>
+    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6">
+      <h3 className="text-xl font-semibold text-gray-dark mb-6">ძებნა</h3>
+      
+      <div className="space-y-6">
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <Car className="text-primary" size={18} /> ტრანსპორტის ტიპი
+          </h4>
+          <div className="grid grid-cols-3 gap-3">
+            {TRANSPORT_TYPE_OPTIONS.map((type) => (
+              <label
+                key={type}
+                className={`flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer border-2 transition-all ${
+                  formData.transport_type === type
+                    ? 'border-primary bg-green-light text-primary'
+                    : 'border-gray-100 hover:border-primary/50'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="transport_type"
+                  value={type}
+                  checked={formData.transport_type === type}
+                  onChange={(e) => handleChange('transport_type', e.target.value)}
+                  className="hidden"
+                />
+                <span className="text-sm font-medium">{transportTypeLabels[type]}</span>
+              </label>
             ))}
-          </select>
+          </div>
         </div>
-        
-        <div className="relative group">
-          <Car className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
-          <select
-            value={formData.model}
-            onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-            disabled={!formData.brand}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer disabled:bg-gray-50 disabled:cursor-not-allowed hover:border-primary"
-          >
-            <option value="">აირჩიე მოდელი</option>
-            {availableModels.map(model => (
-              <option key={model} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
+
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <Car className="text-primary" size={18} /> მარკა და მოდელი
+          </h4>
+          <div className="grid grid-cols-2 gap-3">
+            <select
+              value={formData.brand}
+              onChange={(e) => handleChange('brand', e.target.value)}
+              className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            >
+              <option value="">მარკა</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={formData.model}
+              onChange={(e) => handleChange('model', e.target.value)}
+              disabled={!formData.brand}
+              className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 disabled:bg-gray-50 disabled:cursor-not-allowed"
+            >
+              <option value="">მოდელი</option>
+              {availableModels.map((model) => (
+                <option key={model} value={model}>
+                  {model}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        
-        <div className="relative group">
-          <Settings className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <Settings2 className="text-primary" size={18} /> კატეგორია
+          </h4>
           <select
-            value={formData.transmission}
-            onChange={(e) => setFormData({ ...formData, transmission: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+            value={formData.category}
+            onChange={(e) => handleChange('category', e.target.value)}
+            disabled={!formData.transport_type}
+            className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 disabled:bg-gray-50 disabled:cursor-not-allowed"
           >
-            <option value="">ტრანსმისია</option>
-            {transmissions.map(transmission => (
-              <option key={transmission} value={transmission}>
-                {transmission}
+            <option value="">აირჩიეთ კატეგორია</option>
+            {filteredCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="relative group">
-          <Fuel className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <Settings2 className="text-primary" size={18} /> ფასი და წელი
+          </h4>
+          <div className="grid grid-cols-2 gap-3">
+            <select
+              value={formData.priceRange}
+              onChange={(e) => handleChange('priceRange', e.target.value)}
+              className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            >
+              <option value="">ფასი</option>
+              {priceRanges.map((range) => (
+                <option key={range} value={range}>
+                  ${range}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={formData.year}
+              onChange={(e) => handleChange('year', e.target.value)}
+              className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            >
+              <option value="">წელი</option>
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <Fuel className="text-primary" size={18} /> საწვავის ტიპი
+          </h4>
           <select
             value={formData.fuelType}
-            onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+            onChange={(e) => handleChange('fuelType', e.target.value)}
+            className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
           >
-            <option value="">საწვავის ტიპი</option>
-            {fuelTypes.map(type => (
+            <option value="">ნებისმიერი</option>
+            {fuelTypes.map((type) => (
               <option key={type} value={type}>
                 {type}
               </option>
@@ -136,15 +280,17 @@ const VerticalSearchFilter: React.FC = () => {
           </select>
         </div>
 
-        <div className="relative group">
-          <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <Settings2 className="text-primary" size={18} /> ტრანსმისია
+          </h4>
           <select
-            value={formData.drive}
-            onChange={(e) => setFormData({ ...formData, drive: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+            value={formData.transmission}
+            onChange={(e) => handleChange('transmission', e.target.value)}
+            className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
           >
-            <option value="">წამყვანი თვლები</option>
-            {driveTypes.map(type => (
+            <option value="">ნებისმიერი</option>
+            {transmissions.map((type) => (
               <option key={type} value={type}>
                 {type}
               </option>
@@ -152,67 +298,31 @@ const VerticalSearchFilter: React.FC = () => {
           </select>
         </div>
 
-        <div className="relative group">
-          <Palette className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
+        <div>
+          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <MapPin className="text-primary" size={18} /> მდებარეობა
+          </h4>
           <select
-            value={formData.color}
-            onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
+            value={formData.location}
+            onChange={(e) => handleChange('location', e.target.value)}
+            className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
           >
-            <option value="">ფერი</option>
-            {colors.map(color => (
-              <option key={color} value={color}>
-                {color}
-              </option>
-            ))}
+            <option value="">მდებარეობა</option>
+            <option value="tbilisi">თბილისი</option>
+            <option value="batumi">ბათუმი</option>
+            <option value="kutaisi">ქუთაისი</option>
+            <option value="rustavi">რუსთავი</option>
           </select>
         </div>
-        
-        <div className="relative group">
-          <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
-          <select
-            value={formData.priceRange}
-            onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
-          >
-            <option value="">ფასის დიაპაზონი</option>
-            {priceRanges.map(range => (
-              <option key={range} value={range}>
-                ${range}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="relative group">
-          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-all duration-300 group-hover:scale-110" />
-          <select
-            value={formData.year}
-            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 border-2 border-green-light rounded-xl bg-white/80 text-gray-dark focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all cursor-pointer hover:border-primary"
-          >
-            <option value="">წელი</option>
-            {years.map(year => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </div>
-        
+
         <button
           type="submit"
-          className="flex items-center justify-center gap-3 py-3 px-4 bg-primary-gradient text-white text-lg font-semibold rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full bg-primary text-white font-medium py-3 rounded-lg hover:bg-primary/90 transition-colors duration-200"
         >
-          <Search className="text-xl" /> მოძებნა
+          ძებნა
         </button>
-      </form>
-
-      <button className='flex gap-2 text-white text-sm bg-primary py-1 px-6 rounded-t-lg mt-6'>
-        <ChevronsLeft />
-        დამატებითი დეტალები
-      </button>
-    </div>
+      </div>
+    </form>
   );
 };
 

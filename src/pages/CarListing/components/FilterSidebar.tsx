@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   SlidersHorizontal, 
   X, 
-  Car, 
+  Car,
+  Bike, 
+  Truck,
   Calendar, 
   Fuel, 
   Settings,
@@ -10,11 +12,14 @@ import {
   Search 
 } from 'lucide-react';
 import data from '../../../data/cars.json';
+import axios from '../../../api/config/axios';
 
 interface FilterSidebarProps {
   filters: {
+    transportType: string;
     brand: string;
     model: string;
+    category: string;
     priceRange: string;
     year: string;
     fuelType: string;
@@ -26,25 +31,54 @@ interface FilterSidebarProps {
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [categories, setCategories] = useState<Array<{ id: number; name: string; transport_type: string }>>([]);
+  const [filteredCategories, setFilteredCategories] = useState<Array<{ id: number; name: string; transport_type: string }>>([]);
   const { brands } = data;
   const years = Array.from({ length: 35 }, (_, i) => 2024 - i);
   const fuelTypes = ['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო'];
   const transmissions = ['ავტომატიკა', 'მექანიკა'];
-  const priceRanges = [
-    '0-5000',
-    '5000-10000',
-    '10000-20000',
-    '20000-30000',
-    '30000-50000',
-    '50000+'
+  const transportTypes = [
+    { id: 'car', name: 'მანქანა', icon: Car },
+    { id: 'motorcycle', name: 'მოტოციკლი', icon: Bike },
+    { id: 'truck', name: 'სატვირთო', icon: Truck }
   ];
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('/transports/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (filters.transportType && categories.length > 0) {
+      const filtered = categories.filter(category => 
+        category.transport_type === filters.transportType
+      );
+      setFilteredCategories(filtered);
+      
+      // If the current category doesn't belong to the new transport type, reset it
+      if (!filtered.find(cat => cat.id.toString() === filters.category)) {
+        onFilterChange({ ...filters, category: '' });
+      }
+    } else {
+      setFilteredCategories([]);
+    }
+  }, [filters.transportType, categories]);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   
   const handleReset = () => {
     onFilterChange({
+      transportType: '',
       brand: '',
       model: '',
+      category: '',
       priceRange: '',
       year: '',
       fuelType: '',
@@ -62,22 +96,59 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
         onClick={toggleSidebar}
       />
       
-      <aside className={`bg-white p-4 rounded-xl shadow-sm max-h-[calc(100vh-100px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-primary md:translate-x-0 fixed md:static inset-y-0 left-0 w-[320px] md:w-auto z-50 transition-transform duration-200 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-          <h3 className="text-xl font-bold text-gray-dark flex items-center gap-2">
-            <SlidersHorizontal className="text-primary" size={20} /> ფილტრები
-          </h3>
-          <button 
-            onClick={toggleSidebar}
-            className="md:hidden w-9 h-9 rounded-full bg-gray-100 text-gray-dark hover:bg-gray-200 hover:rotate-90 transition-all flex items-center justify-center"
-          >
-            <X size={20} />
-          </button>
-        </div>
+      <aside className={`fixed top-0 right-0 h-full bg-white w-80 shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto`}>
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">ფილტრი</h2>
+            <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-700">
+              <X size={24} />
+            </button>
+          </div>
 
-        <div className="space-y-6">
+          {/* Transport Type Selection */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ტრანსპორტის ტიპი
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {transportTypes.map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => onFilterChange({ ...filters, transportType: type.id })}
+                  className={`p-2 flex items-center justify-center border rounded-md ${
+                    filters.transportType === type.id
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  <type.icon className="w-4 h-4 mr-2" />
+                  {type.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Categories */}
+          {filteredCategories.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                კატეგორია
+              </label>
+              <select
+                value={filters.category}
+                onChange={(e) => onFilterChange({ ...filters, category: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              >
+                <option value="">აირჩიეთ კატეგორია</option>
+                {filteredCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
               <Car className="text-primary" size={18} /> მარკა & მოდელი

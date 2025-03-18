@@ -9,8 +9,10 @@ import { useToast } from '../../context/ToastContext';
 import { Car } from '../../types/car';
 
 interface Filters {
+  transportType: string;
   brand: string;
   model: string;
+  category: string;
   priceRange: string;
   year: string;
   fuelType: string;
@@ -33,11 +35,13 @@ const CarListing: React.FC = () => {
   const [filters, setFilters] = useState<Filters>({
     brand: searchParams.get('brand') || '',
     model: searchParams.get('model') || '',
+    category: searchParams.get('category') || '',
     priceRange: searchParams.get('priceRange') || '',
     year: searchParams.get('year') || '',
     fuelType: searchParams.get('fuelType') || '',
     transmission: searchParams.get('transmission') || '',
-    location: searchParams.get('location') || ''
+    location: searchParams.get('location') || '',
+    transportType: 'car'
   });
   
   const [cars, setCars] = useState<Car[] | null>(null);
@@ -61,26 +65,22 @@ const CarListing: React.FC = () => {
       showLoading();
       setIsLoading(true);
 
-      // პარამეტრების მომზადება API-სთვის
-      const [priceFrom, priceTo] = filters.priceRange ? filters.priceRange.split('-').map(Number) : [];
-      
       const params = {
         page: currentPage,
-        limit: 12, // თითო გვერდზე 12 მანქანა
-        sort: sortBy,
-        brand: filters.brand,
-        model: filters.model,
-        yearFrom: filters.year ? Number(filters.year) : undefined,
-        yearTo: filters.year ? Number(filters.year) : undefined,
-        priceFrom,
-        priceTo,
-        transmission: filters.transmission,
-        fuelType: filters.fuelType,
-        city: filters.location
+        limit: 12,
+        sort: sortBy === 'newest' ? 'created_at' : sortBy,
+        order: 'DESC' as const,
+        brand_id: filters.brand ? Number(filters.brand) : undefined,
+        category_id: filters.category ? Number(filters.category) : undefined,
+        transport_type: 'car',
+        price_min: filters.priceRange ? Number(filters.priceRange.split('-')[0]) : undefined,
+        price_max: filters.priceRange ? Number(filters.priceRange.split('-')[1]) : undefined,
+        year_min: filters.year ? Number(filters.year) : undefined,
+        year_max: filters.year ? Number(filters.year) : undefined
       };
 
       const response = await getCars(params);
-      const data = response as PaginatedResponse;
+      const data = response;
       
       setCars(data.cars || []);
       setTotalCars(data.total || 0);

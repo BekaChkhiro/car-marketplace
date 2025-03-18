@@ -9,7 +9,7 @@ const HeroSection: React.FC = () => {
         <FeaturedSlider />
       </div>
       <div className='w-1/4 h-full'>
-        <VerticalSearchFilter />
+        <VerticalSearchFilter onFilterChange={() => {}} />
       </div>
     </section>
   );

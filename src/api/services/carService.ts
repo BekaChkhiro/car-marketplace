@@ -68,16 +68,14 @@ interface GetCarsParams {
   page?: number;
   limit?: number;
   sort?: string;
-  brand?: string;
-  model?: string;
-  yearFrom?: number;
-  yearTo?: number;
-  priceFrom?: number;
-  priceTo?: number;
-  transmission?: string;
-  fuelType?: string;
-  city?: string;
-  isVip?: boolean;
+  order?: 'ASC' | 'DESC';
+  brand_id?: number;
+  category_id?: number;
+  transport_type?: string;
+  price_min?: number;
+  price_max?: number;
+  year_min?: number;
+  year_max?: number;
 }
 
 const validateNewCarData = (data: any): void => {
@@ -351,12 +349,26 @@ export const updateCarWithImages = async (carId: string, carData: any, images?: 
 // Get all cars with filtering
 export const getCars = async (params: GetCarsParams = {}) => {
   try {
-    const { data } = await api.get('/transports', { params });
-    // Return data directly since the API already returns the correct format
+    // Transform frontend parameters to match backend expectations
+    const transformedParams = {
+      page: params.page || 1,
+      limit: params.limit || 12,
+      sort: params.sort || 'created_at',
+      order: params.order || 'DESC',
+      brand_id: params.brand_id,
+      category_id: params.category_id,
+      transport_type: params.transport_type || 'car',
+      price_min: params.price_min,
+      price_max: params.price_max,
+      year_min: params.year_min,
+      year_max: params.year_max
+    };
+
+    const { data } = await api.get('/transports', { params: transformedParams });
     return data;
   } catch (error: any) {
     console.error('Error fetching cars:', error);
-    throw error;
+    throw new Error(error.response?.data?.message || 'Error fetching cars');
   }
 };
 
@@ -367,7 +379,7 @@ export const getCarById = async (id: string): Promise<CarData> => {
     return data;
   } catch (error: any) {
     console.error('Error fetching car:', error);
-    throw error;
+    throw new Error(error.response?.data?.message || 'Error fetching car details');
   }
 };
 
@@ -400,6 +412,16 @@ export const getVipCars = async (limit: number = 4): Promise<CarData[]> => {
   }
 };
 
+export const getCategories = async () => {
+  try {
+    const response = await api.get('/categories');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+};
+
 export default {
   createCar,
   uploadCarImages,
@@ -407,5 +429,6 @@ export default {
   getCars,
   getCarById,
   getSimilarCars,
-  getVipCars
+  getVipCars,
+  getCategories
 };

@@ -10,6 +10,7 @@ import BasicInfo from './components/BasicInfo';
 import TechnicalSpecs from './components/TechnicalSpecs';
 import Location from './components/Location';
 import Description from './components/Description';
+import Features from './components/Features';
 import type { NewCarFormData, FormSection } from './types';
 
 const AddCar: React.FC = () => {
@@ -27,22 +28,63 @@ const AddCar: React.FC = () => {
     model: '',
     year: new Date().getFullYear(),
     price: '',
-    description: '', // This is now required in state even if optional in API
+    transport_type: 'car', // Set default value to 'car'
     city: '',
     state: '',
     country: 'Georgia',
+    location_type: 'georgia',
+    description_en: '',
+    description_ka: '',
+    description_ru: '',
     status: 'available',
-    // Make specifications required in state even if optional in API
+    
     specifications: {
       engine_type: '',
-      transmission: '',
-      fuel_type: '',
+      transmission: undefined,
+      fuel_type: undefined,
       mileage: '',
+      mileage_unit: 'km',
       engine_size: '',
       horsepower: '',
-      doors: '',
-      color: '',
-      body_type: ''
+      doors: undefined,
+      is_turbo: false,
+      cylinders: undefined,
+      manufacture_month: undefined,
+      body_type: '',
+      steering_wheel: undefined,
+      drive_type: undefined,
+      interior_material: undefined,
+      interior_color: '',
+      color: ''
+    },
+    
+    features: {
+      has_catalyst: true,
+      airbags_count: 0,
+      has_hydraulics: false,
+      has_board_computer: false,
+      has_air_conditioning: false,
+      has_parking_control: false,
+      has_rear_view_camera: false,
+      has_electric_windows: false,
+      has_climate_control: false,
+      has_cruise_control: false,
+      has_start_stop: false,
+      has_sunroof: false,
+      has_seat_heating: false,
+      has_seat_memory: false,
+      has_abs: false,
+      has_traction_control: false,
+      has_central_locking: false,
+      has_alarm: false,
+      has_fog_lights: false,
+      has_navigation: false,
+      has_aux: false,
+      has_bluetooth: false,
+      has_multifunction_steering_wheel: false,
+      has_alloy_wheels: false,
+      has_spare_tire: false,
+      is_disability_adapted: false
     }
   });
 
@@ -50,7 +92,7 @@ const AddCar: React.FC = () => {
     const newErrors: Record<string, string> = {};
     const currentYear = new Date().getFullYear();
 
-    // Basic Info validation with numeric checks
+    // Basic Info validation
     if (!formData.brand_id) newErrors['brand_id'] = 'მარკის არჩევა სავალდებულოა';
     if (!formData.category_id) newErrors['category_id'] = 'კატეგორიის არჩევა სავალდებულოა';
     if (!formData.model) newErrors['model'] = 'მოდელის მითითება სავალდებულოა';
@@ -76,11 +118,14 @@ const AddCar: React.FC = () => {
     if (!formData.city?.trim()) {
       newErrors['city'] = 'ქალაქის მითითება სავალდებულოა';
     }
-    if (!formData.state?.trim()) {
-      newErrors['state'] = 'რეგიონის მითითება სავალდებულოა';
+    
+    if (formData.location_type !== 'georgia') {
+      if (!formData.state?.trim()) {
+        newErrors['state'] = 'რეგიონის მითითება სავალდებულოა';
+      }
     }
 
-    // Optional specifications validation if provided
+    // Specifications validation
     const specs = formData.specifications;
     if (specs) {
       if (specs.mileage && isNaN(Number(specs.mileage))) {
@@ -92,12 +137,18 @@ const AddCar: React.FC = () => {
       if (specs.horsepower && isNaN(Number(specs.horsepower))) {
         newErrors['specifications.horsepower'] = 'ცხენის ძალა უნდა იყოს რიცხვითი მნიშვნელობა';
       }
-      if (specs.doors) {
-        const doors = Number(specs.doors);
-        if (isNaN(doors) || doors < 2 || doors > 5) {
-          newErrors['specifications.doors'] = 'კარების რაოდენობა უნდა იყოს 2-დან 5-მდე';
-        }
+      if (specs.cylinders && (isNaN(Number(specs.cylinders)) || Number(specs.cylinders) < 1)) {
+        newErrors['specifications.cylinders'] = 'ცილინდრების რაოდენობა უნდა იყოს დადებითი რიცხვი';
       }
+      if (specs.manufacture_month && (isNaN(Number(specs.manufacture_month)) || Number(specs.manufacture_month) < 1 || Number(specs.manufacture_month) > 12)) {
+        newErrors['specifications.manufacture_month'] = 'გამოშვების თვე უნდა იყოს 1-დან 12-მდე';
+      }
+    }
+
+    // Features validation
+    if (formData.features?.airbags_count && (isNaN(Number(formData.features.airbags_count)) || 
+        Number(formData.features.airbags_count) < 0 || Number(formData.features.airbags_count) > 12)) {
+      newErrors['features.airbags_count'] = 'აირბეგების რაოდენობა უნდა იყოს 0-დან 12-მდე';
     }
 
     // Images validation
@@ -142,11 +193,11 @@ const AddCar: React.FC = () => {
           mileage: formData.specifications.mileage ? Number(formData.specifications.mileage) : undefined,
           engine_size: formData.specifications.engine_size ? Number(formData.specifications.engine_size) : undefined,
           horsepower: formData.specifications.horsepower ? Number(formData.specifications.horsepower) : undefined,
-          doors: formData.specifications.doors ? Number(formData.specifications.doors) : undefined
+          doors: formData.specifications.doors ? Number(formData.specifications.doors) : undefined,
+          cylinders: formData.specifications.cylinders ? Number(formData.specifications.cylinders) : undefined
         } : undefined,
         // Ensure strings are trimmed
         model: formData.model.trim(),
-        description: formData.description?.trim(),
         city: formData.city.trim(),
         state: formData.state.trim(),
         country: formData.country.trim()
@@ -175,7 +226,7 @@ const AddCar: React.FC = () => {
     }
   };
 
-  const handleChange = (field: string, value: string | number) => {
+  const handleChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => {
       if (field.includes('.')) {
         const [section, key] = field.split('.') as [FormSection, string];
@@ -237,17 +288,26 @@ const AddCar: React.FC = () => {
           onChange={handleChange}
           errors={errors}
         />
+
+        <Features
+          features={formData.features}
+          onChange={handleChange}
+          errors={errors}
+        />
         
         <Location 
           city={formData.city}
           state={formData.state}
           country={formData.country}
+          location_type={formData.location_type}
           onChange={handleChange}
           errors={errors}
         />
         
         <Description 
-          description={formData.description} 
+          description_en={formData.description_en}
+          description_ka={formData.description_ka}
+          description_ru={formData.description_ru}
           onChange={handleChange}
           errors={errors}
         />
