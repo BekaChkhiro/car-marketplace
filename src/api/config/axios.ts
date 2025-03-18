@@ -8,6 +8,7 @@ import authService from '../services/authService';
 interface ApiErrorResponse {
   message?: string;
   error?: string;
+  details?: any;
 }
 
 // Define public endpoints that don't require authentication
@@ -31,7 +32,11 @@ const api = axios.create({
   withCredentials: true,
   maxContentLength: 100 * 1024 * 1024, // 100MB max
   maxBodyLength: 100 * 1024 * 1024, // 100MB max
-  timeout: 30000 // 30 second timeout
+  timeout: 30000, // 30 second timeout
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
 });
 
 // Track if we're currently refreshing the token
@@ -77,9 +82,28 @@ api.interceptors.request.use(
 
     if (!isPublicEndpoint && !isPublicGetEndpoint) {
       const accessToken = getAccessToken();
+      const refreshToken = getRefreshToken();
 
       if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
+        // Check if token is expired and we have a refresh token
+        if (isTokenExpired(accessToken) && refreshToken && !config.url?.includes('/auth/refresh-token')) {
+          try {
+            const response = await axios.post(
+              `${config.baseURL}/auth/refresh-token`,
+              { refreshToken },
+              { withCredentials: true }
+            );
+            const newTokens = response.data.tokens;
+            setStoredToken(newTokens.accessToken, newTokens.refreshToken);
+            config.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+          } catch (error) {
+            console.error('Token refresh failed during request:', error);
+            removeStoredToken();
+            throw error;
+          }
+        } else {
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
       }
     }
 
@@ -98,15 +122,24 @@ api.interceptors.response.use(
     return response;
   },
   async (error: AxiosError<ApiErrorResponse>) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean; _retryCount?: number };
     
-    // Log error details for debugging
+    // Enhanced error logging
     if (error.response) {
       console.error('API Error Response:', {
         status: error.response.status,
         data: error.response.data,
-        url: originalRequest.url
+        url: originalRequest.url,
+        method: originalRequest.method,
+        headers: {
+          ...originalRequest.headers,
+          Authorization: originalRequest.headers?.Authorization ? '[REDACTED]' : undefined
+        }
       });
+    }
+
+    if (!originalRequest._retryCount) {
+      originalRequest._retryCount = 0;
     }
 
     // Handle specific error cases
@@ -140,13 +173,25 @@ api.interceptors.response.use(
           isRefreshing = true;
 
           try {
-            const tokens = await authService.refreshToken();
+            const refreshToken = getRefreshToken();
+            if (!refreshToken) {
+              throw new Error('No refresh token available');
+            }
+
+            const response = await axios.post(
+              `${originalRequest.baseURL}/auth/refresh-token`,
+              { refreshToken },
+              { withCredentials: true }
+            );
+
+            const newTokens = response.data.tokens;
+            setStoredToken(newTokens.accessToken, newTokens.refreshToken);
+            
             isRefreshing = false;
-            
             originalRequest.headers = originalRequest.headers || {};
-            originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
+            originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
             
-            processQueue(null, tokens.accessToken);
+            processQueue(null, newTokens.accessToken);
             return api(originalRequest);
           } catch (refreshError) {
             isRefreshing = false;
@@ -173,22 +218,49 @@ api.interceptors.response.use(
 
         case 500:
           console.error('Server error:', error.response.data);
-          // Add retry logic for 500 errors
-          if (!originalRequest._retry) {
-            originalRequest._retry = true;
-            return new Promise(resolve => setTimeout(resolve, 1000)).then(() => api(originalRequest));
+          
+          // Implement exponential backoff for 500 errors
+          const maxRetries = 3;
+          if (originalRequest._retryCount < maxRetries) {
+            originalRequest._retryCount++;
+            const backoffDelay = Math.pow(2, originalRequest._retryCount) * 1000;
+            
+            console.log(`Retrying request (${originalRequest._retryCount}/${maxRetries}) after ${backoffDelay}ms`);
+            
+            return new Promise(resolve => setTimeout(resolve, backoffDelay))
+              .then(() => api(originalRequest));
           }
-          return Promise.reject(new Error(error.response.data?.message || 'Internal server error occurred. Please try again.'));
+          
+          return Promise.reject(new Error(
+            error.response.data?.message || 
+            error.response.data?.error || 
+            'Internal server error occurred. Please try again.'
+          ));
+
+        case 502:
+        case 503:
+        case 504:
+          // Retry gateway/timeout errors with exponential backoff
+          if (originalRequest._retryCount < 3) {
+            originalRequest._retryCount++;
+            const backoffDelay = Math.pow(2, originalRequest._retryCount) * 1000;
+            return new Promise(resolve => setTimeout(resolve, backoffDelay))
+              .then(() => api(originalRequest));
+          }
+          break;
       }
 
-      const errorMessage = error.response.data?.message || error.response.data?.error || 'An error occurred';
+      const errorMessage = error.response.data?.message || 
+                         error.response.data?.error || 
+                         'An unexpected error occurred';
       return Promise.reject(new Error(errorMessage));
     }
 
-    // Handle network errors
-    if (error.message === 'Network Error') {
-      console.error('Network error occurred:', error);
-      return Promise.reject(new Error('Network error. Please check your connection and try again.'));
+    // Handle network errors with retry
+    if (error.message === 'Network Error' && originalRequest._retryCount < 2) {
+      originalRequest._retryCount++;
+      return new Promise(resolve => setTimeout(resolve, 1000))
+        .then(() => api(originalRequest));
     }
 
     return Promise.reject(error);
