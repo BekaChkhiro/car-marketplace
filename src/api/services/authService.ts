@@ -1,10 +1,11 @@
 import api from '../config/axios';
-import { setStoredToken, removeStoredToken } from '../utils/tokenStorage';
+import { setStoredToken, removeStoredToken, getRefreshToken } from '../utils/tokenStorage';
 import {
   User,
   LoginCredentials,
   RegisterCredentials,
-  AuthResponse
+  AuthResponse,
+  Tokens
 } from '../types/auth.types';
 
 class AuthService {
@@ -12,15 +13,43 @@ class AuthService {
     try {
       const response = await api.post<AuthResponse>('/auth/login', {
         email: credentials.email.trim(),
-        password: credentials.password
+        password: credentials.password,
+        rememberMe: credentials.rememberMe
       });
       
-      if (response.data.token) {
+      if (response.data.tokens) {
+        // Store both access and refresh tokens
+        setStoredToken(response.data.tokens.accessToken, response.data.tokens.refreshToken);
+      } else if (response.data.token) {
+        // Backwards compatibility for old token format
         setStoredToken(response.data.token);
       }
+      
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Login failed');
+    }
+  }
+
+  async refreshToken(): Promise<Tokens> {
+    try {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const response = await api.post<{ tokens: Tokens }>('/auth/refresh-token', {
+        refreshToken
+      });
+
+      if (response.data.tokens) {
+        setStoredToken(response.data.tokens.accessToken, response.data.tokens.refreshToken);
+        return response.data.tokens;
+      }
+      throw new Error('Invalid token response');
+    } catch (error: any) {
+      removeStoredToken(); // Clear tokens on refresh failure
+      throw new Error(error.response?.data?.message || 'Token refresh failed');
     }
   }
 
@@ -37,6 +66,9 @@ class AuthService {
         phone: credentials.phone.trim()
       });
       
+      if (response.data.tokens) {
+        setStoredToken(response.data.tokens.accessToken, response.data.tokens.refreshToken);
+      }
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Registration failed');
@@ -48,7 +80,11 @@ class AuthService {
       const response = await api.get<User>('/auth/profile');
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to get profile');
+      // Don't throw on 401/403, let the axios interceptor handle token refresh
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        throw new Error(error.response?.data?.message || 'Failed to get profile');
+      }
+      throw error;
     }
   }
 

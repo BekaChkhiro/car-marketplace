@@ -53,11 +53,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [initRetries, setInitRetries] = useState(0);
+  const MAX_RETRIES = 3;
 
   // Listen for auth:required events
   useEffect(() => {
     const handleAuthRequired = (event: CustomEvent<{ message: string }>) => {
-      logout();
+      clearAuthState();
       showToast(event.detail.message, 'error');
     };
 
@@ -67,7 +69,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, []);
 
-  // Check if user is already authenticated on mount
+  const clearAuthState = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    clearUserData();
+    navigate('/', { replace: true });
+  };
+
+  // Initialize auth state
   useEffect(() => {
     const initializeAuth = async () => {
       if (!hasStoredToken()) {
@@ -77,12 +86,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       try {
         showLoading();
-        const token = getAccessToken();
+        const accessToken = getAccessToken();
         const refreshToken = getRefreshToken();
 
-        // Only clear auth if both tokens are missing or invalid
-        if ((!token && !refreshToken) || (token && isTokenExpired(token) && !refreshToken)) {
-          throw new Error('No valid authentication tokens');
+        // Check if we need to refresh the token
+        if (accessToken && isTokenExpired(accessToken) && refreshToken) {
+          try {
+            await authService.refreshToken();
+          } catch (refreshError) {
+            if (initRetries >= MAX_RETRIES) {
+              throw new Error('Failed to refresh authentication');
+            }
+            // Increment retry counter and try again after a delay
+            setInitRetries(prev => prev + 1);
+            setTimeout(() => initializeAuth(), 1000);
+            return;
+          }
         }
 
         const userData = await authService.getProfile();
@@ -90,17 +109,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setUser(userData);
           setIsAuthenticated(true);
           storeUserData(userData);
-        } else {
-          throw new Error('Failed to get user profile');
         }
       } catch (error: any) {
         console.error('Error initializing auth:', error);
-        // Only clear auth state if it's a token-related error
-        if (error.message.includes('token') || error.message.includes('authentication')) {
-          setUser(null);
-          setIsAuthenticated(false);
-          clearUserData();
-          logout();
+        
+        // Only clear auth state if it's a fatal error
+        if (initRetries >= MAX_RETRIES || 
+            error.message.includes('authentication') || 
+            error.message.includes('token')) {
+          clearAuthState();
+        } else {
+          // Retry initialization
+          setInitRetries(prev => prev + 1);
+          setTimeout(() => initializeAuth(), 1000);
+          return;
         }
       } finally {
         hideLoading();

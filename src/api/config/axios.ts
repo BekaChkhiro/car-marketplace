@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { getAccessToken, removeStoredToken, isTokenExpired, getRefreshToken, setStoredToken } from '../utils/tokenStorage';
 import { getCsrfToken, refreshCsrfToken } from '../utils/csrfProtection';
-import { AuthResponse } from '../types/auth.types';
+import { AuthResponse, Tokens } from '../types/auth.types';
+import authService from '../services/authService';
 
 // Define error response types
 interface ApiErrorResponse {
@@ -29,17 +30,23 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
   withCredentials: true,
   maxContentLength: 100 * 1024 * 1024, // 100MB max
-  maxBodyLength: 100 * 1024 * 1024 // 100MB max
+  maxBodyLength: 100 * 1024 * 1024, // 100MB max
+  timeout: 30000 // 30 second timeout
 });
 
 // Track if we're currently refreshing the token
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let failedQueue: { resolve: (token: string) => void; reject: (error: any) => void; }[] = [];
 
-// Helper to retry failed requests
-const retryFailedRequest = (token: string) => {
-  refreshSubscribers.forEach(callback => callback(token));
-  refreshSubscribers = [];
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token as string);
+    }
+  });
+  failedQueue = [];
 };
 
 // Request interceptor
@@ -69,26 +76,11 @@ api.interceptors.request.use(
     );
 
     if (!isPublicEndpoint && !isPublicGetEndpoint) {
-      let authToken = getAccessToken();
+      const accessToken = getAccessToken();
 
-      // If token exists but is expired, try to refresh it
-      if (authToken && isTokenExpired(authToken)) {
-        try {
-          const newToken = await refreshAccessToken();
-          authToken = newToken;
-        } catch (error) {
-          // If refresh fails, remove tokens but don't reject yet
-          removeStoredToken();
-          authToken = null;
-        }
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
       }
-
-      // After potential refresh, check if we have a valid token
-      if (!authToken) {
-        return Promise.reject(new Error('No valid authentication token'));
-      }
-
-      config.headers.Authorization = `Bearer ${authToken}`;
     }
 
     return config;
@@ -99,7 +91,6 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
-    // Check for new CSRF token in response headers
     const newCsrfToken = response.headers['x-csrf-token'];
     if (newCsrfToken) {
       refreshCsrfToken();
@@ -109,43 +100,66 @@ api.interceptors.response.use(
   async (error: AxiosError<ApiErrorResponse>) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
     
+    // Log error details for debugging
     if (error.response) {
-      // Log the error response for debugging
       console.error('API Error Response:', {
         status: error.response.status,
         data: error.response.data,
         url: originalRequest.url
       });
+    }
 
+    // Handle specific error cases
+    if (error.response) {
       switch (error.response.status) {
-        case 401:
-          // Only try refresh token if we haven't already tried
-          if (!originalRequest._retry && !isRefreshing) {
-            originalRequest._retry = true;
-            isRefreshing = true;
+        case 401: {
+          if (originalRequest._retry || originalRequest.url?.includes('/auth/refresh-token')) {
+            processQueue(error);
+            removeStoredToken();
+            window.dispatchEvent(new CustomEvent('auth:required', { 
+              detail: { message: 'Session expired. Please log in again.' }
+            }));
+            return Promise.reject(error);
+          }
 
+          originalRequest._retry = true;
+
+          if (isRefreshing) {
             try {
-              const newToken = await refreshAccessToken();
-              
-              // Retry the original request with new token
-              if (originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              }
-              
-              retryFailedRequest(newToken);
+              const token = await new Promise<string>((resolve, reject) => {
+                failedQueue.push({ resolve, reject });
+              });
+              originalRequest.headers = originalRequest.headers || {};
+              originalRequest.headers.Authorization = `Bearer ${token}`;
               return api(originalRequest);
-            } catch (refreshError) {
-              // If refresh fails, clear tokens and reject
-              removeStoredToken();
-              window.dispatchEvent(new CustomEvent('auth:required', { 
-                detail: { message: 'Session expired. Please log in again.' }
-              }));
-              return Promise.reject(new Error('Authentication failed'));
-            } finally {
-              isRefreshing = false;
+            } catch (err) {
+              return Promise.reject(err);
             }
           }
-          break;
+
+          isRefreshing = true;
+
+          try {
+            const tokens = await authService.refreshToken();
+            isRefreshing = false;
+            
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
+            
+            processQueue(null, tokens.accessToken);
+            return api(originalRequest);
+          } catch (refreshError) {
+            isRefreshing = false;
+            processQueue(refreshError);
+            removeStoredToken();
+            
+            window.dispatchEvent(new CustomEvent('auth:required', { 
+              detail: { message: 'Session expired. Please log in again.' }
+            }));
+            
+            return Promise.reject(refreshError);
+          }
+        }
         
         case 403:
           if (error.response.data?.message?.includes('CSRF')) {
@@ -159,43 +173,26 @@ api.interceptors.response.use(
 
         case 500:
           console.error('Server error:', error.response.data);
-          return Promise.reject(new Error(error.response.data?.message || 'Internal server error occurred'));
+          // Add retry logic for 500 errors
+          if (!originalRequest._retry) {
+            originalRequest._retry = true;
+            return new Promise(resolve => setTimeout(resolve, 1000)).then(() => api(originalRequest));
+          }
+          return Promise.reject(new Error(error.response.data?.message || 'Internal server error occurred. Please try again.'));
       }
 
       const errorMessage = error.response.data?.message || error.response.data?.error || 'An error occurred';
       return Promise.reject(new Error(errorMessage));
     }
 
-    // Network errors
+    // Handle network errors
     if (error.message === 'Network Error') {
       console.error('Network error occurred:', error);
-      return Promise.reject(new Error('Network error. Please check your connection.'));
+      return Promise.reject(new Error('Network error. Please check your connection and try again.'));
     }
 
     return Promise.reject(error);
   }
 );
-
-// Helper function to refresh the access token
-async function refreshAccessToken(): Promise<string> {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    throw new Error('No refresh token available');
-  }
-
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/refresh-token`,
-      { refreshToken },
-      { withCredentials: true }
-    );
-
-    const { accessToken, refreshToken: newRefreshToken } = response.data;
-    setStoredToken(accessToken, newRefreshToken);
-    return accessToken;
-  } catch (error) {
-    throw new Error('Failed to refresh access token');
-  }
-}
 
 export default api;
