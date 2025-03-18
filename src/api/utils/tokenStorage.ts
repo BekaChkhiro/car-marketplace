@@ -44,26 +44,39 @@ const decrypt = (encoded: string): string => {
   }
 };
 
-// Store tokens
+// Store tokens with expiry check
 export const setStoredToken = (accessToken: string, refreshToken?: string): void => {
   try {
-    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+    if (!accessToken || isTokenInvalid(accessToken)) {
+      throw new Error('Invalid access token');
+    }
+
+    localStorage.setItem(ACCESS_TOKEN_KEY, encrypt(accessToken));
+    
     if (refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+      if (isTokenInvalid(refreshToken)) {
+        throw new Error('Invalid refresh token');
+      }
+      localStorage.setItem(REFRESH_TOKEN_KEY, encrypt(refreshToken));
     }
   } catch (error) {
     console.error('Error storing tokens:', error);
+    removeStoredToken();
   }
 };
 
-// Get access token
+// Get access token with validation
 export const getAccessToken = (): string | null => {
   try {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (token && isTokenExpired(token)) {
+    const encryptedToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+    if (!encryptedToken) return null;
+
+    const token = decrypt(encryptedToken);
+    if (isTokenInvalid(token)) {
       removeStoredToken();
       return null;
     }
+
     return token;
   } catch (error) {
     console.error('Error retrieving access token:', error);
@@ -71,20 +84,34 @@ export const getAccessToken = (): string | null => {
   }
 };
 
-// Get refresh token
+// Get refresh token with validation
 export const getRefreshToken = (): string | null => {
   try {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    const encryptedToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+    if (!encryptedToken) return null;
+
+    const token = decrypt(encryptedToken);
+    if (isTokenInvalid(token)) {
+      removeStoredToken();
+      return null;
+    }
+
+    return token;
   } catch (error) {
     console.error('Error retrieving refresh token:', error);
     return null;
   }
 };
 
-// Check if token exists
+// Check if token exists and is valid
 export const hasStoredToken = (): boolean => {
   const token = getAccessToken();
-  return !!token && !isTokenExpired(token);
+  const refreshToken = getRefreshToken();
+  
+  // Valid if either:
+  // 1. Access token exists and is not expired
+  // 2. No access token but valid refresh token exists
+  return (!!token && !isTokenExpired(token)) || (!!refreshToken && !isTokenExpired(refreshToken));
 };
 
 // Remove stored tokens
@@ -94,6 +121,21 @@ export const removeStoredToken = (): void => {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   } catch (error) {
     console.error('Error removing tokens:', error);
+  }
+};
+
+// Basic token validation
+const isTokenInvalid = (token: string): boolean => {
+  try {
+    // Check basic JWT format (3 parts separated by dots)
+    if (!token.match(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/)) {
+      return true;
+    }
+
+    const payload = parseJwt(token);
+    return !payload || !payload.exp;
+  } catch {
+    return true;
   }
 };
 
@@ -122,6 +164,11 @@ export const getTokenExpiration = (token: string): number | null => {
 
 // Check if token is expired
 export const isTokenExpired = (token: string): boolean => {
+  // If token is invalid, consider it expired
+  if (isTokenInvalid(token)) {
+    return true;
+  }
+
   const expiration = getTokenExpiration(token);
   if (!expiration) return true;
   

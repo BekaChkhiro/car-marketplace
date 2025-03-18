@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useNavigate } from 'react-router-dom';
 import authService from '../api/services/authService';
 import { User } from '../api/types/auth.types';
-import { hasStoredToken, getAccessToken } from '../api/utils/tokenStorage';
+import { hasStoredToken, getAccessToken, isTokenExpired, getRefreshToken } from '../api/utils/tokenStorage';
 import { useToast } from './ToastContext';
 import { useLoading } from './LoadingContext';
 import { getStoredPreferences } from '../utils/userPreferences';
@@ -54,6 +54,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Listen for auth:required events
+  useEffect(() => {
+    const handleAuthRequired = (event: CustomEvent<{ message: string }>) => {
+      logout();
+      showToast(event.detail.message, 'error');
+    };
+
+    window.addEventListener('auth:required' as any, handleAuthRequired);
+    return () => {
+      window.removeEventListener('auth:required' as any, handleAuthRequired);
+    };
+  }, []);
+
   // Check if user is already authenticated on mount
   useEffect(() => {
     const initializeAuth = async () => {
@@ -64,29 +77,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       try {
         showLoading();
+        const token = getAccessToken();
+        const refreshToken = getRefreshToken();
+
+        // Only clear auth if both tokens are missing or invalid
+        if ((!token && !refreshToken) || (token && isTokenExpired(token) && !refreshToken)) {
+          throw new Error('No valid authentication tokens');
+        }
+
         const userData = await authService.getProfile();
-        setUser(userData);
-        setIsAuthenticated(true);
-      } catch (error) {
+        if (userData) {
+          setUser(userData);
+          setIsAuthenticated(true);
+          storeUserData(userData);
+        } else {
+          throw new Error('Failed to get user profile');
+        }
+      } catch (error: any) {
         console.error('Error initializing auth:', error);
-        // Clear auth state on error
-        setUser(null);
-        setIsAuthenticated(false);
-        logout();
+        // Only clear auth state if it's a token-related error
+        if (error.message.includes('token') || error.message.includes('authentication')) {
+          setUser(null);
+          setIsAuthenticated(false);
+          clearUserData();
+          logout();
+        }
       } finally {
         hideLoading();
         setIsInitializing(false);
       }
     };
 
-    // Initialize auth immediately
     initializeAuth();
-
-    // Cleanup function
     return () => {
-      hideLoading(); // Ensure loading is hidden when component unmounts
+      hideLoading();
     };
-  }, []); // Only run once on mount
+  }, []);
 
   // Login handler
   const login = async (email: string, password: string, rememberMe?: boolean) => {
@@ -99,6 +125,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
       setUser(response.user);
       setIsAuthenticated(true);
+      storeUserData(response.user);
       showToast('წარმატებით შეხვედით სისტემაში', 'success');
     } catch (err: any) {
       const message = err.message || 'შესვლა ვერ მოხერხდა';

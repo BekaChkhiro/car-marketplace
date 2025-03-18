@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken, removeStoredToken, isTokenExpired } from '../utils/tokenStorage';
+import { getAccessToken, removeStoredToken, isTokenExpired, getRefreshToken, setStoredToken } from '../utils/tokenStorage';
 import { getCsrfToken, refreshCsrfToken } from '../utils/csrfProtection';
 import { AuthResponse } from '../types/auth.types';
 
@@ -15,7 +15,8 @@ const publicEndpoints = [
   '/auth/register',
   '/auth/forgot-password',
   '/auth/google',
-  '/auth/facebook'
+  '/auth/facebook',
+  '/auth/refresh-token'  // Add refresh token endpoint
 ];
 
 // Define endpoints that are public only for GET requests
@@ -30,6 +31,16 @@ const api = axios.create({
   maxContentLength: 100 * 1024 * 1024, // 100MB max
   maxBodyLength: 100 * 1024 * 1024 // 100MB max
 });
+
+// Track if we're currently refreshing the token
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+// Helper to retry failed requests
+const retryFailedRequest = (token: string) => {
+  refreshSubscribers.forEach(callback => callback(token));
+  refreshSubscribers = [];
+};
 
 // Request interceptor
 api.interceptors.request.use(
@@ -53,25 +64,28 @@ api.interceptors.request.use(
     const isPublicEndpoint = publicEndpoints.some(endpoint => 
       config.url?.includes(endpoint)
     );
-
     const isPublicGetEndpoint = config.method === 'get' && publicGetEndpoints.some(endpoint =>
       config.url?.includes(endpoint)
     );
 
     if (!isPublicEndpoint && !isPublicGetEndpoint) {
-      // Check for auth token only for protected endpoints
-      const authToken = getAccessToken();
-      if (!authToken) {
-        return Promise.reject(new Error('No authentication token found'));
+      let authToken = getAccessToken();
+
+      // If token exists but is expired, try to refresh it
+      if (authToken && isTokenExpired(authToken)) {
+        try {
+          const newToken = await refreshAccessToken();
+          authToken = newToken;
+        } catch (error) {
+          // If refresh fails, remove tokens but don't reject yet
+          removeStoredToken();
+          authToken = null;
+        }
       }
 
-      // Check if token is expired
-      if (isTokenExpired(authToken)) {
-        removeStoredToken();
-        window.dispatchEvent(new CustomEvent('auth:required', { 
-          detail: { message: 'Session expired. Please log in again.' }
-        }));
-        return Promise.reject(new Error('Authentication token expired'));
+      // After potential refresh, check if we have a valid token
+      if (!authToken) {
+        return Promise.reject(new Error('No valid authentication token'));
       }
 
       config.headers.Authorization = `Bearer ${authToken}`;
@@ -105,15 +119,35 @@ api.interceptors.response.use(
 
       switch (error.response.status) {
         case 401:
-          // Clear auth on 401 Unauthorized
-          removeStoredToken();
-          window.dispatchEvent(new CustomEvent('auth:required', { 
-            detail: { message: 'Please log in to continue' }
-          }));
+          // Only try refresh token if we haven't already tried
+          if (!originalRequest._retry && !isRefreshing) {
+            originalRequest._retry = true;
+            isRefreshing = true;
+
+            try {
+              const newToken = await refreshAccessToken();
+              
+              // Retry the original request with new token
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              }
+              
+              retryFailedRequest(newToken);
+              return api(originalRequest);
+            } catch (refreshError) {
+              // If refresh fails, clear tokens and reject
+              removeStoredToken();
+              window.dispatchEvent(new CustomEvent('auth:required', { 
+                detail: { message: 'Session expired. Please log in again.' }
+              }));
+              return Promise.reject(new Error('Authentication failed'));
+            } finally {
+              isRefreshing = false;
+            }
+          }
           break;
         
         case 403:
-          // Handle CSRF token validation failure
           if (error.response.data?.message?.includes('CSRF')) {
             const newToken = refreshCsrfToken();
             if (originalRequest.headers && newToken) {
@@ -128,7 +162,6 @@ api.interceptors.response.use(
           return Promise.reject(new Error(error.response.data?.message || 'Internal server error occurred'));
       }
 
-      // Convert error response to a more friendly format
       const errorMessage = error.response.data?.message || error.response.data?.error || 'An error occurred';
       return Promise.reject(new Error(errorMessage));
     }
@@ -142,5 +175,27 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Helper function to refresh the access token
+async function refreshAccessToken(): Promise<string> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    throw new Error('No refresh token available');
+  }
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/refresh-token`,
+      { refreshToken },
+      { withCredentials: true }
+    );
+
+    const { accessToken, refreshToken: newRefreshToken } = response.data;
+    setStoredToken(accessToken, newRefreshToken);
+    return accessToken;
+  } catch (error) {
+    throw new Error('Failed to refresh access token');
+  }
+}
 
 export default api;
