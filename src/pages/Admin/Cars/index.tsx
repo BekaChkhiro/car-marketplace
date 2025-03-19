@@ -14,7 +14,7 @@ interface CarData {
 const CarsPage = () => {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   
-  // Mock data - შეცვალეთ API-დან მიღებული მონაცემებით
+  // Mock data - replace with API data
   const cars: CarData[] = [
     {
       id: 1,
@@ -27,49 +27,27 @@ const CarsPage = () => {
     },
     {
       id: 2,
-      title: "Mercedes-Benz C-Class 2021",
-      seller: "nino_90",
-      price: 35000,
+      title: "Mercedes-Benz S500 2021",
+      seller: "david456",
+      price: 65000,
       status: "approved",
       isVip: true,
-      createdAt: "2024-01-16"
-    },
+      createdAt: "2024-01-14"
+    }
   ];
-
-  const getStatusBadgeStyle = (status: CarData['status']) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-700';
-      case 'approved':
-        return 'bg-green-100 text-green-700';
-      case 'rejected':
-        return 'bg-red-100 text-red-700';
-    }
-  };
-
-  const getStatusText = (status: CarData['status']) => {
-    switch (status) {
-      case 'pending':
-        return 'მოლოდინში';
-      case 'approved':
-        return 'დადასტურებული';
-      case 'rejected':
-        return 'უარყოფილი';
-    }
-  };
 
   return (
     <div className="p-6">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">განცხადებები</h1>
+        <h1 className="text-2xl font-bold text-gray-900">მანქანები</h1>
         <div className="flex gap-4">
           <input
             type="text"
-            placeholder="მოძებნე განცხადება..."
+            placeholder="მოძებნე მანქანა..."
             className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <select className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
-            <option value="all">ყველა სტატუსი</option>
+            <option value="">ყველა სტატუსი</option>
             <option value="pending">მოლოდინში</option>
             <option value="approved">დადასტურებული</option>
             <option value="rejected">უარყოფილი</option>
@@ -77,20 +55,12 @@ const CarsPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full">
+          <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                  <button
-                    className="flex items-center gap-2"
-                    onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
-                  >
-                    განცხადება
-                    {sortDirection === 'asc' ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-                  </button>
-                </th>
+              <tr className="bg-gray-50">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">დასახელება</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">გამყიდველი</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ფასი</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">სტატუსი</th>
@@ -168,6 +138,31 @@ const CarsPage = () => {
       </div>
     </div>
   );
+};
+
+// Helper functions
+const getStatusBadgeStyle = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'bg-green-100 text-green-700';
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-700';
+    case 'rejected':
+      return 'bg-red-100 text-red-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+};
+
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'დადასტურებული';
+    case 'pending':
+      return 'მოლოდინში';
+    case 'rejected':
+      return 'უარყოფილი';
+  }
 };
 
 export default CarsPage;

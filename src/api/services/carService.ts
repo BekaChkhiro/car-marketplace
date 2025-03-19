@@ -1,4 +1,5 @@
 import api from '../config/axios';
+import { mockBrands } from '../../data/mockData';
 
 interface CarImage {
   original_name: string;
@@ -26,6 +27,7 @@ interface CarData {
     doors?: number;
     color?: string;
     body_type?: string;
+    drive_type?: string;
   };
   city: string;
   state: string;
@@ -58,6 +60,7 @@ interface NewCarData {
     doors?: number | string;
     color?: string;
     body_type?: string;
+    drive_type?: string;
   };
   city: string;
   state: string;
@@ -71,7 +74,6 @@ interface GetCarsParams {
   order?: 'ASC' | 'DESC';
   brand_id?: number;
   category_id?: number;
-  transport_type?: string;
   price_min?: number;
   price_max?: number;
   year_min?: number;
@@ -186,7 +188,7 @@ export const createCar = async (carData: NewCarData, images: File[]): Promise<Ca
     }
 
     // Send everything in one request
-    const { data } = await api.post('/transports', formData, {
+    const { data } = await api.post('/cars', formData, {
       headers: {
         'Accept': 'application/json',
         // Let browser set the content type for FormData
@@ -226,84 +228,6 @@ export const createCar = async (carData: NewCarData, images: File[]): Promise<Ca
   }
 };
 
-export const uploadCarImages = async (carId: string, images: File[]): Promise<CarData> => {
-  const formData = new FormData();
-  
-  // Validate image sizes and types before upload
-  for (const image of images) {
-    // Validate file size (10MB limit)
-    if (image.size > 10 * 1024 * 1024) {
-      throw new Error(`Image ${image.name} is too large. Maximum size is 10MB`);
-    }
-
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(image.type)) {
-      throw new Error(`File ${image.name} must be a JPEG, PNG, or WebP image`);
-    }
-
-    // Add the image to FormData with proper filename
-    formData.append('images', image, image.name);
-  }
-
-  const maxRetries = 3;
-  let attempt = 0;
-
-  while (attempt < maxRetries) {
-    try {
-      const { data } = await api.post(`/transports/${carId}/images`, formData, {
-        headers: {
-          'Accept': 'application/json',
-          // Let browser set proper multipart boundary
-          'Content-Type': 'multipart/form-data'
-        },
-        // Increase timeout for large uploads
-        timeout: 60000,
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity,
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || progressEvent.loaded));
-          console.log(`Upload Progress: ${percentCompleted}%`);
-        }
-      });
-      return data;
-    } catch (error: any) {
-      attempt++;
-      
-      console.error('Error uploading images (attempt ${attempt}/${maxRetries}):', {
-        message: error.response?.data?.message || error.message,
-        status: error.response?.status,
-        data: error.response?.data
-      });
-
-      // Don't retry if it's a validation error
-      if (error.response?.status === 400) {
-        throw new Error(error.response.data.message || 'Invalid image data');
-      }
-
-      // Don't retry if it's an auth error
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        throw error;
-      }
-
-      // If we've exhausted all retries, throw the error
-      if (attempt === maxRetries) {
-        // If it's an ACL error, throw a more specific error
-        if (error.message?.includes('ACL') || error.response?.data?.error?.includes('ACL')) {
-          throw new Error('The server is currently unable to process image uploads. Please try again later or contact support.');
-        }
-        
-        throw new Error('Failed to upload images after multiple attempts. Please try again later.');
-      }
-
-      // Wait before retrying (exponential backoff)
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-    }
-  }
-
-  throw new Error('Failed to upload images after exhausting all retries');
-};
-
 export const updateCarWithImages = async (carId: string, carData: any, images?: File[]): Promise<CarData> => {
   // For updates, we'll keep the nested structure consistent
   const formData = new FormData();
@@ -337,7 +261,7 @@ export const updateCarWithImages = async (carId: string, carData: any, images?: 
     });
   }
 
-  const { data } = await api.put(`/transports/${carId}`, formData, {
+  const { data } = await api.put(`/cars/${carId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -357,14 +281,13 @@ export const getCars = async (params: GetCarsParams = {}) => {
       order: params.order || 'DESC',
       brand_id: params.brand_id,
       category_id: params.category_id,
-      transport_type: params.transport_type || 'car',
       price_min: params.price_min,
       price_max: params.price_max,
       year_min: params.year_min,
       year_max: params.year_max
     };
 
-    const { data } = await api.get('/transports', { params: transformedParams });
+    const { data } = await api.get('/cars', { params: transformedParams });
     return data;
   } catch (error: any) {
     console.error('Error fetching cars:', error);
@@ -375,7 +298,7 @@ export const getCars = async (params: GetCarsParams = {}) => {
 // Get single car by ID
 export const getCarById = async (id: string): Promise<CarData> => {
   try {
-    const { data } = await api.get(`/transports/${id}`);
+    const { data } = await api.get(`/cars/${id}`);
     return data;
   } catch (error: any) {
     console.error('Error fetching car:', error);
@@ -386,7 +309,7 @@ export const getCarById = async (id: string): Promise<CarData> => {
 // Get similar cars
 export const getSimilarCars = async (carId: string, limit: number = 3): Promise<CarData[]> => {
   try {
-    const { data } = await api.get(`/transports/${carId}/similar`, {
+    const { data } = await api.get(`/cars/${carId}/similar`, {
       params: { limit }
     });
     return data;
@@ -399,7 +322,7 @@ export const getSimilarCars = async (carId: string, limit: number = 3): Promise<
 // Get VIP cars
 export const getVipCars = async (limit: number = 4): Promise<CarData[]> => {
   try {
-    const { data } = await api.get('/transports', {
+    const { data } = await api.get('/cars', {
       params: {
         isVip: true,
         limit
@@ -414,7 +337,7 @@ export const getVipCars = async (limit: number = 4): Promise<CarData[]> => {
 
 export const getCategories = async () => {
   try {
-    const response = await api.get('/categories');
+    const response = await api.get('/cars/categories');
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -422,13 +345,70 @@ export const getCategories = async () => {
   }
 };
 
+const brandModelsMap: { [key: string]: string[] } = {
+  'Audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'e-tron', 'TT', 'R8', 'RS3', 'RS4', 'RS5', 'RS6', 'RS7', 'RS Q8'],
+  'BMW': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'i8', 'iX', 'M2', 'M3', 'M4', 'M5', 'M8'],
+  'Mercedes-Benz': ['A-Class', 'B-Class', 'C-Class', 'CLA', 'CLS', 'E-Class', 'G-Class', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'S-Class', 'SL', 'AMG GT'],
+  'Toyota': ['Camry', 'Corolla', 'RAV4', 'Land Cruiser', 'Prius', 'Yaris', 'Highlander', 'Avalon', 'Supra', '4Runner', 'Tundra', 'Tacoma', 'Sienna'],
+  'Honda': ['Civic', 'Accord', 'CR-V', 'HR-V', 'Pilot', 'Odyssey', 'Fit', 'Jazz', 'City', 'Insight'],
+  'Volkswagen': ['Golf', 'Passat', 'Tiguan', 'Atlas', 'Jetta', 'Arteon', 'ID.4', 'Taos', 'Polo', 'T-Roc', 'Touareg'],
+  'Hyundai': ['Elantra', 'Sonata', 'Tucson', 'Santa Fe', 'Kona', 'Venue', 'Palisade', 'Accent', 'i20', 'i30'],
+  'Kia': ['Forte', 'K5', 'Sportage', 'Telluride', 'Sorento', 'Soul', 'Seltos', 'Carnival', 'Rio', 'Stinger'],
+  'Ford': ['F-150', 'Mustang', 'Explorer', 'Escape', 'Edge', 'Bronco', 'Ranger', 'Focus', 'Fiesta', 'EcoSport'],
+  'Chevrolet': ['Silverado', 'Camaro', 'Equinox', 'Tahoe', 'Traverse', 'Malibu', 'Suburban', 'Colorado', 'Spark', 'Blazer'],
+  'Nissan': ['Altima', 'Maxima', 'Rogue', 'Pathfinder', 'Murano', 'Sentra', 'Frontier', 'Titan', 'Kicks', 'Leaf'],
+  'Lexus': ['ES', 'IS', 'LS', 'NX', 'RX', 'UX', 'GX', 'LX', 'RC', 'LC'],
+  'Mazda': ['CX-5', 'CX-30', 'Mazda3', 'Mazda6', 'MX-5', 'CX-9', 'CX-3', 'RX-7', 'RX-8'],
+  'Subaru': ['Outback', 'Forester', 'Impreza', 'Legacy', 'Crosstrek', 'Ascent', 'WRX', 'BRZ'],
+  'Porsche': ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan', '718 Cayman', '718 Boxster'],
+  'Land Rover': ['Range Rover', 'Range Rover Sport', 'Range Rover Velar', 'Range Rover Evoque', 'Discovery', 'Discovery Sport', 'Defender'],
+  'Jaguar': ['F-PACE', 'E-PACE', 'I-PACE', 'XE', 'XF', 'F-TYPE'],
+  'Volvo': ['XC90', 'XC60', 'XC40', 'S60', 'S90', 'V60', 'V90'],
+  'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Cybertruck'],
+  'Acura': ['TLX', 'RDX', 'MDX', 'ILX', 'NSX', 'RLX']
+};
+
+export const getBrands = async () => {
+  try {
+    console.log('Fetching brands...');
+    const response = await api.get('/cars/brands');
+    console.log('Raw brands response:', JSON.stringify(response.data, null, 2));
+
+    if (!response.data || !Array.isArray(response.data) || response.data.length === 0) {
+      console.log('API returned invalid data, using mock data');
+      return mockBrands;
+    }
+
+    // Map through the brands and add models from our map or keep existing models
+    const brandsWithModels = response.data.map((brand: any) => {
+      const brandName = brand.name;
+      const fallbackModels = brandModelsMap[brandName] || [];
+      
+      return {
+        id: brand.id || brand._id,
+        name: brandName,
+        models: Array.isArray(brand.models) && brand.models.length > 0 
+          ? brand.models 
+          : fallbackModels
+      };
+    });
+
+    console.log('Processed brands with models:', JSON.stringify(brandsWithModels[0], null, 2));
+    return brandsWithModels;
+
+  } catch (error) {
+    console.error('Error fetching brands:', error);
+    return mockBrands;
+  }
+};
+
 export default {
   createCar,
-  uploadCarImages,
   updateCarWithImages,
   getCars,
   getCarById,
   getSimilarCars,
   getVipCars,
-  getCategories
+  getCategories,
+  getBrands
 };

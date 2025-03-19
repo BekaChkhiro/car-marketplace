@@ -3,23 +3,10 @@ import CarHeader from './components/CarHeader';
 import CarSpecificationCards from './components/CarSpecificationCards';
 import CarDescription from './components/CarDescription';
 import TechnicalSpecifications from './components/TechnicalSpecifications';
+import { Car } from '../../../../types/car';
 
 interface CarInfoProps {
-  car: {
-    make: string;
-    model: string;
-    year: number;
-    price: number;
-    specifications: {
-      engine: string;
-      transmission: string;
-      fuelType: string;
-      mileage: number;
-      color: string;
-      drive: string;
-    };
-    description: string;
-  };
+  car: Car;
 }
 
 const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
@@ -35,7 +22,7 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
         
         <CarSpecificationCards specifications={car.specifications} />
         
-        <CarDescription description={car.description} />
+        <CarDescription description={car.description || ''} />
         
         <TechnicalSpecifications specifications={car.specifications} />
       </div>

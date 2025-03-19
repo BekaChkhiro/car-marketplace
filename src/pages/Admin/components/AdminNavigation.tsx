@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Car, 
+import {
+  LayoutDashboard,
+  Users,
+  Car,
   Settings,
   LogOut
 } from 'lucide-react';
@@ -14,9 +14,9 @@ const AdminNavigation: React.FC = () => {
   const { logout } = useAuth();
 
   const navItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'დეშბორდი', path: '/admin' },
+    { icon: <LayoutDashboard size={20} />, label: 'დაფა', path: '/admin' },
     { icon: <Users size={20} />, label: 'მომხმარებლები', path: '/admin/users' },
-    { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/transports' },
+    { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/cars' },
     { icon: <Settings size={20} />, label: 'პარამეტრები', path: '/admin/settings' },
   ];
 

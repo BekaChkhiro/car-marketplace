@@ -1,107 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import ImageGallery from './components/imageGallery/ImageGallery';
-import CarInfo from './components/carInfo/CarInfo';
-import SellerInfo from './components/sellerInfo/SellerInfo';
-import SimilarCars from './components/similarCars/SimilarCars';
-import { getCarById, getSimilarCars } from '../../api/services/carService';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getCarById } from '../../api/services/carService';
 import { useLoading } from '../../context/LoadingContext';
 import { useToast } from '../../context/ToastContext';
+import CarInfo from './components/carInfo/CarInfo';
+import ImageGallery from './components/imageGallery/ImageGallery';
+import SellerInfo from './components/sellerInfo/SellerInfo';
+import SimilarCars from './components/similarCars/index';
+import { Car } from '../../types/car';
 
-const CarDetails = () => {
-  const { id } = useParams();
+const CarDetails: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const { showLoading, hideLoading } = useLoading();
   const { showToast } = useToast();
-  
-  const [car, setCar] = useState<any>(null);
-  const [similarCars, setSimilarCars] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [car, setCar] = useState<Car | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    const fetchCar = async () => {
+      if (!id) return;
 
-  useEffect(() => {
-    if (id) {
-      fetchCarDetails();
-    }
-  }, [id]);
+      try {
+        showLoading();
+        const data = await getCarById(id);
+        // Transform CarData to Car type
+        setCar({
+          id: data.id,
+          brand_id: data.brand_id,
+          category_id: data.category_id,
+          make: data.brand_id?.toString() || '',
+          model: data.model,
+          year: data.year,
+          price: data.price,
+          description: data.description,
+          // Convert CarImage objects to image URLs
+          images: data.images.map(img => typeof img === 'string' ? img : img.large),
+          specifications: {
+            fuelType: data.specifications?.fuel_type || '',
+            transmission: data.specifications?.transmission || '',
+            mileage: data.specifications?.mileage || 0,
+            bodyType: data.specifications?.body_type as Car['specifications']['bodyType'],
+            color: data.specifications?.color,
+            drive: data.specifications?.drive_type || '',
+            engine: data.specifications?.engine_type
+          },
+          location: {
+            city: data.city || '',
+            region: data.state || ''
+          },
+          isVip: data.isVip || false,
+          seller: data.seller && {
+            ...data.seller,
+            phone: data.seller.phone || '',
+            name: data.seller.name || ''
+          }
+        });
+      } catch (err: any) {
+        console.error('Error fetching car details:', err);
+        setError(err.message || 'მანქანის მონაცემების ჩატვირთვა ვერ მოხერხდა');
+        showToast('მანქანის მონაცემების ჩატვირთვა ვერ მოხერხდა', 'error');
+      } finally {
+        hideLoading();
+      }
+    };
 
-  const fetchCarDetails = async () => {
-    if (!id) return;
-    
-    try {
-      showLoading();
-      setIsLoading(true);
+    fetchCar();
+  }, [id, showLoading, hideLoading, showToast]);
 
-      // ძირითადი მანქანის დეტალების წამოღება
-      const carData = await getCarById(id);
-      setCar(carData);
-
-      // მსგავსი მანქანების წამოღება
-      const similarData = await getSimilarCars(id, 3);
-      setSimilarCars(similarData);
-    } catch (error: any) {
-      showToast(error.message || 'მანქანის დეტალების ჩატვირთვა ვერ მოხერხდა', 'error');
-    } finally {
-      hideLoading();
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
+  if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+          {error}
+        </div>
       </div>
     );
   }
 
   if (!car) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-dark mb-4">მანქანა ვერ მოიძებნა</h2>
-          <Link to="/transports" className="text-primary hover:underline">
-            დაბრუნდი მანქანების სიაში
-          </Link>
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse space-y-8">
+          <div className="h-96 bg-gray-200 rounded-lg"></div>
+          <div className="space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto px-4 py-6 space-y-6">
-        {/* Breadcrumbs */}
-        <nav className="flex flex-wrap items-center space-x-2 text-sm text-gray-500">
-          <Link to="/" className="hover:text-gray-700 transition-colors">მთავარი</Link>
-          <span>/</span>
-          <Link to="/transports" className="hover:text-gray-700 transition-colors">მანქანები</Link>
-          <span>/</span>
-          <span className="text-gray-700 font-medium">{car.make} {car.model} {car.year}</span>
-        </nav>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[3.5fr,1.5fr] gap-8">
-          {/* Left Column */}
-          <div className="space-y-6">
-            <ImageGallery images={car.images} />
-            <CarInfo car={car} />
-          </div>
-          
-          {/* Right Column */}
-          <div>
-            <SellerInfo 
-              seller={car.seller} 
-              price={car.price}
-              carId={car.id}
-            />
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <ImageGallery images={car.images} />
+          <CarInfo car={car} />
         </div>
-
-        {/* Similar Cars */}
-        <SimilarCars cars={similarCars} />
+        
+        <div className="space-y-8">
+          <SellerInfo seller={car.seller} price={car.price} carId={car.id} />
+          <SimilarCars carId={car.id} category={car.specifications.bodyType} />
+        </div>
       </div>
     </div>
   );

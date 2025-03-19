@@ -3,20 +3,18 @@ import {
   SlidersHorizontal, 
   X, 
   Car,
-  Bike, 
-  Truck,
   Calendar, 
   Fuel, 
   Settings,
   RotateCcw,
-  Search 
+  MapPin
 } from 'lucide-react';
 import data from '../../../data/cars.json';
 import axios from '../../../api/config/axios';
+import CustomSelect from '../../../components/common/CustomSelect';
 
 interface FilterSidebarProps {
   filters: {
-    transportType: string;
     brand: string;
     model: string;
     category: string;
@@ -31,22 +29,25 @@ interface FilterSidebarProps {
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [categories, setCategories] = useState<Array<{ id: number; name: string; transport_type: string }>>([]);
-  const [filteredCategories, setFilteredCategories] = useState<Array<{ id: number; name: string; transport_type: string }>>([]);
+  const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
   const { brands } = data;
   const years = Array.from({ length: 35 }, (_, i) => 2024 - i);
   const fuelTypes = ['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო'];
   const transmissions = ['ავტომატიკა', 'მექანიკა'];
-  const transportTypes = [
-    { id: 'car', name: 'მანქანა', icon: Car },
-    { id: 'motorcycle', name: 'მოტოციკლი', icon: Bike },
-    { id: 'truck', name: 'სატვირთო', icon: Truck }
+  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი'];
+  const priceRanges = [
+    { value: '0-5000', label: '0₾ - 5,000₾' },
+    { value: '5000-10000', label: '5,000₾ - 10,000₾' },
+    { value: '10000-20000', label: '10,000₾ - 20,000₾' },
+    { value: '20000-30000', label: '20,000₾ - 30,000₾' },
+    { value: '30000-50000', label: '30,000₾ - 50,000₾' },
+    { value: '50000+', label: '50,000₾ +' }
   ];
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/transports/categories');
+        const response = await axios.get('/cars/categories');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -55,27 +56,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    if (filters.transportType && categories.length > 0) {
-      const filtered = categories.filter(category => 
-        category.transport_type === filters.transportType
-      );
-      setFilteredCategories(filtered);
-      
-      // If the current category doesn't belong to the new transport type, reset it
-      if (!filtered.find(cat => cat.id.toString() === filters.category)) {
-        onFilterChange({ ...filters, category: '' });
-      }
-    } else {
-      setFilteredCategories([]);
-    }
-  }, [filters.transportType, categories]);
-
   const toggleSidebar = () => setIsOpen(!isOpen);
   
   const handleReset = () => {
     onFilterChange({
-      transportType: '',
       brand: '',
       model: '',
       category: '',
@@ -87,6 +71,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
     });
   };
 
+  const selectedBrand = brands.find(b => b.name === filters.brand);
+  const availableModels = selectedBrand?.models || [];
+
   return (
     <>
       <div 
@@ -96,187 +83,137 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
         onClick={toggleSidebar}
       />
       
-      <aside className={`fixed top-0 right-0 h-full bg-white w-80 shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto`}>
+      <aside className={`fixed top-0 right-0 h-full bg-white w-80 shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto md:translate-x-0 md:static md:w-full md:shadow-none md:bg-transparent`}>
         <div className="p-4">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4 md:hidden">
             <h2 className="text-xl font-semibold">ფილტრი</h2>
             <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-700">
               <X size={24} />
             </button>
           </div>
 
-          {/* Transport Type Selection */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ტრანსპორტის ტიპი
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {transportTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => onFilterChange({ ...filters, transportType: type.id })}
-                  className={`p-2 flex items-center justify-center border rounded-md ${
-                    filters.transportType === type.id
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <type.icon className="w-4 h-4 mr-2" />
-                  {type.name}
-                </button>
-              ))}
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+                <Car className="text-primary" size={18} /> მარკა & მოდელი
+              </h4>
+              <div className="space-y-4">
+                <CustomSelect
+                  options={brands.map(brand => ({
+                    value: brand.name,
+                    label: brand.name
+                  }))}
+                  value={filters.brand}
+                  onChange={(value) => onFilterChange({ ...filters, brand: value, model: '' })}
+                  placeholder="ყველა მარკა"
+                />
+                
+                <CustomSelect
+                  options={availableModels.map(model => ({
+                    value: model,
+                    label: model
+                  }))}
+                  value={filters.model}
+                  onChange={(value) => onFilterChange({ ...filters, model: value })}
+                  placeholder="ყველა მოდელი"
+                  disabled={!filters.brand}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Categories */}
-          {filteredCategories.length > 0 && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                კატეგორია
-              </label>
-              <select
+            <div>
+              <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+                <Car className="text-primary" size={18} /> კატეგორია
+              </h4>
+              <CustomSelect
+                options={categories.map(category => ({
+                  value: String(category.id),
+                  label: category.name
+                }))}
                 value={filters.category}
-                onChange={(e) => onFilterChange({ ...filters, category: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="">აირჩიეთ კატეგორია</option>
-                {filteredCategories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => onFilterChange({ ...filters, category: value })}
+                placeholder="ყველა კატეგორია"
+              />
             </div>
-          )}
 
-          <div>
-            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <Car className="text-primary" size={18} /> მარკა & მოდელი
-            </h4>
-            <div className="relative">
-              <select
-                value={filters.brand}
-                onChange={(e) => onFilterChange({ ...filters, brand: e.target.value, model: '' })}
-                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              >
-                <option value="">ყველა მარკა</option>
-                {brands.map((brand) => (
-                  <option key={brand.id} value={brand.name}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
-            </div>
-            
-            <div className="relative mt-4">
-              <select
-                value={filters.model}
-                onChange={(e) => onFilterChange({ ...filters, model: e.target.value })}
-                disabled={!filters.brand}
-                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200"
-              >
-                <option value="">ყველა მოდელი</option>
-                {filters.brand && 
-                  brands
-                    .find(b => b.name === filters.brand)
-                    ?.models.map((model) => (
-                      <option key={model} value={model}>
-                        {model}
-                      </option>
-                    ))
-                }
-              </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <Calendar className="text-primary" size={18} /> წელი
-            </h4>
-            <div className="relative">
-              <select
+            <div>
+              <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+                <Calendar className="text-primary" size={18} /> წელი
+              </h4>
+              <CustomSelect
+                options={years.map(year => ({
+                  value: String(year),
+                  label: String(year)
+                }))}
                 value={filters.year}
-                onChange={(e) => onFilterChange({ ...filters, year: e.target.value })}
-                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              >
-                <option value="">ნებისმიერი წელი</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+                onChange={(value) => onFilterChange({ ...filters, year: value })}
+                placeholder="ნებისმიერი წელი"
+              />
             </div>
-          </div>
 
-          <div>
-            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <Fuel className="text-primary" size={18} /> საწვავის ტიპი
-            </h4>
-            <div className="relative">
-              <select
+            <div>
+              <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+                <Fuel className="text-primary" size={18} /> საწვავის ტიპი
+              </h4>
+              <CustomSelect
+                options={fuelTypes.map(type => ({
+                  value: type,
+                  label: type
+                }))}
                 value={filters.fuelType}
-                onChange={(e) => onFilterChange({ ...filters, fuelType: e.target.value })}
-                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              >
-                <option value="">ნებისმიერი</option>
-                {fuelTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+                onChange={(value) => onFilterChange({ ...filters, fuelType: value })}
+                placeholder="საწვავის ტიპი"
+              />
             </div>
-          </div>
 
-          <div>
-            <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-              <Settings className="text-primary" size={18} /> გადაცემათა კოლოფი
-            </h4>
-            <div className="relative">
-              <select
+            <div>
+              <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+                <Settings className="text-primary" size={18} /> გადაცემათა კოლოფი
+              </h4>
+              <CustomSelect
+                options={transmissions.map(type => ({
+                  value: type,
+                  label: type
+                }))}
                 value={filters.transmission}
-                onChange={(e) => onFilterChange({ ...filters, transmission: e.target.value })}
-                className="w-full px-4 py-2 border-2 border-gray-100 rounded-lg text-base text-gray-dark bg-white cursor-pointer appearance-none hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              >
-                <option value="">ნებისმიერი</option>
-                {transmissions.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 border-[5px] border-transparent border-t-gray-400" />
+                onChange={(value) => onFilterChange({ ...filters, transmission: value })}
+                placeholder="გადაცემათა კოლოფი"
+              />
             </div>
-          </div>
 
-          <div className="flex gap-4 mt-6">
-            <button 
-              className="flex-1 py-2 px-4 rounded-lg text-base font-medium bg-gray-100 text-gray-dark hover:bg-gray-200 transition-all duration-200 flex items-center justify-center gap-2"
-              onClick={handleReset}
-            >
-              <RotateCcw size={16} /> გასუფთავება
-            </button>
-            <button 
-              className="flex-1 py-2 px-4 rounded-lg text-base font-medium bg-primary text-white hover:bg-secondary transition-all duration-200 flex items-center justify-center gap-2 transform hover:scale-105 shadow-sm hover:shadow-md"
-              onClick={toggleSidebar}
-            >
-              <Search size={16} /> ძებნა
-            </button>
+            <div>
+              <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
+                <MapPin className="text-primary" size={18} /> მდებარეობა
+              </h4>
+              <CustomSelect
+                options={locations.map(location => ({
+                  value: location,
+                  label: location
+                }))}
+                value={filters.location}
+                onChange={(value) => onFilterChange({ ...filters, location: value })}
+                placeholder="მდებარეობა"
+              />
+            </div>
+
+            <div className="flex gap-4 mt-8">
+              <button
+                onClick={handleReset}
+                className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-gray-600 font-medium border-2 border-gray-100 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <RotateCcw size={16} /> გასუფთავება
+              </button>
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                className="md:hidden flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-white font-medium bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <SlidersHorizontal size={16} /> ფილტრი
+              </button>
+            </div>
           </div>
         </div>
       </aside>
-      
-      <button
-        onClick={toggleSidebar}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white shadow-lg hover:bg-secondary hover:scale-110 transition-all duration-200 md:hidden flex items-center justify-center"
-      >
-        <SlidersHorizontal size={24} />
-      </button>
     </>
   );
 };

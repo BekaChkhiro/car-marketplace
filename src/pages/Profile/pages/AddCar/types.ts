@@ -4,7 +4,6 @@ export interface NewCarFormData {
   model: string;
   year: number;
   price: string | number;
-  transport_type: 'car' | 'motorcycle' | 'truck';
   status?: 'available' | 'sold' | 'pending';
   featured?: boolean;
   city: string;
@@ -12,15 +11,15 @@ export interface NewCarFormData {
   country: string;
   location_type: 'transit' | 'georgia' | 'international';
   
-  description_en?: string;
   description_ka?: string;
+  description_en?: string;
   description_ru?: string;
 
   specifications: {
     engine_type?: string;
-    transmission?: 'manual' | 'automatic' | 'tiptronic' | 'variator';
-    fuel_type?: 'ბენზინი' | 'დიზელი' | 'ელექტრო' | 'ჰიბრიდი' | 'დატენვადი_ჰიბრიდი' | 
-                'თხევადი_გაზი' | 'ბუნებრივი_გაზი' | 'წყალბადი';
+    transmission: 'manual' | 'automatic' | 'tiptronic' | 'variator';
+    fuel_type: 'ბენზინი' | 'დიზელი' | 'ელექტრო' | 'ჰიბრიდი' | 'დატენვადი_ჰიბრიდი' | 
+               'თხევადი_გაზი' | 'ბუნებრივი_გაზი' | 'წყალბადი';
     mileage?: string | number;
     mileage_unit?: 'km' | 'mi';
     engine_size?: string | number;
@@ -29,9 +28,9 @@ export interface NewCarFormData {
     is_turbo?: boolean;
     cylinders?: number;
     manufacture_month?: number;
-    body_type?: string;
+    body_type: 'სედანი' | 'ჯიპი' | 'კუპე' | 'ჰეტჩბეკი' | 'უნივერსალი' | 'კაბრიოლეტი' | 'პიკაპი' | 'მინივენი' | 'ლიმუზინი' | 'კროსოვერი';
     steering_wheel?: 'left' | 'right';
-    drive_type?: 'front' | 'rear' | '4x4';
+    drive_type: 'front' | 'rear' | '4x4';
     interior_material?: 'ნაჭერი' | 'ტყავი' | 'ხელოვნური ტყავი' | 'კომბინირებული' | 'ალკანტარა';
     interior_color?: string;
     color?: string;
@@ -77,7 +76,6 @@ export interface BrandOption {
 export interface CategoryOption {
   id: number;
   name: string;
-  transport_type: 'car' | 'motorcycle' | 'truck';
 }
 
 // Constants for select options
@@ -92,6 +90,19 @@ export const FUEL_TYPE_OPTIONS = [
   'თხევადი_გაზი',
   'ბუნებრივი_გაზი',
   'წყალბადი'
+] as const;
+
+export const BODY_TYPE_OPTIONS = [
+  'სედანი',
+  'ჯიპი',
+  'კუპე',
+  'ჰეტჩბეკი',
+  'უნივერსალი',
+  'კაბრიოლეტი',
+  'პიკაპი',
+  'მინივენი',
+  'ლიმუზინი',
+  'კროსოვერი'
 ] as const;
 
 export const DOORS_OPTIONS = [2, 3, 4, 5, 6, 7, 8] as const;
@@ -111,10 +122,3 @@ export const INTERIOR_MATERIAL_OPTIONS = [
 ] as const;
 
 export const LOCATION_TYPE_OPTIONS = ['transit', 'georgia', 'international'] as const;
-
-export const TRANSPORT_TYPE_OPTIONS = ['car', 'motorcycle', 'truck'] as const;
-
-export const MONTHS = [
-  'იანვარი', 'თებერვალი', 'მარტი', 'აპრილი', 'მაისი', 'ივნისი',
-  'ივლისი', 'აგვისტო', 'სექტემბერი', 'ოქტომბერი', 'ნოემბერი', 'დეკემბერი'
-] as const;

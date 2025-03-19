@@ -9,7 +9,6 @@ import { useToast } from '../../context/ToastContext';
 import { Car } from '../../types/car';
 
 interface Filters {
-  transportType: string;
   brand: string;
   model: string;
   category: string;
@@ -40,8 +39,7 @@ const CarListing: React.FC = () => {
     year: searchParams.get('year') || '',
     fuelType: searchParams.get('fuelType') || '',
     transmission: searchParams.get('transmission') || '',
-    location: searchParams.get('location') || '',
-    transportType: 'car'
+    location: searchParams.get('location') || ''
   });
   
   const [cars, setCars] = useState<Car[] | null>(null);
@@ -72,7 +70,6 @@ const CarListing: React.FC = () => {
         order: 'DESC' as const,
         brand_id: filters.brand ? Number(filters.brand) : undefined,
         category_id: filters.category ? Number(filters.category) : undefined,
-        transport_type: 'car',
         price_min: filters.priceRange ? Number(filters.priceRange.split('-')[0]) : undefined,
         price_max: filters.priceRange ? Number(filters.priceRange.split('-')[1]) : undefined,
         year_min: filters.year ? Number(filters.year) : undefined,
@@ -86,6 +83,7 @@ const CarListing: React.FC = () => {
       setTotalCars(data.total || 0);
       setTotalPages(data.totalPages || 1);
     } catch (error: any) {
+      console.error('Error fetching cars:', error);
       showToast(error.message || 'მანქანების ჩატვირთვა ვერ მოხერხდა', 'error');
       setCars(null);
       setTotalCars(0);
@@ -141,10 +139,10 @@ const CarListing: React.FC = () => {
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`px-4 py-2 rounded-lg transition-colors ${
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                         currentPage === page
                           ? 'bg-primary text-white'
-                          : 'bg-white text-gray-600 hover:bg-gray-100'
+                          : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       {page}

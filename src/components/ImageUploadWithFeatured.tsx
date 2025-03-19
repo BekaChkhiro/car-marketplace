@@ -1,19 +1,23 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, X, AlertCircle } from 'lucide-react';
+import { UploadCloud, X, AlertCircle, Star } from 'lucide-react';
 
-interface ImageUploadProps {
+interface ImageUploadWithFeaturedProps {
   files: File[];
   onUpload: (files: File[]) => void;
   onRemove: (index: number) => void;
   maxFiles?: number;
+  featuredImageIndex: number;
+  onFeaturedChange: (index: number) => void;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({
+const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   files,
   onUpload,
   onRemove,
-  maxFiles = 10
+  maxFiles = 10,
+  featuredImageIndex,
+  onFeaturedChange
 }) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles = [...files];
@@ -109,6 +113,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               >
                 <X size={18} />
               </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFeaturedChange(index);
+                }}
+                className={`absolute top-2 left-2 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105 ${
+                  featuredImageIndex === index
+                    ? 'bg-primary text-white opacity-100'
+                    : 'bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 hover:text-primary'
+                }`}
+                title={featuredImageIndex === index ? 'მთავარი სურათი' : 'დააყენეთ მთავარ სურათად'}
+              >
+                <Star size={18} fill={featuredImageIndex === index ? 'white' : 'none'} />
+              </button>
             </div>
           ))}
           
@@ -131,9 +149,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       {files.length > 0 && (
         <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
-          <span className="text-sm text-gray-600">
-            {files.length} / {maxFiles} სურათი
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              {files.length} / {maxFiles} სურათი
+            </span>
+            {featuredImageIndex > -1 && (
+              <span className="text-sm text-primary flex items-center gap-1">
+                <Star size={14} className="fill-primary" />
+                მთავარი სურათი არჩეულია
+              </span>
+            )}
+          </div>
           <button
             onClick={() => onUpload([])}
             className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors duration-200 px-3 py-1 rounded-md hover:bg-red-50"
@@ -146,4 +172,4 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   );
 };
 
-export default ImageUpload;
+export default ImageUploadWithFeatured;

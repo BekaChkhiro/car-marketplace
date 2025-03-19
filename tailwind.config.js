@@ -6,12 +6,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#4CAF50',
-        secondary: '#388E3C',
-        background: '#F5F5F5',
+        primary: '#009C6D',
+        secondary: '#00B67F',
+        background: '#F8F9FA',
         'text-dark': '#333333',
         'text-light': '#FFFFFF',
-        'gray-dark': '#4A4A4A',
+        'gray-dark': '#212529',
         'gray-light': '#F0F0F0',
         'green-light': '#E8F5E9',
         'green-lighter': '#C8E6C9',
@@ -43,13 +43,24 @@ module.exports = {
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' }
+        },
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
+        },
+        'bounce-in': {
+          '0%': { transform: 'scale(0)' },
+          '50%': { transform: 'scale(1.2)' },
+          '100%': { transform: 'scale(1)' }
         }
       },
       animation: {
         fadeIn: 'fadeIn 0.3s ease-out',
         'modal-enter': 'modal-enter 0.2s ease-out',
         'slowly-move': 'slowly-move 20s ease-in-out infinite',
-        'fade-in-up': 'fade-in-up 0.5s ease-out'
+        'fade-in-up': 'fade-in-up 0.5s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out forwards',
+        'bounce-in': 'bounce-in 0.2s ease-out'
       },
       fontSize: {
         'xs': '0.75rem',

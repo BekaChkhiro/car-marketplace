@@ -1,332 +1,392 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useBeforeUnload } from 'react-router-dom';
+import { Camera, Info, Settings, Car, CheckCircle2, AlertTriangle } from 'lucide-react';
 import carService from '../../../../api/services/carService';
 import { useToast } from '../../../../context/ToastContext';
-import { useLoading } from '../../../../context/LoadingContext';
-import { useAuth } from '../../../../context/AuthContext';
-import ImageUpload from '../../../../components/ImageUpload';
+import { NewCarFormData } from './types';
+import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import BasicInfo from './components/BasicInfo';
-import TechnicalSpecs from './components/TechnicalSpecs';
-import Location from './components/Location';
-import Description from './components/Description';
 import Features from './components/Features';
-import type { NewCarFormData, FormSection } from './types';
 
 const AddCar: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { showLoading, hideLoading } = useLoading();
-  const { isAuthenticated } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [images, setImages] = useState<File[]>([]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(-1);
+  const [currentSection, setCurrentSection] = useState<'basic' | 'features'>('basic');
+  
   const [formData, setFormData] = useState<NewCarFormData>({
     brand_id: '',
     category_id: '',
     model: '',
     year: new Date().getFullYear(),
     price: '',
-    transport_type: 'car', // Set default value to 'car'
     city: '',
     state: '',
-    country: 'Georgia',
+    country: 'საქართველო',
     location_type: 'georgia',
-    description_en: '',
-    description_ka: '',
-    description_ru: '',
-    status: 'available',
-    
     specifications: {
       engine_type: '',
-      transmission: undefined,
-      fuel_type: undefined,
+      transmission: 'manual',
+      fuel_type: 'ბენზინი',
       mileage: '',
-      mileage_unit: 'km',
       engine_size: '',
       horsepower: '',
-      doors: undefined,
-      is_turbo: false,
-      cylinders: undefined,
-      manufacture_month: undefined,
-      body_type: '',
-      steering_wheel: undefined,
-      drive_type: undefined,
-      interior_material: undefined,
-      interior_color: '',
-      color: ''
+      doors: 4,
+      color: '',
+      body_type: 'სედანი',
+      drive_type: 'front'
     },
-    
     features: {
-      has_catalyst: true,
-      airbags_count: 0,
-      has_hydraulics: false,
-      has_board_computer: false,
-      has_air_conditioning: false,
-      has_parking_control: false,
-      has_rear_view_camera: false,
-      has_electric_windows: false,
-      has_climate_control: false,
-      has_cruise_control: false,
-      has_start_stop: false,
-      has_sunroof: false,
-      has_seat_heating: false,
-      has_seat_memory: false,
       has_abs: false,
-      has_traction_control: false,
-      has_central_locking: false,
+      has_air_conditioning: false,
       has_alarm: false,
-      has_fog_lights: false,
-      has_navigation: false,
       has_aux: false,
       has_bluetooth: false,
+      has_board_computer: false,
+      has_central_locking: false,
+      has_climate_control: false,
+      has_cruise_control: false,
+      has_electric_windows: false,
+      has_fog_lights: false,
       has_multifunction_steering_wheel: false,
-      has_alloy_wheels: false,
-      has_spare_tire: false,
-      is_disability_adapted: false
+      has_navigation: false,
+      has_parking_control: false,
+      has_rear_view_camera: false,
+      has_seat_heating: false,
+      has_sunroof: false,
+      has_alloy_wheels: false
     }
   });
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    const currentYear = new Date().getFullYear();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [scrollPositions, setScrollPositions] = useState<Record<string, number>>({
+    basic: 0,
+    features: 0
+  });
 
-    // Basic Info validation
-    if (!formData.brand_id) newErrors['brand_id'] = 'მარკის არჩევა სავალდებულოა';
-    if (!formData.category_id) newErrors['category_id'] = 'კატეგორიის არჩევა სავალდებულოა';
-    if (!formData.model) newErrors['model'] = 'მოდელის მითითება სავალდებულოა';
-    
-    // Year validation
-    if (!formData.year) {
-      newErrors['year'] = 'წლის არჩევა სავალდებულოა';
-    } else if (formData.year < 1900 || formData.year > currentYear + 1) {
-      newErrors['year'] = `წელი უნდა იყოს 1900-სა და ${currentYear + 1}-ს შორის`;
-    }
-
-    // Price validation
-    if (!formData.price) {
-      newErrors['price'] = 'ფასის მითითება სავალდებულოა';
-    } else {
-      const price = Number(formData.price);
-      if (isNaN(price) || price <= 0) {
-        newErrors['price'] = 'ფასი უნდა იყოს დადებითი რიცხვი';
-      }
-    }
-
-    // Location validation
-    if (!formData.city?.trim()) {
-      newErrors['city'] = 'ქალაქის მითითება სავალდებულოა';
-    }
-    
-    if (formData.location_type !== 'georgia') {
-      if (!formData.state?.trim()) {
-        newErrors['state'] = 'რეგიონის მითითება სავალდებულოა';
-      }
-    }
-
-    // Specifications validation
-    const specs = formData.specifications;
-    if (specs) {
-      if (specs.mileage && isNaN(Number(specs.mileage))) {
-        newErrors['specifications.mileage'] = 'გარბენი უნდა იყოს რიცხვითი მნიშვნელობა';
-      }
-      if (specs.engine_size && isNaN(Number(specs.engine_size))) {
-        newErrors['specifications.engine_size'] = 'ძრავის მოცულობა უნდა იყოს რიცხვითი მნიშვნელობა';
-      }
-      if (specs.horsepower && isNaN(Number(specs.horsepower))) {
-        newErrors['specifications.horsepower'] = 'ცხენის ძალა უნდა იყოს რიცხვითი მნიშვნელობა';
-      }
-      if (specs.cylinders && (isNaN(Number(specs.cylinders)) || Number(specs.cylinders) < 1)) {
-        newErrors['specifications.cylinders'] = 'ცილინდრების რაოდენობა უნდა იყოს დადებითი რიცხვი';
-      }
-      if (specs.manufacture_month && (isNaN(Number(specs.manufacture_month)) || Number(specs.manufacture_month) < 1 || Number(specs.manufacture_month) > 12)) {
-        newErrors['specifications.manufacture_month'] = 'გამოშვების თვე უნდა იყოს 1-დან 12-მდე';
-      }
-    }
-
-    // Features validation
-    if (formData.features?.airbags_count && (isNaN(Number(formData.features.airbags_count)) || 
-        Number(formData.features.airbags_count) < 0 || Number(formData.features.airbags_count) > 12)) {
-      newErrors['features.airbags_count'] = 'აირბეგების რაოდენობა უნდა იყოს 0-დან 12-მდე';
-    }
-
-    // Images validation
-    if (images.length === 0) {
-      setError('გთხოვთ ატვირთოთ მინიმუმ 1 სურათი');
-      return false;
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleBasicInfoChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
+
+  const handleSpecificationsChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      specifications: {
+        ...prev.specifications,
+        [field]: value
+      }
+    }));
+  };
+
+  const handleFeaturesChange = (field: string, value: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      features: {
+        ...prev.features,
+        [field]: value
+      }
+    }));
+  };
+
+  const handleImagesChange = useCallback((newImages: File[]) => {
+    setImages(newImages);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-
-    if (!isAuthenticated) {
-      setError('გთხოვთ გაიაროთ ავტორიზაცია');
-      showToast('გთხოვთ გაიაროთ ავტორიზაცია მანქანის დასამატებლად', 'error');
-      navigate('/');
-      return;
-    }
-
-    if (!validateForm()) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    setIsLoading(true);
-    showLoading();
-
+    
     try {
-      // Convert form data to proper types before sending
+      if (images.length === 0) {
+        showToast('გთხოვთ აირჩიოთ მინიმუმ ერთი სურათი', 'error');
+        return;
+      }
+
+      if (featuredImageIndex === -1) {
+        showToast('გთხოვთ აირჩიოთ მთავარი სურათი', 'error');
+        return;
+      }
+
       const carDataToSend = {
         ...formData,
         brand_id: Number(formData.brand_id),
         category_id: Number(formData.category_id),
         year: Number(formData.year),
         price: Number(formData.price),
-        specifications: formData.specifications ? {
+        specifications: {
           ...formData.specifications,
           mileage: formData.specifications.mileage ? Number(formData.specifications.mileage) : undefined,
           engine_size: formData.specifications.engine_size ? Number(formData.specifications.engine_size) : undefined,
-          horsepower: formData.specifications.horsepower ? Number(formData.specifications.horsepower) : undefined,
-          doors: formData.specifications.doors ? Number(formData.specifications.doors) : undefined,
-          cylinders: formData.specifications.cylinders ? Number(formData.specifications.cylinders) : undefined
-        } : undefined,
-        // Ensure strings are trimmed
-        model: formData.model.trim(),
-        city: formData.city.trim(),
-        state: formData.state.trim(),
-        country: formData.country.trim()
+          horsepower: formData.specifications.horsepower ? Number(formData.specifications.horsepower) : undefined
+        },
+        featuredImageIndex
       };
 
-      const response = await carService.createCar(carDataToSend, images);
+      await carService.createCar(carDataToSend, images);
       showToast('მანქანა წარმატებით დაემატა', 'success');
-      navigate(`/transports/${response.id}`);
-    } catch (err: any) {
-      console.error('Error creating car:', err);
-      const errorMessage = err.message === 'No authentication token found' || err.message === 'Authentication token expired'
-        ? 'გთხოვთ გაიაროთ ავტორიზაცია მანქანის დასამატებლად'
-        : err.response?.data?.message || 'დაფიქსირდა შეცდომა მანქანის დამატებისას';
-      
-      setError(errorMessage);
-      showToast(errorMessage, 'error');
-
-      if (err.message === 'No authentication token found' || err.message === 'Authentication token expired') {
-        navigate('/');
-      }
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } finally {
-      setIsLoading(false);
-      hideLoading();
+      navigate('/profile/cars');
+    } catch (error: any) {
+      showToast(error.message || 'დამატების დროს მოხდა შეცდომა', 'error');
     }
   };
 
-  const handleChange = (field: string, value: string | number | boolean) => {
-    setFormData(prev => {
-      if (field.includes('.')) {
-        const [section, key] = field.split('.') as [FormSection, string];
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [key]: value
-          }
-        };
-      }
-      return { ...prev, [field]: value };
-    });
+  const handleFeaturedImageChange = (index: number) => {
+    setFeaturedImageIndex(index);
   };
 
-  const handleImageUpload = useCallback((files: File[]) => {
-    setImages(prev => [...prev, ...files].slice(0, 10));
-  }, []);
+  const getFormProgress = () => {
+    let progress = 0;
+    let total = 0;
 
-  const removeImage = useCallback((index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-  }, []);
+    // Images progress
+    if (images.length > 0) progress++;
+    if (featuredImageIndex !== -1) progress++;
+    total += 2;
+
+    // Basic info progress
+    const requiredFields = ['brand_id', 'model', 'category_id', 'year', 'price', 'city', 'state'];
+    requiredFields.forEach(field => {
+      if (formData[field as keyof typeof formData]) progress++;
+      total++;
+    });
+
+    // Calculate percentage
+    return Math.round((progress / total) * 100);
+  };
+
+  const formProgress = getFormProgress();
+
+  // Save scroll position when switching sections
+  const handleSectionChange = (section: 'basic' | 'features') => {
+    // Save current section's scroll position
+    setScrollPositions(prev => ({
+      ...prev,
+      [currentSection]: window.scrollY
+    }));
+
+    // Change section
+    setCurrentSection(section);
+
+    // Restore that section's scroll position after a brief delay
+    setTimeout(() => {
+      window.scrollTo({
+        top: scrollPositions[section],
+        behavior: 'smooth'
+      });
+    }, 100);
+  };
+
+  // Track unsaved changes
+  useEffect(() => {
+    const hasChanges = images.length > 0 || 
+      Object.values(formData).some(value => 
+        value && (typeof value === 'string' ? value.length > 0 : true)
+      );
+    
+    setHasUnsavedChanges(hasChanges);
+  }, [formData, images]);
+
+  // Show warning when trying to leave with unsaved changes
+  useBeforeUnload(
+    useCallback(
+      (event) => {
+        if (hasUnsavedChanges) {
+          event.preventDefault();
+          return (event.returnValue = 'თქვენ გაქვთ შეუნახავი ცვლილებები. ნამდვილად გსურთ გვერდის დატოვება?');
+        }
+      },
+      [hasUnsavedChanges]
+    )
+  );
+
+  // Handle navigation attempt with unsaved changes
+  const handleNavigation = useCallback(
+    (to: string) => {
+      if (hasUnsavedChanges) {
+        const confirmLeave = window.confirm(
+          'თქვენ გაქვთ შეუნახავი ცვლილებები. ნამდვილად გსურთ გვერდის დატოვება?'
+        );
+        if (!confirmLeave) {
+          return;
+        }
+      }
+      navigate(to);
+    },
+    [hasUnsavedChanges, navigate]
+  );
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-dark mb-6">მანქანის დამატება</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        მანქანის დამატება
+      </h1>
       
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-          {error}
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        {/* Progress Bar */}
+        <div className="px-6 pt-6">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Car size={20} className="text-primary" />
+              <span className="text-sm font-medium text-gray-700">
+                ფორმის შევსების პროგრესი
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {formProgress === 100 ? (
+                <CheckCircle2 size={20} className="text-green-500" />
+              ) : (
+                <AlertTriangle size={20} className="text-amber-500" />
+              )}
+              <span className="text-sm font-medium text-gray-700">
+                {formProgress}%
+              </span>
+            </div>
+          </div>
+          <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-primary transition-all duration-500 ease-out"
+              style={{ width: `${formProgress}%` }}
+            />
+          </div>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-dark">სურათები</h2>
-          <ImageUpload
-            files={images}
-            onUpload={handleImageUpload}
-            onRemove={removeImage}
-            maxFiles={10}
-            maxSize={5 * 1024 * 1024} // 5MB
-            acceptedTypes={['image/jpeg', 'image/png', 'image/webp']}
-            isUploading={isLoading}
-          />
-          <p className="text-sm text-gray-500">
-            * მაქსიმუმ 10 სურათი, თითოეული მაქსიმუმ 5MB ზომის. დაშვებული ფორმატები: JPEG, PNG, WebP
-          </p>
+        <div className="border-b border-gray-100 mt-6">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                onClick={() => handleSectionChange('basic')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 ${
+                  currentSection === 'basic'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Info size={18} />
+                ძირითადი ინფორმაცია
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSectionChange('features')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 ${
+                  currentSection === 'features'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Settings size={18} />
+                აღჭურვილობა
+              </button>
+            </div>
+          </div>
         </div>
 
-        <BasicInfo 
-          formData={formData} 
-          onChange={handleChange}
-          errors={errors}
-        />
-        
-        <TechnicalSpecs 
-          specifications={formData.specifications} 
-          onChange={handleChange}
-          errors={errors}
-        />
+        <div className="p-6">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(e).then(() => {
+                setHasUnsavedChanges(false);
+              });
+            }} 
+            className="space-y-8"
+          >
+            <div className="bg-gray-50 rounded-xl p-6 border-2 border-dashed border-gray-200">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Camera size={20} className="text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">სურათები</h2>
+                  <p className="text-sm text-gray-500">
+                    {images.length > 0 
+                      ? `${images.length} სურათი ატვირთულია${featuredImageIndex !== -1 ? ', მთავარი სურათი არჩეულია' : ''}`
+                      : 'მინიმუმ 1 სურათი სავალდებულოა'
+                    }
+                  </p>
+                </div>
+              </div>
+              
+              <ImageUploadWithFeatured
+                files={images}
+                onUpload={setImages}
+                onRemove={(index) => {
+                  const newImages = [...images];
+                  newImages.splice(index, 1);
+                  setImages(newImages);
+                  if (featuredImageIndex === index) {
+                    setFeaturedImageIndex(-1);
+                  } else if (featuredImageIndex > index) {
+                    setFeaturedImageIndex(featuredImageIndex - 1);
+                  }
+                }}
+                maxFiles={10}
+                featuredImageIndex={featuredImageIndex}
+                onFeaturedChange={handleFeaturedImageChange}
+              />
+            </div>
 
-        <Features
-          features={formData.features}
-          onChange={handleChange}
-          errors={errors}
-        />
-        
-        <Location 
-          city={formData.city}
-          state={formData.state}
-          country={formData.country}
-          location_type={formData.location_type}
-          onChange={handleChange}
-          errors={errors}
-        />
-        
-        <Description 
-          description_en={formData.description_en}
-          description_ka={formData.description_ka}
-          description_ru={formData.description_ru}
-          onChange={handleChange}
-          errors={errors}
-        />
+            {currentSection === 'basic' ? (
+              <BasicInfo
+                formData={formData}
+                onChange={handleBasicInfoChange}
+                onSpecificationsChange={handleSpecificationsChange}
+              />
+            ) : (
+              <Features
+                features={formData.features}
+                onChange={handleFeaturesChange}
+              />
+            )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-3 px-6 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              მიმდინარეობს...
-            </>
-          ) : (
-            'დამატება'
-          )}
-        </button>
-      </form>
+            <div className="flex items-center justify-between pt-6 border-t border-gray-100">
+              <div className="flex items-center gap-2">
+                {formProgress === 100 ? (
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-lg">
+                    <CheckCircle2 size={18} />
+                    <span className="text-sm font-medium">მზადაა გამოსაქვეყნებლად</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-lg">
+                    <AlertTriangle size={18} />
+                    <span className="text-sm font-medium">შეავსეთ ყველა სავალდებულო ველი</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-4">
+                {hasUnsavedChanges && (
+                  <span className="text-sm text-amber-600">
+                    * თქვენ გაქვთ შეუნახავი ცვლილებები
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleNavigation('/profile/cars')}
+                  className="px-6 py-2.5 border-2 border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  გაუქმება
+                </button>
+                <button
+                  type="submit"
+                  className={`px-8 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 font-medium ${
+                    formProgress === 100
+                      ? 'bg-primary text-white hover:bg-primary/90'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
+                  disabled={formProgress !== 100}
+                >
+                  დამატება
+                  {formProgress === 100 && <CheckCircle2 size={18} />}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

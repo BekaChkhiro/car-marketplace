@@ -1,14 +1,29 @@
 export const mockBrands = [
-  { id: 1, name: 'Toyota', models: ['Camry', 'Corolla', 'RAV4', 'Land Cruiser'] },
-  { id: 2, name: 'BMW', models: ['3 Series', '5 Series', 'X5', 'M3'] },
-  { id: 3, name: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE'] },
-  { id: 4, name: 'Audi', models: ['A4', 'A6', 'Q5', 'Q7'] },
-  { id: 5, name: 'Honda', models: ['Civic', 'Accord', 'CR-V', 'Pilot'] },
-  { id: 6, name: 'Ford', models: ['Focus', 'Mustang', 'Explorer', 'F-150'] },
-  { id: 7, name: 'Volkswagen', models: ['Golf', 'Passat', 'Tiguan', 'Atlas'] },
-  { id: 8, name: 'Hyundai', models: ['Elantra', 'Sonata', 'Tucson', 'Santa Fe'] },
-  { id: 9, name: 'Kia', models: ['Forte', 'K5', 'Sportage', 'Telluride'] },
-  { id: 10, name: 'Nissan', models: ['Altima', 'Maxima', 'Rogue', 'Pathfinder'] }
+  { 
+    id: 1, 
+    name: 'BMW', 
+    models: ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'i8', 'iX', 'M2', 'M3', 'M4', 'M5', 'M8']
+  },
+  { 
+    id: 2, 
+    name: 'Mercedes-Benz', 
+    models: ['A-Class', 'B-Class', 'C-Class', 'CLA', 'CLS', 'E-Class', 'G-Class', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'S-Class', 'SL', 'AMG GT']
+  },
+  { 
+    id: 3, 
+    name: 'Toyota', 
+    models: ['Camry', 'Corolla', 'RAV4', 'Land Cruiser', 'Prius', 'Yaris', 'Highlander', 'Avalon', 'Supra', '4Runner', 'Tundra', 'Tacoma', 'Sienna']
+  },
+  { 
+    id: 4, 
+    name: 'Lexus', 
+    models: ['ES', 'IS', 'LS', 'NX', 'RX', 'UX', 'GX', 'LX', 'RC', 'LC']
+  },
+  {
+    id: 5,
+    name: 'Volkswagen',
+    models: ['Golf', 'Passat', 'Tiguan', 'Atlas', 'Jetta', 'Arteon', 'ID.4', 'Taos', 'Polo', 'T-Roc']
+  }
 ];
 
 export const mockCategories = [

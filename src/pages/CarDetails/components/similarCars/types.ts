@@ -9,6 +9,12 @@ export interface Car {
     fuelType: string;
     transmission: string;
     mileage: number;
+    bodyType?: 'სედანი' | 'ჯიპი' | 'კუპე' | 'ჰეტჩბეკი' | 'უნივერსალი' | 'კაბრიოლეტი' | 'პიკაპი' | 'მინივენი' | 'ლიმუზინი' | 'კროსოვერი';
+    color?: string;
+    drive?: string;
+    engine?: string;
+    drive_type?: string;
+    engine_type?: string;
   };
   location: {
     city: string;

@@ -2,9 +2,9 @@ import React from 'react';
 import { Fuel, Gauge, Settings, Palette, Navigation } from 'lucide-react';
 
 interface Specifications {
-  fuelType?: string;
-  mileage?: number;
-  transmission?: string;
+  fuelType: string;
+  mileage: number;
+  transmission: string;
   color?: string;
   drive?: string;
 }

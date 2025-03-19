@@ -31,10 +31,7 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-gray-50 rounded-lg">
       <div className="flex">
-        <SideNavigation 
-          activeTab={activeTab} 
-          onTabChange={(tab) => {}} // აღარ გვჭირდება ეს ფუნქცია, რადგან Link-ები გამოვიყენეთ
-        />
+        <SideNavigation />
         
         <main className="flex-1 py-8 px-8">
           <div className="max-w-4xl mx-auto">
