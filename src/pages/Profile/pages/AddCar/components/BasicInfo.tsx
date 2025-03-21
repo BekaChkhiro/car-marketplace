@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Car, DollarSign, MapPin, Gauge, Check, AlertTriangle } from 'lucide-react';
+import { Car, DollarSign, MapPin, Check, AlertTriangle, Navigation } from 'lucide-react';
 import { mockCategories } from '../../../../../data/mockData';
-import { getBrands } from '../../../../../api/services/carService';
+import carService from '../../../../../api/services/carService';
 import { NewCarFormData } from '../types';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import {
-  TRANSMISSION_OPTIONS,
-  FUEL_TYPE_OPTIONS,
-  BODY_TYPE_OPTIONS,
-  DRIVE_TYPE_OPTIONS
+  CITY_OPTIONS,
+  COUNTRY_OPTIONS,
+  LOCATION_TYPE_OPTIONS
 } from '../types';
+import TechnicalSpecs from './TechnicalSpecs';
 
 interface Brand {
   id: number;
@@ -33,41 +33,56 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
 
+  // Load brands on mount
   useEffect(() => {
-    const fetchBrands = async () => {
+    const loadBrands = async () => {
       try {
-        const data = await getBrands();
+        setLoading(true);
+        const data = await carService.getBrands();
         setBrands(data);
-      } catch (err) {
-        setError('Failed to load brands');
+      } catch (err: any) {
+        setError(err.message);
+        console.error('Error loading brands:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBrands();
+    loadBrands();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  // Load models when brand changes
+  useEffect(() => {
+    const loadModels = async () => {
+      if (!formData.brand_id) {
+        setAvailableModels([]);
+        return;
+      }
 
-  if (error) {
-    return (
-      <div className="p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-2">
-        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-        {error}
-      </div>
-    );
-  }
+      try {
+        setLoadingModels(true);
+        const models = await carService.getModels(formData.brand_id);
+        setAvailableModels(models);
+      } catch (err: any) {
+        console.error('Error loading models:', err);
+        setError(err.message);
+      } finally {
+        setLoadingModels(false);
+      }
+    };
 
-  const selectedBrand = brands.find(brand => String(brand.id) === String(formData.brand_id));
-  const availableModels = selectedBrand?.models || [];
+    loadModels();
+  }, [formData.brand_id]);
+
+  // Brand selection handler
+  const handleBrandChange = (value: string | string[]) => {
+    const brandId = Array.isArray(value) ? value[0] : value;
+    onChange('brand_id', brandId);
+    onChange('model', ''); // Reset model when brand changes
+  };
 
   const getFieldStatus = (fieldName: string) => {
     if (errors[fieldName]) return 'error';
@@ -86,11 +101,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 transition-all duration-300">
       {/* Car Details Section */}
-      <div className="bg-gray-50 rounded-xl p-6">
+      <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110">
             <Car size={20} className="text-primary" />
           </div>
           <div>
@@ -113,10 +128,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 label: brand.name
               }))}
               value={String(formData.brand_id)}
-              onChange={(value) => {
-                onChange('brand_id', value);
-                onChange('model', '');
-              }}
+              onChange={handleBrandChange}
               placeholder="აირჩიეთ მარკა"
               error={errors?.brand_id}
               isValid={!!formData.brand_id}
@@ -187,8 +199,15 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
         </div>
       </div>
 
+      {/* Technical Specifications */}
+      <TechnicalSpecs 
+        specifications={formData.specifications}
+        onChange={onSpecificationsChange}
+        errors={errors}
+      />
+
       {/* Price Section */}
-      <div className="bg-gray-50 rounded-xl p-6">
+      <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <DollarSign size={20} className="text-primary" />
@@ -227,189 +246,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
         </div>
       </div>
 
-      {/* Specifications Section */}
-      <div className="bg-gray-50 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Gauge size={20} className="text-primary" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">სპეციფიკაციები</h2>
-            <p className="text-sm text-gray-500">ტექნიკური მახასიათებლები</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              გარბენი (კმ)
-              {errors?.mileage && (
-                <span className="text-red-500 ml-1 text-xs">{errors.mileage}</span>
-              )}
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                value={formData.specifications.mileage}
-                onChange={(e) => onSpecificationsChange('mileage', e.target.value)}
-                className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 ${
-                  errors?.mileage
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : formData.specifications.mileage
-                    ? 'border-green-300'
-                    : 'border-gray-100'
-                }`}
-                placeholder="მაგ: 100000"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {renderStatusIcon(getFieldStatus('mileage'))}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              გადაცემათა კოლოფი
-              {errors?.transmission && (
-                <span className="text-red-500 ml-1 text-xs">{errors.transmission}</span>
-              )}
-            </label>
-            <CustomSelect
-              options={TRANSMISSION_OPTIONS.map(option => ({
-                value: option,
-                label: option === 'manual' ? 'მექანიკა' : 
-                       option === 'automatic' ? 'ავტომატი' : 
-                       option === 'tiptronic' ? 'ტიპტრონიკი' : 
-                       'ვარიატორი'
-              }))}
-              value={formData.specifications.transmission}
-              onChange={(value) => onSpecificationsChange('transmission', value)}
-              placeholder="აირჩიეთ გადაცემათა კოლოფი"
-              error={errors?.transmission}
-              isValid={!!formData.specifications.transmission}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              საწვავის ტიპი
-              {errors?.fuel_type && (
-                <span className="text-red-500 ml-1 text-xs">{errors.fuel_type}</span>
-              )}
-            </label>
-            <CustomSelect
-              options={FUEL_TYPE_OPTIONS.map(option => ({
-                value: option,
-                label: option
-              }))}
-              value={formData.specifications.fuel_type}
-              onChange={(value) => onSpecificationsChange('fuel_type', value)}
-              placeholder="აირჩიეთ საწვავის ტიპი"
-              error={errors?.fuel_type}
-              isValid={!!formData.specifications.fuel_type}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ძარის ტიპი
-              {errors?.body_type && (
-                <span className="text-red-500 ml-1 text-xs">{errors.body_type}</span>
-              )}
-            </label>
-            <CustomSelect
-              options={BODY_TYPE_OPTIONS.map(option => ({
-                value: option,
-                label: option
-              }))}
-              value={formData.specifications.body_type}
-              onChange={(value) => onSpecificationsChange('body_type', value)}
-              placeholder="აირჩიეთ ძარის ტიპი"
-              error={errors?.body_type}
-              isValid={!!formData.specifications.body_type}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              წამყვანი თვლები
-              {errors?.drive_type && (
-                <span className="text-red-500 ml-1 text-xs">{errors.drive_type}</span>
-              )}
-            </label>
-            <CustomSelect
-              options={DRIVE_TYPE_OPTIONS.map(option => ({
-                value: option,
-                label: option === 'front' ? 'წინა' : 
-                       option === 'rear' ? 'უკანა' : '4x4'
-              }))}
-              value={formData.specifications.drive_type}
-              onChange={(value) => onSpecificationsChange('drive_type', value)}
-              placeholder="აირჩიეთ წამყვანი თვლები"
-              error={errors?.drive_type}
-              isValid={!!formData.specifications.drive_type}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ძრავის მოცულობა (ლ)
-              {errors?.engine_size && (
-                <span className="text-red-500 ml-1 text-xs">{errors.engine_size}</span>
-              )}
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                step="0.1"
-                value={formData.specifications.engine_size}
-                onChange={(e) => onSpecificationsChange('engine_size', e.target.value)}
-                className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 ${
-                  errors?.engine_size
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : formData.specifications.engine_size
-                    ? 'border-green-300'
-                    : 'border-gray-100'
-                }`}
-                placeholder="მაგ: 2.0"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {renderStatusIcon(getFieldStatus('engine_size'))}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ფერი
-              {errors?.color && (
-                <span className="text-red-500 ml-1 text-xs">{errors.color}</span>
-              )}
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.specifications.color}
-                onChange={(e) => onSpecificationsChange('color', e.target.value)}
-                className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 ${
-                  errors?.color
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : formData.specifications.color
-                    ? 'border-green-300'
-                    : 'border-gray-100'
-                }`}
-                placeholder="მაგ: შავი"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {renderStatusIcon(getFieldStatus('color'))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Location Section */}
-      <div className="bg-gray-50 rounded-xl p-6">
+      <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 ჰ-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <MapPin size={20} className="text-primary" />
@@ -423,74 +261,113 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              ქალაქი *
-              {errors?.city && (
-                <span className="text-red-500 ml-1 text-xs">{errors.city}</span>
-              )}
+              ქვეყანა *
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.city}
-                onChange={(e) => onChange('city', e.target.value)}
-                className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 ${
-                  errors?.city
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : formData.city
-                    ? 'border-green-300'
-                    : 'border-gray-100'
-                }`}
-                placeholder="მაგ: თბილისი"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {renderStatusIcon(getFieldStatus('city'))}
-              </div>
-            </div>
+            <CustomSelect
+              options={COUNTRY_OPTIONS.map(country => ({
+                value: country,
+                label: country
+              }))}
+              value={formData.country}
+              onChange={(value) => onChange('country', value)}
+              placeholder="აირჩიეთ ქვეყანა"
+              error={errors?.country}
+              isValid={!!formData.country}
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              რეგიონი *
-              {errors?.state && (
-                <span className="text-red-500 ml-1 text-xs">{errors.state}</span>
-              )}
+              ქალაქი *
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.state}
-                onChange={(e) => onChange('state', e.target.value)}
-                className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 ${
-                  errors?.state
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : formData.state
-                    ? 'border-green-300'
-                    : 'border-gray-100'
-                }`}
-                placeholder="მაგ: თბილისი"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {renderStatusIcon(getFieldStatus('state'))}
-              </div>
-            </div>
+            <CustomSelect
+              options={CITY_OPTIONS.map(city => ({
+                value: city,
+                label: city
+              }))}
+              value={formData.city}
+              onChange={(value) => onChange('city', value)}
+              placeholder="აირჩიეთ ქალაქი"
+              error={errors?.city}
+              isValid={!!formData.city}
+            />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              რაიონი/უბანი
+            </label>
+            <input
+              type="text"
+              value={formData.state}
+              onChange={(e) => onChange('state', e.target.value)}
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              placeholder="შეიყვანეთ რაიონი/უბანი"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              მდებარეობის ტიპი
+            </label>
+            <CustomSelect
+              options={LOCATION_TYPE_OPTIONS}
+              value={formData.location_type}
+              onChange={(value) => onChange('location_type', value)}
+              placeholder="აირჩიეთ მდებარეობის ტიპი"
+              isValid={!!formData.location_type}
+            />
+          </div>
+
+          {formData.location_type === 'transit' && (
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ტრანზიტის სტატუსი
+              </label>
+              <select
+                value={formData.transit_status || ''}
+                onChange={(e) => onChange('transit_status', e.target.value)}
+                className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              >
+                <option value="">აირჩიეთ სტატუსი</option>
+                <option value="გზაში საქ.-სკენ">გზაში საქართველოსკენ</option>
+              </select>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Technical Specifications */}
+      <TechnicalSpecs 
+        specifications={formData.specifications}
+        onChange={onSpecificationsChange}
+        errors={errors}
+      />
+
       {/* Description Section */}
-      <div className="bg-gray-50 rounded-xl p-6">
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            აღწერა *
-            {errors?.description_ka && (
-              <span className="text-red-500 ml-1 text-xs">{errors.description_ka}</span>
-            )}
-          </label>
-          <div className="relative">
+      <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 ჰ-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Navigation size={20} className="text-primary" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">აღწერა</h2>
+            <p className="text-sm text-gray-500">დაწერეთ დეტალური ინფორმაცია მანქანის შესახებ</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              აღწერა (ქართულად) *
+              {errors?.description_ka && (
+                <span className="text-red-500 ml-1 text-xs">{errors.description_ka}</span>
+              )}
+            </label>
             <textarea
               value={formData.description_ka}
               onChange={(e) => onChange('description_ka', e.target.value)}
-              className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 min-h-[150px] resize-none pr-10 ${
+              className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 min-h-[150px] resize-none ${
                 errors?.description_ka
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                   : formData.description_ka
@@ -499,9 +376,30 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               }`}
               placeholder="დაწერეთ დეტალური ინფორმაცია მანქანის შესახებ..."
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              {renderStatusIcon(getFieldStatus('description_ka'))}
-            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              აღწერა (ინგლისურად)
+            </label>
+            <textarea
+              value={formData.description_en}
+              onChange={(e) => onChange('description_en', e.target.value)}
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 min-h-[150px] resize-none"
+              placeholder="Write detailed information about the car..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              აღწერა (რუსულად)
+            </label>
+            <textarea
+              value={formData.description_ru}
+              onChange={(e) => onChange('description_ru', e.target.value)}
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 min-h-[150px] resize-none"
+              placeholder="Напишите подробную информацию об автомобиле..."
+            />
           </div>
         </div>
       </div>

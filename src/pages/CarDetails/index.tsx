@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getCarById } from '../../api/services/carService';
+import carService, { CarImage } from '../../api/services/carService';
 import { useLoading } from '../../context/LoadingContext';
 import { useToast } from '../../context/ToastContext';
 import CarInfo from './components/carInfo/CarInfo';
@@ -22,7 +22,7 @@ const CarDetails: React.FC = () => {
 
       try {
         showLoading();
-        const data = await getCarById(id);
+        const data = await carService.getCarById(id);
         // Transform CarData to Car type
         setCar({
           id: data.id,
@@ -33,8 +33,8 @@ const CarDetails: React.FC = () => {
           year: data.year,
           price: data.price,
           description: data.description,
-          // Convert CarImage objects to image URLs
-          images: data.images.map(img => typeof img === 'string' ? img : img.large),
+          // Convert CarImage objects to image URLs with type annotation
+          images: data.images.map((img: CarImage | string) => typeof img === 'string' ? img : img.large),
           specifications: {
             fuelType: data.specifications?.fuel_type || '',
             transmission: data.specifications?.transmission || '',

@@ -1,69 +1,64 @@
+export interface CarSpecifications {
+  transmission: string;
+  fuel_type: string;
+  body_type: string;
+  drive_type: string;
+  steering_wheel?: string;
+  engine_size?: number;
+  mileage?: number;
+  color?: string;
+}
+
+export interface CarFeatures {
+  has_board_computer?: boolean;
+  has_air_conditioning?: boolean;
+  has_parking_control?: boolean;
+  has_rear_view_camera?: boolean;
+  has_navigation?: boolean;
+  has_heated_seats?: boolean;
+  has_ventilated_seats?: boolean;
+  has_cruise_control?: boolean;
+  has_multimedia?: boolean;
+  has_bluetooth?: boolean;
+  has_start_stop?: boolean;
+  has_panoramic_roof?: boolean;
+  has_sunroof?: boolean;
+  has_leather_interior?: boolean;
+  has_memory_seats?: boolean;
+  has_memory_steering_wheel?: boolean;
+  has_electric_mirrors?: boolean;
+  has_electric_seats?: boolean;
+  has_heated_steering_wheel?: boolean;
+  has_electric_trunk?: boolean;
+  has_keyless_entry?: boolean;
+  has_alarm?: boolean;
+  has_technical_inspection?: boolean;
+}
+
 export interface NewCarFormData {
-  brand_id: string | number;
-  category_id: string | number;
+  brand_id: string;
   model: string;
+  category_id: string;
   year: number;
   price: string | number;
-  status?: 'available' | 'sold' | 'pending';
-  featured?: boolean;
-  city: string;
-  state: string;
-  country: string;
-  location_type: 'transit' | 'georgia' | 'international';
-  
-  description_ka?: string;
+  description_ka: string;
   description_en?: string;
   description_ru?: string;
+  status: 'available' | 'sold' | 'reserved';
+  city: string;
+  state?: string;
+  country: string;
+  location_type: 'georgia' | 'transit' | 'international';
+  transit_status?: string;
+  specifications: CarSpecifications;
+  features: CarFeatures;
+}
 
-  specifications: {
-    engine_type?: string;
-    transmission: 'manual' | 'automatic' | 'tiptronic' | 'variator';
-    fuel_type: 'ბენზინი' | 'დიზელი' | 'ელექტრო' | 'ჰიბრიდი' | 'დატენვადი_ჰიბრიდი' | 
-               'თხევადი_გაზი' | 'ბუნებრივი_გაზი' | 'წყალბადი';
-    mileage?: string | number;
-    mileage_unit?: 'km' | 'mi';
-    engine_size?: string | number;
-    horsepower?: string | number;
-    doors?: 2 | 3 | 4 | 5 | 6 | 7 | 8;
-    is_turbo?: boolean;
-    cylinders?: number;
-    manufacture_month?: number;
-    body_type: 'სედანი' | 'ჯიპი' | 'კუპე' | 'ჰეტჩბეკი' | 'უნივერსალი' | 'კაბრიოლეტი' | 'პიკაპი' | 'მინივენი' | 'ლიმუზინი' | 'კროსოვერი';
-    steering_wheel?: 'left' | 'right';
-    drive_type: 'front' | 'rear' | '4x4';
-    interior_material?: 'ნაჭერი' | 'ტყავი' | 'ხელოვნური ტყავი' | 'კომბინირებული' | 'ალკანტარა';
-    interior_color?: string;
-    color?: string;
-  };
-  
-  features: {
-    has_catalyst?: boolean;
-    airbags_count?: number;
-    has_hydraulics?: boolean;
-    has_board_computer?: boolean;
-    has_air_conditioning?: boolean;
-    has_parking_control?: boolean;
-    has_rear_view_camera?: boolean;
-    has_electric_windows?: boolean;
-    has_climate_control?: boolean;
-    has_cruise_control?: boolean;
-    has_start_stop?: boolean;
-    has_sunroof?: boolean;
-    has_seat_heating?: boolean;
-    has_seat_memory?: boolean;
-    has_abs?: boolean;
-    has_traction_control?: boolean;
-    has_central_locking?: boolean;
-    has_alarm?: boolean;
-    has_fog_lights?: boolean;
-    has_navigation?: boolean;
-    has_aux?: boolean;
-    has_bluetooth?: boolean;
-    has_multifunction_steering_wheel?: boolean;
-    has_alloy_wheels?: boolean;
-    has_spare_tire?: boolean;
-    is_disability_adapted?: boolean;
-  };
+export interface FormSectionProps {
+  formData: NewCarFormData;
+  onChange: (field: string, value: any) => void;
+  onSpecificationsChange?: (field: string, value: any) => void;
+  errors?: { [key: string]: string };
 }
 
 export type FormSection = 'specifications' | 'features';
@@ -71,6 +66,7 @@ export type FormSection = 'specifications' | 'features';
 export interface BrandOption {
   id: number;
   name: string;
+  models: string[];
 }
 
 export interface CategoryOption {
@@ -78,47 +74,195 @@ export interface CategoryOption {
   name: string;
 }
 
-// Constants for select options
-export const TRANSMISSION_OPTIONS = ['manual', 'automatic', 'tiptronic', 'variator'] as const;
+export interface Option {
+  value: string;
+  label: string;
+}
 
-export const FUEL_TYPE_OPTIONS = [
+// Constants for select options
+export const TRANSMISSION_OPTIONS: Option[] = [
+  'მექანიკური',
+  'ავტომატური',
+  'ტიპტრონიკი',
+  'ვარიატორი'
+].map(option => ({ value: option, label: option }));
+
+export const FUEL_TYPE_OPTIONS: Option[] = [
   'ბენზინი',
   'დიზელი',
-  'ელექტრო',
   'ჰიბრიდი',
-  'დატენვადი_ჰიბრიდი',
-  'თხევადი_გაზი',
-  'ბუნებრივი_გაზი',
-  'წყალბადი'
-] as const;
+  'ელექტრო',
+  'ბუნებრივი გაზი',
+  'თხევადი გაზი'
+].map(option => ({ value: option, label: option }));
 
 export const BODY_TYPE_OPTIONS = [
   'სედანი',
-  'ჯიპი',
-  'კუპე',
   'ჰეტჩბეკი',
   'უნივერსალი',
+  'კუპე',
   'კაბრიოლეტი',
+  'ჯიპი',
   'პიკაპი',
   'მინივენი',
-  'ლიმუზინი',
-  'კროსოვერი'
-] as const;
+  'მიკროავტობუსი',
+  'ფურგონი'
+];
 
-export const DOORS_OPTIONS = [2, 3, 4, 5, 6, 7, 8] as const;
+export const DRIVE_TYPE_OPTIONS: Option[] = [
+  'წინა',
+  'უკანა',
+  '4x4'
+].map(option => ({ value: option, label: option }));
 
-export const MILEAGE_UNIT_OPTIONS = ['km', 'mi'] as const;
+export const STEERING_WHEEL_OPTIONS = [
+  'მარჯვენა',
+  'მარცხენა'
+];
 
-export const STEERING_WHEEL_OPTIONS = ['left', 'right'] as const;
+export const COLOR_OPTIONS = [
+  'შავი',
+  'თეთრი',
+  'ვერცხლისფერი',
+  'რუხი',
+  'ლურჯი',
+  'წითელი',
+  'ყავისფერი',
+  'მწვანე',
+  'ყვითელი',
+  'ოქროსფერი',
+  'ნარინჯისფერი',
+  'სხვა'
+];
 
-export const DRIVE_TYPE_OPTIONS = ['front', 'rear', '4x4'] as const;
+export const INTERIOR_COLOR_OPTIONS = [
+  'შავი',
+  'რუხი',
+  'ბეჟი',
+  'ყავისფერი',
+  'წითელი',
+  'სხვა'
+];
 
 export const INTERIOR_MATERIAL_OPTIONS = [
-  'ნაჭერი',
   'ტყავი',
-  'ხელოვნური ტყავი',
+  'ნაჭერი',
   'კომბინირებული',
-  'ალკანტარა'
+  'ალკანტარა',
+  'ველიური'
+];
+
+export const DOORS_OPTIONS = ['2', '3', '4', '5'];
+
+export const CYLINDER_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12];
+
+export const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1);
+
+export const MILEAGE_UNIT_OPTIONS = ['km', 'mi'];
+
+export const CITY_OPTIONS = [
+  'თბილისი',
+  'ქუთაისი',
+  'ბათუმი',
+  'რუსთავი',
+  'გორი',
+  'ზუგდიდი',
+  'ფოთი',
+  'ხაშური',
+  'სამტრედია',
+  'სენაკი',
+  'ზესტაფონი',
+  'მარნეული',
+  'თელავი',
+  'ახალციხე',
+  'ქობულეთი',
+  'ოზურგეთი',
+  'კასპი',
+  'ჭიათურა',
+  'წყალტუბო',
+  'საგარეჯო',
+  'გარდაბანი',
+  'ბორჯომი',
+  'სხვა'
 ] as const;
 
-export const LOCATION_TYPE_OPTIONS = ['transit', 'georgia', 'international'] as const;
+export const COUNTRY_OPTIONS = [
+  'საქართველო',
+  'გერმანია',
+  'აშშ',
+  'იაპონია',
+  'კორეა',
+  'დიდი ბრიტანეთი',
+  'საფრანგეთი',
+  'იტალია',
+  'ესპანეთი',
+  'ბელგია',
+  'ნიდერლანდები',
+  'შვეიცარია',
+  'ავსტრია',
+  'შვედეთი',
+  'ნორვეგია',
+  'დანია',
+  'ფინეთი',
+  'პოლონეთი',
+  'ჩეხეთი',
+  'სლოვაკეთი',
+  'უნგრეთი',
+  'რუმინეთი',
+  'ბულგარეთი',
+  'საბერძნეთი',
+  'თურქეთი',
+  'სხვა'
+] as const;
+
+export const LOCATION_TYPE_OPTIONS: Option[] = [
+  { value: 'transit', label: 'ტრანზიტში' },
+  { value: 'georgia', label: 'საქართველოში' },
+  { value: 'international', label: 'საზღვარგარეთ' }
+];
+
+// Features and equipment options
+export const SAFETY_FEATURES = [
+  'ABS',
+  'EBD',
+  'მძღოლის უსაფრთხოების ბალიში',
+  'მგზავრის უსაფრთხოების ბალიში',
+  'გვერდითი უსაფრთხოების ბალიშები',
+  'ESP',
+  'სიგნალიზაცია',
+  'ცენტრალური საკეტი',
+  'იმობილაიზერი'
+];
+
+export const INTERIOR_FEATURES = [
+  'კონდიციონერი',
+  'კლიმატ-კონტროლი',
+  'ტყავის სალონი',
+  'ნავიგაცია',
+  'ლუქი',
+  'პანორამული ჭერი',
+  'მულტისაჭე',
+  'ელ.შუშები',
+  'ელ.სავარძლები',
+  'სავარძლების გათბობა',
+  'სავარძლების ვენტილაცია',
+  'საჭის გათბობა',
+  'უკანა ხედვის კამერა',
+  'კრუიზ-კონტროლი',
+  'ბორტკომპიუტერი',
+  'Bluetooth',
+  'CD',
+  'USB',
+  'AUX'
+];
+
+export const EXTERIOR_FEATURES = [
+  'სანისლე ფარები',
+  'ქსენონის ფარები',
+  'LED ფარები',
+  'ალუმინის დისკები',
+  'პარკტრონიკი',
+  'ელ.სარკეები',
+  'წვიმის სენსორი',
+  'სინათლის სენსორი'
+];

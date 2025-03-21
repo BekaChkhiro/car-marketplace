@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getSimilarCars } from '../../../../api/services/carService';
+import carService, { CarImage } from '../../../../api/services/carService';
 import EmptyState from './components/EmptyState';
 import SectionHeader from './components/SectionHeader';
 import CarGrid from './components/CarGrid';
@@ -19,9 +19,9 @@ const SimilarCars: React.FC<SimilarCarsProps> = ({ carId, category }) => {
     const fetchSimilarCars = async () => {
       try {
         setLoading(true);
-        const data = await getSimilarCars(carId);
-        // Transform CarData array to Car array
-        const transformedCars = data.map(car => ({
+        const data = await carService.getSimilarCars(carId);
+        // Transform CarData array to Car array with proper type annotations
+        const transformedCars = data.map((car: any) => ({
           id: car.id,
           brand_id: car.brand_id,
           category_id: car.category_id,
@@ -30,8 +30,8 @@ const SimilarCars: React.FC<SimilarCarsProps> = ({ carId, category }) => {
           year: car.year,
           price: car.price,
           description: car.description,
-          // Transform image objects to URLs or keep as is if already URL
-          images: car.images.map(img => typeof img === 'string' ? img : img.large),
+          // Transform image objects to URLs with type annotation
+          images: car.images.map((img: CarImage | string) => typeof img === 'string' ? img : img.large),
           specifications: {
             fuelType: car.specifications?.fuel_type || '',
             transmission: car.specifications?.transmission || '',

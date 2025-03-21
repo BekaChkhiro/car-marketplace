@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Car, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2, Check, X } from 'lucide-react';
+import carService from '../../../api/services/carService';
 
 interface CarData {
   id: number;
@@ -11,30 +12,50 @@ interface CarData {
   createdAt: string;
 }
 
+const getStatusText = (status: CarData['status']) => {
+  switch (status) {
+    case 'pending': return 'მოლოდინში';
+    case 'approved': return 'დადასტურებული';
+    case 'rejected': return 'უარყოფილი';
+    default: return status;
+  }
+};
+
+const getStatusBadgeStyle = (status: CarData['status']) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-700';
+    case 'approved':
+      return 'bg-green-100 text-green-700';
+    case 'rejected':
+      return 'bg-red-100 text-red-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+};
+
 const CarsPage = () => {
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  
-  // Mock data - replace with API data
-  const cars: CarData[] = [
-    {
-      id: 1,
-      title: "BMW M5 2020",
-      seller: "giorgi123",
-      price: 45000,
-      status: "pending",
-      isVip: false,
-      createdAt: "2024-01-15"
-    },
-    {
-      id: 2,
-      title: "Mercedes-Benz S500 2021",
-      seller: "david456",
-      price: 65000,
-      status: "approved",
-      isVip: true,
-      createdAt: "2024-01-14"
-    }
-  ];
+  const [cars, setCars] = useState<CarData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await carService.getAllCars();
+        setCars(response.cars);
+      } catch (error) {
+        console.error('Error fetching cars:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -138,31 +159,6 @@ const CarsPage = () => {
       </div>
     </div>
   );
-};
-
-// Helper functions
-const getStatusBadgeStyle = (status: string) => {
-  switch (status) {
-    case 'approved':
-      return 'bg-green-100 text-green-700';
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-700';
-    case 'rejected':
-      return 'bg-red-100 text-red-700';
-    default:
-      return 'bg-gray-100 text-gray-700';
-  }
-};
-
-const getStatusText = (status: string) => {
-  switch (status) {
-    case 'approved':
-      return 'დადასტურებული';
-    case 'pending':
-      return 'მოლოდინში';
-    case 'rejected':
-      return 'უარყოფილი';
-  }
 };
 
 export default CarsPage;

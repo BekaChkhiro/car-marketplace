@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import FilterSidebar from './components/FilterSidebar';
 import CarGrid from './components/CarGrid';
 import SortingHeader from './components/SortingHeader';
-import { getCars } from '../../api/services/carService';
+import carService from '../../api/services/carService';
 import { useLoading } from '../../context/LoadingContext';
 import { useToast } from '../../context/ToastContext';
 import { Car } from '../../types/car';
@@ -76,7 +76,7 @@ const CarListing: React.FC = () => {
         year_max: filters.year ? Number(filters.year) : undefined
       };
 
-      const response = await getCars(params);
+      const response = await carService.getAllCars(params);
       const data = response;
       
       setCars(data.cars || []);

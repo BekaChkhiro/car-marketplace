@@ -2,11 +2,13 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import LoadingOverlay from '../components/common/LoadingOverlay';
 
 interface LoadingContextType {
+  isLoading: boolean;
   showLoading: () => void;
   hideLoading: () => void;
 }
 
 const LoadingContext = createContext<LoadingContextType>({
+  isLoading: false,
   showLoading: () => {},
   hideLoading: () => {},
 });
@@ -49,7 +51,7 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   return (
-    <LoadingContext.Provider value={{ showLoading, hideLoading }}>
+    <LoadingContext.Provider value={{ isLoading, showLoading, hideLoading }}>
       {children}
       <LoadingOverlay isVisible={isLoading} />
     </LoadingContext.Provider>
