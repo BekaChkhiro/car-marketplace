@@ -36,21 +36,38 @@ export interface CarFeatures {
 }
 
 export interface NewCarFormData {
+  // ძირითადი ინფო
   brand_id: string;
   model: string;
   category_id: string;
   year: number;
-  price: string | number;
+  price: number;
+  
+  // აღწერა
   description_ka: string;
   description_en?: string;
   description_ru?: string;
-  status: 'available' | 'sold' | 'reserved';
+  
+  // მდებარეობა
   city: string;
   state?: string;
   country: string;
   location_type: 'georgia' | 'transit' | 'international';
   transit_status?: string;
-  specifications: CarSpecifications;
+  
+  // ტექნიკური მახასიათებლები
+  specifications: {
+    transmission: string;
+    fuel_type: string;
+    body_type: string;
+    drive_type: string;
+    steering_wheel?: string;
+    engine_size?: number;
+    mileage?: number;
+    color?: string;
+  };
+  
+  // დამატებითი ფუნქციები
   features: CarFeatures;
 }
 
@@ -266,3 +283,10 @@ export const EXTERIOR_FEATURES = [
   'წვიმის სენსორი',
   'სინათლის სენსორი'
 ];
+
+export interface ImageUploadResponse {
+  url: string;
+  thumbnail: string;
+  medium: string;
+  large: string;
+}

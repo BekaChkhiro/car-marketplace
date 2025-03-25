@@ -9,6 +9,9 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import UsersPage from './pages/Admin/Users';
 import CarsPage from './pages/Admin/Cars';
 import SettingsPage from './pages/Admin/Settings';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+import ForgotPassword from './pages/Auth/ForgotPassword';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { routeConfigs } from './config/routes';
 import { useAuth } from './context/AuthContext';
@@ -31,6 +34,11 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path={routeConfigs.home.path} element={<Home />} />
+      
+      {/* Auth Routes */}
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/register" element={<Register />} />
+      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
       
       {/* Public Car Routes */}
       <Route path={routeConfigs.carListing.path} element={<CarListing />} />

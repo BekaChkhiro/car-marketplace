@@ -124,8 +124,11 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                 ? 'ჩააგდეთ სურათები აქ'
                 : 'აირჩიეთ ან ჩააგდეთ სურათები'}
             </p>
-            <p className="text-sm text-gray-500">
-              მაქსიმალური ზომა: 10MB | ფორმატები: JPG, PNG, WEBP
+            <p className="text-base text-gray-600">
+              {isDragActive ? 'ჩააგდეთ სურათები აქ...' : 'აირჩიეთ ან ჩააგდეთ სურათები'}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              მინიმუმ 1, მაქსიმუმ 15 სურათი | მაქსიმალური ზომა: 5MB | ფორმატები: JPG, JPEG, PNG
             </p>
           </div>
         </div>

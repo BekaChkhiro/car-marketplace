@@ -18,7 +18,7 @@ const publicEndpoints = [
   '/auth/forgot-password',
   '/auth/google',
   '/auth/facebook',
-  '/auth/refresh-token'  // Add refresh token endpoint
+  '/auth/refresh-token'
 ];
 
 // Define endpoints that are public only for GET requests
@@ -30,7 +30,7 @@ const publicGetEndpoints = [
 ];
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
   withCredentials: true,
   maxContentLength: 100 * 1024 * 1024, // 100MB max
   maxBodyLength: 100 * 1024 * 1024, // 100MB max

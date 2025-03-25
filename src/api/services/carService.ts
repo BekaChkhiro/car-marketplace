@@ -112,13 +112,68 @@ const validateNewCarData = (data: any): void => {
 };
 
 const carService = {
+  // Get all brands
+  getBrands: async () => {
+    try {
+      const response = await api.get('/cars/brands');
+      
+      if (!response.data || !Array.isArray(response.data)) {
+        console.warn('Invalid API response format, using mock data');
+        return mockBrands;
+      }
+
+      // Map API response to include models
+      const brandsWithModels = response.data.map((apiBrand: any) => {
+        const mockBrand = mockBrands.find(mock => 
+          mock.name.toLowerCase() === apiBrand.name.toLowerCase() ||
+          mock.name.toLowerCase().includes(apiBrand.name.toLowerCase()) ||
+          apiBrand.name.toLowerCase().includes(mock.name.toLowerCase())
+        );
+
+        return {
+          id: apiBrand.id,
+          name: apiBrand.name,
+          models: mockBrand?.models || []
+        };
+      });
+
+      return brandsWithModels;
+    } catch (error: any) {
+      console.error('Error fetching brands:', error);
+      throw new Error(error.response?.data?.message || 'მარკების ჩატვირთვისას მოხდა შეცდომა');
+    }
+  },
+
+  // Get models for a specific brand
+  getModels: async (brandId: string) => {
+    try {
+      const response = await api.get(`/cars/brands/${brandId}/models`);
+      
+      if (!response.data || !Array.isArray(response.data)) {
+        console.warn('Invalid API response format for models, using mock data');
+        const selectedBrand = mockBrands.find(brand => brand.id === Number(brandId));
+        return selectedBrand?.models || [];
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching models:', error);
+      // Fallback to mock data on API error
+      const selectedBrand = mockBrands.find(brand => brand.id === Number(brandId));
+      if (!selectedBrand) {
+        throw new Error('მოდელების ჩატვირთვისას მოხდა შეცდომა');
+      }
+      return selectedBrand.models;
+    }
+  },
+
+  // Create a new car
   createCar: async (formData: NewCarFormData, images: File[], featuredImageIndex: number) => {
     try {
       if (!images || images.length === 0) {
         throw new Error('At least one image is required');
       }
 
-      // Validate the data
       validateNewCarData(formData);
 
       const data = new FormData();
@@ -127,7 +182,7 @@ const carService = {
       images.forEach((image) => {
         data.append('images', image);
       });
-      
+
       data.append('featuredImageIndex', featuredImageIndex.toString());
 
       const response = await api.post('/cars', data, {
@@ -140,6 +195,16 @@ const carService = {
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error.message || 'მანქანის დამატებისას მოხდა შეცდომა';
       throw new Error(errorMessage);
+    }
+  },
+
+  // Get all categories
+  getCategories: async () => {
+    try {
+      const response = await api.get('/cars/categories');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'კატეგორიების ჩატვირთვისას მოხდა შეცდომა');
     }
   },
 
@@ -221,60 +286,6 @@ const carService = {
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'ფავორიტებში დამატებისას მოხდა შეცდომა');
-    }
-  },
-
-  getCategories: async () => {
-    try {
-      const response = await api.get('/cars/categories');
-      return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'კატეგორიების ჩატვირთვისას მოხდა შეცდომა');
-    }
-  },
-
-  getBrands: async () => {
-    try {
-      const response = await api.get('/cars/brands');
-      
-      // If API call succeeds but data format is incorrect, use mock data
-      if (!response.data || !Array.isArray(response.data)) {
-        console.warn('Invalid API response format, using mock data');
-        return mockBrands;
-      }
-
-      // Get the models from mockBrands
-      const brandsWithModels = response.data.map((apiBrand: any) => {
-        // Find corresponding mock brand with models
-        const mockBrand = mockBrands.find(mock => 
-          mock.name.toLowerCase() === apiBrand.name.toLowerCase() ||
-          mock.name.toLowerCase().includes(apiBrand.name.toLowerCase()) ||
-          apiBrand.name.toLowerCase().includes(mock.name.toLowerCase())
-        );
-
-        return {
-          id: apiBrand.id,
-          name: apiBrand.name,
-          // Use mock models if available, otherwise empty array
-          models: mockBrand?.models || []
-        };
-      });
-
-      console.log('Loaded brands with models:', brandsWithModels);
-      return brandsWithModels;
-    } catch (error: any) {
-      console.error('Error fetching brands:', error);
-      return mockBrands;
-    }
-  },
-
-  getModels: async (brandId: number | string) => {
-    try {
-      const response = await api.get(`/cars/brands/${brandId}/models`);
-      return response.data;
-    } catch (error: any) {
-      console.error('Error fetching models:', error);
-      throw new Error(error.response?.data?.message || 'მოდელების ჩატვირთვისას მოხდა შეცდომა');
     }
   },
 
