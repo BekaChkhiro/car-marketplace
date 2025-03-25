@@ -1,5 +1,6 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import { routes } from './config/routes';
 import Home from './pages/Home';
 import CarListing from './pages/CarListing';
 import CarDetails from './pages/CarDetails';
@@ -13,70 +14,35 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import { routeConfigs } from './config/routes';
 import { useAuth } from './context/AuthContext';
 import ProfileHome from './pages/Profile/pages/ProfileHome';
 import Favorites from './pages/Profile/pages/Favorites';
 import Notifications from './pages/Profile/pages/Notifications';
 import Settings from './pages/Profile/pages/Settings';
 import AddCar from './pages/Profile/pages/AddCar';
+import ResetPassword from './pages/Auth/ResetPassword';
 
 const AppRoutes = () => {
-  const { isAuthenticated, user } = useAuth();
-
-  // Redirect authenticated users based on their role
-  const getAuthenticatedRedirect = () => {
-    if (!isAuthenticated) return '/';
-    if (user?.role === 'admin') return '/admin';
-    return '/profile';
-  };
-
   return (
     <Routes>
-      <Route path={routeConfigs.home.path} element={<Home />} />
-      
-      {/* Auth Routes */}
-      <Route path="/auth/login" element={<Login />} />
-      <Route path="/auth/register" element={<Register />} />
-      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-      
-      {/* Public Car Routes */}
-      <Route path={routeConfigs.carListing.path} element={<CarListing />} />
-      <Route path={routeConfigs.carDetails.path} element={<CarDetails />} />
-      
-      {/* Admin Routes */}
-      <Route
-        path="/admin/*"
-        element={
-          <ProtectedRoute requiredRole="admin">
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<AdminDashboard />} />
-        <Route path="users" element={<UsersPage />} />
-        <Route path="transports" element={<CarsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
-      
-      {/* Protected Profile Routes - Only for non-admin users */}
-      <Route 
-        path="/profile/*" 
-        element={
-          <ProtectedRoute requiredRole="user">
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<ProfileHome />} />
-        <Route path="favorites" element={<Favorites />} />
-        <Route path="notifications" element={<Notifications />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="add-car" element={<AddCar />} />
-      </Route>
-
-      {/* Catch all unmatched routes */}
-      <Route path="*" element={<Navigate to={getAuthenticatedRedirect()} replace />} />
+      <Route path={routes.home} element={<Home />} />
+      <Route path={routes.carListing} element={<CarListing />} />
+      <Route path={routes.carDetails} element={<CarDetails />} />
+      <Route path={routes.admin} element={<AdminLayout />} />
+      <Route path={routes.profile} element={<ProfilePage />} />
+      <Route path={routes.auth.login} element={<Login />} />
+      <Route path={routes.auth.register} element={<Register />} />
+      <Route path={routes.auth.forgotPassword} element={<ForgotPassword />} />
+      <Route path={routes.auth.resetPassword} element={<ResetPassword />} />
+      <Route path={routes.adminDashboard} element={<AdminDashboard />} />
+      <Route path={routes.users} element={<UsersPage />} />
+      <Route path={routes.cars} element={<CarsPage />} />
+      <Route path={routes.settings} element={<SettingsPage />} />
+      <Route path={routes.profileHome} element={<ProfileHome />} />
+      <Route path={routes.favorites} element={<Favorites />} />
+      <Route path={routes.notifications} element={<Notifications />} />
+      <Route path={routes.profileSettings} element={<Settings />} />
+      <Route path={routes.addCar} element={<AddCar />} />
     </Routes>
   );
 };

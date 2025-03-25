@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../api/services/authService';
 import { User } from '../api/types/auth.types';
@@ -9,7 +9,7 @@ import { getStoredPreferences } from '../utils/userPreferences';
 import { storeUserData, clearUserData, getCachedUserData } from '../utils/userStorage';
 
 // Auth context state interface
-interface AuthState {
+interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -25,28 +25,14 @@ interface AuthState {
   updateProfile: (data: { username?: string; email?: string; phone?: string }) => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
 
 // Create context with default values
-const AuthContext = createContext<AuthState>({
-  user: null,
-  isAuthenticated: false,
-  isLoading: true,
-  login: async () => {},
-  register: async () => {},
-  logout: () => {},
-  updateProfile: async () => {},
-  updatePassword: async () => {},
-  forgotPassword: async () => {},
-});
-
-// Auth provider props interface
-interface AuthProviderProps {
-  children: ReactNode;
-}
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Auth Provider component
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { showLoading, hideLoading } = useLoading();
@@ -273,6 +259,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  // Reset password handler
+  const resetPassword = async (token: string, newPassword: string) => {
+    try {
+      await authService.resetPassword(token, newPassword);
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'პაროლის შეცვლა ვერ მოხერხდა');
+    }
+  };
+
   // Context value
   const value = {
     user,
@@ -284,6 +279,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     updateProfile,
     updatePassword,
     forgotPassword,
+    resetPassword,
   };
 
   if (isInitializing) {

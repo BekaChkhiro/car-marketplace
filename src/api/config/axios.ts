@@ -16,6 +16,7 @@ const publicEndpoints = [
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
+  '/auth/reset-password',
   '/auth/google',
   '/auth/facebook',
   '/auth/refresh-token'
