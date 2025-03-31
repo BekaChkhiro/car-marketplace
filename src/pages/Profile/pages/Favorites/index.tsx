@@ -1,30 +1,52 @@
-import React from 'react';
-import { Car } from '../../../../types/car';
+import React, { useEffect, useState } from 'react';
+import { Car } from '../../../../api/types/car.types';
+import carService from '../../../../api/services/carService';
+import { Container, Loading } from '../../../../components/ui';
 import CarGrid from '../../../CarListing/components/CarGrid';
+import { useToast } from '../../../../context/ToastContext';
 
 const Favorites: React.FC = () => {
-  // TODO: Implement favorites fetching logic
-  const favoritesCars: Car[] = [];
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
 
-  if (favoritesCars.length === 0) {
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await carService.getFavoriteCars();
+        setCars(response);
+      } catch (error) {
+        console.error('Error fetching favorites:', error);
+        showToast('Failed to load favorites', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavorites();
+  }, [showToast]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (cars.length === 0) {
     return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
-            ფავორიტები ცარიელია
-          </h3>
-          <p className="text-gray-500">
-            თქვენ ჯერ არ დაგიმატებიათ არცერთი მანქანა ფავორიტებში
-          </p>
+      <Container>
+        <div className="py-8">
+          <p className="text-center text-gray-500">No favorite cars yet</p>
         </div>
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div className="p-6">
-      <CarGrid cars={favoritesCars} />
-    </div>
+    <Container>
+      <div className="py-8">
+        <h1 className="text-2xl font-bold mb-6">My Favorites</h1>
+        <CarGrid cars={cars} />
+      </div>
+    </Container>
   );
 };
 

@@ -1,16 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import data from '../../../data/cars.json';
+import { Car } from '../../../api/types/car.types';
+import carService from '../../../api/services/carService';
 import CarCard from '../../../components/CarCard';
+import { useToast } from '../../../context/ToastContext';
 
 const VipListings: React.FC = () => {
-  // Filter VIP cars using the correct property name
-  const vipCars = data.cars.filter(car => car.isVip).slice(0, 4);
+  const [vipCars, setVipCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    const fetchVipCars = async () => {
+      try {
+        setLoading(true);
+        const response = await carService.getCars({ isVip: true, limit: 4 });
+        // Ensure we always set an array, even if empty
+        setVipCars(Array.isArray(response) ? response : []);
+      } catch (error) {
+        console.error('Error fetching VIP cars:', error);
+        showToast('Failed to load VIP listings', 'error');
+        setVipCars([]); // Set empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVipCars();
+  }, [showToast]);
 
   const handleViewAllClick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Return null only if loading, show empty state if no cars
+  if (loading) {
+    return null;
+  }
 
   return (
     <section className="w-full px-4 py-8 bg-gradient-to-b from-gray-50/15 to-background">
@@ -31,11 +58,17 @@ const VipListings: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {vipCars.map((car) => (
-            <CarCard key={car.id} car={car} />
-          ))}
-        </div>
+        {vipCars.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {vipCars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            No VIP listings available at the moment
+          </div>
+        )}
       </div>
     </section>
   );

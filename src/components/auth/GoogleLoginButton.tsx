@@ -35,10 +35,10 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess }) => {
       try {
         const { credential } = response;
         const data = await socialAuthService.googleLogin(credential);
-        if (!data.tokens?.accessToken) {
+        if (!data.token) {
           throw new Error('Invalid response from Google login');
         }
-        await login(response.email, data.tokens.accessToken);
+        await login(response.email, data.token);
         onSuccess();
       } catch (error: any) {
         showToast(error.message || 'Google-ით ავტორიზაცია ვერ მოხერხდა', 'error');

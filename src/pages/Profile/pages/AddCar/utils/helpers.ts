@@ -1,44 +1,87 @@
 import { NewCarFormData } from '../types';
+import { CreateCarFormData } from '../../../../../api/types/car.types';
 
 export const formatPrice = (price: number | string): string => {
   return new Intl.NumberFormat('ka-GE').format(Number(price));
 };
 
-export const cleanFormData = (data: NewCarFormData): NewCarFormData => {
+export const validateImageFile = (file: File): boolean => {
+  const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  const maxSize = 5 * 1024 * 1024; // 5MB
+
+  if (!validTypes.includes(file.type)) {
+    return false;
+  }
+
+  if (file.size > maxSize) {
+    return false;
+  }
+
+  return true;
+};
+
+export const cleanFormData = (formData: NewCarFormData): Omit<CreateCarFormData, 'images'> => {
+  const cleanedData = { ...formData };
+
+  // Convert features object to string array
+  const features: string[] = [];
+  if (cleanedData.features) {
+    Object.entries(cleanedData.features).forEach(([key, value]) => {
+      if (value === true) {
+        // Convert from camelCase to readable format
+        const feature = key
+          .replace('has_', '')
+          .split('_')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        features.push(feature);
+      }
+    });
+  }
+
+  // Remove fields that don't exist in CreateCarFormData
+  const {
+    brand_id,
+    category_id,
+    description_en,
+    description_ru,
+    city,
+    state,
+    country,
+    location_type,
+    ...apiFormData
+  } = cleanedData;
+
+  // Use the Georgian description as the main description
+  const description = cleanedData.description_ka;
+
+  // Convert specifications to match the API format
+  const {
+    transmission,
+    fuel_type,
+    drive_type,
+    steering_wheel = 'left' as const,
+    engine_size = 0,
+    mileage = 0,
+    color = ''
+  } = cleanedData.specifications;
+
   return {
-    // ძირითადი ინფო
-    brand_id: data.brand_id,
-    model: data.model.trim(),
-    category_id: data.category_id,
-    year: Number(data.year),
-    price: Number(data.price),
-    
-    // აღწერა
-    description_ka: data.description_ka.trim(),
-    description_en: data.description_en?.trim(),
-    description_ru: data.description_ru?.trim(),
-    
-    // მდებარეობა
-    city: data.city.trim(),
-    state: data.state?.trim(),
-    country: data.country.trim(),
-    location_type: data.location_type,
-    
-    // ტექნიკური მახასიათებლები
-    specifications: {
-      transmission: data.specifications.transmission,
-      fuel_type: data.specifications.fuel_type,
-      body_type: data.specifications.body_type,
-      drive_type: data.specifications.drive_type,
-      engine_size: data.specifications.engine_size ? Number(data.specifications.engine_size) : undefined,
-      mileage: data.specifications.mileage ? Number(data.specifications.mileage) : undefined,
-      color: data.specifications.color
-    },
-    
-    // დამატებითი ფუნქციები
-    features: {
-      ...data.features
-    }
+    brand: brand_id,
+    category: category_id,
+    condition: 'used',
+    description,
+    features,
+    transmission,
+    fuel_type,
+    drive_type,
+    steering_wheel,
+    engine_size,
+    mileage,
+    color,
+    year: cleanedData.year,
+    price: cleanedData.price,
+    model: cleanedData.model
   };
 };
 
@@ -51,18 +94,6 @@ export const getImagePreview = (file: File): Promise<string> => {
   });
 };
 
-export const validateImageFile = (file: File): boolean => {
-  // Check file type
-  const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-  if (!validTypes.includes(file.type)) {
-    throw new Error('მხოლოდ JPG, JPEG და PNG ფორმატის სურათებია დაშვებული');
-  }
-
-  // Check file size (max 5MB)
-  const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-  if (file.size > maxSize) {
-    throw new Error('სურათის ზომა არ უნდა აღემატებოდეს 5MB-ს');
-  }
-
-  return true;
+export const clearSavedDraft = () => {
+  localStorage.removeItem('car_form_draft');
 };

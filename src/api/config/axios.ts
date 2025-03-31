@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { getAccessToken, removeStoredToken, isTokenExpired, getRefreshToken, setStoredToken } from '../utils/tokenStorage';
-import { getCsrfToken, refreshCsrfToken } from '../utils/csrfProtection';
 import { AuthResponse, Tokens } from '../types/auth.types';
 import authService from '../services/authService';
 
@@ -13,21 +12,21 @@ interface ApiErrorResponse {
 
 // Define public endpoints that don't require authentication
 const publicEndpoints = [
-  '/auth/login',
-  '/auth/register',
-  '/auth/forgot-password',
-  '/auth/reset-password',
-  '/auth/google',
-  '/auth/facebook',
-  '/auth/refresh-token'
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password',
+  '/api/auth/google',
+  '/api/auth/facebook',
+  '/api/auth/refresh-token'
 ];
 
 // Define endpoints that are public only for GET requests
 const publicGetEndpoints = [
-  '/transports',
-  '/transports/',
-  '/cars/brands',
-  '/cars/categories'
+  '/api/transports',
+  '/api/transports/',
+  '/api/cars/brands',
+  '/api/cars/categories'
 ];
 
 const api = axios.create({
@@ -50,11 +49,18 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
-    } else {
-      prom.resolve(token as string);
+    } else if (token) {
+      prom.resolve(token);
     }
   });
   failedQueue = [];
+};
+
+// Helper function to check if a URL matches an endpoint
+const isEndpointMatch = (url: string | undefined, endpoint: string): boolean => {
+  if (!url) return false;
+  const urlPath = url.split('?')[0]; // Remove query parameters
+  return urlPath === endpoint;
 };
 
 // Request interceptor
@@ -63,24 +69,13 @@ api.interceptors.request.use(
     // For multipart form data, let the browser handle the Content-Type
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
-    } else {
-      config.headers['Content-Type'] = 'application/json';
     }
 
-    // Only add CSRF token for non-GET requests that are not preflight
-    if (config.method !== 'get' && config.method !== 'options') {
-      const token = getCsrfToken();
-      if (token) {
-        config.headers['X-CSRF-Token'] = token;
-      }
-    }
-
-    // Check if the endpoint requires authentication
-    const isPublicEndpoint = publicEndpoints.some(endpoint => 
-      config.url?.includes(endpoint)
+    const isPublicEndpoint = publicEndpoints.some(endpoint =>
+      isEndpointMatch(config.url, endpoint)
     );
     const isPublicGetEndpoint = config.method === 'get' && publicGetEndpoints.some(endpoint =>
-      config.url?.includes(endpoint)
+      isEndpointMatch(config.url, endpoint)
     );
 
     if (!isPublicEndpoint && !isPublicGetEndpoint) {
@@ -89,22 +84,23 @@ api.interceptors.request.use(
 
       if (accessToken) {
         // Check if token is expired and we have a refresh token
-        if (isTokenExpired(accessToken) && refreshToken && !config.url?.includes('/auth/refresh-token')) {
+        if (isTokenExpired(accessToken) && refreshToken && !isEndpointMatch(config.url, '/api/auth/refresh-token')) {
           try {
             const response = await axios.post(
-              `${config.baseURL}/auth/refresh-token`,
+              `${config.baseURL}/api/auth/refresh-token`,
               { refreshToken },
               { withCredentials: true }
             );
-            const newTokens = response.data.tokens;
-            setStoredToken(newTokens.accessToken, newTokens.refreshToken);
-            config.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+            setStoredToken(response.data.token, response.data.refreshToken);
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${response.data.token}`;
           } catch (error) {
             console.error('Token refresh failed during request:', error);
             removeStoredToken();
             throw error;
           }
         } else {
+          config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
       }
@@ -112,16 +108,14 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error: AxiosError) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
-    const newCsrfToken = response.headers['x-csrf-token'];
-    if (newCsrfToken) {
-      refreshCsrfToken();
-    }
     return response;
   },
   async (error: AxiosError<ApiErrorResponse>) => {
@@ -134,129 +128,60 @@ api.interceptors.response.use(
         data: error.response.data,
         url: originalRequest.url,
         method: originalRequest.method,
-        headers: {
-          ...originalRequest.headers,
-          Authorization: originalRequest.headers?.Authorization ? '[REDACTED]' : undefined
-        }
+        headers: error.response.headers
       });
+    } else if (error.request) {
+      console.error('API Request Error (No Response):', error.request);
+    } else {
+      console.error('API Error:', error.message);
     }
 
-    if (!originalRequest._retryCount) {
+    // Initialize retry count if not present
+    if (typeof originalRequest._retryCount === 'undefined') {
       originalRequest._retryCount = 0;
     }
 
-    // Handle specific error cases
-    if (error.response) {
-      switch (error.response.status) {
-        case 401: {
-          if (originalRequest._retry || originalRequest.url?.includes('/auth/refresh-token')) {
-            processQueue(error);
-            removeStoredToken();
-            window.dispatchEvent(new CustomEvent('auth:required', { 
-              detail: { message: 'Session expired. Please log in again.' }
-            }));
-            return Promise.reject(error);
-          }
-
-          originalRequest._retry = true;
-
-          if (isRefreshing) {
-            try {
-              const token = await new Promise<string>((resolve, reject) => {
-                failedQueue.push({ resolve, reject });
-              });
-              originalRequest.headers = originalRequest.headers || {};
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              return api(originalRequest);
-            } catch (err) {
-              return Promise.reject(err);
-            }
-          }
-
-          isRefreshing = true;
-
-          try {
-            const refreshToken = getRefreshToken();
-            if (!refreshToken) {
-              throw new Error('No refresh token available');
-            }
-
-            const response = await axios.post(
-              `${originalRequest.baseURL}/auth/refresh-token`,
-              { refreshToken },
-              { withCredentials: true }
-            );
-
-            const newTokens = response.data.tokens;
-            setStoredToken(newTokens.accessToken, newTokens.refreshToken);
-            
-            isRefreshing = false;
-            originalRequest.headers = originalRequest.headers || {};
-            originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-            
-            processQueue(null, newTokens.accessToken);
-            return api(originalRequest);
-          } catch (refreshError) {
-            isRefreshing = false;
-            processQueue(refreshError);
-            removeStoredToken();
-            
-            window.dispatchEvent(new CustomEvent('auth:required', { 
-              detail: { message: 'Session expired. Please log in again.' }
-            }));
-            
-            return Promise.reject(refreshError);
-          }
+    // Handle 401 errors (Unauthorized)
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        try {
+          const token = await new Promise<string>((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          });
+          originalRequest.headers = originalRequest.headers || {};
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        } catch (err) {
+          return Promise.reject(err);
         }
-        
-        case 403:
-          if (error.response.data?.message?.includes('CSRF')) {
-            const newToken = refreshCsrfToken();
-            if (originalRequest.headers && newToken) {
-              originalRequest.headers['X-CSRF-Token'] = newToken;
-              return api(originalRequest);
-            }
-          }
-          break;
-
-        case 500:
-          console.error('Server error:', error.response.data);
-          
-          // Implement exponential backoff for 500 errors
-          const maxRetries = 3;
-          if (originalRequest._retryCount < maxRetries) {
-            originalRequest._retryCount++;
-            const backoffDelay = Math.pow(2, originalRequest._retryCount) * 1000;
-            
-            console.log(`Retrying request (${originalRequest._retryCount}/${maxRetries}) after ${backoffDelay}ms`);
-            
-            return new Promise(resolve => setTimeout(resolve, backoffDelay))
-              .then(() => api(originalRequest));
-          }
-          
-          return Promise.reject(new Error(
-            error.response.data?.message || 
-            error.response.data?.error || 
-            'Internal server error occurred. Please try again.'
-          ));
-
-        case 502:
-        case 503:
-        case 504:
-          // Retry gateway/timeout errors with exponential backoff
-          if (originalRequest._retryCount < 3) {
-            originalRequest._retryCount++;
-            const backoffDelay = Math.pow(2, originalRequest._retryCount) * 1000;
-            return new Promise(resolve => setTimeout(resolve, backoffDelay))
-              .then(() => api(originalRequest));
-          }
-          break;
       }
 
-      const errorMessage = error.response.data?.message || 
-                         error.response.data?.error || 
-                         'An unexpected error occurred';
-      return Promise.reject(new Error(errorMessage));
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = getRefreshToken();
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        const response = await axios.post(
+          `${originalRequest.baseURL}/api/auth/refresh-token`,
+          { refreshToken },
+          { withCredentials: true }
+        );
+        setStoredToken(response.data.token, response.data.refreshToken);
+        
+        isRefreshing = false;
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers.Authorization = `Bearer ${response.data.token}`;
+        processQueue(null, response.data.token);
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        removeStoredToken();
+        return Promise.reject(refreshError);
+      }
     }
 
     // Handle network errors with retry

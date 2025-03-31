@@ -6,6 +6,7 @@ import { NewCarFormData } from '../types';
 import { validateCarForm, validateImage, ValidationErrors } from '../utils/validation';
 import carService from '../../../../../api/services/carService';
 import { cleanFormData, validateImageFile } from '../utils/helpers';
+import { CreateCarFormData } from '../../../../../api/types/car.types';
 
 // Auto-save delay in milliseconds
 const AUTO_SAVE_DELAY = 3000;
@@ -29,61 +30,29 @@ export const useCarForm = () => {
       }
     }
     return {
-      // ძირითადი ინფო
       brand_id: '',
       model: '',
       category_id: '',
       year: new Date().getFullYear(),
       price: 0,
-      
-      // აღწერა
       description_ka: '',
       description_en: '',
       description_ru: '',
-      
-      // მდებარეობა
       city: '',
       state: '',
       country: 'საქართველო',
       location_type: 'georgia',
-      
-      // ტექნიკური მახასიათებლები
       specifications: {
         transmission: '',
         fuel_type: '',
         body_type: '',
         drive_type: '',
+        steering_wheel: '',
         engine_size: undefined,
         mileage: undefined,
-        color: undefined
+        color: ''
       },
-      
-      // დამატებითი ფუნქციები
-      features: {
-        has_air_conditioning: false,
-        has_navigation: false,
-        has_parking_control: false,
-        has_board_computer: false,
-        has_rear_view_camera: false,
-        has_heated_seats: false,
-        has_ventilated_seats: false,
-        has_cruise_control: false,
-        has_multimedia: false,
-        has_bluetooth: false,
-        has_start_stop: false,
-        has_panoramic_roof: false,
-        has_sunroof: false,
-        has_leather_interior: false,
-        has_memory_seats: false,
-        has_memory_steering_wheel: false,
-        has_electric_mirrors: false,
-        has_electric_seats: false,
-        has_heated_steering_wheel: false,
-        has_electric_trunk: false,
-        has_keyless_entry: false,
-        has_alarm: false,
-        has_technical_inspection: false
-      }
+      features: {}
     };
   });
 
@@ -175,7 +144,11 @@ export const useCarForm = () => {
     try {
       showLoading();
       const cleanedData = cleanFormData(formData);
-      await carService.createCar(cleanedData, images, featuredImageIndex);
+      const apiFormData: CreateCarFormData = {
+        ...cleanedData,
+        images
+      };
+      await carService.createCar(apiFormData);
       clearSavedDraft(); // Clear the draft after successful submission
       showToast('მანქანა წარმატებით დაემატა', 'success');
       navigate('/profile/cars');

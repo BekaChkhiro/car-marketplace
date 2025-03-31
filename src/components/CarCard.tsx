@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft,
   ChevronRight,
@@ -12,13 +12,15 @@ import {
 import { CustomSwitch } from './layout/Header/components/CurrencySelector';
 import { useCurrency } from '../context/CurrencyContext';
 import { usePrice } from '../context/usePrice';
-import { Car } from '../types/car';
+import { Car } from '../api/types/car.types';
 
 interface CarCardProps {
   car: Car;
+  isOwner?: boolean;
+  onDelete?: () => void;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car }) => {
+const CarCard: React.FC<CarCardProps> = ({ car, isOwner, onDelete }) => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { currency, setCurrency } = useCurrency();
@@ -50,116 +52,104 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
   };
 
   return (
-    <Link 
-      to={`/cars/${car.id}`}
+    <div 
       onClick={handleClick}
-      className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md relative group"
+      className="relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
     >
-      <div className="relative pt-[66.67%] overflow-hidden">
-        <div className="absolute inset-0 flex transition-transform duration-300 ease-in-out"
-          style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
-        >
-          {images.length > 0 ? (
-            images.map((image, index) => (
-              <div
-                key={index}
-                className="min-w-full h-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${image})` }}
-              />
-            ))
-          ) : (
-            <div
-              className="min-w-full h-full bg-cover bg-center bg-gray-100 flex items-center justify-center"
-            >
-              <span className="text-gray-400">No image available</span>
-            </div>
-          )}
-        </div>
-
-        {/* Navigation Buttons - Only show if there are multiple images */}
+      {/* Image carousel */}
+      <div className="relative h-48 bg-gray-200">
+        {images.length > 0 ? (
+          <img
+            src={images[currentImageIndex]}
+            alt={`${car.brand} ${car.model}`}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400">
+            No Image
+          </div>
+        )}
+        
         {images.length > 1 && (
           <>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-full text-white hover:bg-black/70"
             >
-              <ChevronLeft className="text-primary w-5 h-5" />
+              <ChevronLeft size={20} />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-full text-white hover:bg-black/70"
             >
-              <ChevronRight className="text-primary w-5 h-5" />
+              <ChevronRight size={20} />
             </button>
           </>
         )}
-
-        {/* Image Indicators - Only show if there are multiple images */}
-        {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  currentImageIndex === index ? 'w-6 bg-primary' : 'w-2 bg-white/70'
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {car.isVip && (
-          <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-lg text-sm font-medium shadow-sm backdrop-blur-sm">
-            VIP
-          </div>
-        )}
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            // Add favorite functionality here
-          }}
-          className="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center transition-all duration-200 hover:scale-105 hover:bg-white"
-        >
-          <Heart className="text-primary w-5 h-5" />
-        </button>
       </div>
-      
+
+      {/* Car details */}
       <div className="p-4">
-        <h3 className="text-lg text-gray-dark font-semibold mb-2">
-          {car.year} {car.make} {car.model}
-        </h3>
-        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-          <MapPin className="text-primary w-4 h-4" />
-          {car.location?.city || ''}, {car.location?.region || ''}
-        </div>
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            {formatPrice(car.price)}
-          </div>
-          <div onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-lg font-semibold text-gray-900">
+            {car.brand} {car.model}
+          </h3>
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold text-primary">
+              {formatPrice(car.price)}
+            </span>
             <CustomSwitch
               checked={currency === 'USD'}
               onChange={(e) => setCurrency(e.target.checked ? 'USD' : 'GEL')}
             />
           </div>
         </div>
-        
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Fuel className="text-primary w-4 h-4" />
-            {car.specifications?.fuelType || 'N/A'}
+
+        {/* Specifications */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Gauge size={16} />
+            <span>{car.mileage.toLocaleString()} km</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Gauge className="text-primary w-4 h-4" />
-            {car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Fuel size={16} />
+            <span>{car.fuel_type}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Settings className="text-primary w-4 h-4" />
-            {car.specifications?.transmission || 'N/A'}
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Settings size={16} />
+            <span>{car.transmission}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <MapPin size={16} />
+            <span>{car.steering_wheel}</span>
           </div>
         </div>
+
+        {/* Owner actions */}
+        {isOwner && (
+          <div className="mt-3 flex justify-end gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/profile/cars/edit/${car.id}`);
+              }}
+              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Edit
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onDelete) onDelete();
+              }}
+              className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </div>
-    </Link>
+    </div>
   );
 };
 

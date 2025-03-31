@@ -1,12 +1,15 @@
+import { CreateCarFormData } from '../../../../api/types/car.types';
+
 export interface CarSpecifications {
-  transmission: string;
-  fuel_type: string;
+  transmission: 'manual' | 'automatic';
+  fuel_type: 'petrol' | 'diesel' | 'hybrid' | 'electric';
   body_type: string;
-  drive_type: string;
-  steering_wheel?: string;
+  drive_type: 'FWD' | 'RWD' | 'AWD' | '4WD';
+  steering_wheel?: 'left' | 'right';
   engine_size?: number;
   mileage?: number;
   color?: string;
+  cylinders?: number;
 }
 
 export interface CarFeatures {
@@ -36,39 +39,22 @@ export interface CarFeatures {
 }
 
 export interface NewCarFormData {
-  // ძირითადი ინფო
   brand_id: string;
   model: string;
   category_id: string;
   year: number;
   price: number;
-  
-  // აღწერა
   description_ka: string;
   description_en?: string;
   description_ru?: string;
-  
-  // მდებარეობა
   city: string;
-  state?: string;
+  state: string;
   country: string;
-  location_type: 'georgia' | 'transit' | 'international';
-  transit_status?: string;
-  
-  // ტექნიკური მახასიათებლები
-  specifications: {
-    transmission: string;
-    fuel_type: string;
-    body_type: string;
-    drive_type: string;
-    steering_wheel?: string;
-    engine_size?: number;
-    mileage?: number;
-    color?: string;
-  };
-  
-  // დამატებითი ფუნქციები
-  features: CarFeatures;
+  location_type: string;
+  specifications: CarSpecifications;
+  features?: CarFeatures;
+  transitStatus?: string;
+  images?: File[];
 }
 
 export interface FormSectionProps {
@@ -78,7 +64,10 @@ export interface FormSectionProps {
   errors?: { [key: string]: string };
 }
 
-export type FormSection = 'specifications' | 'features';
+export interface FormSection {
+  title: string;
+  component: React.ComponentType<FormSectionProps>;
+}
 
 export interface BrandOption {
   id: number;
@@ -98,191 +87,51 @@ export interface Option {
 
 // Constants for select options
 export const TRANSMISSION_OPTIONS: Option[] = [
-  'მექანიკური',
-  'ავტომატური',
-  'ტიპტრონიკი',
-  'ვარიატორი'
-].map(option => ({ value: option, label: option }));
+  { value: 'manual', label: 'მექანიკური' },
+  { value: 'automatic', label: 'ავტომატური' }
+];
 
 export const FUEL_TYPE_OPTIONS: Option[] = [
-  'ბენზინი',
-  'დიზელი',
-  'ჰიბრიდი',
-  'ელექტრო',
-  'ბუნებრივი გაზი',
-  'თხევადი გაზი'
-].map(option => ({ value: option, label: option }));
-
-export const BODY_TYPE_OPTIONS = [
-  'სედანი',
-  'ჰეტჩბეკი',
-  'უნივერსალი',
-  'კუპე',
-  'კაბრიოლეტი',
-  'ჯიპი',
-  'პიკაპი',
-  'მინივენი',
-  'მიკროავტობუსი',
-  'ფურგონი'
+  { value: 'petrol', label: 'ბენზინი' },
+  { value: 'diesel', label: 'დიზელი' },
+  { value: 'hybrid', label: 'ჰიბრიდი' },
+  { value: 'electric', label: 'ელექტრო' }
 ];
 
 export const DRIVE_TYPE_OPTIONS: Option[] = [
-  'წინა',
-  'უკანა',
-  '4x4'
-].map(option => ({ value: option, label: option }));
-
-export const STEERING_WHEEL_OPTIONS = [
-  'მარჯვენა',
-  'მარცხენა'
+  { value: 'FWD', label: 'წინა წამყვანი' },
+  { value: 'RWD', label: 'უკანა წამყვანი' },
+  { value: 'AWD', label: '4x4' },
+  { value: '4WD', label: 'სრული წამყვანი' }
 ];
 
-export const COLOR_OPTIONS = [
-  'შავი',
-  'თეთრი',
-  'ვერცხლისფერი',
-  'რუხი',
-  'ლურჯი',
-  'წითელი',
-  'ყავისფერი',
-  'მწვანე',
-  'ყვითელი',
-  'ოქროსფერი',
-  'ნარინჯისფერი',
-  'სხვა'
+export const STEERING_WHEEL_OPTIONS: Option[] = [
+  { value: 'left', label: 'მარცხენა' },
+  { value: 'right', label: 'მარჯვენა' }
 ];
 
-export const INTERIOR_COLOR_OPTIONS = [
-  'შავი',
-  'რუხი',
-  'ბეჟი',
-  'ყავისფერი',
-  'წითელი',
-  'სხვა'
+export const CONDITION_OPTIONS: Option[] = [
+  { value: 'new', label: 'ახალი' },
+  { value: 'used', label: 'მეორადი' }
 ];
 
-export const INTERIOR_MATERIAL_OPTIONS = [
-  'ტყავი',
-  'ნაჭერი',
-  'კომბინირებული',
-  'ალკანტარა',
-  'ველიური'
+export const CITY_OPTIONS: Option[] = [
+  { value: 'თბილისი', label: 'თბილისი' },
+  { value: 'ბათუმი', label: 'ბათუმი' },
+  { value: 'ქუთაისი', label: 'ქუთაისი' },
+  { value: 'რუსთავი', label: 'რუსთავი' }
 ];
 
-export const DOORS_OPTIONS = ['2', '3', '4', '5'];
-
-export const CYLINDER_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12];
-
-export const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1);
-
-export const MILEAGE_UNIT_OPTIONS = ['km', 'mi'];
-
-export const CITY_OPTIONS = [
-  'თბილისი',
-  'ქუთაისი',
-  'ბათუმი',
-  'რუსთავი',
-  'გორი',
-  'ზუგდიდი',
-  'ფოთი',
-  'ხაშური',
-  'სამტრედია',
-  'სენაკი',
-  'ზესტაფონი',
-  'მარნეული',
-  'თელავი',
-  'ახალციხე',
-  'ქობულეთი',
-  'ოზურგეთი',
-  'კასპი',
-  'ჭიათურა',
-  'წყალტუბო',
-  'საგარეჯო',
-  'გარდაბანი',
-  'ბორჯომი',
-  'სხვა'
-] as const;
-
-export const COUNTRY_OPTIONS = [
-  'საქართველო',
-  'გერმანია',
-  'აშშ',
-  'იაპონია',
-  'კორეა',
-  'დიდი ბრიტანეთი',
-  'საფრანგეთი',
-  'იტალია',
-  'ესპანეთი',
-  'ბელგია',
-  'ნიდერლანდები',
-  'შვეიცარია',
-  'ავსტრია',
-  'შვედეთი',
-  'ნორვეგია',
-  'დანია',
-  'ფინეთი',
-  'პოლონეთი',
-  'ჩეხეთი',
-  'სლოვაკეთი',
-  'უნგრეთი',
-  'რუმინეთი',
-  'ბულგარეთი',
-  'საბერძნეთი',
-  'თურქეთი',
-  'სხვა'
-] as const;
+export const COUNTRY_OPTIONS: Option[] = [
+  { value: 'საქართველო', label: 'საქართველო' }
+];
 
 export const LOCATION_TYPE_OPTIONS: Option[] = [
-  { value: 'transit', label: 'ტრანზიტში' },
-  { value: 'georgia', label: 'საქართველოში' },
-  { value: 'international', label: 'საზღვარგარეთ' }
+  { value: 'georgia', label: 'საქართველო' },
+  { value: 'abroad', label: 'საზღვარგარეთ' }
 ];
 
-// Features and equipment options
-export const SAFETY_FEATURES = [
-  'ABS',
-  'EBD',
-  'მძღოლის უსაფრთხოების ბალიში',
-  'მგზავრის უსაფრთხოების ბალიში',
-  'გვერდითი უსაფრთხოების ბალიშები',
-  'ESP',
-  'სიგნალიზაცია',
-  'ცენტრალური საკეტი',
-  'იმობილაიზერი'
-];
-
-export const INTERIOR_FEATURES = [
-  'კონდიციონერი',
-  'კლიმატ-კონტროლი',
-  'ტყავის სალონი',
-  'ნავიგაცია',
-  'ლუქი',
-  'პანორამული ჭერი',
-  'მულტისაჭე',
-  'ელ.შუშები',
-  'ელ.სავარძლები',
-  'სავარძლების გათბობა',
-  'სავარძლების ვენტილაცია',
-  'საჭის გათბობა',
-  'უკანა ხედვის კამერა',
-  'კრუიზ-კონტროლი',
-  'ბორტკომპიუტერი',
-  'Bluetooth',
-  'CD',
-  'USB',
-  'AUX'
-];
-
-export const EXTERIOR_FEATURES = [
-  'სანისლე ფარები',
-  'ქსენონის ფარები',
-  'LED ფარები',
-  'ალუმინის დისკები',
-  'პარკტრონიკი',
-  'ელ.სარკეები',
-  'წვიმის სენსორი',
-  'სინათლის სენსორი'
-];
+export const CYLINDER_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12];
 
 export interface ImageUploadResponse {
   url: string;

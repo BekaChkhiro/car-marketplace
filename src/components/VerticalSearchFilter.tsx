@@ -54,8 +54,8 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     const fetchData = async () => {
       try {
         const [brandsResponse, categoriesResponse] = await Promise.all([
-          axios.get('/cars/brands'),
-          axios.get('/cars/categories')
+          axios.get('/api/cars/brands'),
+          axios.get('/api/cars/categories')
         ]);
 
         setBrands(brandsResponse.data);

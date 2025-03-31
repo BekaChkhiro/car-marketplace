@@ -27,9 +27,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
       const { email, accessToken } = response;
       const authResponse = await socialAuthService.facebookLogin(accessToken);
       // Use the regular login method with the token
-      if (authResponse.tokens) {
-        await login(email, authResponse.tokens.accessToken);
-      } else if (authResponse.token) {
+      if (authResponse.token) {
         await login(email, authResponse.token);
       }
       onSuccess();

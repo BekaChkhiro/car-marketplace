@@ -47,7 +47,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/cars/categories');
+        const response = await axios.get('/api/cars/categories');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);

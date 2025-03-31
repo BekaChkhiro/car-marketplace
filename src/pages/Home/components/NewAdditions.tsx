@@ -1,41 +1,52 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import data from '../../../data/cars.json';
+import React, { useEffect, useState } from 'react';
+import { Car } from '../../../api/types/car.types';
+import carService from '../../../api/services/carService';
+import { Container } from '../../../components/ui';
 import CarCard from '../../../components/CarCard';
+import { useToast } from '../../../context/ToastContext';
 
 const NewAdditions: React.FC = () => {
-  const newCars = data.cars.slice(0, 4);
+  const [newCars, setNewCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
 
-  const handleViewAllClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  useEffect(() => {
+    const fetchNewCars = async () => {
+      try {
+        // We don't need any filters for this case
+        const response = await carService.getCars({});
+        // Sort by created_at and take the latest 4 cars
+        const sortedCars = response
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 4);
+        setNewCars(sortedCars);
+      } catch (error) {
+        console.error('Error fetching new cars:', error);
+        showToast('Failed to load new cars', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewCars();
+  }, [showToast]);
+
+  if (loading || newCars.length === 0) {
+    return null;
+  }
 
   return (
-    <section className="w-full px-4 py-8 bg-gradient-to-b from-background to-gray-50/15">
-      <div className="w-full">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
-          <div className="max-w-xl">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r text-primary">
-              ახალი დამატებები
-            </h2>
+    <section className="py-12 bg-gray-50">
+      <Container>
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold text-center">ახალი დამატებები</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {newCars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
           </div>
-          
-          <Link
-            to="/transports?sort=newest"
-            onClick={handleViewAllClick}
-            className="flex items-center gap-2 px-6 py-3 text-primary font-semibold border-2 border-primary/30 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:-translate-y-0.5 group"
-          >
-            ყველა განცხადება <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {newCars.map((car) => (
-            <CarCard key={car.id} car={car} />
-          ))}
-        </div>
-      </div>
+      </Container>
     </section>
   );
 };

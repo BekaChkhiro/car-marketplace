@@ -1,9 +1,9 @@
 import React from 'react';
 import CarCard from '../../../components/CarCard';
-import { Car } from '../../../types/car';
+import { Car } from '../../../api/types/car.types';
 
 interface CarGridProps {
-  cars: Car[] | null;
+  cars: Car[];
 }
 
 const CarGrid: React.FC<CarGridProps> = ({ cars }) => {
