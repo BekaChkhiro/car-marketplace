@@ -21,7 +21,7 @@ import Notifications from './pages/Profile/pages/Notifications';
 import Settings from './pages/Profile/pages/Settings';
 import AddCar from './pages/Profile/pages/AddCar';
 import ResetPassword from './pages/Auth/ResetPassword';
-import UserCars from './pages/Profile/pages/UserCars';
+import UserCars from './pages/Profile/pages/UserCars/index';
 import EditCar from './pages/Profile/pages/EditCar';
 
 const AppRoutes = () => {

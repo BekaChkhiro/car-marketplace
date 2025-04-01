@@ -1,38 +1,96 @@
-import React, { useState } from 'react';
-import { User, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User as UserIcon, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2 } from 'lucide-react';
+import authService from '../../../api/services/authService';
+import { useToast } from '../../../context/ToastContext';
+import { User } from '../../../api/types/auth.types';
 
-interface UserData {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-  status: 'active' | 'blocked';
-  joinDate: string;
+// Extended user interface with status field which might not be in the original User type
+interface UserWithStatus extends User {
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const UsersPage = () => {
+  const { showToast } = useToast();
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [users, setUsers] = useState<UserWithStatus[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   
-  // Mock data - შეცვალეთ API-დან მიღებული მონაცემებით
-  const users: UserData[] = [
-    {
-      id: 1,
-      username: "giorgi123",
-      email: "giorgi@example.com",
-      role: "user",
-      status: "active",
-      joinDate: "2024-01-15"
-    },
-    {
-      id: 2,
-      username: "nino_90",
-      email: "nino@example.com",
-      role: "user",
-      status: "active",
-      joinDate: "2024-01-16"
-    },
-    // დაამატეთ მეტი მომხმარებელი საჭიროებისამებრ
-  ];
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+  
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      console.log('Fetching users from authService...');
+      const usersData = await authService.getAllUsers();
+      
+      // Check if we received data
+      if (usersData && Array.isArray(usersData)) {
+        console.log('Received user data:', usersData);
+        
+        // Determine if we're using mock data (mock users have IDs 1, 2, 3)
+        const isMockData = usersData.length > 0 && usersData.some(user => [1, 2, 3].includes(user.id));
+        
+        // Add status field if not present (assuming all users are active by default)
+        const usersWithStatus = usersData.map(user => ({
+          ...user,
+          // Add a default status since it's not in the User type
+          status: user.status || 'active',
+          // Add default dates if not present (for mock data)
+          created_at: user.created_at || new Date().toISOString(),
+          updated_at: user.updated_at || new Date().toISOString()
+        }));
+        
+        setUsers(usersWithStatus);
+        setError(null);
+        
+        // If we're showing mock data, inform the user
+        if (isMockData) {
+          console.log('Using mock data for users');
+          showToast('სერვერთან კავშირი ვერ მოხერხდა. ნაჩვენებია მოდელირებული მონაცემები.', 'warning');
+        }
+      } else {
+        console.error('Invalid user data received:', usersData);
+        throw new Error('Invalid user data received');
+      }
+    } catch (err: any) {
+      console.error('Error fetching users:', err);
+      
+      // Try to get mock data directly if the fetch failed
+      try {
+        console.log('Attempting to use mock data after error...');
+        const mockData = await authService.getAllUsers();
+        if (mockData && Array.isArray(mockData) && mockData.length > 0) {
+          console.log('Successfully retrieved mock data:', mockData);
+          
+          const usersWithStatus = mockData.map(user => ({
+            ...user,
+            status: user.status || 'active',
+            created_at: user.created_at || new Date().toISOString(),
+            updated_at: user.updated_at || new Date().toISOString()
+          }));
+          
+          setUsers(usersWithStatus);
+          setError('სერვერთან კავშირი ვერ მოხერხდა. ნაჩვენებია მოდელირებული მონაცემები.');
+          showToast('სერვერთან კავშირი ვერ მოხერხდა. ნაჩვენებია მოდელირებული მონაცემები.', 'warning');
+        } else {
+          throw new Error('Failed to retrieve mock data');
+        }
+      } catch (mockErr) {
+        console.error('Failed to use mock data:', mockErr);
+        setError(err.message || 'Failed to load users');
+        showToast('მომხმარებლების ჩატვირთვა ვერ მოხერხდა', 'error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6">
@@ -43,8 +101,14 @@ const UsersPage = () => {
             type="text"
             placeholder="მოძებნე მომხმარებელი..."
             className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <select className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
+          <select 
+            className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
             <option value="all">ყველა</option>
             <option value="active">აქტიური</option>
             <option value="blocked">დაბლოკილი</option>
@@ -52,7 +116,27 @@ const UsersPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 p-4 rounded-xl text-red-600 text-center">
+          <p className="mb-2">{error}</p>
+          {users.length > 0 && (
+            <p className="text-amber-600 mb-2">
+              ნაჩვენებია მოდელირებული მონაცემები სერვერის პრობლემის გამო.
+            </p>
+          )}
+          <button 
+            onClick={fetchUsers} 
+            className="ml-4 underline hover:text-red-800"
+          >
+            სცადეთ თავიდან
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
@@ -74,12 +158,39 @@ const UsersPage = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users
+                .filter(user => {
+                  // Apply search filter
+                  if (searchTerm) {
+                    const searchLower = searchTerm.toLowerCase();
+                    return (
+                      user.username?.toLowerCase().includes(searchLower) ||
+                      user.email?.toLowerCase().includes(searchLower) ||
+                      user.first_name?.toLowerCase().includes(searchLower) ||
+                      user.last_name?.toLowerCase().includes(searchLower)
+                    );
+                  }
+                  return true;
+                })
+                .filter(user => {
+                  // Apply status filter
+                  if (statusFilter === 'all') return true;
+                  return user.status === statusFilter;
+                })
+                .sort((a, b) => {
+                  // Apply sorting
+                  const nameA = a.username?.toLowerCase() || '';
+                  const nameB = b.username?.toLowerCase() || '';
+                  return sortDirection === 'asc' 
+                    ? nameA.localeCompare(nameB) 
+                    : nameB.localeCompare(nameA);
+                })
+                .map((user) => (
                 <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                        <User size={16} className="text-gray-600" />
+                        <UserIcon size={16} className="text-gray-600" />
                       </div>
                       <span className="font-medium text-gray-900">{user.username}</span>
                     </div>
@@ -99,7 +210,9 @@ const UsersPage = () => {
                       {user.status === 'active' ? 'აქტიური' : 'დაბლოკილი'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-600">{user.joinDate}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString('ka-GE') : '-'}
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
@@ -134,6 +247,7 @@ const UsersPage = () => {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 };

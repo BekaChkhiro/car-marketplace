@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car } from '../../../api/types/car.types';
-import carService from '../../../api/services/carService';
-import { useAuth } from '../../../context/AuthContext';
-import CarCard from '../../../components/CarCard';
-import { Button, Container, Grid, Loading } from '../../../components/ui';
+import { Car } from '../../../../api/types/car.types';
+import carService from '../../../../api/services/carService';
+import { useAuth } from '../../../../context/AuthContext';
+import { Button, Container, Loading } from '../../../../components/ui';
 import { Plus, AlertCircle, RefreshCw } from 'lucide-react';
-import { useToast } from '../../../context/ToastContext';
+import { useToast } from '../../../../context/ToastContext';
+import EmptyState from './components/EmptyState';
+import UserCarsList from './components/UserCarsList';
 
 const UserCars: React.FC = () => {
   const navigate = useNavigate();
@@ -71,16 +72,16 @@ const UserCars: React.FC = () => {
   }
 
   return (
-    <section className="w-full px-4 py-8 bg-gradient-to-b from-gray-50/15 to-background">
+    <section className="w-full px-4 py-8 bg-gradient-to-b from-blue-50/50 to-white">
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r text-primary">ჩემი განცხადებები</h2>
+            <h2 className="text-3xl font-bold mb-2 text-primary">ჩემი განცხადებები</h2>
             <p className="text-gray-600">მართეთ თქვენი გამოქვეყნებული განცხადებები</p>
           </div>
           <Button 
             onClick={() => navigate('/profile/add-car')}
-            className="flex items-center gap-2 px-6 py-3 transition-all duration-300 hover:-translate-y-0.5"
+            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 hover:shadow-md"
           >
             <Plus size={18} />
             ახალი განცხადება
@@ -88,39 +89,9 @@ const UserCars: React.FC = () => {
         </div>
 
         {cars.length === 0 ? (
-          <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm p-12 text-center my-8">
-            <img 
-              src="/assets/images/empty-cars.svg" 
-              alt="No cars" 
-              className="w-48 h-48 mb-6 opacity-80"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = 'https://placehold.co/200x200?text=No+Cars';
-              }}
-            />
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">თქვენ ჯერ არ გაქვთ განცხადებები</h3>
-            <p className="text-gray-600 mb-6 max-w-md">დაამატეთ თქვენი პირველი განცხადება და გაყიდეთ თქვენი ავტომობილი სწრაფად</p>
-            <Button 
-              onClick={() => navigate('/profile/add-car')}
-              className="flex items-center gap-2 px-6 py-3 transition-all duration-300 hover:-translate-y-0.5"
-            >
-              <Plus size={18} />
-              პირველი განცხადების დამატება
-            </Button>
-          </div>
+          <EmptyState />
         ) : (
-          <div className="mt-6">
-            <Grid className="gap-8">
-              {cars.map((car) => (
-                <CarCard 
-                  key={car.id} 
-                  car={car} 
-                  isOwner={true}
-                  onDelete={() => handleDeleteCar(car.id)}
-                />
-              ))}
-            </Grid>
-          </div>
+          <UserCarsList cars={cars} onDelete={handleDeleteCar} />
         )}
       </Container>
     </section>

@@ -8,6 +8,9 @@ export interface User {
   last_name: string;
   age: number;
   gender: 'male' | 'female' | 'other';
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Tokens {
