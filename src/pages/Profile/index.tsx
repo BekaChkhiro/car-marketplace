@@ -34,7 +34,7 @@ const ProfilePage = () => {
         <SideNavigation />
         
         <main className="flex-1 py-8 px-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="mx-auto">
             <Outlet />
           </div>
         </main>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wrench } from 'lucide-react';
 import CustomSelect from '../../../../../components/common/CustomSelect';
-import { TRANSMISSION_OPTIONS, FUEL_TYPE_OPTIONS, DRIVE_TYPE_OPTIONS, STEERING_WHEEL_OPTIONS } from '../types';
+import { TRANSMISSION_OPTIONS, FUEL_TYPE_OPTIONS, DRIVE_TYPE_OPTIONS, STEERING_WHEEL_OPTIONS, BODY_TYPE_OPTIONS } from '../types';
 
 const CYLINDER_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12];
 
@@ -101,12 +101,16 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             გადაცემათა კოლოფი
+            {errors?.transmission && (
+              <span className="text-red-500 ml-1 text-xs">{errors.transmission}</span>
+            )}
           </label>
           <CustomSelect
             value={specifications.transmission || ''}
             onChange={(value) => onChange('transmission', value)}
             options={TRANSMISSION_OPTIONS}
             placeholder="აირჩიეთ გადაცემათა კოლოფი"
+            error={errors?.transmission}
           />
         </div>
 
@@ -114,12 +118,33 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             საწვავის ტიპი
+            {errors?.fuel_type && (
+              <span className="text-red-500 ml-1 text-xs">{errors.fuel_type}</span>
+            )}
           </label>
           <CustomSelect
             value={specifications.fuel_type || ''}
             onChange={(value) => onChange('fuel_type', value)}
             options={FUEL_TYPE_OPTIONS}
             placeholder="აირჩიეთ საწვავის ტიპი"
+            error={errors?.fuel_type}
+          />
+        </div>
+
+        {/* ძარის ტიპი */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            ძარის ტიპი
+            {errors?.body_type && (
+              <span className="text-red-500 ml-1 text-xs">{errors.body_type}</span>
+            )}
+          </label>
+          <CustomSelect
+            value={specifications.body_type || ''}
+            onChange={(value) => onChange('body_type', value)}
+            options={BODY_TYPE_OPTIONS}
+            placeholder="აირჩიეთ ძარის ტიპი"
+            error={errors?.body_type}
           />
         </div>
 
@@ -127,12 +152,16 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             წამყვანი თვლები
+            {errors?.drive_type && (
+              <span className="text-red-500 ml-1 text-xs">{errors.drive_type}</span>
+            )}
           </label>
           <CustomSelect
             value={specifications.drive_type || ''}
             onChange={(value) => onChange('drive_type', value)}
             options={DRIVE_TYPE_OPTIONS}
             placeholder="აირჩიეთ წამყვანი თვლები"
+            error={errors?.drive_type}
           />
         </div>
 
@@ -140,12 +169,16 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             საჭე
+            {errors?.steering_wheel && (
+              <span className="text-red-500 ml-1 text-xs">{errors.steering_wheel}</span>
+            )}
           </label>
           <CustomSelect
             value={specifications.steering_wheel || ''}
             onChange={(value) => onChange('steering_wheel', value)}
             options={STEERING_WHEEL_OPTIONS}
             placeholder="აირჩიეთ საჭის მდებარეობა"
+            error={errors?.steering_wheel}
           />
         </div>
 

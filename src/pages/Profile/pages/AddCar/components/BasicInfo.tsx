@@ -157,6 +157,105 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
               isValid={!!formData.model}
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              კატეგორია *
+              {errors?.category_id && (
+                <span className="text-red-500 ml-1 text-xs">{errors.category_id}</span>
+              )}
+            </label>
+            <CustomSelect
+              options={categories.map(category => ({
+                value: String(category.id),
+                label: category.name
+              }))}
+              value={String(formData.category_id || '')}
+              onChange={(value) => onChange('category_id', value)}
+              placeholder="აირჩიეთ კატეგორია"
+              error={errors?.category_id}
+              isValid={!!formData.category_id}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              გამოშვების წელი *
+              {errors?.year && (
+                <span className="text-red-500 ml-1 text-xs">{errors.year}</span>
+              )}
+            </label>
+            <input
+              type="number"
+              value={formData.year || ''}
+              onChange={(e) => onChange('year', Number(e.target.value))}
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              placeholder="მაგ: 2020"
+              min="1900"
+              max={new Date().getFullYear() + 1}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ფასი (₾) *
+              {errors?.price && (
+                <span className="text-red-500 ml-1 text-xs">{errors.price}</span>
+              )}
+            </label>
+            <input
+              type="number"
+              value={formData.price || ''}
+              onChange={(e) => onChange('price', Number(e.target.value))}
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              placeholder="მაგ: 15000"
+              min="0"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gray-50 rounded-xl p-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">აღწერა</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              აღწერა (ქართულად) *
+              {errors?.description_ka && (
+                <span className="text-red-500 ml-1 text-xs">{errors.description_ka}</span>
+              )}
+            </label>
+            <textarea
+              value={formData.description_ka || ''}
+              onChange={(e) => onChange('description_ka', e.target.value)}
+              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="შეიყვანეთ მანქანის აღწერა ქართულად"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              აღწერა (ინგლისურად)
+            </label>
+            <textarea
+              value={formData.description_en || ''}
+              onChange={(e) => onChange('description_en', e.target.value)}
+              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="შეიყვანეთ მანქანის აღწერა ინგლისურად"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              აღწერა (რუსულად)
+            </label>
+            <textarea
+              value={formData.description_ru || ''}
+              onChange={(e) => onChange('description_ru', e.target.value)}
+              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="შეიყვანეთ მანქანის აღწერა რუსულად"
+            />
+          </div>
         </div>
       </div>
 

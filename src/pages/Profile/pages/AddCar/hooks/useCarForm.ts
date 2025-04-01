@@ -149,7 +149,49 @@ export const useCarForm = () => {
   };
 
   const validate = () => {
+    // Log all form data for debugging
+    console.log('Form data being validated:', JSON.stringify(formData, null, 2));
+    
+    // Check for empty fields and log them
+    const emptyFields: string[] = [];
+    
+    // Check basic fields
+    if (!formData.brand_id) emptyFields.push('brand_id');
+    if (!formData.model) emptyFields.push('model');
+    if (!formData.category_id) emptyFields.push('category_id');
+    if (!formData.year) emptyFields.push('year');
+    if (!formData.price) emptyFields.push('price');
+    if (!formData.description_ka) emptyFields.push('description_ka');
+    
+    // Check location fields
+    if (!formData.location?.city) emptyFields.push('location.city');
+    if (formData.location?.location_type === 'international') {
+      if (!formData.location.country) emptyFields.push('location.country');
+      if (!formData.location.state) emptyFields.push('location.state');
+    }
+    
+    // Check specifications
+    const specs = formData.specifications;
+    if (!specs.transmission) emptyFields.push('specifications.transmission');
+    if (!specs.fuel_type) emptyFields.push('specifications.fuel_type');
+    if (!specs.body_type) emptyFields.push('specifications.body_type');
+    if (!specs.drive_type) emptyFields.push('specifications.drive_type');
+    if (!specs.steering_wheel) emptyFields.push('specifications.steering_wheel');
+    
+    // Check if images are provided
+    if (images.length === 0) emptyFields.push('images');
+    
+    // Log empty fields
+    if (emptyFields.length > 0) {
+      console.log('Empty fields detected:', emptyFields);
+      console.log('Empty fields count:', emptyFields.length);
+    } else {
+      console.log('All required fields are filled');
+    }
+    
+    // Run the regular validation
     const newErrors = validateCarForm(formData, images);
+    console.log('Validation errors:', newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -187,6 +229,36 @@ export const useCarForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('HandleSubmit - Form data before validation:', formData);
+    
+    // Log specific details about the steering_wheel field
+    console.log('Steering wheel value type:', typeof formData.specifications.steering_wheel);
+    console.log('Steering wheel value:', formData.specifications.steering_wheel);
+    
+    // Check if steering_wheel is an object and handle it
+    if (formData.specifications.steering_wheel && 
+        typeof formData.specifications.steering_wheel === 'object') {
+      const steeringWheelObj = formData.specifications.steering_wheel as any;
+      console.log('Steering wheel is an object:', steeringWheelObj);
+      if (steeringWheelObj.value) {
+        console.log('Extracting value from steering wheel object:', steeringWheelObj.value);
+        formData.specifications.steering_wheel = steeringWheelObj.value as 'left' | 'right';
+      }
+    }
+    
+    // Also check for any other select fields that might be objects
+    const selectFields = ['transmission', 'fuel_type', 'body_type', 'drive_type'] as const;
+    selectFields.forEach(field => {
+      const value = formData.specifications[field as keyof typeof formData.specifications];
+      if (value && typeof value === 'object') {
+        console.log(`Field ${field} is an object:`, value);
+        const objValue = (value as any).value;
+        if (objValue) {
+          console.log(`Extracting value from ${field} object:`, objValue);
+          // Use type assertion to safely assign the value
+          (formData.specifications as any)[field] = objValue;
+        }
+      }
+    });
 
     if (!formData.brand_id) {
       showToast('გთხოვთ აირჩიოთ მარკა', 'error');
