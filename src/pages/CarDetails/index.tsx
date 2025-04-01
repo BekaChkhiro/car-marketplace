@@ -48,7 +48,7 @@ const CarDetails: React.FC = () => {
     <Container>
       <div className="py-8">
         <CarInfo car={car} />
-        <SimilarCars carId={car.id.toString()} category={car.category} />
+        <SimilarCars carId={car.id.toString()} category={car.category_id.toString()} />
       </div>
     </Container>
   );

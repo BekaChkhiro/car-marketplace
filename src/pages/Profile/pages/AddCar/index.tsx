@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import BasicInfo from './components/BasicInfo';
 import Features from './components/Features';
+import Location from './components/Location';
 import { useCarForm } from './hooks/useCarForm';
 import { CarFeatures } from './types';
 
@@ -47,6 +48,15 @@ const AddCar: React.FC = () => {
             formData={formData}
             onChange={handleChange}
             onSpecificationsChange={handleSpecificationsChange}
+            errors={errors}
+          />
+
+          <Location
+            city={formData.location?.city || ''}
+            state={formData.location?.state || ''}
+            country={formData.location?.country || ''}
+            location_type={(formData.location?.location_type || 'georgia') as 'georgia' | 'transit' | 'international'}
+            onChange={handleChange}
             errors={errors}
           />
 

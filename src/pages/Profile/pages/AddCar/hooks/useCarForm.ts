@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../../../../context/ToastContext';
 import { useLoading } from '../../../../../context/LoadingContext';
-import { NewCarFormData } from '../types';
-import { validateCarForm, validateImage, ValidationErrors } from '../utils/validation';
+import { NewCarFormData, CarFeatures } from '../types';
+import { validateCarForm, validateImage } from '../utils/validation';
 import carService from '../../../../../api/services/carService';
-import { cleanFormData, validateImageFile } from '../utils/helpers';
-import { CreateCarFormData } from '../../../../../api/types/car.types';
+import { cleanFormData } from '../utils/helpers';
 
 // Auto-save delay in milliseconds
 const AUTO_SAVE_DELAY = 3000;
@@ -15,7 +14,7 @@ export const useCarForm = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { showLoading, hideLoading } = useLoading();
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [images, setImages] = useState<File[]>([]);
   const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
   
@@ -38,21 +37,63 @@ export const useCarForm = () => {
       description_ka: '',
       description_en: '',
       description_ru: '',
-      city: '',
-      state: '',
-      country: 'საქართველო',
-      location_type: 'georgia',
+      location: {
+        city: '',
+        state: '',
+        country: 'საქართველო',
+        location_type: 'georgia',
+        is_transit: false
+      },
       specifications: {
         transmission: '',
         fuel_type: '',
         body_type: '',
         drive_type: '',
-        steering_wheel: '',
+        steering_wheel: 'left',
         engine_size: undefined,
+        horsepower: undefined,
         mileage: undefined,
-        color: ''
+        mileage_unit: 'km',
+        color: '',
+        cylinders: undefined,
+        interior_material: '',
+        interior_color: '',
+        airbags_count: undefined,
+        engine_type: ''
       },
-      features: {}
+      features: {
+        has_abs: false,
+        has_esp: false,
+        has_asr: false,
+        has_traction_control: false,
+        has_central_locking: false,
+        has_alarm: false,
+        has_fog_lights: false,
+        has_board_computer: false,
+        has_multimedia: false,
+        has_bluetooth: false,
+        has_air_conditioning: false,
+        has_climate_control: false,
+        has_heated_seats: false,
+        has_ventilated_seats: false,
+        has_cruise_control: false,
+        has_start_stop: false,
+        has_panoramic_roof: false,
+        has_sunroof: false,
+        has_leather_interior: false,
+        has_memory_seats: false,
+        has_memory_steering_wheel: false,
+        has_electric_mirrors: false,
+        has_electric_seats: false,
+        has_heated_steering_wheel: false,
+        has_electric_windows: false,
+        has_electric_trunk: false,
+        has_keyless_entry: false,
+        has_parking_control: false,
+        has_rear_view_camera: false,
+        has_navigation: false,
+        has_technical_inspection: false
+      }
     };
   });
 
@@ -65,12 +106,22 @@ export const useCarForm = () => {
     return () => clearTimeout(timeoutId);
   }, [formData]);
 
-  // Clear saved draft on successful submission
-  const clearSavedDraft = () => {
-    localStorage.removeItem('car_form_draft');
-  };
-
   const handleChange = (field: string, value: any) => {
+    console.log(`handleChange - field: ${field}, value:`, value);
+    
+    // Handle location fields
+    if (['city', 'state', 'country', 'location_type'].includes(field)) {
+      setFormData(prev => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          [field]: typeof value === 'object' ? value.value : value,
+          is_transit: field === 'location_type' ? value === 'transit' : prev.location?.is_transit || false
+        }
+      }));
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -87,7 +138,7 @@ export const useCarForm = () => {
     }));
   };
 
-  const handleFeaturesChange = (field: string, value: boolean) => {
+  const handleFeaturesChange = (field: keyof CarFeatures, value: boolean) => {
     setFormData(prev => ({
       ...prev,
       features: {
@@ -135,6 +186,12 @@ export const useCarForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('HandleSubmit - Form data before validation:', formData);
+
+    if (!formData.brand_id) {
+      showToast('გთხოვთ აირჩიოთ მარკა', 'error');
+      return;
+    }
 
     if (!validate()) {
       showToast('გთხოვთ შეავსოთ ყველა სავალდებულო ველი', 'error');
@@ -143,17 +200,20 @@ export const useCarForm = () => {
 
     try {
       showLoading();
+      console.log('HandleSubmit - Form data after validation:', formData);
       const cleanedData = cleanFormData(formData);
-      const apiFormData: CreateCarFormData = {
+      console.log('HandleSubmit - Cleaned data:', cleanedData);
+      
+      await carService.createCar({
         ...cleanedData,
         images
-      };
-      await carService.createCar(apiFormData);
-      clearSavedDraft(); // Clear the draft after successful submission
+      });
+      
+      localStorage.removeItem('car_form_draft'); // Clear the draft after successful submission
       showToast('მანქანა წარმატებით დაემატა', 'success');
       navigate('/profile/cars');
     } catch (error: any) {
-      console.error('Error creating car:', error);
+      console.error('HandleSubmit - Error:', error);
       showToast(error.message || 'მანქანის დამატებისას მოხდა შეცდომა', 'error');
     } finally {
       hideLoading();
@@ -171,7 +231,6 @@ export const useCarForm = () => {
     handleImageUpload,
     removeImage,
     setFeaturedImageIndex,
-    handleSubmit,
-    clearSavedDraft
+    handleSubmit
   };
 };

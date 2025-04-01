@@ -1,12 +1,9 @@
 import React from 'react';
-import { Settings } from 'lucide-react';
+import { Wrench } from 'lucide-react';
 import CustomSelect from '../../../../../components/common/CustomSelect';
-import {
-  TRANSMISSION_OPTIONS,
-  FUEL_TYPE_OPTIONS,
-  DRIVE_TYPE_OPTIONS,
-  CYLINDER_OPTIONS,
-} from '../types';
+import { TRANSMISSION_OPTIONS, FUEL_TYPE_OPTIONS, DRIVE_TYPE_OPTIONS, STEERING_WHEEL_OPTIONS } from '../types';
+
+const CYLINDER_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12];
 
 interface TechnicalSpecsProps {
   specifications: {
@@ -18,18 +15,23 @@ interface TechnicalSpecsProps {
     engine_size?: string | number;
     cylinders?: number;
     drive_type?: string;
+    horsepower?: number;
+    color?: string;
+    interior_material?: string;
+    interior_color?: string;
+    airbags_count?: number;
     [key: string]: any;
   };
   onChange: (field: string, value: any) => void;
   errors?: Record<string, string>;
 }
 
-const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChange, errors }) => {
+const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChange, errors = {} }) => {
   return (
     <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:rotate-180">
-          <Settings size={20} className="text-primary" />
+          <Wrench size={20} className="text-primary" />
         </div>
         <div>
           <h2 className="text-lg font-semibold text-gray-900">ტექნიკური მახასიათებლები</h2>
@@ -38,9 +40,11 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* ძრავის მოცულობა */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ძრავის მოცულობა (cc)
+            ძრავის მოცულობა (კუბ.სმ)
+            <span className="text-xs text-gray-500 ml-1">(მაგ: 2000 კუბ.სმ = 2.0 ლიტრი)</span>
           </label>
           <input
             type="number"
@@ -49,11 +53,24 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
             className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
             placeholder="მაგ: 2000"
           />
-          {errors?.engine_size && (
-            <p className="mt-1 text-sm text-red-600">{errors.engine_size}</p>
-          )}
+          <p className="text-xs text-gray-500 mt-1">შეიყვანეთ ძრავის მოცულობა კუბურ სანტიმეტრებში (cc).</p>
         </div>
 
+        {/* ცხენის ძალა */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            ცხენის ძალა
+          </label>
+          <input
+            type="number"
+            value={specifications.horsepower || ''}
+            onChange={(e) => onChange('horsepower', e.target.value)}
+            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            placeholder="მაგ: 150"
+          />
+        </div>
+
+        {/* ცილინდრები */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             ცილინდრების რაოდენობა
@@ -66,6 +83,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           />
         </div>
 
+        {/* გარბენი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             გარბენი (კმ)
@@ -77,11 +95,9 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
             className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
             placeholder="მაგ: 100000"
           />
-          {errors?.mileage && (
-            <p className="mt-1 text-sm text-red-600">{errors.mileage}</p>
-          )}
         </div>
         
+        {/* გადაცემათა კოლოფი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             გადაცემათა კოლოფი
@@ -94,6 +110,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           />
         </div>
 
+        {/* საწვავის ტიპი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             საწვავის ტიპი
@@ -106,6 +123,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           />
         </div>
 
+        {/* წამყვანი თვლები */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             წამყვანი თვლები
@@ -115,6 +133,75 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
             onChange={(value) => onChange('drive_type', value)}
             options={DRIVE_TYPE_OPTIONS}
             placeholder="აირჩიეთ წამყვანი თვლები"
+          />
+        </div>
+
+        {/* საჭე */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            საჭე
+          </label>
+          <CustomSelect
+            value={specifications.steering_wheel || ''}
+            onChange={(value) => onChange('steering_wheel', value)}
+            options={STEERING_WHEEL_OPTIONS}
+            placeholder="აირჩიეთ საჭის მდებარეობა"
+          />
+        </div>
+
+        {/* ფერი */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            ფერი
+          </label>
+          <input
+            type="text"
+            value={specifications.color || ''}
+            onChange={(e) => onChange('color', e.target.value)}
+            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            placeholder="მაგ: შავი"
+          />
+        </div>
+
+        {/* სალონის მასალა */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            სალონის მასალა
+          </label>
+          <input
+            type="text"
+            value={specifications.interior_material || ''}
+            onChange={(e) => onChange('interior_material', e.target.value)}
+            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            placeholder="მაგ: ტყავი"
+          />
+        </div>
+
+        {/* სალონის ფერი */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            სალონის ფერი
+          </label>
+          <input
+            type="text"
+            value={specifications.interior_color || ''}
+            onChange={(e) => onChange('interior_color', e.target.value)}
+            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            placeholder="მაგ: შავი"
+          />
+        </div>
+
+        {/* უსაფრთხოების ბალიშების რაოდენობა */}
+        <div className="group">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+            უსაფრთხოების ბალიშების რაოდენობა
+          </label>
+          <input
+            type="number"
+            value={specifications.airbags_count || ''}
+            onChange={(e) => onChange('airbags_count', Number(e.target.value))}
+            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            placeholder="მაგ: 4"
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { NewCarFormData } from '../types';
 import { CreateCarFormData } from '../../../../../api/types/car.types';
+import { CarSpecifications } from '../types';
 
 export const formatPrice = (price: number | string): string => {
   return new Intl.NumberFormat('ka-GE').format(Number(price));
@@ -21,68 +22,93 @@ export const validateImageFile = (file: File): boolean => {
 };
 
 export const cleanFormData = (formData: NewCarFormData): Omit<CreateCarFormData, 'images'> => {
-  const cleanedData = { ...formData };
+  console.log('CleanFormData - Raw input:', JSON.stringify(formData, null, 2));
+  console.log('CleanFormData - brand_id type:', typeof formData.brand_id);
+  console.log('CleanFormData - brand_id value:', formData.brand_id);
+  
+  // Validate brand_id with detailed error message
+  if (formData.brand_id === undefined || formData.brand_id === null || formData.brand_id === '') {
+    console.error('CleanFormData - brand_id is missing or undefined');
+    throw new Error('მარკის არჩევა სავალდებულოა');
+  }
+
+  // Convert brand_id and category_id to numbers and ensure they are valid
+  const brand_id = parseInt(String(formData.brand_id));
+  console.log('CleanFormData - Parsed brand_id:', brand_id, 'Original:', formData.brand_id);
+  
+  if (isNaN(brand_id)) {
+    console.error('CleanFormData - brand_id parsing failed:', formData.brand_id);
+    throw new Error('არასწორი მარკის ID ფორმატი');
+  }
+  if (brand_id <= 0) {
+    console.error('CleanFormData - Invalid brand_id value:', brand_id);
+    throw new Error('არასწორი მარკის ID მნიშვნელობა');
+  }
+
+  // Convert and validate category_id
+  if (formData.category_id === undefined || formData.category_id === null || formData.category_id === '') {
+    console.error('CleanFormData - category_id is missing or undefined');
+    throw new Error('კატეგორიის არჩევა სავალდებულოა');
+  }
+
+  const category_id = parseInt(String(formData.category_id));
+  console.log('CleanFormData - Parsed category_id:', category_id, 'Original:', formData.category_id);
+  
+  if (isNaN(category_id) || category_id <= 0) {
+    console.error('CleanFormData - Invalid category_id:', formData.category_id);
+    throw new Error('არასწორი კატეგორიის ID');
+  }
 
   // Convert features object to string array
   const features: string[] = [];
-  if (cleanedData.features) {
-    Object.entries(cleanedData.features).forEach(([key, value]) => {
+  if (formData.features) {
+    Object.entries(formData.features).forEach(([key, value]) => {
       if (value === true) {
-        // Convert from camelCase to readable format
-        const feature = key
-          .replace('has_', '')
-          .split('_')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-        features.push(feature);
+        features.push(key);
       }
     });
   }
 
-  // Remove fields that don't exist in CreateCarFormData
-  const {
+  // Handle location data
+  const location = {
+    city: typeof formData.location?.city === 'object' ? 
+          (formData.location.city as { value: string; label: string })?.value || '' : 
+          formData.location?.city || '',
+    state: formData.location?.state || '',
+    country: formData.location?.country || 'საქართველო',
+    location_type: formData.location?.location_type || 'georgia',
+    is_transit: formData.location?.is_transit || false
+  };
+
+  // Convert drive_type from Georgian to English
+  if (formData.specifications?.drive_type) {
+    const driveTypeMap: { [key: string]: CarSpecifications['drive_type'] } = {
+      'წინა': 'FWD',
+      'უკანა': 'RWD',
+      '4x4': 'AWD'
+    };
+    const mappedDriveType = driveTypeMap[formData.specifications.drive_type];
+    if (mappedDriveType) {
+      formData.specifications.drive_type = mappedDriveType;
+    }
+  }
+
+  const cleanedData = {
     brand_id,
     category_id,
-    description_en,
-    description_ru,
-    city,
-    state,
-    country,
-    location_type,
-    ...apiFormData
-  } = cleanedData;
-
-  // Use the Georgian description as the main description
-  const description = cleanedData.description_ka;
-
-  // Convert specifications to match the API format
-  const {
-    transmission,
-    fuel_type,
-    drive_type,
-    steering_wheel = 'left' as const,
-    engine_size = 0,
-    mileage = 0,
-    color = ''
-  } = cleanedData.specifications;
-
-  return {
-    brand: brand_id,
-    category: category_id,
-    condition: 'used',
-    description,
+    model: formData.model,
+    year: formData.year,
+    price: formData.price,
+    description_ka: formData.description_ka || '',
+    description_en: formData.description_en || '',
+    description_ru: formData.description_ru || '',
+    specifications: formData.specifications,
     features,
-    transmission,
-    fuel_type,
-    drive_type,
-    steering_wheel,
-    engine_size,
-    mileage,
-    color,
-    year: cleanedData.year,
-    price: cleanedData.price,
-    model: cleanedData.model
+    location
   };
+
+  console.log('CleanFormData - Final output:', JSON.stringify(cleanedData, null, 2));
+  return cleanedData;
 };
 
 export const getImagePreview = (file: File): Promise<string> => {

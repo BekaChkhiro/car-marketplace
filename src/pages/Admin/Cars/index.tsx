@@ -63,7 +63,7 @@ const AdminCars: React.FC = () => {
                   Car
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Owner
+                  Seller ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Price
@@ -84,7 +84,7 @@ const AdminCars: React.FC = () => {
                       <div className="h-10 w-10 flex-shrink-0">
                         <img
                           className="h-10 w-10 rounded-full object-cover"
-                          src={car.images[0] || '/placeholder-car.jpg'}
+                          src={car.images[0]?.thumbnail_url || '/placeholder-car.jpg'}
                           alt={`${car.brand} ${car.model}`}
                         />
                       </div>
@@ -100,7 +100,7 @@ const AdminCars: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      User {car.user_id}
+                      Seller {car.seller_id}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -109,8 +109,12 @@ const AdminCars: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      Active
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      ${car.status === 'available' ? 'bg-green-100 text-green-800' : 
+                        car.status === 'sold' ? 'bg-gray-100 text-gray-800' : 
+                        'bg-yellow-100 text-yellow-800'}`}
+                    >
+                      {car.status.charAt(0).toUpperCase() + car.status.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

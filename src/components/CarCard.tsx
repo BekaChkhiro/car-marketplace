@@ -26,8 +26,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, isOwner, onDelete }) => {
   const { currency, setCurrency } = useCurrency();
   const { formatPrice } = usePrice();
   
-  // Ensure images is always an array
-  const images = car.images || [];
+  const images = car.images?.map(img => img.url) || [];
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -109,19 +108,19 @@ const CarCard: React.FC<CarCardProps> = ({ car, isOwner, onDelete }) => {
         <div className="grid grid-cols-2 gap-2 mt-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Gauge size={16} />
-            <span>{car.mileage.toLocaleString()} km</span>
+            <span>{car.specifications.mileage.toLocaleString()} km</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Fuel size={16} />
-            <span>{car.fuel_type}</span>
+            <span>{car.specifications.fuel_type}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Settings size={16} />
-            <span>{car.transmission}</span>
+            <span>{car.specifications.transmission}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <MapPin size={16} />
-            <span>{car.steering_wheel}</span>
+            <span>{car.specifications.steering_wheel}</span>
           </div>
         </div>
 

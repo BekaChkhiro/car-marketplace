@@ -30,13 +30,17 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
     const loadData = async () => {
       try {
         setLoading(true);
+        console.log('Fetching brands and categories...');
         const [brandsData, categoriesData] = await Promise.all([
           carService.getBrands(),
           carService.getCategories()
         ]);
+        console.log('Received brands:', brandsData);
+        console.log('Received categories:', categoriesData);
         setBrands(brandsData || []);
         setCategories(categoriesData || []);
       } catch (err: any) {
+        console.error('Detailed error:', err);
         setError(err.message);
         console.error('Error loading data:', err);
       } finally {
@@ -54,13 +58,40 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
       return;
     }
 
-    const selectedBrand = brands.find((brand) => brand.id.toString() === formData.brand_id);
-    setAvailableModels(selectedBrand?.models || []);
+    const loadModels = async () => {
+      try {
+        console.log('BasicInfo - Fetching models for brand_id:', formData.brand_id);
+        console.log('BasicInfo - Available brands:', brands.map(b => `${b.id}: ${b.name}`).join(', '));
+        
+        // Find the selected brand to verify it exists
+        const selectedBrand = brands.find(b => b.id.toString() === formData.brand_id.toString());
+        console.log('BasicInfo - Selected brand object:', selectedBrand);
+        
+        if (!selectedBrand) {
+          console.error('BasicInfo - Cannot find brand with ID:', formData.brand_id);
+          return;
+        }
+        
+        const models = await carService.getModelsByBrand(Number(formData.brand_id));
+        console.log('BasicInfo - Received models:', models);
+        setAvailableModels(models || []);
+      } catch (err: any) {
+        console.error('BasicInfo - Error loading models:', err);
+        setError(err.message);
+        setAvailableModels([]);
+      }
+    };
+
+    loadModels();
   }, [formData.brand_id, brands]);
 
   const handleBrandChange = (value: string | string[]) => {
+    console.log('handleBrandChange - received value:', value);
     const brandId = Array.isArray(value) ? value[0] : value;
-    onChange('brand_id', brandId);
+    console.log('handleBrandChange - setting brand_id to:', brandId);
+    if (brandId) {
+      onChange('brand_id', brandId.toString());
+    }
     onChange('model', ''); // Reset model when brand changes
   };
 

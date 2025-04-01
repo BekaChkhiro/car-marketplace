@@ -23,30 +23,30 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
         </div>
         <div>
           <p className="text-gray-500 text-sm">Mileage</p>
-          <p className="font-semibold">{car.mileage.toLocaleString()} km</p>
+          <p className="font-semibold">{car.specifications.mileage.toLocaleString()} km</p>
         </div>
         <div>
           <p className="text-gray-500 text-sm">Fuel Type</p>
-          <p className="font-semibold">{car.fuel_type}</p>
+          <p className="font-semibold">{car.specifications.fuel_type}</p>
         </div>
         <div>
           <p className="text-gray-500 text-sm">Transmission</p>
-          <p className="font-semibold">{car.transmission}</p>
+          <p className="font-semibold">{car.specifications.transmission}</p>
         </div>
         <div>
           <p className="text-gray-500 text-sm">Engine Size</p>
-          <p className="font-semibold">{car.engine_size}L</p>
+          <p className="font-semibold">{car.specifications.engine_size}L</p>
         </div>
         <div>
           <p className="text-gray-500 text-sm">Steering Wheel</p>
-          <p className="font-semibold">{car.steering_wheel}</p>
+          <p className="font-semibold">{car.specifications.steering_wheel}</p>
         </div>
       </div>
 
-      {car.description && (
+      {car.description_ka && (
         <div>
           <h2 className="text-lg font-semibold mb-2">Description</h2>
-          <p className="text-gray-700 whitespace-pre-line">{car.description}</p>
+          <p className="text-gray-700 whitespace-pre-line">{car.description_ka}</p>
         </div>
       )}
     </div>

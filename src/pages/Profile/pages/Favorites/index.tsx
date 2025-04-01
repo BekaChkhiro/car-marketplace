@@ -13,7 +13,7 @@ const Favorites: React.FC = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await carService.getFavoriteCars();
+        const response = await carService.getFavorites();
         setCars(response);
       } catch (error) {
         console.error('Error fetching favorites:', error);

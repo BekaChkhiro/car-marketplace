@@ -15,7 +15,7 @@ const VipListings: React.FC = () => {
     const fetchVipCars = async () => {
       try {
         setLoading(true);
-        const response = await carService.getCars({ isVip: true, limit: 4 });
+        const response = await carService.getCars({ featured: true, limit: 4 });
         // Ensure we always set an array, even if empty
         setVipCars(Array.isArray(response) ? response : []);
       } catch (error) {
