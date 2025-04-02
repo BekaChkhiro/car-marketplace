@@ -44,7 +44,7 @@ const mockUsers: User[] = [
     phone: '+1234567892',
     age: 35,
     gender: 'other',
-    status: 'blocked',
+    status: 'დაბლოკილი',
     created_at: '2023-03-22T16:40:00Z',
     updated_at: '2023-07-12T08:30:00Z'
   }

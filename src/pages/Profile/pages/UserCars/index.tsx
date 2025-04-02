@@ -20,9 +20,15 @@ const UserCars: React.FC = () => {
   useEffect(() => {
     const fetchUserCars = async () => {
       try {
+        console.log('Fetching user cars...');
         const userCars = await carService.getUserCars();
+        console.log('User cars received:', userCars);
         setCars(userCars);
+        if (userCars.length === 0) {
+          console.log('No user cars found, but no error occurred');
+        }
       } catch (err) {
+        console.error('Error fetching user cars:', err);
         setError('Failed to load your cars');
       } finally {
         setLoading(false);

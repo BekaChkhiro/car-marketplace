@@ -157,7 +157,7 @@ const AdminDashboard: React.FC = () => {
 
   // Calculate statistics
   const activeUsers = users.filter(u => u.status === 'active').length;
-  const blockedUsers = users.filter(u => u.status === 'blocked').length;
+  const blockedUsers = users.filter(u => u.status === 'დაბლოკილი' || u.status === 'blocked').length;
   
   const availableCars = cars.filter(c => c.status === 'available').length;
   const soldCars = cars.filter(c => c.status === 'sold').length;
