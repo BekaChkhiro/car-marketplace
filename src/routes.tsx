@@ -9,6 +9,7 @@ import AdminLayout from './pages/Admin/components/AdminLayout';
 import AdminDashboard from './pages/Admin/Dashboard';
 import UsersPage from './pages/Admin/Users';
 import CarsPage from './pages/Admin/Cars';
+import AdminEditCar from './pages/Admin/Cars/pages/EditCar';
 import SettingsPage from './pages/Admin/Settings';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
@@ -37,9 +38,11 @@ const AppRoutes = () => {
           <AdminLayout />
         </ProtectedRoute>
       }>
+        <Route index element={<AdminDashboard />} />
         <Route path={routes.adminDashboard} element={<AdminDashboard />} />
         <Route path={routes.adminUsers} element={<UsersPage />} />
         <Route path={routes.adminCars} element={<CarsPage />} />
+        <Route path={routes.adminEditCar} element={<AdminEditCar />} />
         <Route path={routes.adminSettings} element={<SettingsPage />} />
       </Route>
 

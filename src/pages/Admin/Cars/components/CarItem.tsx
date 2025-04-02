@@ -85,7 +85,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
             <Eye size={16} className="text-gray-600 group-hover:text-blue-600" />
           </button>
           <button 
-            onClick={() => navigate(`/profile/cars/edit/${car.id}`)}
+            onClick={() => navigate(`/admin/cars/edit/${car.id}`)}
             className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
             title="რედაქტირება"
           >

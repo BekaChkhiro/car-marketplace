@@ -7,6 +7,7 @@ export const routes = {
   adminDashboard: '/admin/dashboard',
   adminUsers: '/admin/users',
   adminCars: '/admin/cars',
+  adminEditCar: '/admin/cars/edit/:id',
   adminSettings: '/admin/settings',
   addCar: '/profile/add-car',
   editCar: '/profile/cars/edit/:id',
