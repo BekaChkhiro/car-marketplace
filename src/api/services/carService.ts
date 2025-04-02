@@ -718,7 +718,13 @@ class CarService {
 
   async deleteCar(id: number): Promise<void> {
     try {
-      await api.delete(`/api/cars/${id}`);
+      console.log('[CarService.deleteCar] Attempting to delete car with ID:', id);
+      await api.delete(`/api/cars/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
+      });
+      console.log('[CarService.deleteCar] Successfully deleted car');
     } catch (error: any) {
       console.error('[CarService.deleteCar] Error details:', error);
       
@@ -729,10 +735,31 @@ class CarService {
         console.log('[CarService.deleteCar] No response data available');
       }
       
+      // Try to delete from the backend directly as a fallback
+      try {
+        console.log('[CarService.deleteCar] Attempting direct backend connection at http://localhost:5000');
+        const backendResponse = await fetch(`http://localhost:5000/api/cars/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${getAccessToken()}`
+          }
+        });
+        if (backendResponse.ok) {
+          console.log('[CarService.deleteCar] Successfully deleted car via direct backend connection');
+          return;
+        } else {
+          console.log('[CarService.deleteCar] Direct backend connection failed with status:', backendResponse.status);
+        }
+      } catch (backendError) {
+        console.error('[CarService.deleteCar] Direct backend connection error:', backendError);
+      }
+      
       // Provide a more user-friendly error message
       let errorMessage = 'Failed to delete car.';
       
-      if (error?.response?.data?.details) {
+      if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error?.response?.data?.details) {
         if (error.response.data.details.includes('numeric field overflow')) {
           errorMessage = 'One of the numeric values exceeds the database field limit. Please check large number entries.';
         } else {

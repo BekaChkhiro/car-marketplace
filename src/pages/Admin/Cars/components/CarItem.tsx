@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Calendar, Gauge } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '../../../../api/types/car.types';
+import ConfirmationModal from '../../../../components/ConfirmationModal';
 
 interface CarItemProps {
   car: Car;
@@ -24,10 +25,19 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
     }
   };
 
-  const handleDeleteCar = (id: string) => {
-    if (window.confirm(`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${car.brand} ${car.model}?`)) {
-      onDelete(id);
-    }
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete(car.id.toString());
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
   };
   
   // Format date to be more readable
@@ -92,12 +102,22 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
             <Edit size={16} className="text-gray-600 group-hover:text-blue-600" />
           </button>
           <button 
-            onClick={() => handleDeleteCar(car.id.toString())}
+            onClick={handleDeleteClick}
             className="p-1.5 hover:bg-red-100 rounded-lg transition-colors group-hover:bg-red-100"
             title="წაშლა"
           >
             <Trash2 size={16} className="text-red-600" />
           </button>
+          
+          <ConfirmationModal
+            isOpen={isDeleteModalOpen}
+            title="მანქანის წაშლა"
+            message={`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${car.brand} ${car.model}?`}
+            confirmText="წაშლა"
+            cancelText="გაუქმება"
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
         </div>
       </td>
     </tr>
