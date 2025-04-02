@@ -92,7 +92,7 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 
   .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 0 ${props => props.theme.spacing.md};
   }
