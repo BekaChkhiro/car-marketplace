@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import { LOCATION_TYPE_OPTIONS, CITY_OPTIONS, COUNTRY_OPTIONS } from '../types';
 
 interface LocationProps {
   city: string;
-  state: string;
   country: string;
   location_type: 'transit' | 'georgia' | 'international';
   onChange: (field: string, value: string) => void;
@@ -14,12 +13,32 @@ interface LocationProps {
 
 const Location: React.FC<LocationProps> = ({
   city,
-  state,
   country,
   location_type,
   onChange,
   errors = {}
 }) => {
+  // Set default values based on location type
+  useEffect(() => {
+    if (location_type === 'transit') {
+      onChange('city', 'ტრანზიტში');
+      onChange('country', 'საქართველო');
+    } else if (location_type === 'international') {
+      onChange('city', 'საზღვარგარეთ');
+      // If country is empty, set a default value
+      if (!country) {
+        onChange('country', 'გერმანია');
+      }
+    } else if (location_type === 'georgia') {
+      // For georgia type, always set country to საქართველო
+      onChange('country', 'საქართველო');
+      // Set default city if not already set
+      if (!city) {
+        onChange('city', 'თბილისი');
+      }
+    }
+  }, [location_type, city, country]);
+
   return (
     <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
       <div className="flex items-center gap-3 mb-6">
@@ -47,85 +66,46 @@ const Location: React.FC<LocationProps> = ({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {location_type === 'georgia' ? (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                ქალაქი *
-              </label>
-              <CustomSelect
-                value={city}
-                onChange={(value) => onChange('city', value as string)}
-                options={CITY_OPTIONS}
-                placeholder="აირჩიეთ ქალაქი"
-                error={errors?.city}
-                multiple={false}
-              />
-            </div>
-          ) : (
-            <>
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                  ქალაქი *
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  value={city}
-                  onChange={(e) => onChange('city', e.target.value)}
-                  className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
-                    errors?.city
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                      : 'border-gray-100 focus:border-primary focus:ring-primary/20'
-                  } focus:outline-none focus:ring-2 transition-colors`}
-                  placeholder="მაგ: ბერლინი"
-                />
-                {errors?.city && (
-                  <p className="mt-1 text-sm text-red-600">{errors.city}</p>
-                )}
-              </div>
+        {/* Only show city selection for Georgia */}
+        {location_type === 'georgia' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ქალაქი *
+            </label>
+            <CustomSelect
+              value={city}
+              onChange={(value) => onChange('city', value as string)}
+              options={CITY_OPTIONS}
+              placeholder="აირჩიეთ ქალაქი"
+              error={errors?.city}
+              multiple={false}
+            />
+          </div>
+        )}
 
-              {location_type === 'international' && (
-                <>
-                  <div>
-                    <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
-                      შტატი/რეგიონი
-                    </label>
-                    <input
-                      type="text"
-                      id="state"
-                      value={state}
-                      onChange={(e) => onChange('state', e.target.value)}
-                      className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
-                        errors?.state
-                          ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                          : 'border-gray-100 focus:border-primary focus:ring-primary/20'
-                      } focus:outline-none focus:ring-2 transition-colors`}
-                      placeholder="მაგ: ჰესენი"
-                    />
-                    {errors?.state && (
-                      <p className="mt-1 text-sm text-red-600">{errors.state}</p>
-                    )}
-                  </div>
+        {/* Only show country selection for international */}
+        {location_type === 'international' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ქვეყანა *
+            </label>
+            <CustomSelect
+              value={country}
+              onChange={(value) => onChange('country', value as string)}
+              options={COUNTRY_OPTIONS}
+              placeholder="აირჩიეთ ქვეყანა"
+              error={errors?.country}
+              multiple={false}
+            />
+          </div>
+        )}
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ქვეყანა *
-                    </label>
-                    <CustomSelect
-                      value={country}
-                      onChange={(value) => onChange('country', value as string)}
-                      options={COUNTRY_OPTIONS}
-                      placeholder="აირჩიეთ ქვეყანა"
-                      error={errors?.country}
-                      multiple={false}
-                    />
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </div>
+        {/* Display location information based on type */}
+        {location_type === 'transit' && (
+          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+            <p className="text-blue-700">მანქანა იმყოფება ტრანზიტში</p>
+          </div>
+        )}
       </div>
     </div>
   );

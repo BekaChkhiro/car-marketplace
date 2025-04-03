@@ -58,6 +58,7 @@ export interface NewCarFormData {
   category_id: string;
   year: number;
   price: number;
+  currency: 'GEL' | 'USD';  // Currency for the price (GEL or USD)
   description_ka: string;
   description_en?: string;
   description_ru?: string;

@@ -34,12 +34,12 @@ export const useCarForm = () => {
       category_id: '',
       year: new Date().getFullYear(),
       price: 0,
+      currency: 'GEL', // Default currency is GEL (Georgian Lari)
       description_ka: '',
       description_en: '',
       description_ru: '',
       location: {
         city: '',
-        state: '',
         country: 'საქართველო',
         location_type: 'georgia',
         is_transit: false

@@ -532,6 +532,7 @@ class CarService {
         category_id: Number(data.category_id),
         year: Number(data.year || new Date().getFullYear()),
         price: Number(data.price || 0),
+        currency: data.currency || 'GEL', // Use the selected currency (GEL or USD)
         description_ka: data.description_ka || '',
         description_en: data.description_en || '',
         description_ru: data.description_ru || '',
@@ -559,7 +560,6 @@ class CarService {
         // Include location at the top level (flat structure)
         location: {
           city: data.location?.city || 'თბილისი',
-          state: data.location?.state || '',
           country: data.location?.country || 'საქართველო',
           location_type: data.location?.location_type || 'georgia',
           is_transit: Boolean(data.location?.is_transit)
@@ -664,6 +664,7 @@ class CarService {
         model: data.model,
         year: data.year,
         price: data.price,
+        currency: data.currency || 'GEL', // Include currency field
         description_ka: data.description_ka,
         description_en: data.description_en,
         description_ru: data.description_ru,

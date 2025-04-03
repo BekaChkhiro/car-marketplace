@@ -185,7 +185,6 @@ const CarDetails: React.FC = () => {
                     {car.location ? (
                       <>
                         {car.location.city || ''}
-                        {car.location.state && `, ${car.location.state}`}
                         {car.location.country && `, ${car.location.country}`}
                       </>
                     ) : 'Georgia'}

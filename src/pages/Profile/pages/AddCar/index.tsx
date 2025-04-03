@@ -53,7 +53,6 @@ const AddCar: React.FC = () => {
 
           <Location
             city={formData.location?.city || ''}
-            state={formData.location?.state || ''}
             country={formData.location?.country || ''}
             location_type={(formData.location?.location_type || 'georgia') as 'georgia' | 'transit' | 'international'}
             onChange={handleChange}

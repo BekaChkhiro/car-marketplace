@@ -6,6 +6,7 @@ export interface Car {
   model: string;
   year: number;
   price: number;
+  currency?: 'GEL' | 'USD';
   description_ka: string;
   description_en?: string;
   description_ru?: string;
@@ -75,7 +76,6 @@ export interface CarSpecifications {
 export interface CarLocation {
   id: number;
   city: string;
-  state?: string;
   country: string;
   location_type: 'georgia' | 'transit' | 'international';
   is_transit: boolean;
@@ -132,6 +132,7 @@ export interface CreateCarFormData {
   model: string;
   year: number;
   price: number;
+  currency?: 'GEL' | 'USD';
   description_ka: string;
   description_en?: string;
   description_ru?: string;
@@ -140,7 +141,6 @@ export interface CreateCarFormData {
   images: File[];
   location: {
     city: string;
-    state?: string;
     country: string;
     location_type?: string;
     is_transit?: boolean;

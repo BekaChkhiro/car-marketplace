@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Car, Brand, Category, UpdateCarFormData } from '../../../../api/types/car.types';
 import carService from '../../../../api/services/carService';
 import { Loader } from 'lucide-react';
+import CurrencySwitcher from '../../../../components/CurrencySwitcher';
 
 interface CarFormProps {
   initialData?: Car;
@@ -29,6 +30,7 @@ const CarForm: React.FC<CarFormProps> = ({
     model: initialData?.model || '',
     year: initialData?.year || new Date().getFullYear(),
     price: initialData?.price || 0,
+    currency: initialData?.currency || 'GEL',
     description_ka: initialData?.description_ka || '',
     description_en: initialData?.description_en || '',
     description_ru: initialData?.description_ru || '',
@@ -43,7 +45,6 @@ const CarForm: React.FC<CarFormProps> = ({
     },
     location: initialData?.location ? {
       city: initialData.location.city || 'თბილისი',
-      state: initialData.location.state,
       country: initialData.location.country || 'საქართველო',
       location_type: initialData.location.location_type || 'georgia',
       is_transit: initialData.location.is_transit || false
@@ -287,34 +288,55 @@ const CarForm: React.FC<CarFormProps> = ({
                 <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
                   წელი
                 </label>
-                <input
-                  type="number"
+                <select
                   id="year"
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                  min="1900"
-                  max={new Date().getFullYear() + 1}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   required
-                />
+                >
+                  <option value="">აირჩიეთ წელი</option>
+                  {Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => {
+                    const year = new Date().getFullYear() - i;
+                    return (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
               
               {/* Price */}
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                  ფასი (USD)
+                  ფასი
                 </label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    min="0"
+                    className="w-full p-2 pr-24 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <CurrencySwitcher
+                      value={formData.currency as 'GEL' | 'USD'}
+                      onChange={(value) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          currency: value
+                        }));
+                      }}
+                      className="border-0 shadow-sm"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -463,20 +485,7 @@ const CarForm: React.FC<CarFormProps> = ({
                 />
               </div>
               
-              {/* State/Region */}
-              <div>
-                <label htmlFor="location.state" className="block text-sm font-medium text-gray-700 mb-1">
-                  რეგიონი
-                </label>
-                <input
-                  type="text"
-                  id="location.state"
-                  name="location.state"
-                  value={formData.location?.state || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+
               
               {/* City */}
               <div>
