@@ -6,6 +6,7 @@ class CarService {
   async getCars(filters?: CarFilters): Promise<Car[]> {
     try {
       const response = await api.get('/api/cars', { params: filters });
+      console.log('[CarService.getCars] API response data:', JSON.stringify(response.data));
       return response.data;
     } catch (error: any) {
       console.error('[CarService.getCars] Error details:', error);
@@ -207,6 +208,7 @@ class CarService {
       console.log('[CarService.getCar] Fetching car with ID:', id);
       const response = await api.get(`/api/cars/${id}`);
       console.log('[CarService.getCar] Successfully retrieved car data from API');
+      console.log('[CarService.getCar] API response data:', JSON.stringify(response.data));
       return response.data;
     } catch (error: any) {
       console.error('[CarService.getCar] Error details:', error);
@@ -528,6 +530,7 @@ class CarService {
       // SINGLE FOCUSED APPROACH: Create a car data object with model at the top level
       const carData = {
         model: data.model, // Critical field - ensure it's at the top level
+        title: data.title || '', // Add title field
         brand_id: Number(data.brand_id),
         category_id: Number(data.category_id),
         year: Number(data.year || new Date().getFullYear()),
@@ -662,6 +665,7 @@ class CarService {
         brand_id: data.brand_id,
         category_id: data.category_id,
         model: data.model,
+        title: data.title || '', // Add title field
         year: data.year,
         price: data.price,
         currency: data.currency || 'GEL', // Include currency field

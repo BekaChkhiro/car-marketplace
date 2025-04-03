@@ -118,7 +118,7 @@ const CarDetails: React.FC = () => {
                 <div className="flex items-center">
                   <ChevronRight className="w-4 h-4 text-gray-400" />
                   <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2 truncate max-w-[150px]">
-                    {car.brand || ''} {car.model || ''}
+                    {car.title || `${car.brand || ''} ${car.model || ''}`}
                   </span>
                 </div>
               </li>

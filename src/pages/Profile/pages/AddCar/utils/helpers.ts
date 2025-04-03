@@ -97,6 +97,7 @@ export const cleanFormData = (formData: NewCarFormData): Omit<CreateCarFormData,
     brand_id,
     category_id,
     model: formData.model,
+    title: formData.title, // დავამატეთ title ველი
     year: formData.year,
     price: formData.price,
     description_ka: formData.description_ka || '',

@@ -59,7 +59,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">{car.brand} {car.model}</p>
+            <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">{car.title || `${car.brand} ${car.model}`}</p>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
               <div className="flex items-center text-sm text-gray-500">
                 <Calendar size={14} className="mr-1 text-gray-400" />

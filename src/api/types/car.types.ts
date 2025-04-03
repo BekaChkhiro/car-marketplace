@@ -4,6 +4,7 @@ export interface Car {
   category_id: number;
   brand: string;
   model: string;
+  title?: string;
   year: number;
   price: number;
   currency?: 'GEL' | 'USD';
@@ -130,6 +131,7 @@ export interface CreateCarFormData {
   brand_id: number;
   category_id: number;
   model: string;
+  title?: string;
   year: number;
   price: number;
   currency?: 'GEL' | 'USD';

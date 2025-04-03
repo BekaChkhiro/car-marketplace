@@ -28,6 +28,7 @@ const CarForm: React.FC<CarFormProps> = ({
     brand_id: initialData?.brand_id || 0,
     category_id: initialData?.category_id || 0,
     model: initialData?.model || '',
+    title: initialData?.title || '',
     year: initialData?.year || new Date().getFullYear(),
     price: initialData?.price || 0,
     currency: initialData?.currency || 'GEL',
@@ -198,6 +199,25 @@ const CarForm: React.FC<CarFormProps> = ({
             <h2 className="text-lg font-semibold text-gray-800">ძირითადი ინფორმაცია</h2>
           </div>
           <div className="p-4">
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              {/* Title */}
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  სათაური
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="მაგ: BMW X5 M-პაკეტი, იდეალურ მდგომარეობაში"
+                  required
+                />
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Brand */}
               <div>

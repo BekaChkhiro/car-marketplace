@@ -55,6 +55,7 @@ export interface CarFeatures {
 export interface NewCarFormData {
   brand_id: string;  // as string since it comes from form input
   model: string;
+  title: string;
   category_id: string;
   year: number;
   price: number;

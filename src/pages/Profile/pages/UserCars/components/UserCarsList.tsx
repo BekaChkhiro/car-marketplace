@@ -118,7 +118,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
                       </div>
                       <div className="flex flex-col">
                         <div className="text-sm font-medium text-gray-900">
-                          {car.brand} {car.model}
+                          {car.title || `${car.brand} ${car.model}`}
                         </div>
                         <div className="flex items-center text-xs text-gray-500 mt-1">
                           <Calendar size={14} className="mr-1" /> {car.year}

@@ -91,7 +91,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, isOwner, onDelete }) => {
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-900">
-            {car.brand} {car.model}
+            {car.title || `${car.brand} ${car.model}`}
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-primary">

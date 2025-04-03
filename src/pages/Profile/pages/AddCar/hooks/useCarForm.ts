@@ -31,6 +31,7 @@ export const useCarForm = () => {
     return {
       brand_id: '',
       model: '',
+      title: '',
       category_id: '',
       year: new Date().getFullYear(),
       price: 0,
@@ -158,6 +159,7 @@ export const useCarForm = () => {
     // Check basic fields
     if (!formData.brand_id) emptyFields.push('brand_id');
     if (!formData.model) emptyFields.push('model');
+    if (!formData.title) emptyFields.push('title');
     if (!formData.category_id) emptyFields.push('category_id');
     if (!formData.year) emptyFields.push('year');
     if (!formData.price) emptyFields.push('price');
@@ -177,6 +179,7 @@ export const useCarForm = () => {
     if (!specs.body_type) emptyFields.push('specifications.body_type');
     if (!specs.drive_type) emptyFields.push('specifications.drive_type');
     if (!specs.steering_wheel) emptyFields.push('specifications.steering_wheel');
+    if (!specs.mileage) emptyFields.push('specifications.mileage');
     
     // Check if images are provided
     if (images.length === 0) emptyFields.push('images');

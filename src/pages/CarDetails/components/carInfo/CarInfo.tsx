@@ -13,7 +13,7 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-2xl font-bold mb-4">
-        {car.brand} {car.model} ({car.year})
+        {car.title || `${car.brand} ${car.model} (${car.year})`}
       </h1>
       
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
