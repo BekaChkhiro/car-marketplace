@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import BasicInfo from './components/BasicInfo';
+import TechnicalSpecs from './components/TechnicalSpecs';
 import Features from './components/Features';
 import Location from './components/Location';
+import Description from './components/Description';
 import { useCarForm } from './hooks/useCarForm';
 import { CarFeatures } from './types';
 
@@ -15,6 +17,7 @@ const AddCar: React.FC = () => {
     errors,
     images,
     featuredImageIndex,
+    isUploading,
     handleChange,
     handleSpecificationsChange,
     handleFeaturesChange,
@@ -51,6 +54,17 @@ const AddCar: React.FC = () => {
             errors={errors}
           />
 
+          <TechnicalSpecs 
+            specifications={formData.specifications}
+            onChange={handleSpecificationsChange}
+            errors={errors}
+          />
+
+          <Features
+            features={formData.features as Partial<CarFeatures>}
+            onChange={handleFeaturesChange}
+          />
+          
           <Location
             city={formData.location?.city || ''}
             country={formData.location?.country || ''}
@@ -59,12 +73,16 @@ const AddCar: React.FC = () => {
             errors={errors}
           />
 
-          <Features
-            features={formData.features as Partial<CarFeatures>}
-            onChange={handleFeaturesChange}
+          <Description
+            description_ka={formData.description_ka}
+            description_en={formData.description_en}
+            description_ru={formData.description_ru}
+            onChange={handleChange}
+            errors={errors}
           />
 
-          <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
+
+          <div className="bg-white rounded-xl p-6 border">
             <ImageUploadWithFeatured
               files={images}
               onFilesChange={handleImageUpload}
@@ -72,10 +90,11 @@ const AddCar: React.FC = () => {
               featuredIndex={featuredImageIndex}
               onFeaturedIndexChange={setFeaturedImageIndex}
               error={errors.images}
+              isUploading={isUploading}
             />
           </div>
 
-          <div className="sticky bottom-0 bg-white border-t border-gray-100 py-4 px-6 rounded-b-xl shadow-lg transform translate-y-1">
+          <div className="sticky bottom-0 bg-white border py-4 px-6 rounded-b-xl shadow-lg transform translate-y-1">
             <div className="flex justify-end gap-4 max-w-5xl mx-auto">
               <button
                 type="button"

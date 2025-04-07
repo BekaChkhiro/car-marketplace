@@ -105,13 +105,13 @@ const CarDetails: React.FC = () => {
               <li className="inline-flex items-center">
                 <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
                   <Home className="w-4 h-4 mr-2" />
-                  Home
+                  მთავარი
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
                   <ChevronRight className="w-4 h-4 text-gray-400" />
-                  <Link to="/cars" className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Cars</Link>
+                  <Link to="/cars" className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">მანქანები</Link>
                 </div>
               </li>
               <li aria-current="page">
@@ -141,7 +141,7 @@ const CarDetails: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      <p className="mt-2 text-gray-500">No images available for this vehicle</p>
+                      <p className="mt-2 text-gray-500">ამ მანქანისთვის სურათები არ არის ხელმისაწვდომი</p>
                     </div>
                   </div>
                 </div>
@@ -158,8 +158,8 @@ const CarDetails: React.FC = () => {
               {/* Seller Info Component */}
               <SellerInfo 
                 seller={{
-                  name: 'Car Owner', // Default value since seller is not in the Car type
-                  phone: '+995 555 123456', // Default value
+                  name: 'Car Owner',
+                  phone: '+995 555 123456',
                   verified: true,
                   rating: 4.5
                 }}
@@ -167,36 +167,22 @@ const CarDetails: React.FC = () => {
                 carId={car.id?.toString() || ''}
               />
               
-              {/* Seller information */}
-              <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-                <h3 className="font-semibold text-lg mb-4">Seller Information</h3>
-                <div className="flex items-center">
-                  <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xl font-semibold">
-                    {car.seller_id ? car.seller_id.toString().charAt(0).toUpperCase() : 'S'}
-                  </div>
-                  <div className="ml-4">
-                    <p className="font-medium">Seller #{car.seller_id || 'Unknown'}</p>
-                    <p className="text-sm text-gray-500">Member since {car.created_at ? new Date(car.created_at).getFullYear() : 'N/A'}</p>
-                  </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-600">Location</p>
+              {/* Simplified seller information */}
+              {car.location && (
+                <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
+                  <h3 className="font-semibold text-lg mb-4">მდებარეობა</h3>
                   <p className="font-medium">
-                    {car.location ? (
-                      <>
-                        {car.location.city || ''}
-                        {car.location.country && `, ${car.location.country}`}
-                      </>
-                    ) : 'Georgia'}
+                    {car.location.city || ''}
+                    {car.location.country && `, ${car.location.country}`}
                   </p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           
-          {/* Similar cars section with improved styling */}
+          {/* Similar cars section */}
           <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-2xl font-bold mb-6">Similar Vehicles You May Like</h2>
+            <h2 className="text-2xl font-bold mb-6">მსგავსი მანქანები, რომლებიც შეიძლება მოგეწონოთ</h2>
             <SimilarCars 
               carId={car.id?.toString() || ''} 
               category={categoryId} 

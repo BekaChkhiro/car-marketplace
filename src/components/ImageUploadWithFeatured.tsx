@@ -6,23 +6,27 @@ import ImageProgress from './ImageProgress';
 interface ImageUploadWithFeaturedProps {
   files: File[];
   onFilesChange: (files: File[]) => void;
-  onFileRemove: (index: number) => void;  // Added this line
+  onFileRemove: (index: number) => void;
   featuredIndex: number;
   onFeaturedIndexChange: (index: number) => void;
   error?: string;
   maxFiles?: number;
+  isUploading?: boolean;
 }
 
 const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   files,
   onFilesChange,
+  onFileRemove,
   maxFiles = 10,
   featuredIndex,
   onFeaturedIndexChange,
-  error
+  error,
+  isUploading
 }) => {
   const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error'>();
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [draggedOver, setDraggedOver] = useState(false);
 
   const simulateUpload = () => {
     setUploadStatus('uploading');
@@ -42,22 +46,50 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = [...files];
-    acceptedFiles.forEach(file => {
-      if (newFiles.length < maxFiles && file.size <= 10 * 1024 * 1024) {
-        newFiles.push(file);
+    // Don't modify the existing files array directly
+    let filesAdded = 0;
+    let filesRejected = 0;
+    
+    // Filter out duplicates and invalid files
+    const filesToAdd = acceptedFiles.filter(newFile => {
+      // Check if the file already exists in the files array (by name and size)
+      const isDuplicate = files.some(existingFile => 
+        existingFile.name === newFile.name && existingFile.size === newFile.size
+      );
+      
+      if (isDuplicate) {
+        filesRejected++;
+        return false;
       }
+      
+      if (files.length + filesAdded >= maxFiles) {
+        filesRejected++;
+        return false;
+      }
+      
+      if (newFile.size > 10 * 1024 * 1024) {
+        filesRejected++;
+        return false;
+      }
+      
+      filesAdded++;
+      return true;
     });
-    onFilesChange(newFiles);
-    if (acceptedFiles.length > 0) {
+    
+    if (filesToAdd.length > 0) {
+      // Only pass the new files to add to the parent component
+      onFilesChange([...files, ...filesToAdd]);
       simulateUpload();
+    }
+    
+    if (filesRejected > 0) {
+      // You could add a toast notification here if you have a toast system
+      console.warn(`${filesRejected} ფაილი ვერ აიტვირთა (დუბლიკატი ან ზედმეტი რაოდენობა)`);
     }
   }, [files, maxFiles, onFilesChange]);
 
   const handleRemove = (index: number) => {
-    const newFiles = [...files];
-    newFiles.splice(index, 1);
-    onFilesChange(newFiles);
+    onFileRemove(index);
   };
 
   const handleRemoveAll = () => {
@@ -66,11 +98,16 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
+    onDragEnter: () => setDraggedOver(true),
+    onDragLeave: () => setDraggedOver(false),
+    onDropAccepted: () => setDraggedOver(false),
+    onDropRejected: () => setDraggedOver(false),
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.webp']
     },
     maxFiles: maxFiles - files.length,
-    maxSize: 10 * 1024 * 1024 // 10MB
+    maxSize: 10 * 1024 * 1024, // 10MB
+    disabled: isUploading
   });
 
   return (
@@ -90,25 +127,36 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
           isDragReject
             ? 'border-red-500 bg-red-50'
-            : isDragActive
+            : isDragActive || draggedOver
             ? 'border-primary bg-primary/5'
+            : isUploading
+            ? 'border-gray-300 bg-gray-50 opacity-70'
             : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
-        }`}
+        } ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center gap-3">
           <div className={`w-16 h-16 rounded-xl flex items-center justify-center transform transition-all duration-300 ${
             isDragReject
               ? 'bg-red-100'
-              : isDragActive
+              : isDragActive || draggedOver
               ? 'bg-primary/20 scale-110'
+              : isUploading
+              ? 'bg-gray-100'
               : 'bg-primary/10'
           }`}>
             {isDragReject ? (
               <AlertCircle className="w-8 h-8 text-red-500" />
+            ) : isUploading ? (
+              <div className="w-8 h-8 flex items-center justify-center">
+                <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
             ) : (
               <UploadCloud className={`w-8 h-8 ${
-                isDragActive ? 'text-primary scale-110' : 'text-primary'
+                isDragActive || draggedOver ? 'text-primary scale-110' : 'text-primary'
               } transform transition-all duration-300`} />
             )}
           </div>
@@ -116,29 +164,33 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             <p className={`text-base font-medium ${
               isDragReject
                 ? 'text-red-600'
+                : isUploading
+                ? 'text-gray-500'
                 : 'text-gray-700'
             }`}>
               {isDragReject
-                ? 'არასწორი ფაილის ტიპი ან ზომა'
-                : isDragActive
-                ? 'ჩააგდეთ სურათები აქ'
-                : 'აირჩიეთ ან ჩააგდეთ სურათები'}
+                ? 'ფაილის ფორმატი არასწორია'
+                : isDragActive || draggedOver
+                ? 'ჩააგდეთ სურათები აქ...'
+                : isUploading
+                ? 'მიმდინარეობს ატვირთვა...'
+                : 'ჩააგდეთ სურათები ან დააჭირეთ ასატვირთად'}
             </p>
             <p className="text-base text-gray-600">
               {isDragActive ? 'ჩააგდეთ სურათები აქ...' : 'აირჩიეთ ან ჩააგდეთ სურათები'}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
-              მინიმუმ 1, მაქსიმუმ 15 სურათი | მაქსიმალური ზომა: 5MB | ფორმატები: JPG, JPEG, PNG
+            <p className="text-sm text-gray-500">
+              დაშვებულია JPEG, PNG, WebP ფორმატები, მაქსიმუმ 10MB
             </p>
+            {error && (
+              <div className="mt-2 text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg flex items-center gap-2">
+                <AlertCircle size={16} />
+                {error}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {error && (
-        <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-          {error}
-        </p>
-      )}
 
       {files.length > 0 && (
         <div className="space-y-4">
@@ -226,10 +278,10 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
         </div>
       )}
 
-      {uploadStatus && (
+      {(uploadStatus || isUploading) && (
         <ImageProgress 
-          status={uploadStatus}
-          progress={uploadProgress}
+          status={isUploading ? 'uploading' : uploadStatus || 'uploading'}
+          progress={isUploading ? 50 : uploadProgress}
           error={error}
         />
       )}

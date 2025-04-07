@@ -1,9 +1,51 @@
 import React from 'react';
-import { Wrench } from 'lucide-react';
+import { Wrench, Settings } from 'lucide-react';
 import CustomSelect from '../../../../../components/common/CustomSelect';
-import { TRANSMISSION_OPTIONS, FUEL_TYPE_OPTIONS, DRIVE_TYPE_OPTIONS, STEERING_WHEEL_OPTIONS, BODY_TYPE_OPTIONS } from '../types';
+import { TRANSMISSION_OPTIONS, FUEL_TYPE_OPTIONS, ENGINE_SIZE_OPTIONS, INTERIOR_MATERIAL_OPTIONS } from '../types';
+import CylinderSwitcher from '../../../../../components/CylinderSwitcher';
+import DriveTypeSwitcher from '../../../../../components/DriveTypeSwitcher';
+import SteeringWheelSwitcher from '../../../../../components/SteeringWheelSwitcher';
+import ColorDropdown from '../../../../../components/ColorDropdown';
+import InteriorColorDropdown from '../../../../../components/InteriorColorDropdown';
+import AirbagSwitcher from '../../../../../components/AirbagSwitcher';
 
-const CYLINDER_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12];
+interface TransmissionSwitcherProps {
+  value: 'manual' | 'automatic' | undefined;
+  onChange: (value: 'manual' | 'automatic') => void;
+  className?: string;
+}
+
+const TransmissionSwitcher: React.FC<TransmissionSwitcherProps> = ({ value, onChange, className = '' }) => {
+  return (
+    <div className={`flex items-center justify-between gap-2 ${className}`}>
+      <button
+        type="button"
+        className={`flex-1 py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+          value === 'manual'
+            ? 'bg-primary text-white shadow-sm font-medium'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        }`}
+        onClick={() => onChange('manual')}
+      >
+        <Settings size={16} className={value === 'manual' ? 'text-white' : 'text-gray-500'} />
+        <span>მექანიკური</span>
+      </button>
+      <button
+        type="button"
+        className={`flex-1 py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+          value === 'automatic'
+            ? 'bg-primary text-white shadow-sm font-medium'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        }`}
+        onClick={() => onChange('automatic')}
+      >
+        <Settings size={16} className={value === 'automatic' ? 'text-white' : 'text-gray-500'} />
+        <span>ავტომატური</span>
+      </button>
+    </div>
+  );
+};
+
 
 interface TechnicalSpecsProps {
   specifications: {
@@ -28,7 +70,7 @@ interface TechnicalSpecsProps {
 
 const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChange, errors = {} }) => {
   return (
-    <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
+    <div className="bg-white rounded-xl p-6 border">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:rotate-180">
           <Wrench size={20} className="text-primary" />
@@ -43,44 +85,47 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* ძრავის მოცულობა */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ძრავის მოცულობა (კუბ.სმ)
-            <span className="text-xs text-gray-500 ml-1">(მაგ: 2000 კუბ.სმ = 2.0 ლიტრი)</span>
+            ძრავის მოცულობა (ლიტრი)
+            {errors?.engine_size && (
+              <span className="text-red-500 ml-1 text-xs">{errors.engine_size}</span>
+            )}
           </label>
-          <input
-            type="number"
-            value={specifications.engine_size || ''}
-            onChange={(e) => onChange('engine_size', e.target.value)}
-            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: 2000"
+          <CustomSelect
+            value={specifications.engine_size?.toString() || ''}
+            onChange={(value) => onChange('engine_size', value)}
+            options={ENGINE_SIZE_OPTIONS}
+            placeholder="აირჩიეთ ძრავის მოცულობა"
+            error={errors?.engine_size}
           />
-          <p className="text-xs text-gray-500 mt-1">შეიყვანეთ ძრავის მოცულობა კუბურ სანტიმეტრებში (cc).</p>
+          <p className="text-xs text-gray-500 mt-1">აირჩიეთ ძრავის მოცულობა ლიტრებში.</p>
         </div>
 
-        {/* ცხენის ძალა */}
-        <div className="group">
-          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ცხენის ძალა
-          </label>
-          <input
-            type="number"
-            value={specifications.horsepower || ''}
-            onChange={(e) => onChange('horsepower', e.target.value)}
-            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: 150"
-          />
-        </div>
+
 
         {/* ცილინდრები */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             ცილინდრების რაოდენობა
           </label>
-          <CustomSelect
-            value={specifications.cylinders?.toString() || ''}
-            onChange={(value) => onChange('cylinders', Number(value))}
-            options={CYLINDER_OPTIONS.map(c => ({ value: c.toString(), label: c.toString() }))}
-            placeholder="აირჩიეთ ცილინდრების რაოდენობა"
-          />
+          <div className="relative">
+            <input
+              type="number"
+              value={specifications.cylinders || ''}
+              onChange={(e) => onChange('cylinders', Number(e.target.value))}
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
+              placeholder="მაგ: 4"
+              min="1"
+              max="16"
+            />
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+              <CylinderSwitcher 
+                value={specifications.cylinders} 
+                onChange={(value) => onChange('cylinders', value)}
+                className="border-0 shadow-sm"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">მიუთითეთ ძრავის ცილინდრების რაოდენობა.</p>
         </div>
 
         {/* გარბენი */}
@@ -105,12 +150,10 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               <span className="text-red-500 ml-1 text-xs">{errors.transmission}</span>
             )}
           </label>
-          <CustomSelect
-            value={specifications.transmission || ''}
-            onChange={(value) => onChange('transmission', value)}
-            options={TRANSMISSION_OPTIONS}
-            placeholder="აირჩიეთ გადაცემათა კოლოფი"
-            error={errors?.transmission}
+          <TransmissionSwitcher 
+            value={specifications.transmission as 'manual' | 'automatic'} 
+            onChange={(value: 'manual' | 'automatic') => onChange('transmission', value)}
+            className="w-full"
           />
         </div>
 
@@ -131,22 +174,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           />
         </div>
 
-        {/* ძარის ტიპი */}
-        <div className="group">
-          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ძარის ტიპი
-            {errors?.body_type && (
-              <span className="text-red-500 ml-1 text-xs">{errors.body_type}</span>
-            )}
-          </label>
-          <CustomSelect
-            value={specifications.body_type || ''}
-            onChange={(value) => onChange('body_type', value)}
-            options={BODY_TYPE_OPTIONS}
-            placeholder="აირჩიეთ ძარის ტიპი"
-            error={errors?.body_type}
-          />
-        </div>
+
 
         {/* წამყვანი თვლები */}
         <div className="group">
@@ -156,12 +184,10 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               <span className="text-red-500 ml-1 text-xs">{errors.drive_type}</span>
             )}
           </label>
-          <CustomSelect
-            value={specifications.drive_type || ''}
+          <DriveTypeSwitcher
+            value={specifications.drive_type}
             onChange={(value) => onChange('drive_type', value)}
-            options={DRIVE_TYPE_OPTIONS}
-            placeholder="აირჩიეთ წამყვანი თვლები"
-            error={errors?.drive_type}
+            className="w-full"
           />
         </div>
 
@@ -173,12 +199,10 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               <span className="text-red-500 ml-1 text-xs">{errors.steering_wheel}</span>
             )}
           </label>
-          <CustomSelect
-            value={specifications.steering_wheel || ''}
+          <SteeringWheelSwitcher
+            value={specifications.steering_wheel}
             onChange={(value) => onChange('steering_wheel', value)}
-            options={STEERING_WHEEL_OPTIONS}
-            placeholder="აირჩიეთ საჭის მდებარეობა"
-            error={errors?.steering_wheel}
+            className="w-full"
           />
         </div>
 
@@ -186,13 +210,15 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             ფერი
+            {errors?.color && (
+              <span className="text-red-500 ml-1 text-xs">{errors.color}</span>
+            )}
           </label>
-          <input
-            type="text"
+          <ColorDropdown
             value={specifications.color || ''}
-            onChange={(e) => onChange('color', e.target.value)}
-            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: შავი"
+            onChange={(value) => onChange('color', value)}
+            placeholder="აირჩიეთ ფერი"
+            error={errors?.color}
           />
         </div>
 
@@ -200,13 +226,16 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             სალონის მასალა
+            {errors?.interior_material && (
+              <span className="text-red-500 ml-1 text-xs">{errors.interior_material}</span>
+            )}
           </label>
-          <input
-            type="text"
+          <CustomSelect
+            options={INTERIOR_MATERIAL_OPTIONS}
             value={specifications.interior_material || ''}
-            onChange={(e) => onChange('interior_material', e.target.value)}
-            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: ტყავი"
+            onChange={(value) => onChange('interior_material', value)}
+            placeholder="აირჩიეთ სალონის მასალა"
+            error={errors?.interior_material}
           />
         </div>
 
@@ -214,13 +243,15 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             სალონის ფერი
+            {errors?.interior_color && (
+              <span className="text-red-500 ml-1 text-xs">{errors.interior_color}</span>
+            )}
           </label>
-          <input
-            type="text"
+          <InteriorColorDropdown
             value={specifications.interior_color || ''}
-            onChange={(e) => onChange('interior_color', e.target.value)}
-            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: შავი"
+            onChange={(value) => onChange('interior_color', value)}
+            placeholder="აირჩიეთ სალონის ფერი"
+            error={errors?.interior_color}
           />
         </div>
 
@@ -228,13 +259,30 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             უსაფრთხოების ბალიშების რაოდენობა
+            {errors?.airbags_count && (
+              <span className="text-red-500 ml-1 text-xs">{errors.airbags_count}</span>
+            )}
           </label>
-          <input
-            type="number"
-            value={specifications.airbags_count || ''}
-            onChange={(e) => onChange('airbags_count', Number(e.target.value))}
-            className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: 4"
+          <CustomSelect
+            options={[
+              { value: '0', label: '0' },
+              { value: '1', label: '1' },
+              { value: '2', label: '2' },
+              { value: '3', label: '3' },
+              { value: '4', label: '4' },
+              { value: '5', label: '5' },
+              { value: '6', label: '6' },
+              { value: '7', label: '7' },
+              { value: '8', label: '8' },
+              { value: '9', label: '9' },
+              { value: '10', label: '10' },
+              { value: '11', label: '11' },
+              { value: '12', label: '12' }
+            ]}
+            value={specifications.airbags_count?.toString() || ''}
+            onChange={(value) => onChange('airbags_count', Number(value))}
+            placeholder="აირჩიეთ აირბეგების რაოდენობა"
+            error={errors?.airbags_count}
           />
         </div>
       </div>

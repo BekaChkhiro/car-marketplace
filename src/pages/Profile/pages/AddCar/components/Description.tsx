@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import LanguageSwitcher, { Language } from '../../../../../components/LanguageSwitcher';
 
 interface DescriptionProps {
   description_en?: string;
@@ -15,73 +16,80 @@ const Description: React.FC<DescriptionProps> = ({
   onChange,
   errors
 }) => {
+  const [activeLanguage, setActiveLanguage] = useState<Language>('ka');
+
+  const getPlaceholder = (lang: Language) => {
+    switch (lang) {
+      case 'ka': return 'დაწერეთ დეტალური ინფორმაცია მანქანის შესახებ...';
+      case 'en': return 'Write detailed information about the car...';
+      case 'ru': return 'Напишите подробную информацию об автомобиле...';
+      default: return '';
+    }
+  };
+
+  const getLabel = (lang: Language) => {
+    switch (lang) {
+      case 'ka': return 'აღწერა (ქართულად)';
+      case 'en': return 'Description (in English)';
+      case 'ru': return 'Описание (на русском)';
+      default: return '';
+    }
+  };
+
+  const getValue = (lang: Language) => {
+    switch (lang) {
+      case 'ka': return description_ka;
+      case 'en': return description_en;
+      case 'ru': return description_ru;
+      default: return '';
+    }
+  };
+
+  const getError = (lang: Language) => {
+    switch (lang) {
+      case 'ka': return errors?.description_ka;
+      case 'en': return errors?.description_en;
+      case 'ru': return errors?.description_ru;
+      default: return undefined;
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(`description_${activeLanguage}`, e.target.value);
+  };
+
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-dark border-b pb-4">
-        აღწერა
-      </h2>
+    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border">
+      <div className="flex justify-between items-center border-b pb-4">
+        <h2 className="text-lg font-semibold text-gray-dark">
+          აღწერა
+        </h2>
+        <LanguageSwitcher 
+          value={activeLanguage} 
+          onChange={setActiveLanguage} 
+          className="border shadow-sm"
+        />
+      </div>
       
-      <div className="space-y-6">
+      <div>
         <div>
-          <label htmlFor="description_ka" className="block text-sm font-medium text-gray-700 mb-2">
-            აღწერა (ქართულად) *
+          <label htmlFor={`description_${activeLanguage}`} className="block text-sm font-medium text-gray-700 mb-2">
+            {getLabel(activeLanguage)} {activeLanguage === 'ka' && '*'}
           </label>
           <textarea
-            id="description_ka"
-            rows={6}
-            value={description_ka}
-            onChange={(e) => onChange('description_ka', e.target.value)}
+            id={`description_${activeLanguage}`}
+            rows={8}
+            value={getValue(activeLanguage)}
+            onChange={handleChange}
             className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
-              errors?.description_ka
+              getError(activeLanguage)
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
                 : 'border-gray-100 focus:border-primary focus:ring-primary/20'
             } focus:outline-none focus:ring-2 transition-colors resize-none`}
-            placeholder="დაწერეთ დეტალური ინფორმაცია მანქანის შესახებ..."
+            placeholder={getPlaceholder(activeLanguage)}
           />
-          {errors?.description_ka && (
-            <p className="mt-1 text-sm text-red-600">{errors.description_ka}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="description_en" className="block text-sm font-medium text-gray-700 mb-2">
-            Description (in English)
-          </label>
-          <textarea
-            id="description_en"
-            rows={6}
-            value={description_en}
-            onChange={(e) => onChange('description_en', e.target.value)}
-            className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
-              errors?.description_en
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                : 'border-gray-100 focus:border-primary focus:ring-primary/20'
-            } focus:outline-none focus:ring-2 transition-colors resize-none`}
-            placeholder="Write detailed information about the car..."
-          />
-          {errors?.description_en && (
-            <p className="mt-1 text-sm text-red-600">{errors.description_en}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="description_ru" className="block text-sm font-medium text-gray-700 mb-2">
-            Описание (на русском)
-          </label>
-          <textarea
-            id="description_ru"
-            rows={6}
-            value={description_ru}
-            onChange={(e) => onChange('description_ru', e.target.value)}
-            className={`w-full px-4 py-2 border-2 rounded-lg text-base ${
-              errors?.description_ru
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                : 'border-gray-100 focus:border-primary focus:ring-primary/20'
-            } focus:outline-none focus:ring-2 transition-colors resize-none`}
-            placeholder="Напишите подробную информацию об автомобиле..."
-          />
-          {errors?.description_ru && (
-            <p className="mt-1 text-sm text-red-600">{errors.description_ru}</p>
+          {getError(activeLanguage) && (
+            <p className="mt-1 text-sm text-red-600">{getError(activeLanguage)}</p>
           )}
         </div>
       </div>

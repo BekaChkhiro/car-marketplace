@@ -108,7 +108,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, isOwner, onDelete }) => {
         <div className="grid grid-cols-2 gap-2 mt-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Gauge size={16} />
-            <span>{car.specifications.mileage.toLocaleString()} km</span>
+            <span>{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} {car.specifications.mileage_unit || 'km'}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Fuel size={16} />

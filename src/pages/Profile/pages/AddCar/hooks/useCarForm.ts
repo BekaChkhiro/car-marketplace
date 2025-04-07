@@ -5,10 +5,10 @@ import { useLoading } from '../../../../../context/LoadingContext';
 import { NewCarFormData, CarFeatures } from '../types';
 import { validateCarForm, validateImage } from '../utils/validation';
 import carService from '../../../../../api/services/carService';
-import { cleanFormData } from '../utils/helpers';
+import { CreateCarFormData } from '../../../../../api/types/car.types';
 
 // Auto-save delay in milliseconds
-const AUTO_SAVE_DELAY = 3000;
+const AUTO_SAVE_DELAY = 2000;
 
 export const useCarForm = () => {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ export const useCarForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [images, setImages] = useState<File[]>([]);
   const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   
   // Get saved draft or use initial state
   const [formData, setFormData] = useState<NewCarFormData>(() => {
@@ -130,11 +131,32 @@ export const useCarForm = () => {
   };
 
   const handleSpecificationsChange = (field: string, value: any) => {
+    console.log(`handleSpecificationsChange - field: ${field}, value:`, value);
+    
+    // Process numeric values properly
+    let processedValue = value;
+    
+    if (field === 'engine_size') {
+      // Handle engine size - could be in cc or liters
+      processedValue = value ? parseFloat(value) : undefined;
+      console.log(`Processing engine_size: ${value} -> ${processedValue}`);
+    } 
+    else if (field === 'mileage' || field === 'cylinders' || field === 'airbags_count' || field === 'horsepower') {
+      // Handle other numeric fields
+      processedValue = value ? parseInt(value, 10) : undefined;
+      console.log(`Processing numeric field ${field}: ${value} -> ${processedValue}`);
+    }
+    else if (field === 'has_board_computer' || field === 'has_alarm') {
+      // Handle boolean fields
+      processedValue = Boolean(value);
+      console.log(`Processing boolean field ${field}: ${value} -> ${processedValue}`);
+    }
+    
     setFormData(prev => ({
       ...prev,
       specifications: {
         ...prev.specifications,
-        [field]: value
+        [field]: processedValue
       }
     }));
   };
@@ -149,6 +171,7 @@ export const useCarForm = () => {
     }));
   };
 
+  // Validate form data using the validation utility
   const validate = () => {
     // Log all form data for debugging
     console.log('Form data being validated:', JSON.stringify(formData, null, 2));
@@ -167,16 +190,11 @@ export const useCarForm = () => {
     
     // Check location fields
     if (!formData.location?.city) emptyFields.push('location.city');
-    if (formData.location?.location_type === 'international') {
-      if (!formData.location.country) emptyFields.push('location.country');
-      if (!formData.location.state) emptyFields.push('location.state');
-    }
     
-    // Check specifications
+    // Check specifications fields
     const specs = formData.specifications;
     if (!specs.transmission) emptyFields.push('specifications.transmission');
     if (!specs.fuel_type) emptyFields.push('specifications.fuel_type');
-    if (!specs.body_type) emptyFields.push('specifications.body_type');
     if (!specs.drive_type) emptyFields.push('specifications.drive_type');
     if (!specs.steering_wheel) emptyFields.push('specifications.steering_wheel');
     if (!specs.mileage) emptyFields.push('specifications.mileage');
@@ -198,9 +216,110 @@ export const useCarForm = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
+  // Clean form data before submission to ensure proper format for API
+  const cleanFormData = (): CreateCarFormData => {
+    // Create a deep copy of the form data
+    const cleanedData = JSON.parse(JSON.stringify(formData)) as CreateCarFormData;
+    
+    // Ensure numeric fields are properly formatted
+    if (cleanedData.specifications) {
+      // Handle engine size - ensure it's in the correct format for the API
+      if (cleanedData.specifications.engine_size !== undefined) {
+        const engineSize = Number(cleanedData.specifications.engine_size);
+        if (!isNaN(engineSize)) {
+          // If engine size is likely in cc (over 100), convert to liters
+          if (engineSize > 100) {
+            const liters = engineSize / 1000;
+            cleanedData.specifications.engine_size = parseFloat(liters.toFixed(1)); // Round to 1 decimal place
+            console.log(`Converted engine size from ${engineSize}cc to ${cleanedData.specifications.engine_size}L`);
+          } else {
+            // Already in liters, just ensure it's a number with 1 decimal place precision
+            cleanedData.specifications.engine_size = parseFloat(engineSize.toFixed(1));
+            console.log(`Engine size already in liters: ${cleanedData.specifications.engine_size}L`);
+          }
+        } else {
+          console.warn('Invalid engine size value:', cleanedData.specifications.engine_size);
+          cleanedData.specifications.engine_size = 0; // Default to 0 if invalid
+        }
+      }
+      
+      // Ensure other numeric fields are numbers
+      if (cleanedData.specifications.mileage !== undefined) {
+        const mileage = Number(cleanedData.specifications.mileage);
+        cleanedData.specifications.mileage = !isNaN(mileage) ? mileage : 0;
+      }
+      
+      if (cleanedData.specifications.cylinders !== undefined) {
+        const cylinders = Number(cleanedData.specifications.cylinders);
+        cleanedData.specifications.cylinders = !isNaN(cylinders) ? Math.round(cylinders) : 0; // Ensure it's an integer
+      }
+      
+      if (cleanedData.specifications.airbags_count !== undefined) {
+        const airbagsCount = Number(cleanedData.specifications.airbags_count);
+        cleanedData.specifications.airbags_count = !isNaN(airbagsCount) ? Math.round(airbagsCount) : 0; // Ensure it's an integer
+      }
+      
+      if (cleanedData.specifications.horsepower !== undefined) {
+        const horsepower = Number(cleanedData.specifications.horsepower);
+        cleanedData.specifications.horsepower = !isNaN(horsepower) ? Math.round(horsepower) : 0; // Ensure it's an integer
+      }
+      
+      // Ensure boolean fields are properly formatted
+      if (cleanedData.specifications.has_board_computer !== undefined) {
+        cleanedData.specifications.has_board_computer = Boolean(cleanedData.specifications.has_board_computer);
+      }
+      
+      if (cleanedData.specifications.has_alarm !== undefined) {
+        cleanedData.specifications.has_alarm = Boolean(cleanedData.specifications.has_alarm);
+      }
+    }
+    
+    // Add images to the cleaned data
+    cleanedData.images = images;
+    
+    return cleanedData;
+  };
+    
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) {
+      showToast('გთხოვთ შეავსოთ ყველა აუცილებელი ველი', 'error');
+      return;
+    }
+    
+    try {
+      showLoading();
+      
+      // Clean the form data before submission
+      const cleanedData = cleanFormData();
+      console.log('Submitting cleaned data:', cleanedData);
+      
+      const result = await carService.createCar(cleanedData);
+      hideLoading();
+      
+      // Clear the form draft from localStorage
+      localStorage.removeItem('car_form_draft');
+      
+      // Show success message
+      showToast('მანქანა წარმატებით დაემატა!', 'success');
+      
+      // Navigate to the car details page
+      navigate(`/cars/${result.id}`);
+    } catch (error: any) {
+      hideLoading();
+      showToast(error.message || 'მანქანის დამატება ვერ მოხერხდა', 'error');
+    }
+  };
 
   const handleImageUpload = async (files: File[]) => {
     try {
+      setIsUploading(true);
+      
+      // Important: The files parameter contains ALL files, not just new ones
+      // So we should directly set the images state to these files, not append them
+      
+      // First validate all files
       const validFiles = files.filter(file => {
         if (!validateImage(file)) {
           showToast('სურათის ფორმატი ან ზომა არასწორია. დაშვებულია მხოლოდ JPEG/PNG ფორმატი, მაქსიმუმ 5MB', 'error');
@@ -209,13 +328,24 @@ export const useCarForm = () => {
         return true;
       });
 
-      if (images.length + validFiles.length > 15) {
+      if (validFiles.length > 15) {
         showToast('მაქსიმუმ 15 სურათის ატვირთვაა შესაძლებელი', 'error');
+        setIsUploading(false);
         return;
       }
 
-      setImages(prev => [...prev, ...validFiles]);
+      // Simulate a small delay to show the upload progress
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Directly set the images state to the valid files
+      setImages(validFiles);
+      
+      // Set a timeout to turn off the uploading state
+      setTimeout(() => {
+        setIsUploading(false);
+      }, 500);
     } catch (error: any) {
+      setIsUploading(false);
       showToast(error.message || 'სურათის ატვირთვისას მოხდა შეცდომა', 'error');
     }
   };
@@ -229,83 +359,20 @@ export const useCarForm = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('HandleSubmit - Form data before validation:', formData);
-    
-    // Log specific details about the steering_wheel field
-    console.log('Steering wheel value type:', typeof formData.specifications.steering_wheel);
-    console.log('Steering wheel value:', formData.specifications.steering_wheel);
-    
-    // Check if steering_wheel is an object and handle it
-    if (formData.specifications.steering_wheel && 
-        typeof formData.specifications.steering_wheel === 'object') {
-      const steeringWheelObj = formData.specifications.steering_wheel as any;
-      console.log('Steering wheel is an object:', steeringWheelObj);
-      if (steeringWheelObj.value) {
-        console.log('Extracting value from steering wheel object:', steeringWheelObj.value);
-        formData.specifications.steering_wheel = steeringWheelObj.value as 'left' | 'right';
-      }
-    }
-    
-    // Also check for any other select fields that might be objects
-    const selectFields = ['transmission', 'fuel_type', 'body_type', 'drive_type'] as const;
-    selectFields.forEach(field => {
-      const value = formData.specifications[field as keyof typeof formData.specifications];
-      if (value && typeof value === 'object') {
-        console.log(`Field ${field} is an object:`, value);
-        const objValue = (value as any).value;
-        if (objValue) {
-          console.log(`Extracting value from ${field} object:`, objValue);
-          // Use type assertion to safely assign the value
-          (formData.specifications as any)[field] = objValue;
-        }
-      }
-    });
 
-    if (!formData.brand_id) {
-      showToast('გთხოვთ აირჩიოთ მარკა', 'error');
-      return;
-    }
-
-    if (!validate()) {
-      showToast('გთხოვთ შეავსოთ ყველა სავალდებულო ველი', 'error');
-      return;
-    }
-
-    try {
-      showLoading();
-      console.log('HandleSubmit - Form data after validation:', formData);
-      const cleanedData = cleanFormData(formData);
-      console.log('HandleSubmit - Cleaned data:', cleanedData);
-      
-      await carService.createCar({
-        ...cleanedData,
-        images
-      });
-      
-      localStorage.removeItem('car_form_draft'); // Clear the draft after successful submission
-      showToast('მანქანა წარმატებით დაემატა', 'success');
-      navigate('/profile/cars');
-    } catch (error: any) {
-      console.error('HandleSubmit - Error:', error);
-      showToast(error.message || 'მანქანის დამატებისას მოხდა შეცდომა', 'error');
-    } finally {
-      hideLoading();
-    }
-  };
 
   return {
     formData,
     errors,
     images,
     featuredImageIndex,
-    handleChange,
-    handleSpecificationsChange,
-    handleFeaturesChange,
-    handleImageUpload,
-    removeImage,
+    isUploading,
     setFeaturedImageIndex,
-    handleSubmit
+    handleChange,
+    handleFeaturesChange,
+    handleSpecificationsChange,
+    handleSubmit,
+    handleImageUpload,
+    removeImage
   };
 };

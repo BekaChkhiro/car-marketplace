@@ -11,51 +11,40 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
   const featureGroups = {
     'უსაფრთხოება': [
       { key: 'has_abs', label: 'ABS' },
-      { key: 'has_esp', label: 'ESP' },
-      { key: 'has_asr', label: 'ASR' },
-      { key: 'has_traction_control', label: 'მოცურების საწინააღმდეგო' },
+      { key: 'has_traction_control', label: 'მოცურების საწინააღმდეგო სისტემა' },
       { key: 'has_central_locking', label: 'ცენტრალური საკეტი' },
       { key: 'has_alarm', label: 'სიგნალიზაცია' },
-      { key: 'has_fog_lights', label: 'ნისლის ფარები' },
+      { key: 'has_fog_lights', label: 'სანისლე ფარები' },
     ],
     'კომფორტი': [
       { key: 'has_air_conditioning', label: 'კონდიციონერი' },
-      { key: 'has_climate_control', label: 'კლიმატ-კონტროლი' },
-      { key: 'has_heated_seats', label: 'გათბობადი სავარძლები' },
-      { key: 'has_ventilated_seats', label: 'ვენტილირებადი სავარძლები' },
+      { key: 'has_climate_control', label: 'კლიმატკონტროლი' },
+      { key: 'has_heated_seats', label: 'სავარძლის გათბობა' },
+      { key: 'has_memory_seats', label: 'სავარძლის მეხსიერება' },
       { key: 'has_cruise_control', label: 'კრუიზ-კონტროლი' },
       { key: 'has_start_stop', label: 'Start/Stop სისტემა' },
-      { key: 'has_panoramic_roof', label: 'პანორამული ჭერი' },
       { key: 'has_sunroof', label: 'ლუქი' },
-      { key: 'has_leather_interior', label: 'ტყავის სალონი' },
+      { key: 'has_electric_windows', label: 'ელექტრო შუშები' },
     ],
     'ელექტრონიკა': [
       { key: 'has_board_computer', label: 'ბორტკომპიუტერი' },
-      { key: 'has_multimedia', label: 'მულტიმედია' },
-      { key: 'has_bluetooth', label: 'Bluetooth' },
-      { key: 'has_navigation', label: 'ნავიგაცია' },
-      { key: 'has_parking_control', label: 'პარკინგ კონტროლი' },
+      { key: 'has_navigation', label: 'მონიტორი (ნავიგაცია)' },
+      { key: 'has_parking_control', label: 'პარკინგკონტროლი' },
       { key: 'has_rear_view_camera', label: 'უკანა ხედვის კამერა' },
-    ],
-    'სავარძლები და საჭე': [
-      { key: 'has_memory_seats', label: 'სავარძლების მეხსიერება' },
-      { key: 'has_memory_steering_wheel', label: 'საჭის მეხსიერება' },
-      { key: 'has_electric_seats', label: 'ელექტრო სავარძლები' },
-      { key: 'has_heated_steering_wheel', label: 'საჭის გათბობა' },
-    ],
-    'ელექტრო მართვა': [
-      { key: 'has_electric_mirrors', label: 'ელ. სარკეები' },
-      { key: 'has_electric_windows', label: 'ელ. შუშები' },
-      { key: 'has_electric_trunk', label: 'ელ. საბარგული' },
-      { key: 'has_keyless_entry', label: 'უგასაღებო შესვლა' },
+      { key: 'has_aux', label: 'AUX' },
+      { key: 'has_bluetooth', label: 'Bluetooth' },
+      { key: 'has_multifunction_steering_wheel', label: 'მულტი საჭე' },
     ],
     'სხვა': [
-      { key: 'has_technical_inspection', label: 'გავლილი აქვს ტექ. დათვალიერება' },
+      { key: 'has_hydraulics', label: 'ჰიდრავლიკა' },
+      { key: 'has_alloy_wheels', label: 'დისკები' },
+      { key: 'has_spare_tire', label: 'სათადარიგო საბურავი' },
+      { key: 'has_disability_adapted', label: 'სსმპ ადაპტირებული' },
     ],
   } as const;
 
   return (
-    <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
+    <div className="bg-white rounded-xl p-6 border shadow-sm">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:rotate-180">
           <Wrench size={20} className="text-primary" />
@@ -69,24 +58,37 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
       <div className="space-y-8">
         {Object.entries(featureGroups).map(([groupName, groupFeatures]) => (
           <div key={groupName} className="space-y-4">
-            <h3 className="text-base font-semibold text-gray-800">{groupName}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {groupFeatures.map(({ key, label }) => (
-                <div key={key} className="relative">
-                  <label className="group flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={features[key as keyof CarFeatures] || false}
-                      onChange={(e) => onChange(key as keyof CarFeatures, e.target.checked)}
-                      className="form-checkbox h-5 w-5 text-primary rounded border-gray-300 focus:ring-primary focus:ring-2 transition-all duration-200 
-                      cursor-pointer group-hover:border-primary"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-primary transition-colors duration-200">
-                      {label}
-                    </span>
-                  </label>
-                </div>
-              ))}
+            <h3 className="text-base font-semibold text-gray-800 border-b pb-2">{groupName}</h3>
+            <div className="flex flex-wrap gap-3">
+              {groupFeatures.map(({ key, label }) => {
+                const isActive = features[key as keyof CarFeatures] || false;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => onChange(key as keyof CarFeatures, !isActive)}
+                    className={`
+                      px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                      flex items-center gap-2 border
+                      ${isActive 
+                        ? 'bg-primary/10 border-primary text-primary shadow-sm' 
+                        : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'}
+                    `}
+                  >
+                    <div className={`
+                      w-4 h-4 rounded-full flex items-center justify-center
+                      ${isActive ? 'bg-primary' : 'bg-gray-200'}
+                    `}>
+                      {isActive && (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-3 h-3">
+                          <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}

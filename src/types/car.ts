@@ -11,7 +11,6 @@ export interface CarSpecifications {
   fuelType: string;
   transmission: string;
   mileage: number;
-  bodyType?: 'სედანი' | 'ჯიპი' | 'კუპე' | 'ჰეტჩბეკი' | 'უნივერსალი' | 'კაბრიოლეტი' | 'პიკაპი' | 'მინივენი' | 'ლიმუზინი' | 'კროსოვერი';
   color?: string;
   drive?: string;
   drive_type?: string;  // Added this property

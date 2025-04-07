@@ -67,7 +67,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
               </div>
               <div className="flex items-center text-sm text-gray-500">
                 <Gauge size={14} className="mr-1 text-gray-400" />
-                {car.specifications.mileage.toLocaleString()} კმ
+                {car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ
               </div>
               {car.specifications.transmission && (
                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">

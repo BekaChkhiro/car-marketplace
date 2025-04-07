@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Truck, Globe } from 'lucide-react';
 import CustomSelect from '../../../../../components/common/CustomSelect';
-import { LOCATION_TYPE_OPTIONS, CITY_OPTIONS, COUNTRY_OPTIONS } from '../types';
+import LocationTypeSwitcher from '../../../../../components/LocationTypeSwitcher';
+import { CITY_OPTIONS, COUNTRY_OPTIONS } from '../types';
 
 interface LocationProps {
   city: string;
@@ -40,7 +41,7 @@ const Location: React.FC<LocationProps> = ({
   }, [location_type, city, country]);
 
   return (
-    <div className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-all duration-300">
+    <div className="bg-white rounded-xl p-6 border">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:rotate-180">
           <MapPin size={20} className="text-primary" />
@@ -53,59 +54,87 @@ const Location: React.FC<LocationProps> = ({
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            მდებარეობის ტიპი *
-          </label>
-          <CustomSelect
-            value={location_type}
-            onChange={(value) => onChange('location_type', value as string)}
-            options={LOCATION_TYPE_OPTIONS}
-            placeholder="აირჩიეთ მდებარეობის ტიპი"
-            error={errors?.location_type}
-            multiple={false}
-          />
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              მდებარეობის ტიპი *
+            </label>
+            <LocationTypeSwitcher 
+              value={location_type} 
+              onChange={(value) => onChange('location_type', value)}
+              className="border shadow-sm"
+            />
+          </div>
+          {errors?.location_type && (
+            <p className="mt-1 text-sm text-red-600">{errors.location_type}</p>
+          )}
         </div>
 
-        {/* Only show city selection for Georgia */}
-        {location_type === 'georgia' && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ქალაქი *
-            </label>
-            <CustomSelect
-              value={city}
-              onChange={(value) => onChange('city', value as string)}
-              options={CITY_OPTIONS}
-              placeholder="აირჩიეთ ქალაქი"
-              error={errors?.city}
-              multiple={false}
-            />
-          </div>
-        )}
+        <div className="mt-6 space-y-6">
+          {/* Location type specific content */}
+          {location_type === 'georgia' && (
+            <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin size={18} className="text-green-600" />
+                <h3 className="font-medium text-green-800">საქართველოში</h3>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ქალაქი *
+                  </label>
+                  <CustomSelect
+                    value={city}
+                    onChange={(value) => onChange('city', value as string)}
+                    options={CITY_OPTIONS}
+                    placeholder="აირჩიეთ ქალაქი"
+                    error={errors?.city}
+                    multiple={false}
+                  />
+                  {errors?.city && (
+                    <p className="mt-1 text-sm text-red-600">{errors.city}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Only show country selection for international */}
-        {location_type === 'international' && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ქვეყანა *
-            </label>
-            <CustomSelect
-              value={country}
-              onChange={(value) => onChange('country', value as string)}
-              options={COUNTRY_OPTIONS}
-              placeholder="აირჩიეთ ქვეყანა"
-              error={errors?.country}
-              multiple={false}
-            />
-          </div>
-        )}
+          {location_type === 'transit' && (
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <div className="flex items-center gap-2 mb-2">
+                <Truck size={18} className="text-blue-600" />
+                <h3 className="font-medium text-blue-800">ტრანზიტში</h3>
+              </div>
+              <p className="text-blue-700 text-sm">მანქანა იმყოფება ტრანზიტში საქართველოსკენ მომავალში</p>
+            </div>
+          )}
 
-        {/* Display location information based on type */}
-        {location_type === 'transit' && (
-          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <p className="text-blue-700">მანქანა იმყოფება ტრანზიტში</p>
-          </div>
-        )}
+          {location_type === 'international' && (
+            <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
+              <div className="flex items-center gap-2 mb-4">
+                <Globe size={18} className="text-purple-600" />
+                <h3 className="font-medium text-purple-800">საზღვარგარეთ</h3>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ქვეყანა *
+                  </label>
+                  <CustomSelect
+                    value={country}
+                    onChange={(value) => onChange('country', value as string)}
+                    options={COUNTRY_OPTIONS}
+                    placeholder="აირჩიეთ ქვეყანა"
+                    error={errors?.country}
+                    multiple={false}
+                  />
+                  {errors?.country && (
+                    <p className="mt-1 text-sm text-red-600">{errors.country}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

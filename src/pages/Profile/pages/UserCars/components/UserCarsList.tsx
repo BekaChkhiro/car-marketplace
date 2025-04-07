@@ -138,7 +138,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
                     <div className="flex flex-col space-y-1">
                       <div className="flex items-center text-xs text-gray-500">
                         <Gauge size={14} className="mr-2" /> 
-                        <span>{car.specifications.mileage.toLocaleString()} კმ</span>
+                        <span>{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
                       </div>
                       <div className="flex items-center text-xs text-gray-500">
                         <Fuel size={14} className="mr-2" /> 

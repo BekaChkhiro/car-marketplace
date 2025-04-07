@@ -540,24 +540,44 @@ class CarService {
         description_en: data.description_en || '',
         description_ru: data.description_ru || '',
         
-        // Include specifications as a nested object
+        // Include specifications as a nested object with complete fields
         specifications: {
           drive_type: translatedDriveType,
           engine_type: data.specifications?.engine_type || 'gasoline',
           transmission: data.specifications?.transmission || 'manual',
           fuel_type: data.specifications?.fuel_type || 'petrol',
           mileage: Number(data.specifications?.mileage || 0),
-          // Convert engine size from cc to liters (divide by 1000) to fit in database DECIMAL(3,1)
-          engine_size: data.specifications?.engine_size ? Number(data.specifications.engine_size) / 1000 : 0,
+          // Use the normalizeEngineSize function to handle engine size conversion properly
+          engine_size: data.specifications?.engine_size ? this.normalizeEngineSize(data.specifications.engine_size) : 0,
           cylinders: Number(data.specifications?.cylinders || 0),
           color: data.specifications?.color || 'black',
           body_type: data.specifications?.body_type || 'sedan',
-          steering_wheel: this.translateSteeringWheel(data.specifications?.steering_wheel || 'LEFT'),
+          steering_wheel: this.translateSteeringWheel(data.specifications?.steering_wheel || 'left'),
           airbags_count: Number(data.specifications?.airbags_count || 0),
           interior_material: data.specifications?.interior_material || 'leather',
           interior_color: data.specifications?.interior_color || 'black',
+          doors: data.specifications?.doors || '4',
           has_board_computer: Boolean(data.specifications?.has_board_computer),
           has_alarm: Boolean(data.specifications?.has_alarm),
+          has_air_conditioning: Boolean(data.specifications?.has_air_conditioning),
+          has_parking_control: Boolean(data.specifications?.has_parking_control),
+          has_rear_view_camera: Boolean(data.specifications?.has_rear_view_camera),
+          has_electric_windows: Boolean(data.specifications?.has_electric_windows),
+          has_climate_control: Boolean(data.specifications?.has_climate_control),
+          has_cruise_control: Boolean(data.specifications?.has_cruise_control),
+          has_start_stop: Boolean(data.specifications?.has_start_stop),
+          has_sunroof: Boolean(data.specifications?.has_sunroof),
+          has_seat_heating: Boolean(data.specifications?.has_seat_heating),
+          has_abs: Boolean(data.specifications?.has_abs),
+          has_traction_control: Boolean(data.specifications?.has_traction_control),
+          has_central_locking: Boolean(data.specifications?.has_central_locking),
+          has_fog_lights: Boolean(data.specifications?.has_fog_lights),
+          has_navigation: Boolean(data.specifications?.has_navigation),
+          has_aux: Boolean(data.specifications?.has_aux),
+          has_bluetooth: Boolean(data.specifications?.has_bluetooth),
+          has_technical_inspection: Boolean(data.specifications?.has_technical_inspection),
+          clearance_status: data.specifications?.clearance_status || 'not_cleared'
+          // manufacture_month ველი არ არსებობს მონაცემთა ბაზაში, ამიტომ არ ვაგზავნით
         },
         
         // Include location at the top level (flat structure)
@@ -1191,17 +1211,77 @@ class CarService {
     }
   }
 
-  private translateDriveType(georgianDriveType: string): string {
+  private translateDriveType(driveType: string): string {
+    // Normalize input by trimming and converting to lowercase
+    const normalizedInput = driveType ? String(driveType).trim() : '';
+    
+    // Log the input value for debugging
+    console.log('[CarService.translateDriveType] Input:', driveType);
+    console.log('[CarService.translateDriveType] Normalized:', normalizedInput);
+    
+    // Map of possible values to their standardized form
     const driveTypeMap: {[key: string]: string} = {
+      // Georgian values
       'წინა': 'front',
       'უკანა': 'rear',
       '4x4': '4x4',
-      'RWD': 'rear',
+      
+      // English abbreviations
+      'fwd': 'front',
+      'rwd': 'rear',
+      'awd': '4x4',
+      
+      // Full English values
+      'front': 'front',
+      'rear': 'rear',
+      'all wheel drive': '4x4',
+      'front wheel drive': 'front',
+      'rear wheel drive': 'rear',
+      
+      // Uppercase variants
       'FWD': 'front',
-      'AWD': '4x4'
+      'RWD': 'rear',
+      'AWD': '4x4',
+      '4X4': '4x4'
     };
     
-    return driveTypeMap[georgianDriveType] || georgianDriveType;
+    // Get the mapped value or default to the original input
+    const result = driveTypeMap[normalizedInput] || normalizedInput;
+    
+    console.log('[CarService.translateDriveType] Final result:', result);
+    return result;
+  }
+
+  private normalizeEngineSize(engineSize: number | string): number {
+    // Convert to number first
+    let size = typeof engineSize === 'string' ? parseFloat(engineSize) : engineSize;
+    
+    // Log original value
+    console.log('[CarService.normalizeEngineSize] Original value:', engineSize, 'type:', typeof engineSize);
+    
+    // If it's NaN, return 0
+    if (isNaN(size)) {
+      console.log('[CarService.normalizeEngineSize] Invalid number, returning 0');
+      return 0;
+    }
+    
+    // Check if it's likely in cc (over 100)
+    if (size > 100) {
+      // Convert from cc to liters
+      const liters = size / 1000;
+      console.log(`[CarService.normalizeEngineSize] Converting from cc to liters: ${size}cc -> ${liters}L`);
+      return liters;
+    }
+    
+    // If it's already in a reasonable range for liters (0.1 to 10.0)
+    if (size > 0 && size <= 10) {
+      console.log(`[CarService.normalizeEngineSize] Value already in liters: ${size}L`);
+      return size;
+    }
+    
+    // For any other unusual values, log a warning and return as is
+    console.log(`[CarService.normalizeEngineSize] Unusual engine size value: ${size}, using as is`);
+    return size;
   }
 
   private translateSteeringWheel(steeringWheel: string): string {

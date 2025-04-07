@@ -4,7 +4,6 @@ import type { NewCarFormData } from '../types';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import { CITY_OPTIONS, COUNTRY_OPTIONS, LOCATION_TYPE_OPTIONS } from '../types';
 import CurrencySwitcher from '../../../../../components/CurrencySwitcher';
-import TechnicalSpecs from './TechnicalSpecs';
 import { carService } from '../../../../../api';
 
 interface Brand {
@@ -246,56 +245,6 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
           </div>
         </div>
       </div>
-
-      <div className="bg-gray-50 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">აღწერა</h3>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              აღწერა (ქართულად) *
-              {errors?.description_ka && (
-                <span className="text-red-500 ml-1 text-xs">{errors.description_ka}</span>
-              )}
-            </label>
-            <textarea
-              value={formData.description_ka || ''}
-              onChange={(e) => onChange('description_ka', e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
-              placeholder="შეიყვანეთ მანქანის აღწერა ქართულად"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              აღწერა (ინგლისურად)
-            </label>
-            <textarea
-              value={formData.description_en || ''}
-              onChange={(e) => onChange('description_en', e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
-              placeholder="შეიყვანეთ მანქანის აღწერა ინგლისურად"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              აღწერა (რუსულად)
-            </label>
-            <textarea
-              value={formData.description_ru || ''}
-              onChange={(e) => onChange('description_ru', e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
-              placeholder="შეიყვანეთ მანქანის აღწერა რუსულად"
-            />
-          </div>
-        </div>
-      </div>
-
-      <TechnicalSpecs 
-        specifications={formData.specifications}
-        onChange={onSpecificationsChange}
-        errors={errors}
-      />
     </div>
   );
 };
