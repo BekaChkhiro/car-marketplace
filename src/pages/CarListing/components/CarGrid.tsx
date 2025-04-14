@@ -1,12 +1,13 @@
 import React from 'react';
 import CarCard from '../../../components/CarCard';
-import { Car } from '../../../api/types/car.types';
+import { Car, Category } from '../../../api/types/car.types';
 
 interface CarGridProps {
   cars: Car[];
+  categories: Category[];
 }
 
-const CarGrid: React.FC<CarGridProps> = ({ cars }) => {
+const CarGrid: React.FC<CarGridProps> = ({ cars, categories }) => {
   if (!cars || cars.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -18,7 +19,7 @@ const CarGrid: React.FC<CarGridProps> = ({ cars }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       {cars.map((car) => (
-        <CarCard key={car.id} car={car} />
+        <CarCard key={car.id} car={car} categories={categories} />
       ))}
     </div>
   );

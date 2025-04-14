@@ -1,5 +1,5 @@
 import React from 'react';
-import { CarFilters } from '../../../api/types/car.types';
+import { CarFilters, Category } from '../../../api/types/car.types';
 
 interface ExtendedCarFilters extends CarFilters {
   priceRange?: string;
@@ -9,13 +9,33 @@ interface ExtendedCarFilters extends CarFilters {
 interface FiltersProps {
   filters: ExtendedCarFilters;
   onFilterChange: (filters: Partial<ExtendedCarFilters>) => void;
+  categories: Category[];
 }
 
-const Filters: React.FC<FiltersProps> = ({ filters, onFilterChange }) => {
+const Filters: React.FC<FiltersProps> = ({ filters, onFilterChange, categories }) => {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <h2 className="text-lg font-semibold mb-4">Filters</h2>
       
+      {/* Category */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Category
+        </label>
+        <select
+          value={filters.category}
+          onChange={(e) => onFilterChange({ category: e.target.value })}
+          className="w-full border border-gray-300 rounded-md p-2"
+        >
+          <option value="">All Categories</option>
+          {categories.map(category => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Brand */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">

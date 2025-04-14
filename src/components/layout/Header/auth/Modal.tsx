@@ -1,5 +1,5 @@
+import React, { useState, useEffect, ReactNode } from 'react';
 import { X } from 'lucide-react';
-import { useState, useEffect, ReactNode } from 'react';
 
 interface ModalProps {
   isOpen: boolean;

@@ -6,6 +6,7 @@ import WishlistButton from './components/WishlistButton';
 import CurrencySelector from './components/CurrencySelector';
 import LanguageSelector from './components/LanguageSelector';
 import AuthButtons from './components/AuthButtons';
+import CarsDropdown from './components/CarsDropdown';
 
 const Header = () => {
   const [currentLanguage, setCurrentLanguage] = useState('ქარ');
@@ -19,7 +20,7 @@ const Header = () => {
 
   const menuItems = [
     { id: 1, text: 'მთავარი', href: '/' },
-    { id: 2, text: 'მანქანები', href: '/transports' },
+    { id: 2, component: CarsDropdown },
     { id: 3, text: 'კომპანიის შესახებ', href: '/about' },
     { id: 4, text: 'კონტაქტი', href: '/contact' },
   ];

@@ -1,25 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Car } from '../../../api/types/car.types';
-import carService from '../../../api/services/carService';
+import { Container } from '../../../components/ui';
 import CarCard from '../../../components/CarCard';
+import { Car, Category } from '../../../api/types/car.types';
+import carService from '../../../api/services/carService';
 import { useToast } from '../../../context/ToastContext';
 
 const VipListings: React.FC = () => {
   const [vipCars, setVipCars] = useState<Car[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
   useEffect(() => {
-    const fetchVipCars = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
+        // Fetch categories first
+        const categoriesData = await carService.getCategories();
+        console.log('VipListings - Fetched categories:', categoriesData);
+        setCategories(categoriesData);
+        
+        // Then fetch VIP cars
         const response = await carService.getCars({ featured: true, limit: 4 });
+        console.log('VipListings - Fetched VIP cars:', response);
         // Ensure we always set an array, even if empty
-        setVipCars(Array.isArray(response) ? response : []);
+        const cars = Array.isArray(response) ? response : [];
+        setVipCars(cars);
+        
+        // Log category IDs for debugging
+        if (cars.length > 0) {
+          console.log('VipListings - Car category IDs:', cars.map(car => ({ 
+            id: car.id, 
+            category_id: car.category_id, 
+            type: typeof car.category_id 
+          })));
+        }
       } catch (error) {
-        console.error('Error fetching VIP cars:', error);
+        console.error('Error fetching VIP cars or categories:', error);
         showToast('Failed to load VIP listings', 'error');
         setVipCars([]); // Set empty array on error
       } finally {
@@ -27,7 +46,7 @@ const VipListings: React.FC = () => {
       }
     };
 
-    fetchVipCars();
+    fetchData();
   }, [showToast]);
 
   const handleViewAllClick = () => {
@@ -61,7 +80,7 @@ const VipListings: React.FC = () => {
         {vipCars.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {vipCars.map((car) => (
-              <CarCard key={car.id} car={car} />
+              <CarCard key={car.id} car={car} categories={categories} />
             ))}
           </div>
         ) : (

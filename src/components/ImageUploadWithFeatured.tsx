@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon } from 'lucide-react';
 import ImageProgress from './ImageProgress';

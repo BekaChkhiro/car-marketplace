@@ -8,6 +8,7 @@ import { CurrencyProvider } from './context/CurrencyContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { LoadingProvider } from './context/LoadingContext';
+import { WishlistProvider } from './context/WishlistContext';
 
 const App = () => {
   return (
@@ -18,9 +19,11 @@ const App = () => {
           <ToastProvider>
             <AuthProvider>
               <CurrencyProvider>
-                <Layout>
-                  <AppRoutes />
-                </Layout>
+                <WishlistProvider>
+                  <Layout>
+                    <AppRoutes />
+                  </Layout>
+                </WishlistProvider>
               </CurrencyProvider>
             </AuthProvider>
           </ToastProvider>

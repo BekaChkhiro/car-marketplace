@@ -24,6 +24,8 @@ import AddCar from './pages/Profile/pages/AddCar';
 import ResetPassword from './pages/Auth/ResetPassword';
 import UserCars from './pages/Profile/pages/UserCars/index';
 import EditCar from './pages/Profile/pages/EditCar';
+import Wishlist from './pages/Profile/pages/Wishlist';
+import HowToSell from './pages/HowToSell';
 
 const AppRoutes = () => {
   return (
@@ -31,6 +33,7 @@ const AppRoutes = () => {
       <Route path={routes.home} element={<Home />} />
       <Route path={routes.carListing} element={<CarListing />} />
       <Route path={routes.carDetails} element={<CarDetails />} />
+      <Route path="/how-to-sell" element={<HowToSell />} />
       
       {/* Protected Admin Routes */}
       <Route path={routes.admin} element={
@@ -59,6 +62,7 @@ const AppRoutes = () => {
         <Route path={routes.favorites} element={<Favorites />} />
         <Route path={routes.notifications} element={<Notifications />} />
         <Route path={routes.profileSettings} element={<Settings />} />
+        <Route path="wishlist" element={<Wishlist />} />
       </Route>
 
       {/* Auth Routes */}

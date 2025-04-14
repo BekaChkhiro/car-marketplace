@@ -130,7 +130,7 @@ export interface CarFilters {
   driveType?: string;
   steeringWheel?: string;
   features?: string[];
-
+  excludeId?: string;  // Added for filtering out current car in similar cars list
   location?: string;
   sortBy?: string;
   order?: 'asc' | 'desc';

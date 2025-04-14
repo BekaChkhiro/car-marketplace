@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { INTERIOR_COLOR_OPTIONS } from '../pages/Profile/pages/AddCar/types';
 
@@ -34,7 +34,7 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
   };
 
   // Close dropdown when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);

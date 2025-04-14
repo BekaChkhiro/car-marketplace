@@ -9,6 +9,7 @@ import CarInfo from './components/carInfo/CarInfo';
 import SellerInfo from './components/sellerInfo/SellerInfo';
 import { useToast } from '../../context/ToastContext';
 import { ChevronRight, Home } from 'lucide-react';
+import Banner from '../../components/ui/Banner';
 
 // Define seller interface based on the SellerInfo component's needs
 interface Seller {
@@ -98,6 +99,11 @@ const CarDetails: React.FC = () => {
   return (
     <div className="bg-background min-h-screen rounded-lg">
       <Container>
+        {/* Top Banner - large size */}
+        <div className="my-6">
+          <Banner size="large" variant="primary" />
+        </div>
+
         {/* Breadcrumb navigation */}
         <div className="py-4">
           <nav className="flex" aria-label="Breadcrumb">
@@ -167,6 +173,11 @@ const CarDetails: React.FC = () => {
                 carId={car.id?.toString() || ''}
               />
               
+              {/* Side Banner - medium size */}
+              <div className="mt-6">
+                <Banner size="medium" variant="secondary" />
+              </div>
+              
               {/* Simplified seller information */}
               {car.location && (
                 <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
@@ -178,6 +189,11 @@ const CarDetails: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+          
+          {/* Bottom Banner - large size */}
+          <div className="my-8">
+            <Banner size="large" variant="primary" />
           </div>
           
           {/* Similar cars section */}

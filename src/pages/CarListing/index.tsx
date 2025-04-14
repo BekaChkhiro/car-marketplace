@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Car, CarFilters } from '../../api/types/car.types';
+import { Car, CarFilters, Category } from '../../api/types/car.types';
 import carService from '../../api/services/carService';
 import { Container, Loading } from '../../components/ui';
 import CarGrid from './components/CarGrid';
@@ -15,6 +15,7 @@ interface ExtendedCarFilters extends CarFilters {
 const CarListing: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [cars, setCars] = useState<Car[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
   
@@ -31,39 +32,24 @@ const CarListing: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchCars = async () => {
+    const fetchData = async () => {
       try {
-        // Convert filters to API format
-        const apiFilters: CarFilters = {
-          brand: filters.brand,
-          model: filters.model,
-          category: filters.category,
-          fuelType: filters.fuelType,
-          transmission: filters.transmission
-        };
-
-        // Handle price range
-        if (filters.priceRange) {
-          const [min, max] = filters.priceRange.split('-');
-          apiFilters.priceFrom = Number(min);
-          apiFilters.priceTo = Number(max);
-        }
-
-        // Handle year range
-        if (filters.yearFrom) apiFilters.yearFrom = filters.yearFrom;
-        if (filters.yearTo) apiFilters.yearTo = filters.yearTo;
-
-        const response = await carService.getCars(apiFilters);
-        setCars(response);
+        setLoading(true);
+        const [carsResponse, categoriesResponse] = await Promise.all([
+          carService.getCars(filters),
+          carService.getCategories()
+        ]);
+        setCars(carsResponse);
+        setCategories(categoriesResponse);
       } catch (error) {
-        console.error('Error fetching cars:', error);
-        showToast('Failed to load cars', 'error');
+        console.error('Error fetching data:', error);
+        showToast('Failed to load data', 'error');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCars();
+    fetchData();
   }, [filters, showToast]);
 
   const handleFilterChange = (newFilters: Partial<ExtendedCarFilters>) => {
@@ -79,10 +65,14 @@ const CarListing: React.FC = () => {
       <div className="py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-1/4">
-            <Filters filters={filters} onFilterChange={handleFilterChange} />
+            <Filters 
+              filters={filters} 
+              onFilterChange={handleFilterChange}
+              categories={categories}
+            />
           </div>
           <div className="w-full lg:w-3/4">
-            <CarGrid cars={cars} />
+            <CarGrid cars={cars} categories={categories} />
           </div>
         </div>
       </div>

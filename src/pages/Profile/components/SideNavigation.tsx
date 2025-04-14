@@ -7,7 +7,8 @@ import {
   Settings, 
   Home,
   LogOut,
-  PlusCircle
+  PlusCircle,
+  BookmarkCheck
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -30,6 +31,11 @@ const SideNavigation: React.FC = () => {
       name: 'მანქანის დამატება',
       path: '/profile/add-car',
       icon: PlusCircle
+    },
+    {
+      name: 'სასურველები',
+      path: '/profile/wishlist',
+      icon: BookmarkCheck
     },
     {
       name: 'ფავორიტები',

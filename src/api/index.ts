@@ -5,6 +5,7 @@ export { default as api } from './config/axios';
 export { default as authService } from './services/authService';
 export { default as carService } from './services/carService';
 export { default as socialAuthService } from './services/socialAuthService';
+export { default as wishlistService } from './services/wishlistService';
 
 // Export types
 export * from './types/auth.types';
