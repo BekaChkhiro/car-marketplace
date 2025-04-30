@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { routes } from './config/routes';
 import Home from './pages/Home';
 import CarListing from './pages/CarListing';
@@ -10,6 +10,15 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import UsersPage from './pages/Admin/Users';
 import CarsPage from './pages/Admin/Cars';
 import AdminEditCar from './pages/Admin/Cars/pages/EditCar';
+// იმპორტი ცალკე ფაილიდან, რომელიც ექსპორტირებას აკეთებს index.tsx-იდან
+import AdvertisementsPage from './pages/Admin/Advertisements/AdvertisementsPage';
+import AllAdvertisementsPage from './pages/Admin/Advertisements/pages/All';
+import SliderAdvertisementsPage from './pages/Admin/Advertisements/pages/Slider';
+import BannersAdvertisementsPage from './pages/Admin/Advertisements/pages/Banners';
+import SidebarAdvertisementsPage from './pages/Admin/Advertisements/pages/Sidebar';
+import AdvertisementAnalyticsPage from './pages/Admin/Advertisements/pages/Analytics';
+import NewAdvertisementPage from './pages/Admin/Advertisements/pages/NewAdvertisement';
+import EditAdvertisementPage from './pages/Admin/Advertisements/pages/EditAdvertisement';
 import SettingsPage from './pages/Admin/Settings';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
@@ -46,6 +55,16 @@ const AppRoutes = () => {
         <Route path={routes.adminUsers} element={<UsersPage />} />
         <Route path={routes.adminCars} element={<CarsPage />} />
         <Route path={routes.adminEditCar} element={<AdminEditCar />} />
+        <Route path={routes.adminAdvertisements} element={<AdvertisementsPage />}>
+          <Route index element={<Navigate to={routes.adminAdvertisementsAll} replace />} />
+          <Route path="all" element={<AllAdvertisementsPage />} />
+          <Route path="slider" element={<SliderAdvertisementsPage />} />
+          <Route path="banners" element={<BannersAdvertisementsPage />} />
+          <Route path="sidebar" element={<SidebarAdvertisementsPage />} />
+          <Route path="analytics" element={<AdvertisementAnalyticsPage />} />
+          <Route path="new" element={<NewAdvertisementPage />} />
+          <Route path="edit/:id" element={<EditAdvertisementPage />} />
+        </Route>
         <Route path={routes.adminSettings} element={<SettingsPage />} />
       </Route>
 

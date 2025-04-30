@@ -9,7 +9,7 @@ import CarInfo from './components/carInfo/CarInfo';
 import SellerInfo from './components/sellerInfo/SellerInfo';
 import { useToast } from '../../context/ToastContext';
 import { ChevronRight, Home } from 'lucide-react';
-import Banner from '../../components/ui/Banner';
+import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 
 // Define seller interface based on the SellerInfo component's needs
 interface Seller {
@@ -99,9 +99,9 @@ const CarDetails: React.FC = () => {
   return (
     <div className="bg-background min-h-screen rounded-lg">
       <Container>
-        {/* Top Banner - large size */}
-        <div className="my-6">
-          <Banner size="large" variant="primary" />
+        {/* Top Advertisement - 728x90 banner */}
+        <div className="my-3 pt-3 flex justify-center">
+          <AdvertisementDisplay placement="car_details_top" className="w-[728px] h-[140px] rounded-lg shadow-md" />
         </div>
 
         {/* Breadcrumb navigation */}
@@ -173,9 +173,9 @@ const CarDetails: React.FC = () => {
                 carId={car.id?.toString() || ''}
               />
               
-              {/* Side Banner - medium size */}
+              {/* Side Advertisement */}
               <div className="mt-6">
-                <Banner size="medium" variant="secondary" />
+                <AdvertisementDisplay placement="sidebar" className="w-full h-64 rounded-lg shadow-md" />
               </div>
               
               {/* Simplified seller information */}
@@ -191,9 +191,9 @@ const CarDetails: React.FC = () => {
             </div>
           </div>
           
-          {/* Bottom Banner - large size */}
-          <div className="my-8">
-            <Banner size="large" variant="primary" />
+          {/* Bottom Advertisement - 728x90 banner */}
+          <div className="my-8 flex justify-center">
+            <AdvertisementDisplay placement="car_details_bottom" className="w-[728px] h-[140px] rounded-lg shadow-md" />
           </div>
           
           {/* Similar cars section */}

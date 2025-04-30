@@ -5,6 +5,7 @@ import carService from '../../api/services/carService';
 import { Container, Loading } from '../../components/ui';
 import CarGrid from './components/CarGrid';
 import Filters from './components/Filters';
+import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 import { useToast } from '../../context/ToastContext';
 
 interface ExtendedCarFilters extends CarFilters {
@@ -70,6 +71,9 @@ const CarListing: React.FC = () => {
               onFilterChange={handleFilterChange}
               categories={categories}
             />
+            <div className="mt-6">
+              <AdvertisementDisplay placement="sidebar" className="w-full h-96 rounded-lg shadow-md" />
+            </div>
           </div>
           <div className="w-full lg:w-3/4">
             <CarGrid cars={cars} categories={categories} />
