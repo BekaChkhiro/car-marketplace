@@ -53,11 +53,11 @@ const NewAdditions: React.FC = () => {
   }
 
   return (
-    <section className="py-12 bg-gray-50">
-      <Container>
-        <div className="space-y-8">
-          <h2 className="text-3xl font-bold text-center">ახალი დამატებები</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <section className="py-4 sm:py-8 md:py-12 bg-gray-50">
+      <Container className="px-1 sm:px-4">
+        <div className="space-y-6 sm:space-y-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center">ახალი დამატებები</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-3 md:gap-5 lg:gap-7">
             {newCars.map((car) => (
               <CarCard key={car.id} car={car} categories={categories} />
             ))}

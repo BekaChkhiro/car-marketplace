@@ -152,10 +152,10 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   return (
     <div 
       onClick={handleClick}
-      className="group relative bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+      className="group relative bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col h-full"
     >
       {/* Image carousel */}
-      <div className="relative h-52 bg-gray-100">
+      <div className="relative h-32 sm:h-40 md:h-48 lg:h-52 bg-gray-100">
         {images.length > 0 ? (
           <img
             src={images[currentImageIndex]}
@@ -230,57 +230,53 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
       </div>
 
       {/* Car details */}
-      <div className="p-4">
-        <div className="flex justify-between items-start">
+      <div className="p-1.5 sm:p-3 md:p-4 flex-1 flex flex-col">
+        <div className="flex justify-between items-start gap-0.5">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-1">
+            <h3 className="text-xs sm:text-base md:text-lg font-semibold text-gray-900 mb-0.5 sm:mb-1 line-clamp-1">
               {car.title || `${car.brand} ${car.model}`}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Calendar size={14} />
+            <div className="flex items-center gap-0.5 sm:gap-2 text-[10px] sm:text-sm text-gray-500">
+              <Calendar size={10} className="sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
               <span>{car.year}</span>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-1">
-            <span className="text-lg font-bold text-primary">
+          <div className="flex flex-col items-end gap-0.5 sm:gap-1">
+            <span className="text-xs sm:text-base md:text-lg font-bold text-primary">
               {formatPrice(car.price)}
             </span>
-            <CustomSwitch
-              checked={currency === 'USD'}
-              onChange={(e) => setCurrency(e.target.checked ? 'USD' : 'GEL')}
-            />
           </div>
         </div>
 
-        {/* Specifications grid */}
-        <div className="grid grid-cols-2 gap-2 mt-3">
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 text-sm text-gray-600">
-            <Gauge size={15} className="text-gray-400" />
-            <span>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {car.specifications?.mileage_unit || 'km'}</span>
+        {/* Specifications grid - hide less important info on very small screens */}
+        <div className="grid grid-cols-2 gap-0.5 sm:gap-2 mt-1 sm:mt-3 mt-auto">
+          <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
+            <Gauge size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
+            <span className="truncate">{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {car.specifications?.mileage_unit || 'km'}</span>
           </div>
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 text-sm text-gray-600">
-            <Fuel size={15} className="text-gray-400" />
-            <span>{car.specifications?.fuel_type}</span>
+          <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
+            <Fuel size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
+            <span className="truncate">{car.specifications?.fuel_type}</span>
           </div>
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 text-sm text-gray-600">
-            <Tag size={15} className="text-gray-400" />
-            <span>{localCategory?.name || (car.category_id ? `კატეგორია ${car.category_id}` : 'არ არის')}</span>
+          <div className="hidden sm:flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
+            <Tag size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
+            <span className="truncate">{localCategory?.name || (car.category_id ? `კატეგორია ${car.category_id}` : 'არ არის')}</span>
           </div>
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 text-sm text-gray-600">
-            <MapPin size={15} className="text-gray-400" />
-            <span>{car.location?.city}</span>
+          <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
+            <MapPin size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
+            <span className="truncate">{car.location?.city}</span>
           </div>
         </div>
 
         {/* Owner actions */}
         {isOwner && (
-          <div className="mt-4 flex justify-end gap-2">
+          <div className="mt-2 sm:mt-3 md:mt-4 flex justify-end gap-1 sm:gap-2">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/profile/cars/edit/${car.id}`);
               }}
-              className="px-4 py-1.5 text-sm bg-white text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
+              className="px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 text-xs sm:text-sm bg-white text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
             >
               რედაქტირება
             </button>
@@ -289,7 +285,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
                 e.stopPropagation();
                 if (onDelete) onDelete();
               }}
-              className="px-4 py-1.5 text-sm bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 transition-colors"
+              className="px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 text-xs sm:text-sm bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 transition-colors"
             >
               წაშლა
             </button>

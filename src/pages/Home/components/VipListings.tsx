@@ -59,11 +59,11 @@ const VipListings: React.FC = () => {
   }
 
   return (
-    <section className="w-full px-4 py-8 bg-gradient-to-b from-gray-50/15 to-background">
-      <div className="w-full">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
-          <div className="max-w-xl">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r text-primary">
+    <section className="w-full px-1 sm:px-4 py-4 sm:py-8 bg-gradient-to-b from-gray-50/15 to-background">
+      <div className="w-full max-w-[1280px] mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-10 md:mb-12 gap-4 sm:gap-6">
+          <div className="w-full sm:max-w-xl text-center sm:text-left">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r text-primary">
               VIP განცხადებები
             </h2>
           </div>
@@ -71,14 +71,14 @@ const VipListings: React.FC = () => {
           <Link
             to="/cars?filter=vip"
             onClick={handleViewAllClick}
-            className="flex items-center gap-2 px-6 py-3 text-primary font-semibold border-2 border-primary/30 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:-translate-y-0.5 group"
+            className="flex items-center justify-center sm:justify-start gap-2 px-4 sm:px-6 py-2 sm:py-3 text-primary font-semibold border-2 border-primary/30 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:-translate-y-0.5 group w-full sm:w-auto"
           >
             ყველა VIP განცხადება <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
 
         {vipCars.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-3 md:gap-5 lg:gap-7 px-0 sm:px-1">
             {vipCars.map((car) => (
               <CarCard key={car.id} car={car} categories={categories} />
             ))}

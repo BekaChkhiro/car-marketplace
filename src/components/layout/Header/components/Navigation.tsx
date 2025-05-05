@@ -15,7 +15,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ menuItems }) => {
   return (
     <nav>
-      <ul className="hidden md:flex items-center space-x-8">
+      <ul className="flex items-center space-x-8">
         {menuItems.map((item) => (
           <li key={item.id}>
             {item.component ? (
@@ -23,7 +23,7 @@ const Navigation: React.FC<NavigationProps> = ({ menuItems }) => {
             ) : (
               <Link
                 to={item.href || '/'}
-                className="text-gray-700 hover:text-primary transition-colors"
+                className="text-gray-700 hover:text-primary transition-colors font-medium text-base"
               >
                 {item.text}
               </Link>

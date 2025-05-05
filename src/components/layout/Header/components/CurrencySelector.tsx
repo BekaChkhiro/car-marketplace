@@ -4,9 +4,10 @@ import { useCurrency } from '../../../../context/CurrencyContext';
 interface CustomSwitchProps {
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  size?: 'small' | 'normal';
 }
 
-export const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange }) => {
+export const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, size = 'normal' }) => {
   return (
     <label className="relative inline-flex items-center cursor-pointer">
       <input 
@@ -15,11 +16,11 @@ export const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange })
         checked={checked}
         onChange={onChange}
       />
-      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
-        after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white 
-        after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+      <div className={`flex justify-center items-center ${size === 'small' ? 'w-8 h-4' : 'w-11 h-6'} bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+        after:content-[''] after:absolute ${size === 'small' ? 'after:top-[2px] after:left-[2px] after:h-3 after:w-3' : 'after:top-0.5 after:left-[2px] after:h-5 after:w-5'} after:bg-white 
+        after:rounded-full after:transition-all peer-checked:bg-primary`}>
       </div>
-      <span className="ml-2 text-sm font-medium text-gray-700">
+      <span className={`ml-1.5 ${size === 'small' ? 'text-xs' : 'text-sm'} font-medium text-gray-700`}>
         {checked ? 'USD' : 'GEL'}
       </span>
     </label>

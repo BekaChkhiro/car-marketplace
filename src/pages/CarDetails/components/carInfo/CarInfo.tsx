@@ -156,43 +156,43 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
 
       {/* Basic Info */}
       <div className={`${cardStyle} car-section`}>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-r from-blue-50 to-green-50 rounded-full -mr-16 -mt-16 opacity-30 z-0"></div>
+        <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-r from-blue-50 to-green-50 rounded-full -mr-12 -mt-12 sm:-mr-16 sm:-mt-16 opacity-30 z-0"></div>
         <h2 className={sectionHeadingStyle}>
-          <CarIcon size={20} className="mr-2 text-blue-600" />
+          <CarIcon size={18} className="mr-2 text-blue-600" />
           ძირითადი ინფორმაცია
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-6">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">მარკა</span>
-              <span className="text-xl font-bold text-gray-800">{car.brand}</span>
+              <span className="text-xs sm:text-sm text-gray-500">მარკა</span>
+              <span className="text-base sm:text-xl font-bold text-gray-800">{car.brand}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">მოდელი</span>
-              <span className="text-xl font-bold text-gray-800">{car.model}</span>
+              <span className="text-xs sm:text-sm text-gray-500">მოდელი</span>
+              <span className="text-base sm:text-xl font-bold text-gray-800">{car.model}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">წელი</span>
-              <span className="text-xl font-bold text-gray-800">{car.year}</span>
+              <span className="text-xs sm:text-sm text-gray-500">წელი</span>
+              <span className="text-base sm:text-xl font-bold text-gray-800">{car.year}</span>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">ფასი</span>
-              <span className="text-xl font-bold text-blue-600">
+              <span className="text-xs sm:text-sm text-gray-500">ფასი</span>
+              <span className="text-base sm:text-xl font-bold text-blue-600">
                 {new Intl.NumberFormat('ka-GE', { style: 'currency', currency: car.currency || 'GEL' }).format(car.price)}
               </span>
             </div>
             {category && (
               <div className="flex flex-col">
-                <span className="text-sm text-gray-500">კატეგორია</span>
-                <span className="text-xl font-bold text-gray-800">{category.name}</span>
+                <span className="text-xs sm:text-sm text-gray-500">კატეგორია</span>
+                <span className="text-base sm:text-xl font-bold text-gray-800">{category.name}</span>
               </div>
             )}
             {car.featured && (
-              <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-full inline-flex items-center w-fit mt-2">
-                <Shield size={16} className="mr-1" />
-                <span className="font-semibold">VIP</span>
+              <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full inline-flex items-center w-fit mt-1 sm:mt-2">
+                <Shield size={14} className="mr-1" />
+                <span className="text-sm sm:text-base font-semibold">VIP</span>
               </div>
             )}
           </div>

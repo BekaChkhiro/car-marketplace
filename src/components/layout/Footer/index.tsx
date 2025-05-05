@@ -6,18 +6,33 @@ import SocialLinks from './components/SocialLinks';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-white text-gray-dark pt-16 p-4 border-t">      
-      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-        <AboutSection />
-        <QuickLinks />
-        <ContactInfo />
-        <SocialLinks />
-      </div>
+    <footer className="relative bg-white text-gray-dark pt-8 sm:pt-12 md:pt-16 px-4 sm:px-6 border-t">
+      <div className="w-full max-w-[1280px] mx-auto">
+        {/* Main footer content */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12">
+          {/* About section takes full width on mobile for better readability */}
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <AboutSection />
+          </div>
+          
+          {/* Other sections */}
+          <div className="col-span-1">
+            <QuickLinks />
+          </div>
+          <div className="col-span-1">
+            <ContactInfo />
+          </div>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <SocialLinks />
+          </div>
+        </div>
 
-      <div className="text-center mt-16 pt-8 border-t">
-        <p className="text-gray-dark text-sm">
-          &copy; {new Date().getFullYear()} CarMarket. ყველა უფლება დაცულია.
-        </p>
+        {/* Copyright section */}
+        <div className="text-center mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t">
+          <p className="text-gray-dark text-sm pb-6">
+            &copy; {new Date().getFullYear()} CarMarket. ყველა უფლება დაცულია.
+          </p>
+        </div>
       </div>
     </footer>
   );

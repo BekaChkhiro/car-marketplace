@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FeaturedSlider from './FeaturedSlider';
 import VerticalSearchFilter from '../../../components/VerticalSearchFilter';
 
@@ -22,17 +22,28 @@ const HeroSection: React.FC = () => {
     fuelType: '',
     location: ''
   });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleFilterChange = (newFilters: FormData) => {
     setFilters(newFilters);
   };
 
   return (
-    <section className='flex items-stretch gap-8 p-4 h-[680px]'>
-      <div className='w-3/4 h-full'>
+    <section className='flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 lg:gap-8 p-2 sm:p-4 h-auto lg:h-[680px]'>
+      <div className='w-full lg:w-3/4 h-[400px] sm:h-[500px] md:h-[550px] lg:h-full'>
         <FeaturedSlider />
       </div>
-      <div className='w-1/4 h-full'>
+      <div className='w-full lg:w-1/4 h-auto mt-4 lg:mt-0'>
         <VerticalSearchFilter onFilterChange={handleFilterChange} />
       </div>
     </section>

@@ -26,17 +26,17 @@ const ContactButtons = ({ phone }: ContactButtonsProps) => {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1 sm:gap-2">
       <button 
         onClick={togglePhone}
         disabled={!phone}
         className={`group w-10/12 flex items-center justify-between ${
           phone ? 'bg-primary hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'
-        } text-white rounded-lg transition-all duration-200 p-1`}
+        } text-white rounded-lg transition-all duration-200 p-0.5 sm:p-1`}
       >
-        <div className="flex items-center gap-2 py-2.5 pl-4">
-          <Phone className="w-4 h-4" />
-          <span className="text-base font-medium tracking-wide">
+        <div className="flex items-center gap-1 sm:gap-2 py-1.5 sm:py-2.5 pl-2 sm:pl-4">
+          <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="text-sm sm:text-base font-medium tracking-wide truncate">
             {phone ? (
               showPhone ? phone.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : getMaskedPhoneNumber(phone)
             ) : (
@@ -45,18 +45,18 @@ const ContactButtons = ({ phone }: ContactButtonsProps) => {
           </span>
         </div>
         {phone && !showPhone && (
-          <div className="h-full px-3 py-2.5 bg-white text-gray-600 text-sm font-medium rounded-lg transition-colors">
+          <div className="h-full px-2 sm:px-3 py-1.5 sm:py-2.5 bg-white text-gray-600 text-xs sm:text-sm font-medium rounded-lg transition-colors">
             ნომრის ნახვა
           </div>
         )}
       </button>
       <button
-        className={`w-2/12 flex items-center justify-center gap-2 ${
+        className={`w-2/12 flex items-center justify-center gap-1 sm:gap-2 ${
           phone ? 'bg-primary hover:bg-[#128C7E]' : 'bg-gray-300 cursor-not-allowed'
-        } text-white px-4 py-3 rounded-lg transition-all duration-200`}
+        } text-white px-2 sm:px-4 py-1.5 sm:py-3 rounded-lg transition-all duration-200`}
         disabled={!phone}
       >
-        <Heart className='text-2xl' />
+        <Heart className='w-5 h-5 sm:w-6 sm:h-6' />
       </button>
     </div>
   );
