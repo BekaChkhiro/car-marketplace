@@ -99,9 +99,12 @@ const CarDetails: React.FC = () => {
   return (
     <div className="bg-background min-h-screen rounded-lg">
       <Container>
-        {/* Top Advertisement - 728x90 banner */}
+        {/* Top Advertisement - responsive */}
         <div className="my-3 pt-3 flex justify-center">
-          <AdvertisementDisplay placement="car_details_top" className="w-[728px] h-[140px] rounded-lg shadow-md" />
+          <AdvertisementDisplay 
+            placement="car_details_top" 
+            className="w-full md:w-[728px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+          />
         </div>
 
         {/* Breadcrumb navigation */}
@@ -173,10 +176,7 @@ const CarDetails: React.FC = () => {
                 carId={car.id?.toString() || ''}
               />
               
-              {/* Side Advertisement */}
-              <div className="mt-6">
-                <AdvertisementDisplay placement="sidebar" className="w-full h-64 rounded-lg shadow-md" />
-              </div>
+              {/* Sidebar advertisement removed as requested */}
               
               {/* Simplified seller information */}
               {car.location && (
@@ -191,9 +191,12 @@ const CarDetails: React.FC = () => {
             </div>
           </div>
           
-          {/* Bottom Advertisement - 728x90 banner */}
+          {/* Bottom Advertisement - responsive */}
           <div className="my-8 flex justify-center">
-            <AdvertisementDisplay placement="car_details_bottom" className="w-[728px] h-[140px] rounded-lg shadow-md" />
+            <AdvertisementDisplay 
+              placement="car_details_bottom" 
+              className="w-full md:w-[728px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+            />
           </div>
           
           {/* Similar cars section */}

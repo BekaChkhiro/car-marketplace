@@ -63,6 +63,14 @@ const CarListing: React.FC = () => {
 
   return (
     <Container>
+      {/* Top Advertisement - responsive */}
+      <div className="w-full flex justify-center my-4">
+        <AdvertisementDisplay 
+          placement="car_listing_top" 
+          className="w-full md:w-[728px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+        />
+      </div>
+      
       <div className="py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-1/4">
@@ -71,9 +79,7 @@ const CarListing: React.FC = () => {
               onFilterChange={handleFilterChange}
               categories={categories}
             />
-            <div className="mt-6">
-              <AdvertisementDisplay placement="sidebar" className="w-full h-96 rounded-lg shadow-md" />
-            </div>
+            {/* Sidebar advertisement removed as requested */}
           </div>
           <div className="w-full lg:w-3/4">
             <CarGrid cars={cars} categories={categories} />

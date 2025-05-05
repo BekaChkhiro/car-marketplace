@@ -12,7 +12,6 @@ export const routes = {
   adminAdvertisementsAll: '/admin/advertisements/all',
   adminAdvertisementsSlider: '/admin/advertisements/slider',
   adminAdvertisementsBanners: '/admin/advertisements/banners',
-  adminAdvertisementsSidebar: '/admin/advertisements/sidebar',
   adminAdvertisementsAnalytics: '/admin/advertisements/analytics',
   adminSettings: '/admin/settings',
   addCar: '/profile/add-car',

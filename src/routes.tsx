@@ -15,7 +15,6 @@ import AdvertisementsPage from './pages/Admin/Advertisements/AdvertisementsPage'
 import AllAdvertisementsPage from './pages/Admin/Advertisements/pages/All';
 import SliderAdvertisementsPage from './pages/Admin/Advertisements/pages/Slider';
 import BannersAdvertisementsPage from './pages/Admin/Advertisements/pages/Banners';
-import SidebarAdvertisementsPage from './pages/Admin/Advertisements/pages/Sidebar';
 import AdvertisementAnalyticsPage from './pages/Admin/Advertisements/pages/Analytics';
 import NewAdvertisementPage from './pages/Admin/Advertisements/pages/NewAdvertisement';
 import EditAdvertisementPage from './pages/Admin/Advertisements/pages/EditAdvertisement';
@@ -60,7 +59,6 @@ const AppRoutes = () => {
           <Route path="all" element={<AllAdvertisementsPage />} />
           <Route path="slider" element={<SliderAdvertisementsPage />} />
           <Route path="banners" element={<BannersAdvertisementsPage />} />
-          <Route path="sidebar" element={<SidebarAdvertisementsPage />} />
           <Route path="analytics" element={<AdvertisementAnalyticsPage />} />
           <Route path="new" element={<NewAdvertisementPage />} />
           <Route path="edit/:id" element={<EditAdvertisementPage />} />

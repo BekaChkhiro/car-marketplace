@@ -13,7 +13,28 @@ const AdvertisementAnalyticsTable: React.FC = () => {
       try {
         setIsLoading(true);
         const data = await advertisementService.getAllAnalytics();
-        setAnalytics(data);
+        
+        // Process data to ensure CTR is calculated if not provided by API
+        const processedData = data.map(item => {
+          const impressions = typeof item.impressions === 'number' ? item.impressions : 0;
+          const clicks = typeof item.clicks === 'number' ? item.clicks : 0;
+          
+          // Calculate CTR if not already provided by API or if it's not a number
+          let ctr = item.ctr;
+          if (typeof ctr !== 'number' || isNaN(ctr)) {
+            // Avoid division by zero
+            ctr = impressions > 0 ? (clicks / impressions) * 100 : 0;
+          }
+          
+          return {
+            ...item,
+            impressions,
+            clicks,
+            ctr
+          };
+        });
+        
+        setAnalytics(processedData);
         setError(null);
       } catch (err) {
         setError('ანალიტიკის მონაცემების ჩატვირთვა ვერ მოხერხდა');
@@ -32,8 +53,8 @@ const AdvertisementAnalyticsTable: React.FC = () => {
         return 'მთავარი გვერდის სლაიდერი';
       case 'home_banner':
         return 'მთავარი გვერდის ბანერი';
-      case 'sidebar':
-        return 'გვერდითი პანელი';
+      case 'car_listing_top':
+        return 'მანქანების ყიდვის გვერდი - ზედა';
       case 'car_details_top':
         return 'მანქანის დეტალების გვერდი - ზედა';
       case 'car_details_bottom':
@@ -61,9 +82,9 @@ const AdvertisementAnalyticsTable: React.FC = () => {
   };
 
   // Stats cards calculation
-  const totalImpressions = analytics.reduce((sum, ad) => sum + ad.impressions, 0);
-  const totalClicks = analytics.reduce((sum, ad) => sum + ad.clicks, 0);
-  const averageCTR = analytics.length > 0 
+  const totalImpressions = analytics.reduce((sum, ad) => sum + (typeof ad.impressions === 'number' ? ad.impressions : 0), 0);
+  const totalClicks = analytics.reduce((sum, ad) => sum + (typeof ad.clicks === 'number' ? ad.clicks : 0), 0);
+  const averageCTR = analytics.length > 0 && totalImpressions > 0
     ? (totalClicks / totalImpressions * 100).toFixed(2) 
     : "0.00";
   
@@ -101,6 +122,13 @@ const AdvertisementAnalyticsTable: React.FC = () => {
       </motion.div>
     );
   }
+
+  // Helper function to categorize CTR performance
+  const getCtrPerformance = (ctr: number) => {
+    if (ctr >= 5) return { text: 'კარგი', color: 'bg-green-500', textColor: 'text-green-600' };
+    if (ctr >= 2) return { text: 'საშუალო', color: 'bg-yellow-500', textColor: 'text-yellow-600' };
+    return { text: 'დაბალი', color: 'bg-red-500', textColor: 'text-red-600' };
+  };
 
   return (
     <motion.div 
@@ -149,6 +177,31 @@ const AdvertisementAnalyticsTable: React.FC = () => {
             <p className="text-2xl font-bold text-emerald-800">{averageCTR}%</p>
           </div>
         </motion.div>
+      </motion.div>
+
+      {/* CTR Performance Guide */}
+      <motion.div variants={itemVariants} className="bg-white rounded-xl shadow-sm p-6">
+        <h3 className="text-lg font-semibold mb-3">რეკლამის ეფექტურობის შეფასება (CTR)</h3>
+        <div className="text-sm text-gray-600 mb-4">
+          CTR (დაწკაპუნების ხვედრითი კოეფიციენტი) განსაზღვრავს რეკლამის ეფექტურობას და გამოითვლება ფორმულით: (100 * დაწკაპუნებები / ნახვები)%
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+            <span className="text-sm text-red-600">დაბალი CTR (&lt;2%)</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
+            <span className="text-sm text-yellow-600">საშუალო CTR (2-5%)</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+            <span className="text-sm text-green-600">კარგი CTR (&gt;5%)</span>
+          </div>
+        </div>
+        <div className="mt-4 text-sm text-gray-500">
+          <p>შენიშვნა: უკეთესი CTR მიუთითებს უფრო ეფექტურ რეკლამაზე. თუ რეკლამის CTR დაბალია, გაკვეული შესაძლოა ცვლილებების შეტანა სურათსა და ტექსტში.</p>
+        </div>
       </motion.div>
 
       {/* Table */}
@@ -248,12 +301,12 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-700">
-                        {item.impressions.toLocaleString()}
+                        {(item.impressions || 0).toLocaleString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-700">
-                        {item.clicks.toLocaleString()}
+                        {(item.clicks || 0).toLocaleString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -261,12 +314,12 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                         <div className="w-16 h-4 bg-gray-200 rounded-full overflow-hidden mr-2">
                           <motion.div 
                             initial={{ width: 0 }}
-                            animate={{ width: `${Math.min(item.ctr * 2, 100)}%` }}
+                            animate={{ width: `${Math.min(((typeof item.ctr === 'number' ? item.ctr : 0) * 2), 100)}%` }}
                             transition={{ duration: 1, delay: index * 0.1 }}
-                            className={`h-full rounded-full ${item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                            className={`h-full rounded-full ${typeof item.ctr === 'number' ? (item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500') : 'bg-red-500'}`}
                           />
                         </div>
-                        <span className="text-sm font-medium text-gray-700">{item.ctr}%</span>
+                        <span className="text-sm font-medium text-gray-700">{typeof item.ctr === 'number' ? item.ctr.toFixed(2) : '0.00'}%</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

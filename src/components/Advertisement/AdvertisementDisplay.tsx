@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import advertisementService, { Advertisement } from '../../api/services/advertisementService';
 
 interface AdvertisementDisplayProps {
@@ -9,6 +10,7 @@ interface AdvertisementDisplayProps {
 const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, className = '' }) => {
   const [advertisement, setAdvertisement] = useState<Advertisement | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
   // Add a timestamp to force re-fetch on each mount
   const refreshKey = useRef(Date.now()).current;
 
@@ -86,20 +88,36 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
   if (!advertisement) {
     return null; // Don't show anything if no ad is available
   }
-
+  
   const content = (
-    <div className={`relative overflow-hidden ${className}`}>
+    <motion.div 
+      className={`relative overflow-hidden ${className} cursor-pointer hover:shadow-lg transition-shadow duration-300`}
+      initial={{ opacity: 0.9 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ scale: 1.01, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+    >
       <img 
         src={advertisement.image_url} 
         alt={advertisement.title}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover transition-transform duration-700 ease-in-out"
+        style={{ 
+          transform: isHovered ? 'scale(1.03)' : 'scale(1)' 
+        }}
       />
       
-      {/* Optional label to show it's an advertisement */}
-      <div className="absolute top-0 right-0 bg-black bg-opacity-50 text-white text-xs px-2 py-1">
-        რეკლამა
-      </div>
-    </div>
+      {/* Subtle overlay effect on hover */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 0.1 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
+      
+      {/* Advertisement badge removed as requested */}
+    </motion.div>
   );
 
   // Function to record click

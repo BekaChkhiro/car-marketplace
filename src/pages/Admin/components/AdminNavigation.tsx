@@ -50,7 +50,6 @@ const AdminNavigation: React.FC = () => {
         { icon: <LayoutGrid size={18} />, label: 'ყველა რეკლამა', path: '/admin/advertisements/all' },
         { icon: <SlidersHorizontal size={18} />, label: 'სლაიდერი', path: '/admin/advertisements/slider' },
         { icon: <Rows size={18} />, label: 'ბანერები', path: '/admin/advertisements/banners' },
-        { icon: <PanelRight size={18} />, label: 'გვერდითი პანელი', path: '/admin/advertisements/sidebar' },
         { icon: <BarChart2 size={18} />, label: 'ანალიტიკა', path: '/admin/advertisements/analytics' },
       ]
     },

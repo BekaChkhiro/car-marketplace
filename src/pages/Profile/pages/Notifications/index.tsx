@@ -7,15 +7,15 @@ const Notifications: React.FC = () => {
 
   if (notifications.length === 0) {
     return (
-      <div className="p-6">
-        <div className="text-center py-12">
+      <div className="p-3 sm:p-4 md:p-6">
+        <div className="text-center py-8 sm:py-12">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
             <Bell className="w-6 h-6 text-primary" />
           </div>
           <h3 className="text-xl font-semibold text-gray-700 mb-2">
             შეტყობინებები არ არის
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-500 max-w-xs mx-auto">
             თქვენ არ გაქვთ ახალი შეტყობინებები
           </p>
         </div>
@@ -24,10 +24,10 @@ const Notifications: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="space-y-4">
+    <div className="p-3 sm:p-4 md:p-6">
+      <div className="space-y-3 sm:space-y-4">
         {notifications.map((notification) => (
-          <div key={notification.id} className="notification-item">
+          <div key={notification.id} className="notification-item bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-100">
             {/* Notification item content */}
           </div>
         ))}

@@ -78,16 +78,16 @@ const UserCars: React.FC = () => {
   }
 
   return (
-    <section className="w-full px-4 py-8 bg-gradient-to-b from-blue-50/50 to-white">
+    <section className="w-full px-3 sm:px-4 py-4 sm:py-6 md:py-8 bg-gradient-to-b from-blue-50/50 to-white">
       <Container>
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          <div>
-            <h2 className="text-3xl font-bold mb-2 text-primary">ჩემი განცხადებები</h2>
-            <p className="text-gray-600">მართეთ თქვენი გამოქვეყნებული განცხადებები</p>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 sm:mb-6 md:mb-8 gap-3 sm:gap-4">
+          <div className="w-full md:w-auto text-center md:text-left mb-3 md:mb-0">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 text-primary">ჩემი განცხადებები</h2>
+            <p className="text-sm sm:text-base text-gray-600">მართეთ თქვენი გამოქვეყნებული განცხადებები</p>
           </div>
           <Button 
             onClick={() => navigate('/profile/add-car')}
-            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 hover:shadow-md"
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 hover:shadow-md"
           >
             <Plus size={18} />
             ახალი განცხადება

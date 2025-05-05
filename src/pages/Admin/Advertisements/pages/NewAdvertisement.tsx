@@ -25,7 +25,7 @@ const NewAdvertisementPage: React.FC = () => {
     } else if (initialPlacement === 'home_banner') {
       navigate(routes.adminAdvertisementsBanners);
     } else if (initialPlacement === 'sidebar') {
-      navigate(routes.adminAdvertisementsSidebar);
+      navigate(routes.adminAdvertisementsAll);
     } else {
       navigate(routes.adminAdvertisementsAll);
     }
@@ -39,7 +39,7 @@ const NewAdvertisementPage: React.FC = () => {
     } else if (initialPlacement === 'home_banner') {
       navigate(routes.adminAdvertisementsBanners);
     } else if (initialPlacement === 'sidebar') {
-      navigate(routes.adminAdvertisementsSidebar);
+      navigate(routes.adminAdvertisementsAll);
     } else {
       navigate(routes.adminAdvertisementsAll);
     }

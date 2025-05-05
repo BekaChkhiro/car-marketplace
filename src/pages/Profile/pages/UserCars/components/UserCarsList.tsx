@@ -76,100 +76,175 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                მანქანა
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ფასი
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ძირითადი მონაცემები
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                სტატუსი
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                მოქმედებები
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {cars.map((car) => {
-              const statusStyle = getStatusStyle(car.status);
+    <div>
+      {/* Desktop view - Table */}
+      <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  მანქანა
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ფასი
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ძირითადი მონაცემები
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  სტატუსი
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  მოქმედებები
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {cars.map((car) => {
+                const statusStyle = getStatusStyle(car.status);
+                
+                return (
+                  <tr 
+                    key={car.id} 
+                    className="hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0 h-14 w-20 bg-gray-100 rounded-md overflow-hidden">
+                          <img 
+                            src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
+                            alt={`${car.brand} ${car.model}`} 
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="text-sm font-medium text-gray-900">
+                            {car.title || `${car.brand} ${car.model}`}
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <Calendar size={14} className="mr-1" /> {car.year}
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <MapPin size={14} className="mr-1" /> {car.location.city}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-primary">
+                        {formatPrice(car.price)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col space-y-1">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Gauge size={14} className="mr-2" /> 
+                          <span>{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Fuel size={14} className="mr-2" /> 
+                          <span>{car.specifications.fuel_type}</span>
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Settings size={14} className="mr-2" /> 
+                          <span>{car.specifications.transmission}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bgColor} ${statusStyle.textColor}`}>
+                        {statusStyle.icon}
+                        {getStatusText(car.status)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => navigate(`/cars/${car.id}`)}
+                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm"
+                      >
+                        <Eye size={16} className="mr-2" />
+                        ნახვა
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile view - Card layout */}
+      <div className="md:hidden space-y-4">
+        {cars.map((car) => {
+          const statusStyle = getStatusStyle(car.status);
+          
+          return (
+            <div 
+              key={car.id} 
+              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+            >
+              <div className="flex items-center p-4 border-b border-gray-100">
+                <div className="flex-shrink-0 h-20 w-28 bg-gray-100 rounded-md overflow-hidden mr-4">
+                  <img 
+                    src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
+                    alt={`${car.brand} ${car.model}`} 
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="text-base font-medium text-gray-900 mb-1">
+                    {car.title || `${car.brand} ${car.model}`}
+                  </div>
+                  <div className="text-lg font-semibold text-primary mb-1">
+                    {formatPrice(car.price)}
+                  </div>
+                  <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bgColor} ${statusStyle.textColor}`}>
+                    {statusStyle.icon}
+                    {getStatusText(car.status)}
+                  </div>
+                </div>
+              </div>
               
-              return (
-                <tr 
-                  key={car.id} 
-                  className="hover:bg-gray-50 transition-colors duration-150"
+              <div className="p-4 border-b border-gray-100 bg-gray-50">
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="flex flex-col items-center p-2 bg-white rounded-lg">
+                    <div className="flex items-center text-xs text-gray-500 mb-1">
+                      <Calendar size={16} />
+                    </div>
+                    <div className="text-sm font-medium">{car.year}</div>
+                  </div>
+                  <div className="flex flex-col items-center p-2 bg-white rounded-lg">
+                    <div className="flex items-center text-xs text-gray-500 mb-1">
+                      <Gauge size={16} />
+                    </div>
+                    <div className="text-sm font-medium">{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</div>
+                  </div>
+                  <div className="flex flex-col items-center p-2 bg-white rounded-lg">
+                    <div className="flex items-center text-xs text-gray-500 mb-1">
+                      <Fuel size={16} /> 
+                    </div>
+                    <div className="text-sm font-medium">{car.specifications.fuel_type}</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 flex justify-between items-center">
+                <div className="flex items-center text-sm text-gray-500">
+                  <MapPin size={16} className="mr-1" /> {car.location.city}
+                </div>
+                <button
+                  onClick={() => navigate(`/cars/${car.id}`)}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0 h-14 w-20 bg-gray-100 rounded-md overflow-hidden">
-                        <img 
-                          src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
-                          alt={`${car.brand} ${car.model}`} 
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="text-sm font-medium text-gray-900">
-                          {car.title || `${car.brand} ${car.model}`}
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <Calendar size={14} className="mr-1" /> {car.year}
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <MapPin size={14} className="mr-1" /> {car.location.city}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-primary">
-                      {formatPrice(car.price)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col space-y-1">
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Gauge size={14} className="mr-2" /> 
-                        <span>{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
-                      </div>
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Fuel size={14} className="mr-2" /> 
-                        <span>{car.specifications.fuel_type}</span>
-                      </div>
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Settings size={14} className="mr-2" /> 
-                        <span>{car.specifications.transmission}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bgColor} ${statusStyle.textColor}`}>
-                      {statusStyle.icon}
-                      {getStatusText(car.status)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => navigate(`/cars/${car.id}`)}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm"
-                    >
-                      <Eye size={16} className="mr-2" />
-                      ნახვა
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  <Eye size={16} className="mr-2" />
+                  ნახვა
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

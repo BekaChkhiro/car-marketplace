@@ -140,10 +140,7 @@ const FeaturedSlider: React.FC = () => {
             </>
           )}
           
-          {/* Optional label to show it's an advertisement */}
-          <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-            რეკლამა
-          </div>
+          {/* Advertisement badge removed as requested */}
         </div>
       </div>
     </section>

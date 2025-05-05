@@ -66,7 +66,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {success && (
         <div className="p-4 bg-green-50 text-green-700 rounded-xl flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -93,7 +93,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                 სახელი
@@ -131,7 +131,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             </div>
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
             <button
               type="button"
               onClick={() => setIsEditing(false)}
@@ -176,7 +176,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <Hash size={18} />

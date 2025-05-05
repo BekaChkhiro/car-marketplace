@@ -23,13 +23,13 @@ const WishlistPage: React.FC = () => {
 
   return (
     <Container>
-      <div className="py-8">
-        <div className="flex justify-between items-center mb-6">
+      <div className="py-4 sm:py-6 md:py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0 px-2 sm:px-0">
           <h1 className="text-2xl font-bold text-gray-900">სასურველები</h1>
           {wishlistCars.length > 0 && (
             <button
               onClick={() => setIsConfirmModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center justify-center w-full sm:w-auto gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-200 sm:border-transparent"
             >
               <Trash2 size={18} />
               <span>სიის გასუფთავება</span>
@@ -38,11 +38,18 @@ const WishlistPage: React.FC = () => {
         </div>
 
         {wishlistCars.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">თქვენი სასურველების სია ცარიელია</p>
+          <div className="text-center py-8 sm:py-12">
+            <div className="w-20 h-20 mx-auto mb-4 text-gray-300">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+                <path d="M3.53 2.47a.75.75 0 00-1.06 1.06l18 18a.75.75 0 101.06-1.06l-18-18zM20.25 5.507v11.561L5.853 2.671c.15-.043.306-.075.467-.094a49.255 49.255 0 0111.36 0c1.497.174 2.57 1.46 2.57 2.93zM3.75 21V6.932l14.063 14.063L12 18.088l-7.165 3.583A.75.75 0 013.75 21z" />
+              </svg>
+            </div>
+            <p className="text-gray-500 max-w-xs mx-auto">თქვენი სასურველების სია ცარიელია</p>
           </div>
         ) : (
-          <CarGrid cars={wishlistCars} categories={[]} />
+          <div className="px-1 sm:px-0">
+            <CarGrid cars={wishlistCars} categories={[]} />
+          </div>
         )}
 
         <ConfirmationModal

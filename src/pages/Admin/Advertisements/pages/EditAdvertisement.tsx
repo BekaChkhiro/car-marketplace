@@ -40,7 +40,7 @@ const EditAdvertisementPage: React.FC = () => {
               advertisement?.placement === 'car_details') {
       navigate(routes.adminAdvertisementsBanners);
     } else if (advertisement?.placement === 'sidebar') {
-      navigate(routes.adminAdvertisementsSidebar);
+      navigate(routes.adminAdvertisementsAll);
     } else {
       navigate(routes.adminAdvertisementsAll);
     }
@@ -57,7 +57,7 @@ const EditAdvertisementPage: React.FC = () => {
               advertisement?.placement === 'car_details') {
       navigate(routes.adminAdvertisementsBanners);
     } else if (advertisement?.placement === 'sidebar') {
-      navigate(routes.adminAdvertisementsSidebar);
+      navigate(routes.adminAdvertisementsAll);
     } else {
       navigate(routes.adminAdvertisementsAll);
     }

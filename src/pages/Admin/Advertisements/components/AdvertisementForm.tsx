@@ -83,8 +83,8 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
         return 'მთავარი გვერდის სლაიდერი';
       case 'home_banner':
         return 'მთავარი გვერდის ბანერი';
-      case 'sidebar':
-        return 'გვერდითი პანელი';
+      case 'car_listing_top':
+        return 'მანქანების ყიდვის გვერდი - ზედა';
       case 'car_details_top':
         return 'მანქანის დეტალების გვერდი - ზედა';
       case 'car_details_bottom':
@@ -193,7 +193,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                   <option value="" disabled>აირჩიეთ განთავსების ადგილი</option>
                   <option value="home_slider">მთავარი გვერდის სლაიდერი (1200×600px)</option>
                   <option value="home_banner">მთავარი გვერდის ბანერი (1200×300px)</option>
-                  <option value="sidebar">გვერდითი პანელი (400×600px)</option>
+                  <option value="car_listing_top">მანქანების ყიდვის გვერდი - ზედა (728×140px)</option>
                   <option value="car_details_top">მანქანის დეტალების გვერდი - ზედა (728×140px)</option>
                   <option value="car_details_bottom">მანქანის დეტალების გვერდი - ქვედა (728×140px)</option>
                 </select>

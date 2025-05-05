@@ -192,16 +192,7 @@ const AdvertisementsPage: React.FC = () => {
               <Rows className="mr-2 h-4 w-4" />
               ბანერები
             </NavLink>
-            <NavLink
-              to={routes.adminAdvertisementsSidebar}
-              className={({isActive}) => 
-                `${isActive ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
-                whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm flex items-center transition-all duration-200`
-              }
-            >
-              <PanelRight className="mr-2 h-4 w-4" />
-              გვერდითი პანელი
-            </NavLink>
+            {/* Sidebar advertisement navigation removed as requested */}
             <NavLink
               to={routes.adminAdvertisementsAnalytics}
               className={({isActive}) => 
