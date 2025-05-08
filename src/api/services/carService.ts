@@ -744,6 +744,82 @@ class CarService {
     }
   }
 
+  async deleteCarImage(imageId: number): Promise<void> {
+    try {
+      console.log('[CarService.deleteCarImage] Attempting to delete car image with ID:', imageId);
+      await api.delete(`/api/cars/images/${imageId}`, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
+      });
+      console.log('[CarService.deleteCarImage] Successfully deleted car image');
+    } catch (error: any) {
+      console.error('[CarService.deleteCarImage] Error details:', error);
+      
+      // Show detailed error information for debugging
+      if (error?.response?.data) {
+        console.log('[CarService.deleteCarImage] Server error response:', error.response.data);
+      } else {
+        console.log('[CarService.deleteCarImage] No response data available');
+      }
+      
+      // Provide a more user-friendly error message
+      let errorMessage = 'Failed to delete car image.';
+      
+      if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error?.response?.data?.details) {
+        if (error.response.data.details.includes('numeric field overflow')) {
+          errorMessage = 'One of the numeric values exceeds the database field limit. Please check large number entries.';
+        } else {
+          errorMessage = `Server error: ${error.response.data.details}`;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      throw new Error(errorMessage);
+    }
+  }
+
+  async setPrimaryImage(carId: number, imageId: number): Promise<void> {
+    try {
+      console.log('[CarService.setPrimaryImage] Attempting to set primary image for car:', carId, 'image:', imageId);
+      await api.put(`/api/cars/${carId}/images/${imageId}/primary`, {}, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
+      });
+      console.log('[CarService.setPrimaryImage] Successfully set primary image');
+    } catch (error: any) {
+      console.error('[CarService.setPrimaryImage] Error details:', error);
+      
+      // Show detailed error information for debugging
+      if (error?.response?.data) {
+        console.log('[CarService.setPrimaryImage] Server error response:', error.response.data);
+      } else {
+        console.log('[CarService.setPrimaryImage] No response data available');
+      }
+      
+      // Provide a more user-friendly error message
+      let errorMessage = 'Failed to set primary image.';
+      
+      if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error?.response?.data?.details) {
+        if (error.response.data.details.includes('numeric field overflow')) {
+          errorMessage = 'One of the numeric values exceeds the database field limit. Please check large number entries.';
+        } else {
+          errorMessage = `Server error: ${error.response.data.details}`;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      throw new Error(errorMessage);
+    }
+  }
+
   async deleteCar(id: number): Promise<void> {
     try {
       console.log('[CarService.deleteCar] Attempting to delete car with ID:', id);
@@ -1016,6 +1092,19 @@ class CarService {
         }
       });
       console.log('[CarService.getUserCars] Successfully retrieved user cars from API');
+      
+      // Debug log to check if VIP status exists in response
+      const cars = response.data;
+      if (Array.isArray(cars)) {
+        console.log('[CarService.getUserCars] Retrieved cars:', cars.length);
+        console.log('[CarService.getUserCars] Cars with VIP status:', 
+          cars.filter(car => car.vip_status && car.vip_status !== 'none')
+            .map(car => ({ id: car.id, title: car.title || `${car.brand} ${car.model}`, vip_status: car.vip_status }))
+        );
+      } else {
+        console.warn('[CarService.getUserCars] Received non-array data:', typeof cars);
+      }
+      
       return response.data;
     } catch (error: any) {
       console.error('[CarService.getUserCars] Error details:', error);

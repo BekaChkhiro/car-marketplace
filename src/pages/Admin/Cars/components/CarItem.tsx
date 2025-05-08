@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, Edit, Trash2, Calendar, Gauge } from 'lucide-react';
+import { Eye, Edit, Trash2, Calendar, Gauge, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '../../../../api/types/car.types';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
@@ -20,6 +20,25 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
         return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">გაყიდული</span>;
       case 'pending':
         return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">მოლოდინში</span>;
+      default:
+        return null;
+    }
+  };
+  
+  const getVipBadge = (vipStatus?: string) => {
+    switch (vipStatus) {
+      case 'vip':
+        return <span className="px-2.5 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full flex items-center gap-1">
+          <Star size={10} fill="currentColor" /> VIP
+        </span>;
+      case 'vip_plus':
+        return <span className="px-2.5 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full flex items-center gap-1">
+          <Star size={10} fill="currentColor" /> VIP+
+        </span>;
+      case 'super_vip':
+        return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full flex items-center gap-1">
+          <Star size={10} fill="currentColor" /> SUPER VIP
+        </span>;
       default:
         return null;
     }
@@ -83,7 +102,15 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
         <div className="text-xs text-gray-500 mt-1">დამატებულია: {formatDate(car.created_at)}</div>
       </td>
       <td className="px-6 py-4">
-        {getStatusBadge(car.status)}
+        <div className="flex flex-col gap-2">
+          {getStatusBadge(car.status)}
+          {getVipBadge(car.vip_status)}
+          {car.vip_expiration_date && (
+            <div className="text-xs text-gray-500">
+              VIP ვადა: {formatDate(car.vip_expiration_date)}
+            </div>
+          )}
+        </div>
       </td>
       <td className="px-6 py-4 text-right">
         <div className="flex items-center gap-2 justify-end">
@@ -109,15 +136,19 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
             <Trash2 size={16} className="text-red-600" />
           </button>
           
-          <ConfirmationModal
-            isOpen={isDeleteModalOpen}
-            title="მანქანის წაშლა"
-            message={`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${car.brand} ${car.model}?`}
-            confirmText="წაშლა"
-            cancelText="გაუქმება"
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-          />
+          {isDeleteModalOpen && (
+            <ConfirmationModal
+              isOpen={isDeleteModalOpen}
+              title="მანქანის წაშლა"
+              message={`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${car.brand} ${car.model}?`}
+              confirmText="წაშლა"
+              cancelText="გაუქმება"
+              onConfirm={handleConfirmDelete}
+              onCancel={handleCancelDelete}
+            />
+          )}
+          
+
         </div>
       </td>
     </tr>

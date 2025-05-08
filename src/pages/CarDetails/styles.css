@@ -1,0 +1,81 @@
+/* Breadcrumb navigation styling */
+.breadcrumb-nav a {
+  position: relative;
+}
+
+.breadcrumb-nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: #10b981; /* primary color */
+  transition: width 0.3s ease;
+}
+
+.breadcrumb-nav a:hover::after {
+  width: 100%;
+}
+
+/* Scroll to top button animation */
+.scroll-top-button {
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-top-button:hover {
+  transform: translateY(-5px);
+}
+
+/* Card styling */
+.car-detail-card {
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+}
+
+.car-detail-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+/* Spec item styling */
+.spec-item {
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.spec-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #10b981; /* primary color */
+}
+
+/* Focus styles for accessibility */
+a:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Animation for page transitions */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .car-detail-card {
+    border-radius: 0.5rem;
+  }
+}

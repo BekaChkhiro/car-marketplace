@@ -1,0 +1,46 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.tab-button {
+  padding: 0.75rem 1.25rem;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-button.active {
+  color: #10b981; /* primary color */
+  border-bottom: 2px solid #10b981;
+}
+
+.spec-item {
+  transition: all 0.2s ease;
+}
+
+.spec-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.feature-badge {
+  transition: all 0.2s ease;
+}
+
+.feature-badge.active:hover {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .tab-button {
+    padding: 0.5rem 0.75rem;
+  }
+}

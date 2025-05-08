@@ -5,8 +5,11 @@ import ImageProgress from './ImageProgress';
 
 interface ImageUploadWithFeaturedProps {
   files: File[];
+  existingImages?: any[];
   onFilesChange: (files: File[]) => void;
   onFileRemove: (index: number) => void;
+  onExistingImageRemove?: (imageId: number) => void;
+  onSetPrimaryImage?: (imageId: number) => void;
   featuredIndex: number;
   onFeaturedIndexChange: (index: number) => void;
   error?: string;
@@ -16,8 +19,11 @@ interface ImageUploadWithFeaturedProps {
 
 const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   files,
+  existingImages = [],
   onFilesChange,
   onFileRemove,
+  onExistingImageRemove,
+  onSetPrimaryImage,
   maxFiles = 10,
   featuredIndex,
   onFeaturedIndexChange,
@@ -192,8 +198,67 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
         </div>
       </div>
 
-      {files.length > 0 && (
+      {/* არსებული ფოტოები */}
+      {existingImages && existingImages.length > 0 && (
         <div className="space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-medium text-gray-600">არსებული ფოტოები</h4>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {existingImages.map((image, index) => (
+              <div
+                key={image.id}
+                className="relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <img
+                  src={image.medium_url || image.url}
+                  alt={`Car image ${index + 1}`}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {onExistingImageRemove && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onExistingImageRemove(image.id);
+                    }}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/90 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+                    title="ფოტოს წაშლა"
+                  >
+                    <X size={18} />
+                  </button>
+                )}
+                {onSetPrimaryImage && !image.is_primary && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSetPrimaryImage(image.id);
+                    }}
+                    className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:text-primary"
+                    title="დააყენეთ მთავარ სურათად"
+                  >
+                    <Star size={18} fill="none" 
+                      className="transform transition-transform duration-300 hover:rotate-12"
+                    />
+                  </button>
+                )}
+                {image.is_primary && (
+                  <div className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center scale-110 opacity-100">
+                    <Star size={18} fill="white" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ახალი ფოტოები */}
+      {files.length > 0 && (
+        <div className="space-y-4 mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-medium text-gray-600">ახალი ფოტოები</h4>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {files.map((file, index) => (
               <div
@@ -217,6 +282,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                     handleRemove(index);
                   }}
                   className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/90 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+                  title="ფოტოს წაშლა"
                 >
                   <X size={18} />
                 </button>

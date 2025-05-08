@@ -1,0 +1,81 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.image-gallery-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.image-gallery-wrapper img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Thumbnail styles */
+.thumbnail-container {
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.thumbnail-container:hover {
+  transform: translateY(-2px);
+}
+
+.thumbnail-container.active {
+  border-color: #10b981; /* primary color */
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.thumbnail-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.thumbnail-container.active::after,
+.thumbnail-container:hover::after {
+  opacity: 0;
+}
+
+/* Button focus styles for accessibility */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Animation for image loading */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.image-gallery-wrapper img {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .thumbnail-container {
+    border-width: 1px;
+  }
+}

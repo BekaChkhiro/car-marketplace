@@ -1,0 +1,56 @@
+/* Animation for collapsible sections */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Spec item styling */
+.spec-item {
+  transition: all 0.2s ease;
+}
+
+.spec-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Price badge styling */
+.price-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Button focus styles for accessibility */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Card styling */
+.car-detail-card {
+  transition: all 0.3s ease;
+}
+
+.car-detail-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Safety tips section */
+.safety-tips {
+  transition: all 0.3s ease;
+}
+
+.safety-tips:hover {
+  background-color: rgba(254, 240, 199, 0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .spec-item {
+    padding: 0.5rem;
+  }
+}

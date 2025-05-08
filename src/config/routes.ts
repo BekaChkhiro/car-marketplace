@@ -21,9 +21,8 @@ export const routes = {
   cars: '/profile/cars',
   settings: '/admin/settings',
   profileHome: '/profile',
-  favorites: '/profile/favorites',
-  notifications: '/profile/notifications',
   profileSettings: '/profile/settings',
+  profileBalance: '/profile/balance',
   auth: {
     login: '/login',
     register: '/register',

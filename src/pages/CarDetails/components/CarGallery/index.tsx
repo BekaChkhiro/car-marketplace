@@ -1,6 +1,7 @@
-import React from 'react';
-import { Eye } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Eye, ChevronLeft, ChevronRight, Camera, Maximize, ZoomIn } from 'lucide-react';
 import ImageGallery from '../imageGallery/ImageGallery';
+import './styles.css';
 
 interface CarGalleryProps {
   imageUrls: string[];
@@ -8,27 +9,170 @@ interface CarGalleryProps {
 }
 
 const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const thumbnailsRef = useRef<HTMLDivElement>(null);
+
+  // Handle image loading
+  const handleImageLoad = () => {
+    setIsLoading(false);
+  };
+
+  // Handle image navigation
+  const nextImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (imageUrls.length > 0) {
+      setIsLoading(true);
+      setCurrentImageIndex((prev) => (prev + 1) % imageUrls.length);
+    }
+  };
+
+  const prevImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (imageUrls.length > 0) {
+      setIsLoading(true);
+      setCurrentImageIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
+    }
+  };
+
+  // Handle touch events for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 100) {
+      // Swipe left
+      nextImage();
+    }
+
+    if (touchStart - touchEnd < -100) {
+      // Swipe right
+      prevImage();
+    }
+  };
+
+  // Scroll thumbnails to keep active thumbnail visible
+  useEffect(() => {
+    if (thumbnailsRef.current && imageUrls.length > 0) {
+      const thumbnailWidth = 70; // width + margin
+      const scrollPosition = currentImageIndex * thumbnailWidth;
+      thumbnailsRef.current.scrollTo({
+        left: scrollPosition - thumbnailsRef.current.clientWidth / 2 + thumbnailWidth / 2,
+        behavior: 'smooth'
+      });
+    }
+  }, [currentImageIndex, imageUrls.length]);
+
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      {imageUrls.length > 0 ? (
-        <ImageGallery images={imageUrls} />
-      ) : (
-        <div className="bg-gray-100 h-[250px] sm:h-[350px] md:h-[500px] flex items-center justify-center">
-          <div className="text-center p-4 sm:p-6">
-            <svg className="mx-auto h-8 w-8 sm:h-12 sm:w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <p className="mt-2 text-sm sm:text-base text-gray-500">ამ მანქანისთვის სურათები არ არის ხელმისაწვდომი</p>
+    <div className="bg-white rounded-xl shadow-md overflow-hidden border border-green-100 car-detail-card">
+      <div className="relative">
+        {imageUrls.length > 0 ? (
+          <div 
+            className="image-gallery-wrapper"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-80 z-10">
+                <div className="w-12 h-12 border-4 border-green-200 border-t-primary rounded-full animate-spin"></div>
+              </div>
+            )}
+            <img 
+              src={imageUrls[currentImageIndex]} 
+              alt="Car" 
+              className="w-full h-[250px] sm:h-[350px] md:h-[450px] object-cover transition-all duration-300"
+              onLoad={handleImageLoad}
+            />
+            
+            {/* Image navigation buttons */}
+            {imageUrls.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white p-2 sm:p-3 rounded-full text-primary shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white p-2 sm:p-3 rounded-full text-primary shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="Next image"
+                >
+                  <ChevronRight size={20} />
+                </button>
+                
+                {/* Full screen button */}
+                <button
+                  onClick={toggleGallery}
+                  className="absolute top-2 right-2 bg-white/70 hover:bg-white p-2 rounded-full text-primary shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="View fullscreen"
+                >
+                  <Maximize size={16} />
+                </button>
+                
+                {/* Image counter */}
+                <div className="absolute bottom-2 left-2 bg-white/70 text-primary px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                  {currentImageIndex + 1} / {imageUrls.length}
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="bg-gray-50 h-[250px] sm:h-[350px] md:h-[450px] flex items-center justify-center">
+            <div className="text-center p-4 sm:p-6">
+              <div className="mx-auto h-16 w-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
+                <Camera className="h-8 w-8 text-primary" />
+              </div>
+              <p className="text-lg font-medium text-gray-700 mb-2">სურათები არ არის ხელმისაწვდომი</p>
+              <p className="text-sm text-gray-500">ამ მანქანისთვის სურათები არ არის ატვირთული</p>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Thumbnails */}
+      {imageUrls.length > 1 && (
+        <div className="p-2 border-t border-green-50">
+          <div 
+            ref={thumbnailsRef}
+            className="flex overflow-x-auto hide-scrollbar space-x-2 py-2"
+          >
+            {imageUrls.map((url, index) => (
+              <div 
+                key={index} 
+                className={`thumbnail-container ${currentImageIndex === index ? 'active' : ''}`}
+                onClick={() => {
+                  setIsLoading(true);
+                  setCurrentImageIndex(index);
+                }}
+              >
+                <img 
+                  src={url} 
+                  alt={`Thumbnail ${index + 1}`} 
+                  className="w-16 h-12 object-cover rounded-md transition-all duration-200"
+                />
+              </div>
+            ))}
           </div>
         </div>
       )}
       
+      {/* View all images button */}
       {imageUrls.length > 0 && (
-        <div className="p-3 flex justify-end">
+        <div className="px-4 py-3 flex justify-center sm:justify-end border-t border-green-50">
           <button 
             onClick={toggleGallery}
-            className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-white bg-primary hover:bg-green-600 transition-colors px-4 py-2 rounded-lg shadow-sm"
+            aria-label="View all images"
           >
             <Eye className="w-4 h-4" />
             <span>ყველა სურათის ნახვა</span>

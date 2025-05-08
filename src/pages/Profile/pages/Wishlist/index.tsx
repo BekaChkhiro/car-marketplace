@@ -5,11 +5,14 @@ import { Container } from '../../../../components/ui';
 import CarGrid from '../../../CarListing/components/CarGrid';
 import { Trash2 } from 'lucide-react';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
+import { Car } from '../../../../api/types/car.types';
 
 const WishlistPage: React.FC = () => {
-  const { wishlistCars, clearWishlist } = useWishlist();
+  const { wishlistCars, clearWishlist, removeFromWishlist } = useWishlist();
   const { showToast } = useToast();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [carToDelete, setCarToDelete] = useState<Car | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleClearWishlist = async () => {
     try {
@@ -18,6 +21,24 @@ const WishlistPage: React.FC = () => {
       setIsConfirmModalOpen(false);
     } catch (err) {
       showToast('ვერ მოხერხდა სასურველების სიის გასუფთავება', 'error');
+    }
+  };
+
+  const handleDeleteCar = (car: Car) => {
+    setCarToDelete(car);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDeleteCar = async () => {
+    if (!carToDelete) return;
+    
+    try {
+      await removeFromWishlist(carToDelete.id);
+      showToast('მანქანა წაიშალა სასურველებიდან', 'success');
+      setIsDeleteModalOpen(false);
+      setCarToDelete(null);
+    } catch (err) {
+      showToast('ვერ მოხერხდა მანქანის წაშლა სასურველებიდან', 'error');
     }
   };
 
@@ -48,7 +69,12 @@ const WishlistPage: React.FC = () => {
           </div>
         ) : (
           <div className="px-1 sm:px-0">
-            <CarGrid cars={wishlistCars} categories={[]} />
+            <CarGrid 
+              cars={wishlistCars} 
+              categories={[]} 
+              inWishlistPage={true}
+              onRemoveFromWishlist={handleDeleteCar}
+            />
           </div>
         )}
 
@@ -59,6 +85,19 @@ const WishlistPage: React.FC = () => {
           title="სასურველების სიის გასუფთავება"
           message="დარწმუნებული ხართ, რომ გსურთ სასურველების სიის გასუფთავება?"
           confirmText="გასუფთავება"
+          cancelText="გაუქმება"
+        />
+        
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onConfirm={confirmDeleteCar}
+          onCancel={() => {
+            setIsDeleteModalOpen(false);
+            setCarToDelete(null);
+          }}
+          title="ფავორიტიდან წაშლა"
+          message={`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${carToDelete?.brand} ${carToDelete?.model} სასურველებიდან?`}
+          confirmText="წაშლა"
           cancelText="გაუქმება"
         />
       </div>

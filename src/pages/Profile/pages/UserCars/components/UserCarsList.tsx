@@ -1,19 +1,146 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Car } from '../../../../../api/types/car.types';
 import { useNavigate } from 'react-router-dom';
 import { usePrice } from '../../../../../context/usePrice';
 import { useCurrency } from '../../../../../context/CurrencyContext';
-import { Edit2, Trash2, Eye, Calendar, MapPin, Gauge, Fuel, Settings, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { Edit2, Trash2, Eye, Calendar, MapPin, Gauge, Fuel, Settings, CheckCircle, Clock, AlertTriangle, Star, XCircle, Crown } from 'lucide-react';
+import UserVipModal from './UserVipModal';
+import vipService, { VipStatusResponse } from '../../../../../api/services/vipService';
+import { useToast } from '../../../../../context/ToastContext';
 
 interface UserCarsListProps {
   cars: Car[];
   onDelete: (carId: number) => void;
+  onVipUpdate: () => void;
 }
 
-const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
+// ფუნქცია VIP სტატუსის ვადის გასვლამდე დარჩენილი დროის გამოსათვლელად
+const getRemainingTime = (expirationDate: string | undefined | null): { days: number; hours: number; minutes: number } => {
+  if (!expirationDate) return { days: 0, hours: 0, minutes: 0 };
+  
+  // ვადის გასვლის თარიღი და მიმდინარე თარიღი
+  const expDate = new Date(expirationDate);
+  const now = new Date();
+  
+  // დებაგინგისთვის
+  console.log(`Calculating time for ${expirationDate}`);
+  console.log(`Current date: ${now.toISOString()}`);
+  
+  // გამოვთვალოთ მილიწამებს შორის სხვაობა
+  const diffTime = expDate.getTime() - now.getTime();
+  
+  // თუ დრო უარყოფითია, ვადა ამოიწურა
+  if (diffTime <= 0) return { days: 0, hours: 0, minutes: 0 };
+  
+  // გადავიყვანოთ მილიწამები დღეებად, საათებად და წუთებად
+  const msPerMinute = 1000 * 60;
+  const msPerHour = msPerMinute * 60;
+  const msPerDay = msPerHour * 24;
+  
+  const days = Math.floor(diffTime / msPerDay);
+  const remainingMs = diffTime % msPerDay;
+  
+  const hours = Math.floor(remainingMs / msPerHour);
+  const remainingMsAfterHours = remainingMs % msPerHour;
+  
+  const minutes = Math.floor(remainingMsAfterHours / msPerMinute);
+  
+  console.log(`Remaining time: ${days} days, ${hours} hours, ${minutes} minutes`);
+  
+  return { days, hours, minutes };
+};
+
+// დარჩენილი დღეების მიღება ძველი ფუნქციის შესანარჩუნებლად
+const getRemainingDays = (expirationDate: string | undefined | null): number => {
+  const { days } = getRemainingTime(expirationDate);
+  return days;
+};
+
+// ფუნქცია დარჩენილი დროის ქართულად გამოსახატად
+const formatRemainingTime = (expirationDate: string | undefined | null): string => {
+  if (!expirationDate) return 'ვადა ამოიწურა';
+  
+  const { days, hours, minutes } = getRemainingTime(expirationDate);
+  
+  if (days === 0 && hours === 0 && minutes === 0) return 'ვადა ამოიწურა';
+  
+  // თუ 1 დღეზე ნაკლებია დარჩენილი, ვაჩვენოთ საათები და წუთები
+  if (days === 0) {
+    if (hours === 0) {
+      return `დარჩენილია ${minutes} წუთი`;
+    }
+    return `დარჩენილია ${hours} საათი და ${minutes} წუთი`;
+  }
+  
+  // თუ 1 დღე ან მეტია დარჩენილი, ვაჩვენოთ მხოლოდ დღეები
+  if (days === 1) return 'დარჩენილია 1 დღე';
+  return `დარჩენილია ${days} დღე`;
+};
+
+// ძველი ფუნქცია შესანარჩუნებლად, მაგრამ ახლა იყენებს ახალ ლოგიკას
+const formatRemainingDays = (days: number): string => {
+  if (days === 0) return 'ვადა ამოიწურა';
+  if (days === 1) return 'დარჩენილია 1 დღე';
+  return `დარჩენილია ${days} დღე`;
+};
+
+const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate }) => {
+  // ვინახავთ მანქანების VIP სტატუსის ინფორმაციას
+  const [vipStatusInfo, setVipStatusInfo] = useState<Record<number, VipStatusResponse>>({});
+  const [loadingVipInfo, setLoadingVipInfo] = useState<boolean>(false);
+
+  // კონსოლში გამოვიტანოთ მანქანები, რომლებსაც აქვთ VIP სტატუსი
+  console.log('UserCarsList received cars with VIP status:', cars.filter(car => car.vip_status && car.vip_status !== 'none').map(car => ({ id: car.id, vip_status: car.vip_status, vip_expiration_date: car.vip_expiration_date, remaining_days: car.vip_expiration_date ? getRemainingDays(car.vip_expiration_date) : 'N/A' })));
+  
+  // ვნახოთ მანქანის ობიექტის სრული სტრუქტურა
+  if (cars.length > 0 && cars[0].vip_status && cars[0].vip_status !== 'none') {
+    const carWithVip = cars.filter(car => car.vip_status && car.vip_status !== 'none')[0];
+    console.log('Full car object with VIP status:', carWithVip);
+    // შევამოწმოთ ყველა ველი
+    console.log('All properties of car object:', Object.keys(carWithVip));
+    console.log('All properties with values:', Object.entries(carWithVip).reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {} as any));
+  }
+  
+  // მივიღოთ VIP სტატუსის ინფორმაცია სერვერიდან
+  useEffect(() => {
+    const fetchVipStatusInfo = async () => {
+      // ფილტრაცია მანქანების, რომლებსაც აქვთ VIP სტატუსი
+      const carsWithVip = cars.filter(car => car.vip_status && car.vip_status !== 'none');
+      if (carsWithVip.length === 0) return;
+      
+      setLoadingVipInfo(true);
+      
+      try {
+        const vipInfoPromises = carsWithVip.map(car => vipService.getVipStatusInfo(car.id));
+        const vipInfoResults = await Promise.all(vipInfoPromises);
+        
+        const vipInfoMap: Record<number, VipStatusResponse> = {};
+        vipInfoResults.forEach(info => {
+          vipInfoMap[info.id] = info;
+        });
+        
+        setVipStatusInfo(vipInfoMap);
+        console.log('Fetched VIP status info:', vipInfoMap);
+      } catch (error) {
+        console.error('Error fetching VIP status info:', error);
+      } finally {
+        setLoadingVipInfo(false);
+      }
+    };
+    
+    fetchVipStatusInfo();
+  }, [cars]);
   const navigate = useNavigate();
   const { currency } = useCurrency();
   const { formatPrice } = usePrice();
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [isVipModalOpen, setIsVipModalOpen] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [loading, setLoading] = useState<number | null>(null);
+  const { showToast } = useToast();
 
   // ფუნქცია სტატუსის მნიშვნელობის ქართულად გადასათარგმნად
   const getStatusText = (status: string): string => {
@@ -30,6 +157,23 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
         return 'წაშლილია';
       default:
         return 'უცნობია';
+    }
+  };
+  
+  // ფუნქციები გადატანილია კომპონენტის გარეთ
+
+  // VIP სტატუსის გათიშვის ფუნქცია
+  const handleDisableVip = async (carId: number) => {
+    try {
+      setLoading(carId);
+      await vipService.disableVipStatus(carId);
+      showToast('VIP სტატუსი გაუქმებულია', 'success');
+      onVipUpdate(); // განაახლეთ მშობელი კომპონენტი
+    } catch (error) {
+      console.error('Error disabling VIP status:', error);
+      showToast('შეცდომა VIP სტატუსის გაუქმებისას', 'error');
+    } finally {
+      setLoading(null);
     }
   };
 
@@ -76,8 +220,10 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
   };
 
   return (
-    <div>
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       {/* Desktop view - Table */}
+      {/* დებაგ: VIP სტატუსის მანქანების ჩვენება გამორთულია */}
+      
       <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
         <div className="overflow-x-auto">
           <table className="w-full min-w-full divide-y divide-gray-200">
@@ -107,20 +253,24 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
                 return (
                   <tr 
                     key={car.id} 
-                    className="hover:bg-gray-50 transition-colors duration-150"
+                    className="group hover:bg-blue-50/30 transition-colors duration-150"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0 h-14 w-20 bg-gray-100 rounded-md overflow-hidden">
+                        <div className="flex-shrink-0 h-14 w-20 bg-gray-100 rounded-md overflow-hidden relative">
                           <img 
                             src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
                             alt={`${car.brand} ${car.model}`} 
                             className="h-full w-full object-cover"
                           />
+                          {/* VIP ბეჯი სურათზე გამორთულია */}
                         </div>
                         <div className="flex flex-col">
-                          <div className="text-sm font-medium text-gray-900">
-                            {car.title || `${car.brand} ${car.model}`}
+                          <div className="flex items-center">
+                            <div className="text-sm font-medium text-gray-900">
+                              {car.title || `${car.brand} ${car.model}`}
+                            </div>
+                            {/* VIP სტატუსის ბეჯი გამორთულია */}
                           </div>
                           <div className="flex items-center text-xs text-gray-500 mt-1">
                             <Calendar size={14} className="mr-1" /> {car.year}
@@ -140,16 +290,17 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center text-xs text-gray-500">
                           <Gauge size={14} className="mr-2" /> 
-                          <span>{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
+                          <span>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
                         </div>
                         <div className="flex items-center text-xs text-gray-500">
                           <Fuel size={14} className="mr-2" /> 
-                          <span>{car.specifications.fuel_type}</span>
+                          <span>{car.specifications?.fuel_type}</span>
                         </div>
                         <div className="flex items-center text-xs text-gray-500">
                           <Settings size={14} className="mr-2" /> 
-                          <span>{car.specifications.transmission}</span>
+                          <span>{car.specifications?.transmission}</span>
                         </div>
+                        {/* VIP სტატუსის კონტროლი გამორთულია */}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -159,13 +310,95 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => navigate(`/cars/${car.id}`)}
-                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm"
-                      >
-                        <Eye size={16} className="mr-2" />
-                        ნახვა
-                      </button>
+                      <div className="flex items-center gap-2 justify-end">
+                        {car.vip_status && car.vip_status !== 'none' ? (
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => {
+                                setSelectedCar(car);
+                                setIsVipModalOpen(true);
+                              }}
+                              className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 ${car.vip_status === 'vip' ? 'bg-blue-100 hover:bg-blue-200 text-blue-700' : car.vip_status === 'vip_plus' ? 'bg-purple-100 hover:bg-purple-200 text-purple-700' : 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700'}`}
+                              title={`აქტიური VIP სტატუსი: ${car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP'}`}
+                            >
+                              <Star 
+                                size={16} 
+                                fill="currentColor" 
+                              />
+                              <span className="text-xs font-medium">
+                                {car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER'}
+                                {/* დარჩენილი დღეების ჩვენება დესკტოპის ვერსიაში */}
+                                <span className="ml-1 px-1 py-0.5 bg-white bg-opacity-70 rounded text-xs">
+                                  {(() => {
+                                    if (loadingVipInfo) {
+                                      return '...';
+                                    }
+                                    
+                                    // პირველად ვცდილობთ vipStatusInfo-დან მივიღოთ თარიღი
+                                    if (vipStatusInfo[car.id]?.vip_expiration_date) {
+                                      return `დარჩენილია ${getRemainingDays(vipStatusInfo[car.id].vip_expiration_date)} დღე`;
+                                    }
+                                    
+                                    // თუ vipStatusInfo-ში არ არის, ვცდილობთ car ობიექტიდან
+                                    if (car.vip_expiration_date) {
+                                      return `${getRemainingDays(car.vip_expiration_date)} დღე`;
+                                    }
+                                    
+                                    return '?';
+                                  })()}
+                                </span>
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => handleDisableVip(car.id)}
+                              disabled={loading === car.id}
+                              className="p-1.5 hover:bg-red-100 rounded-lg transition-colors"
+                              title="VIP სტატუსის გათიშვა"
+                            >
+                              <XCircle 
+                                size={16} 
+                                className={`${loading === car.id ? 'text-gray-400' : 'text-red-500'}`} 
+                              />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setSelectedCar(car);
+                              setIsVipModalOpen(true);
+                            }}
+                            className="p-1.5 hover:bg-yellow-100 rounded-lg transition-colors group-hover:bg-yellow-100"
+                            title="VIP სტატუსის დამატება"
+                          >
+                            <Star 
+                              size={16} 
+                              className="text-gray-600 group-hover:text-yellow-600" 
+                              fill="none" 
+                            />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => navigate(`/cars/${car.id}`)}
+                          className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
+                          title="ნახვა"
+                        >
+                          <Eye size={16} className="text-gray-600 group-hover:text-blue-600" />
+                        </button>
+                        <button
+                          onClick={() => navigate(`/profile/cars/edit/${car.id}`)}
+                          className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
+                          title="რედაქტირება"
+                        >
+                          <Edit2 size={16} className="text-gray-600 group-hover:text-blue-600" />
+                        </button>
+                        <button
+                          onClick={() => onDelete(car.id)}
+                          className="p-1.5 hover:bg-red-100 rounded-lg transition-colors group-hover:bg-red-100"
+                          title="წაშლა"
+                        >
+                          <Trash2 size={16} className="text-red-600" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -186,17 +419,21 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
               className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
             >
               <div className="flex items-center p-4 border-b border-gray-100">
-                <div className="flex-shrink-0 h-20 w-28 bg-gray-100 rounded-md overflow-hidden mr-4">
-                  <img 
-                    src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
-                    alt={`${car.brand} ${car.model}`} 
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <div className="text-base font-medium text-gray-900 mb-1">
-                    {car.title || `${car.brand} ${car.model}`}
+                  <div className="flex-shrink-0 h-20 w-28 bg-gray-100 rounded-md overflow-hidden mr-4 relative">
+                    <img 
+                      src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
+                      alt={`${car.brand} ${car.model}`} 
+                      className="h-full w-full object-cover"
+                    />
+                    {/* VIP ბეჯი სურათზე გამორთულია */}
                   </div>
+                  <div className="flex-1">
+                    <div className="flex items-center mb-1">
+                      <div className="text-base font-medium text-gray-900">
+                        {car.title || `${car.brand} ${car.model}`}
+                      </div>
+                      {/* VIP სტატუსის ბეჯი გამორთულია */}
+                    </div>
                   <div className="text-lg font-semibold text-primary mb-1">
                     {formatPrice(car.price)}
                   </div>
@@ -208,6 +445,68 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
               </div>
               
               <div className="p-4 border-b border-gray-100 bg-gray-50">
+                {car.vip_status && car.vip_status !== 'none' && (
+                  <div className={`mb-3 p-2 rounded-lg ${car.vip_status === 'vip' ? 'bg-blue-100 text-blue-700' : car.vip_status === 'vip_plus' ? 'bg-purple-100 text-purple-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    <div className="flex items-center justify-center gap-2">
+                      <Star size={18} fill="currentColor" />
+                      <span className="font-semibold text-sm">
+                        {car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP'}
+                        {/* დარჩენილი დღეების ჩვენება VIP ბეიჯის გვერდით */}
+                        <span className="ml-2 px-1.5 py-0.5 bg-white bg-opacity-50 rounded-md text-xs">
+                          {(() => {
+                            if (loadingVipInfo) {
+                              return '...';
+                            }
+                            
+                            // პირველად ვცდილობთ vipStatusInfo-დან მივიღოთ თარიღი
+                            if (vipStatusInfo[car.id]?.vip_expiration_date) {
+                              return `${getRemainingDays(vipStatusInfo[car.id].vip_expiration_date)} დღე`;
+                            }
+                            
+                            // თუ vipStatusInfo-ში არ არის, ვცდილობთ car ობიექტიდან
+                            if (car.vip_expiration_date) {
+                              return `${getRemainingDays(car.vip_expiration_date)} დღე`;
+                            }
+                            
+                            return '?';
+                          })()}
+                        </span>
+                      </span>
+                    </div>
+                    
+                    {/* დამატებითი ინფორმაცია ვადის შესახებ */}
+                    <div className="mt-1 flex items-center justify-center gap-1">
+                      <Clock size={14} />
+                      <span className="text-xs font-medium">
+                        {(() => {
+                          if (loadingVipInfo) {
+                            return 'იტვირთება...';
+                          }
+                          
+                          // პირველად ვცდილობთ vipStatusInfo-დან მივიღოთ თარიღი
+                          if (vipStatusInfo[car.id]?.vip_expiration_date) {
+                            const expDate = new Date(vipStatusInfo[car.id].vip_expiration_date);
+                            const day = expDate.getDate().toString().padStart(2, '0');
+                            const month = (expDate.getMonth() + 1).toString().padStart(2, '0');
+                            const year = expDate.getFullYear();
+                            return `ვადა: ${day}.${month}.${year}`;
+                          }
+                          
+                          // თუ vipStatusInfo-ში არ არის, ვცდილობთ car ობიექტიდან
+                          if (car.vip_expiration_date) {
+                            const expDate = new Date(car.vip_expiration_date);
+                            const day = expDate.getDate().toString().padStart(2, '0');
+                            const month = (expDate.getMonth() + 1).toString().padStart(2, '0');
+                            const year = expDate.getFullYear();
+                            return `ვადა: ${day}.${month}.${year}`;
+                          }
+                          
+                          return 'ვადა უცნობია';
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="flex flex-col items-center p-2 bg-white rounded-lg">
                     <div className="flex items-center text-xs text-gray-500 mb-1">
@@ -234,18 +533,125 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete }) => {
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin size={16} className="mr-1" /> {car.location.city}
                 </div>
-                <button
-                  onClick={() => navigate(`/cars/${car.id}`)}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm"
-                >
-                  <Eye size={16} className="mr-2" />
-                  ნახვა
-                </button>
+                <div className="flex gap-2 mt-3 justify-end p-3 pt-0">
+                {car.vip_status && car.vip_status !== 'none' ? (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => {
+                        setSelectedCar(car);
+                        setIsVipModalOpen(true);
+                      }}
+                      className={`p-2 rounded-lg transition-colors ${car.vip_status === 'vip' ? 'bg-blue-100 hover:bg-blue-200 text-blue-700' : car.vip_status === 'vip_plus' ? 'bg-purple-100 hover:bg-purple-200 text-purple-700' : 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700'}`}
+                      title={`აქტიური VIP სტატუსი: ${car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP'} - ${formatRemainingDays(getRemainingDays(car.vip_expiration_date))}`}
+                    >
+                      <div className="flex flex-col w-full">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1">
+                            <Crown 
+                              size={16} 
+                              fill="currentColor" 
+                            />
+                            <span className="text-xs font-medium">{car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER'}</span>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // ვაჩერებთ მშობელი ღილაკის კლიკს
+                              handleDisableVip(car.id);
+                            }}
+                            disabled={loading === car.id}
+                            className="ml-2 p-1 hover:bg-red-200 rounded transition-colors"
+                            title="VIP სტატუსის გათიშვა"
+                          >
+                            <XCircle 
+                              size={14} 
+                              className={`${loading === car.id ? 'text-gray-400' : 'text-red-500'}`} 
+                            />
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-1 mt-1 text-xs opacity-80">
+                          <Clock size={12} />
+                          <span>
+                            {(() => {
+                              if (loadingVipInfo) {
+                                return 'იტვირთება...';
+                              }
+                              
+                              if (vipStatusInfo[car.id]?.vip_expiration_date) {
+                                return formatRemainingTime(vipStatusInfo[car.id].vip_expiration_date);
+                              }
+                              
+                              if (car.vip_expiration_date) {
+                                return formatRemainingTime(car.vip_expiration_date);
+                              }
+                              
+                              return 'დღეები არ არის მითითებული';
+                            })()}
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setSelectedCar(car);
+                      setIsVipModalOpen(true);
+                    }}
+                    className="p-2 hover:bg-yellow-100 rounded-lg transition-colors relative"
+                    title="VIP სტატუსის დამატება"
+                  >
+                    <Crown 
+                      size={16} 
+                      className="text-gray-600 hover:text-yellow-600" 
+                      fill="none" 
+                    />
+                  </button>
+                )}
+                  <button
+                    onClick={() => navigate(`/cars/${car.id}`)}
+                    className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
+                    title="ნახვა"
+                  >
+                    <Eye size={16} className="text-gray-600 hover:text-blue-600" />
+                  </button>
+                  <button
+                    onClick={() => navigate(`/profile/cars/edit/${car.id}`)}
+                    className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
+                    title="რედაქტირება"
+                  >
+                    <Edit2 size={16} className="text-gray-600 hover:text-blue-600" />
+                  </button>
+                  <button
+                    onClick={() => onDelete(car.id)}
+                    className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+                    title="წაშლა"
+                  >
+                    <Trash2 size={16} className="text-red-600" />
+                  </button>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* VIP Status Modal */}
+      {selectedCar && (
+        <UserVipModal
+          car={selectedCar}
+          isOpen={isVipModalOpen}
+          onClose={() => {
+            setIsVipModalOpen(false);
+            setSelectedCar(null);
+          }}
+          onStatusUpdate={() => {
+            // ვიძახებთ onVipUpdate კოლბეკს მშობელი კომპონენტიდან, რათა განახლდეს მანქანების სია
+            onVipUpdate();
+            // ლოკალური რეფრეშის ტრიგერი
+            setRefreshTrigger(prev => prev + 1);
+          }}
+        />
+      )}
     </div>
   );
 };

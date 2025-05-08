@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Phone, MessageCircle } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -14,46 +14,68 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
 
   return (
-    <div className="block lg:hidden mt-4 space-y-4">
+    <div className="block md:hidden mt-4 space-y-4">
       {/* Title and Price */}
-      <div className="bg-white rounded-xl shadow-sm p-4">
-        <h1 className="text-xl font-bold text-gray-800 mb-2">
-          {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
-        </h1>
-        <div className="text-2xl font-bold text-primary">
-          {formatPrice(car.price || 0)}
-        </div>
-        
-        {/* Location if available */}
-        {car.location && (
-          <div className="flex items-center mt-3 text-gray-600 text-sm">
-            <MapPin className="w-3 h-3 mr-1" />
-            <span>
-              {car.location.city || ''}
-              {car.location.country && `, ${car.location.country}`}
-            </span>
+      <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+          <div className="mb-3 sm:mb-0">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">
+              {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
+            </h1>
+            
+            {/* Location if available */}
+            {car.location && (
+              <div className="flex items-center mt-1 text-gray-600 text-sm">
+                <MapPin className="w-4 h-4 mr-1 text-primary" />
+                <span>
+                  {car.location.city || ''}
+                  {car.location.country && `, ${car.location.country}`}
+                </span>
+              </div>
+            )}
           </div>
-        )}
+          
+          <div className="price-badge text-xl sm:text-2xl font-bold text-primary bg-green-50 px-4 py-2 rounded-lg inline-block">
+            {formatPrice(car.price || 0)}
+          </div>
+        </div>
       </div>
       
       {/* Key Specs */}
-      <div className="bg-white rounded-xl shadow-sm p-4">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
+          ძირითადი მახასიათებლები
+        </h3>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {keySpecs.map((spec, index) => (
-            <div key={index} className="flex flex-col">
-              <div className="flex items-center text-gray-500 mb-1">
+            <div key={index} className="spec-item flex items-center p-2 sm:p-3 bg-green-50 rounded-lg">
+              <div className="spec-item-icon mr-3">
                 {spec.icon}
-                <span className="text-xs ml-1">{spec.label}</span>
               </div>
-              <span className="font-medium">{spec.value}</span>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">{spec.label}</span>
+                <span className="font-medium text-primary text-sm sm:text-base">{spec.value}</span>
+              </div>
             </div>
           ))}
         </div>
       </div>
       
       {/* Mobile Contact Buttons */}
-      <div className="bg-white rounded-xl shadow-sm p-4">
-        <ContactButtons phone="+995 555 123456" />
+      <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
+          დაგვიკავშირდით
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <a href="tel:+995555123456" className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-green-600 transition-colors">
+            <Phone className="w-5 h-5" />
+            <span>დარეკვა</span>
+          </a>
+          <a href="sms:+995555123456" className="flex items-center justify-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium border border-primary hover:bg-green-100 transition-colors">
+            <MessageCircle className="w-5 h-5" />
+            <span>მესიჯი</span>
+          </a>
+        </div>
       </div>
     </div>
   );

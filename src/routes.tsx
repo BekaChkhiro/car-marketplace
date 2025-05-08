@@ -25,14 +25,13 @@ import ForgotPassword from './pages/Auth/ForgotPassword';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import ProfileHome from './pages/Profile/pages/ProfileHome';
-import Favorites from './pages/Profile/pages/Favorites';
-import Notifications from './pages/Profile/pages/Notifications';
 import Settings from './pages/Profile/pages/Settings';
 import AddCar from './pages/Profile/pages/AddCar';
 import ResetPassword from './pages/Auth/ResetPassword';
 import UserCars from './pages/Profile/pages/UserCars/index';
-import EditCar from './pages/Profile/pages/EditCar';
+import EditCar from './pages/Profile/pages/EditCar/index';
 import Wishlist from './pages/Profile/pages/Wishlist';
+import Balance from './pages/Profile/pages/Balance';
 import HowToSell from './pages/HowToSell';
 
 const AppRoutes = () => {
@@ -76,8 +75,7 @@ const AppRoutes = () => {
         <Route path={routes.cars} element={<UserCars />} />
         <Route path="cars/edit/:id" element={<EditCar />} />
         <Route path={routes.addCar} element={<AddCar />} />
-        <Route path={routes.favorites} element={<Favorites />} />
-        <Route path={routes.notifications} element={<Notifications />} />
+        <Route path={routes.profileBalance} element={<Balance />} />
         <Route path={routes.profileSettings} element={<Settings />} />
         <Route path="wishlist" element={<Wishlist />} />
       </Route>

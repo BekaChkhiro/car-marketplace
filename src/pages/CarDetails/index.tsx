@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container } from '../../components/ui';
-import { Calendar, Gauge, Fuel, Shield } from 'lucide-react';
+import { Calendar, Gauge, Fuel, Shield, ArrowUp, ChevronRight } from 'lucide-react';
 import useCarDetails, { KeySpec } from './hooks/useCarDetails';
 import LoadingState from './components/LoadingState';
 import NotFoundState from './components/NotFoundState';
 import CarHeader from './components/CarHeader';
 import CarGallery from './components/CarGallery';
 import MobileCarInfo from './components/MobileCarInfo';
-import CarInfo from './components/carInfo/CarInfo';
 import CarSpecs from './components/CarSpecs';
 import CarPriceCard from './components/CarPriceCard';
+import VipStatusPurchase from './components/VipStatusPurchase';
 import SimilarCarsSection from './components/SimilarCarsSection';
-import AdvertisementSection from './components/AdvertisementSection';
+import { useAuth } from '../../context/AuthContext';
+import './styles.css';
 
 const CarDetails: React.FC = () => {
+  // State for scroll-to-top button visibility
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const [refreshCarData, setRefreshCarData] = useState(false);
+  
   const {
     car,
     loading,
@@ -21,7 +27,21 @@ const CarDetails: React.FC = () => {
     toggleFavorite,
     handleShare,
     toggleGallery
-  } = useCarDetails();
+  } = useCarDetails(refreshCarData);
+  
+  // Handle scroll event to show/hide scroll-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (loading) {
     return <LoadingState />;
@@ -43,76 +63,100 @@ const CarDetails: React.FC = () => {
   // Get key specifications with enhanced styling
   const keySpecs: KeySpec[] = [
     { 
-      icon: <Calendar className="w-5 h-5 text-blue-500" />, 
+      icon: <Calendar className="w-5 h-5 text-primary" />, 
       label: 'წელი', 
-      value: year,
-      color: 'bg-blue-50',
-      textColor: 'text-blue-700'
+      value: year
     },
     { 
-      icon: <Gauge className="w-5 h-5 text-green-500" />, 
+      icon: <Gauge className="w-5 h-5 text-primary" />, 
       label: 'გარბენი', 
-      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : 'N/A',
-      color: 'bg-green-50',
-      textColor: 'text-green-700'
+      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : 'N/A'
     },
     { 
-      icon: <Fuel className="w-5 h-5 text-orange-500" />, 
+      icon: <Fuel className="w-5 h-5 text-primary" />, 
       label: 'საწვავი', 
-      value: car.specifications?.fuel_type || 'N/A',
-      color: 'bg-orange-50',
-      textColor: 'text-orange-700'
+      value: car.specifications?.fuel_type || 'N/A'
     },
     { 
-      icon: <Shield className="w-5 h-5 text-purple-500" />, 
+      icon: <Shield className="w-5 h-5 text-primary" />, 
       label: 'სათავსო', 
-      value: car.specifications?.transmission || 'N/A',
-      color: 'bg-purple-50',
-      textColor: 'text-purple-700'
+      value: car.specifications?.transmission || 'N/A'
     },
   ];
+  
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      {/* Top navigation bar with premium styling */}
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      {/* Top navigation bar */}
       <CarHeader 
         isFavorite={isFavorite} 
         handleShare={handleShare} 
         toggleFavorite={toggleFavorite} 
       />
       
-      <Container>
+      <Container className="px-3 sm:px-4 md:px-6 lg:px-8 pb-16">
+        {/* Breadcrumb navigation */}
+        <nav className="py-3 mb-2 flex items-center text-sm text-gray-500 breadcrumb-nav">
+          <a href="/" className="hover:text-primary transition-colors">მთავარი</a>
+          <span className="mx-2">/</span>
+          <a href="/cars" className="hover:text-primary transition-colors">მანქანები</a>
+          <span className="mx-2">/</span>
+          <span className="text-primary font-medium truncate max-w-[150px] sm:max-w-xs">
+            {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
+          </span>
+        </nav>
+        
         {/* Main content area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
           {/* Left column - Images and details */}
-          <div className="lg:col-span-8">
+          <div className="md:col-span-7 lg:col-span-8">
             {/* Image Gallery */}
             <CarGallery imageUrls={imageUrls} toggleGallery={toggleGallery} />
 
-            {/* Mobile Title, Price, and Key Specs */}
+            {/* Mobile/Tablet Title, Price, and Key Specs - only shown on mobile and tablet */}
             <MobileCarInfo car={car} keySpecs={keySpecs} />
-
-            {/* Car Details */}
-            <div className="mt-4 bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">მანქანის დეტალები</h2>
-              <CarInfo car={car} />
-            </div>
             
             {/* Car Specifications */}
             <CarSpecs car={car} />
           </div>
           
-          {/* Right column - Price and contact info (desktop only) */}
-          <div className="hidden lg:block lg:col-span-4">
-            <CarPriceCard car={car} keySpecs={keySpecs} />
+          {/* Right column - Price and contact info (tablet and desktop only) */}
+          <div className="hidden md:block md:col-span-5 lg:col-span-4">
+            <div className="sticky top-24">
+              {/* Only show VIP purchase if user is the owner of the car */}
+              {isAuthenticated && user && car && car.seller_id === user.id && (
+                <VipStatusPurchase 
+                  car={car} 
+                  onSuccess={() => setRefreshCarData(prev => !prev)} 
+                />
+              )}
+              <CarPriceCard car={car} keySpecs={keySpecs} />
+            </div>
           </div>
         </div>
         
         {/* Similar Cars Section */}
-        <SimilarCarsSection carId={car?.id?.toString() || ''} categoryId={categoryId} />
+        <div className="mt-6 md:mt-10 similar-cars-section">
+          <SimilarCarsSection carId={car?.id?.toString() || ''} categoryId={categoryId} />
+        </div>
         
-        {/* Bottom Advertisement - responsive */}
-        <AdvertisementSection />
+        {/* Scroll to top button */}
+        {showScrollTop && (
+          <button 
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 z-50 scroll-top-button"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </button>
+        )}
       </Container>
     </div>
   );

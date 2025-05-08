@@ -9,7 +9,8 @@ import {
   Gauge,
   Tag,
   Calendar,
-  Car as CarIcon
+  Car as CarIcon,
+  Star
 } from 'lucide-react';
 import { CustomSwitch } from './layout/Header/components/CurrencySelector';
 import { useCurrency } from '../context/CurrencyContext';
@@ -28,9 +29,10 @@ interface CarCardProps {
   isOwner?: boolean;
   onDelete?: () => void;
   showWishlistButton?: boolean;
+  showVipBadge?: boolean;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOwner, onDelete, showWishlistButton = true }) => {
+const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOwner, onDelete, showWishlistButton = true, showVipBadge = false }) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -154,6 +156,22 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
       onClick={handleClick}
       className="group relative bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col h-full"
     >
+      {/* VIP Badge */}
+      {showVipBadge && car.vip_status && car.vip_status !== 'none' && (
+        <div className="absolute top-2 right-2 z-10">
+          <div className={
+            `px-2 py-1 rounded-full flex items-center gap-1 text-xs font-medium shadow-sm ${car.vip_status === 'vip' 
+              ? 'bg-blue-500 text-white' 
+              : car.vip_status === 'vip_plus'
+              ? 'bg-purple-500 text-white'
+              : 'bg-yellow-500 text-yellow-900'}`
+          }>
+            <Star size={12} fill="currentColor" /> 
+            {car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP'}
+          </div>
+        </div>
+      )}
+
       {/* Image carousel */}
       <div className="relative h-32 sm:h-40 md:h-48 lg:h-52 bg-gray-100">
         {images.length > 0 ? (
@@ -183,16 +201,19 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         {showWishlistButton && (
           <button
             onClick={handleWishlistClick}
-            className={`absolute top-3 right-3 p-2 rounded-full bg-white/90 ${
-              isInWishlistState ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+            className={`absolute top-3 right-3 p-2 rounded-full ${  
+              isInWishlistState 
+                ? 'bg-primary text-white' 
+                : 'bg-white/90 text-gray-400 hover:bg-primary hover:text-white'
             } transition-all duration-200 shadow-sm hover:shadow`}
             disabled={isLoadingWishlist}
+            title={isInWishlistState ? 'წაშლა ფავორიტებიდან' : 'დამატება ფავორიტებში'}
           >
-            {isInWishlistState ? (
-              <Heart className="h-5 w-5" />
-            ) : (
-              <Heart className="h-5 w-5" />
-            )}
+            <Heart 
+              className="h-5 w-5" 
+              fill={isInWishlistState ? "currentColor" : "none"} 
+              strokeWidth={isInWishlistState ? 0 : 2}
+            />
           </button>
         )}
 

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import { getAccessToken, removeStoredToken, isTokenExpired, getRefreshToken, setStoredToken } from '../utils/tokenStorage';
 import { AuthResponse, Tokens } from '../types/auth.types';
 import authService from '../services/authService';
@@ -92,16 +92,24 @@ api.interceptors.request.use(
               { withCredentials: true }
             );
             setStoredToken(response.data.token, response.data.refreshToken);
-            config.headers = config.headers || {};
-            config.headers.Authorization = `Bearer ${response.data.token}`;
+            if (!config.headers) {
+              // @ts-ignore - ახალი axios-ის ვერსიებში ტიპები შეიცვალა
+              config.headers = {};
+            }
+            // @ts-ignore - ახალი axios-ის ვერსიებში ტიპები შეიცვალა
+            config.headers['Authorization'] = `Bearer ${response.data.token}`;
           } catch (error) {
             console.error('Token refresh failed during request:', error);
             removeStoredToken();
             throw error;
           }
         } else {
-          config.headers = config.headers || {};
-          config.headers.Authorization = `Bearer ${accessToken}`;
+          if (!config.headers) {
+            // @ts-ignore - ახალი axios-ის ვერსიებში ტიპები შეიცვალა
+            config.headers = {};
+          }
+          // @ts-ignore - ახალი axios-ის ვერსიებში ტიპები შეიცვალა
+          config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
       }
     }

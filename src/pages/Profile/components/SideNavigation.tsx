@@ -3,13 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Car, 
   Heart, 
-  Bell, 
   Settings, 
   Home,
   LogOut,
   PlusCircle,
-  BookmarkCheck,
-  X
+  X,
+  Wallet
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -38,20 +37,14 @@ const SideNavigation: React.FC<SideNavigationProps> = ({ onCloseMobileMenu }) =>
       icon: PlusCircle
     },
     {
-      name: 'სასურველები',
-      path: '/profile/wishlist',
-      icon: BookmarkCheck
+      name: 'ბალანსი',
+      path: '/profile/balance',
+      icon: Wallet
     },
     {
       name: 'ფავორიტები',
-      path: '/profile/favorites',
+      path: '/profile/wishlist',
       icon: Heart
-    },
-    {
-      name: 'შეტყობინებები',
-      path: '/profile/notifications',
-      icon: Bell,
-      hasNotifications: true
     },
     {
       name: 'პარამეტრები',
@@ -102,9 +95,6 @@ const SideNavigation: React.FC<SideNavigationProps> = ({ onCloseMobileMenu }) =>
               >
                 <item.icon className="w-5 h-5 mr-3" />
                 {item.name}
-                {item.hasNotifications && (
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full" />
-                )}
               </Link>
             );
           })}

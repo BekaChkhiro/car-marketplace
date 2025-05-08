@@ -102,7 +102,51 @@ class WishlistService {
   async getWishlist(): Promise<Car[]> {
     try {
       const response = await api.get('/api/wishlist');
-      return response.data;
+      
+      // Transform the API response to match the expected Car interface
+      const transformedCars = response.data.map((car: any) => {
+        // Ensure each car has all required properties according to the Car interface
+        return {
+          id: car.id || car.car_id,
+          brand_id: car.brand_id,
+          category_id: car.category_id,
+          brand: car.brand || '',
+          model: car.model || '',
+          title: car.title || `${car.brand || ''} ${car.model || ''}`,
+          year: car.year || 0,
+          price: car.price || 0,
+          currency: car.currency || 'GEL',
+          description_ka: car.description_ka || '',
+          description_en: car.description_en || '',
+          status: car.status || 'available',
+          featured: car.featured || false,
+          seller_id: car.seller_id || 0,
+          created_at: car.created_at || new Date().toISOString(),
+          updated_at: car.updated_at || new Date().toISOString(),
+          specifications: car.specifications || {
+            id: 0,
+            mileage: 0,
+            fuel_type: '',
+            transmission: '',
+            engine_type: '',
+            drive_type: '',
+            body_type: '',
+            interior_color: '',
+            color: ''
+          },
+          location: car.location || {
+            id: 0,
+            city: '',
+            country: '',
+            location_type: 'georgia',
+            is_transit: false
+          },
+          images: car.images || []
+        };
+      });
+
+      console.log('[WishlistService.getWishlist] Transformed cars:', transformedCars);
+      return transformedCars;
     } catch (error: any) {
       console.error('[WishlistService.getWishlist] Error:', error);
       console.log('Using mock wishlist data instead of API');

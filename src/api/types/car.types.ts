@@ -13,7 +13,10 @@ export interface Car {
   description_ru?: string;
   status: 'available' | 'sold' | 'pending';
   featured: boolean;
+  vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  vip_expiration_date?: string;
   seller_id: number;
+  user_id?: number; // The ID of the user who owns this car
   created_at: string;
   updated_at: string;
   specifications: CarSpecifications;

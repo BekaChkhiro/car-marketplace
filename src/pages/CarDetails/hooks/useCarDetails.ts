@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Car } from '../../../api/types/car.types';
 import carService from '../../../api/services/carService';
+import wishlistService from '../../../api/services/wishlistService';
 import { useToast } from '../../../context/ToastContext';
+import { useAuth } from '../../../context/AuthContext';
 import { customStyles } from '../styles/styles';
 
 export interface CarFeature {
@@ -18,7 +20,7 @@ export interface KeySpec {
   textColor?: string;
 }
 
-export const useCarDetails = () => {
+export const useCarDetails = (refreshTrigger: boolean = false) => {
   const { id } = useParams<{ id: string }>();
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,6 +28,7 @@ export const useCarDetails = () => {
   const [activeTab, setActiveTab] = useState('details'); // 'details', 'specs', 'seller'
   const [showFullGallery, setShowFullGallery] = useState(false);
   const { showToast } = useToast();
+  const { isAuthenticated, user } = useAuth();
 
   // Add custom styles to head
   useEffect(() => {
@@ -51,9 +54,22 @@ export const useCarDetails = () => {
         const carData = await carService.getCar(Number(id));
         if (carData) {
           setCar(carData);
-          // Check if car is in favorites
-          const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-          setIsFavorite(favorites.includes(carData.id));
+          // Check wishlist status only if user is authenticated
+          if (isAuthenticated) {
+            try {
+              const isInWishlist = await wishlistService.isInWishlist(Number(carData.id));
+              setIsFavorite(isInWishlist);
+            } catch (error) {
+              console.error('Error checking wishlist status:', error);
+              // Fallback to localStorage if API fails
+              const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+              setIsFavorite(favorites.includes(carData.id));
+            }
+          } else {
+            // Not logged in, use localStorage
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            setIsFavorite(favorites.includes(carData.id));
+          }
         } else {
           showToast('Failed to load car details', 'error');
         }
@@ -66,24 +82,56 @@ export const useCarDetails = () => {
     };
 
     fetchCar();
-  }, [id, showToast]);
+  }, [id, showToast, isAuthenticated, refreshTrigger]);
 
-  const toggleFavorite = () => {
+  const toggleFavorite = async () => {
     if (!car?.id) return;
     
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    let newFavorites;
-    
-    if (isFavorite) {
-      newFavorites = favorites.filter((favId: number) => favId !== car.id);
-      showToast('Removed from favorites', 'info');
-    } else {
-      newFavorites = [...favorites, car.id];
-      showToast('Added to favorites', 'success');
+    // If user is not authenticated, prompt login
+    if (!isAuthenticated) {
+      showToast('გთხოვთ გაიაროთ ავტორიზაცია ფავორიტებში დასამატებლად', 'warning');
+      // Update localStorage for non-authenticated users
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      let newFavorites;
+      
+      if (isFavorite) {
+        newFavorites = favorites.filter((favId: number) => favId !== car.id);
+      } else {
+        newFavorites = [...favorites, car.id];
+      }
+      
+      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      setIsFavorite(!isFavorite);
+      return;
     }
     
-    localStorage.setItem('favorites', JSON.stringify(newFavorites));
-    setIsFavorite(!isFavorite);
+    try {
+      if (isFavorite) {
+        // Remove from wishlist
+        await wishlistService.removeFromWishlist(car.id);
+        showToast('წაშლილია ფავორიტებიდან', 'info');
+      } else {
+        // Add to wishlist
+        await wishlistService.addToWishlist(car.id);
+        showToast('დამატებულია ფავორიტებში', 'success');
+      }
+      
+      // Also update localStorage for redundancy
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      let newFavorites;
+      
+      if (isFavorite) {
+        newFavorites = favorites.filter((favId: number) => favId !== car.id);
+      } else {
+        newFavorites = [...favorites, car.id];
+      }
+      
+      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+      showToast('ვერ მოხერხდა ფავორიტებში დამატება/წაშლა', 'error');
+    }
   };
 
   const handleShare = () => {
