@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import balanceService, { Transaction } from '../../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
 import { RefreshCw, ArrowUpCircle, ArrowDownCircle, CreditCard, Search, Calendar, Filter, X, Check } from 'lucide-react';
@@ -50,7 +50,11 @@ const fadeInAnimation = `
 }
 `;
 
-const TransactionHistory: React.FC = () => {
+interface TransactionHistoryProps {
+  refreshTrigger?: number;
+}
+
+const TransactionHistory = forwardRef<{fetchTransactions: () => Promise<void>}, TransactionHistoryProps>((props, ref) => {
   const { t } = useTranslation();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -74,11 +78,23 @@ const TransactionHistory: React.FC = () => {
   const dateFilterRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  // Expose fetchTransactions method to parent component via ref
+  useImperativeHandle(ref, () => ({
+    fetchTransactions
+  }));
+
   useEffect(() => {
     fetchTransactions();
     // We'll only use the timeout for development/testing purposes
     // and will remove it in production to ensure real data is shown
   }, []);
+  
+  // Listen for the refreshTrigger changes from parent component
+  useEffect(() => {
+    if (props.refreshTrigger && props.refreshTrigger > 0) {
+      fetchTransactions();
+    }
+  }, [props.refreshTrigger]);
   
   // Close the dropdowns when clicking outside
   useEffect(() => {
@@ -629,6 +645,6 @@ const TransactionHistory: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default TransactionHistory;

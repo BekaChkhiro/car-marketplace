@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TransactionHistory } from './components';
 import balanceService from '../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
@@ -35,6 +35,8 @@ const BalancePage: React.FC = () => {
   const [addAmount, setAddAmount] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showTransactions, setShowTransactions] = useState<boolean>(true); // Always show transactions by default
+  const [transactionRefreshTrigger, setTransactionRefreshTrigger] = useState<number>(0);
+  const transactionHistoryRef = useRef<{ fetchTransactions: () => Promise<void> }>(null)
 
   useEffect(() => {
     fetchBalance();
@@ -62,6 +64,13 @@ const BalancePage: React.FC = () => {
       setBalance(response.balance);
       toast.success(t('balance.fundsAdded'));
       setAddAmount(10);
+      
+      // Trigger transaction history refresh after successful payment
+      // Using both methods to ensure compatibility
+      setTransactionRefreshTrigger(prev => prev + 1);
+      if (transactionHistoryRef.current) {
+        transactionHistoryRef.current.fetchTransactions();
+      }
     } catch (error) {
       console.error('Error adding funds:', error);
       toast.error(t('error.addFunds'));
@@ -136,7 +145,7 @@ const BalancePage: React.FC = () => {
           </button>
         </div>
         
-        {showTransactions && <TransactionHistory />}
+        {showTransactions && <TransactionHistory ref={transactionHistoryRef} refreshTrigger={transactionRefreshTrigger} />}
       </div>
     </div>
   );
