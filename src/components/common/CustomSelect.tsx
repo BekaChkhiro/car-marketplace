@@ -104,7 +104,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const renderSelectedValues = () => {
     if (!multiple) {
       return (
-        <span className={`flex-1 text-base ${value ? 'text-gray-900' : 'text-gray-500'}`}>
+        <span className={`flex-1 text-sm sm:text-base ${value ? 'text-gray-900' : 'text-gray-500'}`}>
           {singleSelectedOption ? singleSelectedOption.label : placeholder}
         </span>
       );
@@ -115,7 +115,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     }
 
     return (
-      <div className="flex flex-wrap gap-1 flex-1">
+      <div className="flex flex-wrap gap-1 flex-1 ">
         {selectedValues.map(val => {
           const opt = options.find(o => o.value === val);
           if (!opt) return null;
