@@ -19,6 +19,7 @@ import AdvertisementAnalyticsPage from './pages/Admin/Advertisements/pages/Analy
 import NewAdvertisementPage from './pages/Admin/Advertisements/pages/NewAdvertisement';
 import EditAdvertisementPage from './pages/Admin/Advertisements/pages/EditAdvertisement';
 import SettingsPage from './pages/Admin/Settings';
+import TransactionsPage from './pages/Admin/Transactions';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
@@ -53,6 +54,7 @@ const AppRoutes = () => {
         <Route path={routes.adminUsers} element={<UsersPage />} />
         <Route path={routes.adminCars} element={<CarsPage />} />
         <Route path={routes.adminEditCar} element={<AdminEditCar />} />
+        <Route path={routes.adminTransactions} element={<TransactionsPage />} />
         <Route path={routes.adminAdvertisements} element={<AdvertisementsPage />}>
           <Route index element={<Navigate to={routes.adminAdvertisementsAll} replace />} />
           <Route path="all" element={<AllAdvertisementsPage />} />

@@ -13,7 +13,8 @@ import {
   SlidersHorizontal,
   Rows,
   PanelRight,
-  BarChart2
+  BarChart2,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -40,6 +41,7 @@ const AdminNavigation: React.FC = () => {
     { icon: <LayoutDashboard size={20} />, label: 'დაფა', path: '/admin' },
     { icon: <Users size={20} />, label: 'მომხმარებლები', path: '/admin/users' },
     { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/cars' },
+    { icon: <CreditCard size={20} />, label: 'ტრანზაქციები', path: '/admin/transactions' },
     { 
       icon: <Image size={20} />, 
       label: 'რეკლამები', 

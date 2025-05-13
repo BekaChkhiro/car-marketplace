@@ -6,12 +6,26 @@ import { getStoredToken as getAccessToken } from '../utils/tokenStorage';
  */
 export interface Transaction {
   id: number;
-  amount: number;
-  type: 'deposit' | 'withdrawal' | 'vip_purchase';
+  // ველი შეიძლება მოვიდეს როგორც სტრიქონი მონაცემთა ბაზიდან (numeric ტიპის გამო)
+  amount: number | string;
+  type: 'deposit' | 'vip_purchase';
   description: string;
   status: 'pending' | 'completed' | 'failed';
   created_at: string;
-  reference_id?: number;
+  reference_id?: number | null;
+  user_id?: number;
+}
+
+/**
+ * Interface for Admin Transaction object with user information
+ */
+export interface AdminTransaction extends Transaction {
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    is_admin?: boolean;
+  };
 }
 
 /**
@@ -175,23 +189,131 @@ class BalanceService {
         created_at: now.toISOString()
       },
       {
-        id: 2,
-        amount: 50,
-        type: 'deposit',
-        description: 'Balance top-up',
-        status: 'completed',
-        created_at: yesterday.toISOString()
-      },
-      {
         id: 3,
-        amount: -30,
+        amount: -25,
         type: 'vip_purchase',
-        description: 'VIP status purchase',
+        description: 'VIP status purchase for 10 days',
         status: 'completed',
-        created_at: yesterday.toISOString(),
-        reference_id: 1
+        created_at: now.toISOString(),
+        reference_id: 123
       }
     ];
+  }
+  
+  /**
+   * Admin: Get all users' transaction history
+   * @returns List of all transactions with user information
+   */
+  async getAdminTransactions(): Promise<AdminTransaction[]> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      console.log('Requesting admin transaction history from API...');
+      const response = await api.get('/api/balance/admin/transactions', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      console.log('Admin transactions API response:', response.data);
+      
+      if (response.data && Array.isArray(response.data.transactions)) {
+        // დეტალური ლოგი დებაგინგისთვის
+        console.log('Transaction count from API:', response.data.transactions.length);
+        if (response.data.transactions.length > 0) {
+          console.log('First transaction sample:', JSON.stringify(response.data.transactions[0]));
+        }
+        
+        return response.data.transactions;
+      } else {
+        console.warn('Invalid admin transaction data format received from API:', response.data);
+        return this.getMockAdminTransactions();
+      }
+    } catch (error) {
+      console.error('Error fetching admin transaction history:', error);
+      // Return mock data as fallback
+      return this.getMockAdminTransactions();
+    }
+  }
+  
+  /**
+   * Get mock admin transaction data for fallback
+   * @returns Mock admin transaction data
+   */
+  private getMockAdminTransactions(): AdminTransaction[] {
+    const transactions = this.getMockTransactions();
+    const users = [
+      { id: 1, name: 'გიორგი მაისურაძე', email: 'giorgi@example.com' },
+      { id: 2, name: 'ნინო ბერიძე', email: 'nino@example.com' },
+      { id: 3, name: 'დავით კვარაცხელია', email: 'davit@example.com' },
+      { id: 4, name: 'თამარ ლომიძე', email: 'tamar@example.com' },
+      { id: 5, name: 'ლევან გვენეტაძე', email: 'levan@example.com' }
+    ];
+    
+    // Create more mock transactions for multiple users
+    const now = new Date();
+    const mockTransactions: AdminTransaction[] = [];
+    
+    // Add original transactions with user 1
+    transactions.forEach(t => {
+      mockTransactions.push({
+        ...t,
+        user: users[0]
+      });
+    });
+    
+    // Add more mock transactions for other users
+    for (let i = 1; i < 20; i++) {
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+      const randomDaysAgo = Math.floor(Math.random() * 30);
+      const transactionDate = new Date(now);
+      transactionDate.setDate(transactionDate.getDate() - randomDaysAgo);
+      
+      // Randomize transaction type
+      const types = ['deposit', 'vip_purchase'] as const;
+      const randomType = types[Math.floor(Math.random() * types.length)];
+      
+      // Randomize amount based on type
+      let amount = 0;
+      if (randomType === 'deposit') {
+        amount = Math.floor(Math.random() * 500) + 10; // 10-510 GEL
+      } else {
+        amount = -(Math.floor(Math.random() * 50) + 5); // -5 to -55 GEL for VIP purchase
+      }
+      
+      // Randomize status
+      const statuses = ['completed', 'pending', 'failed'] as const;
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      // Create transaction description based on type
+      let description = '';
+      if (randomType === 'deposit') {
+        description = 'ბალანსის შევსება';
+      } else {
+        const days = Math.floor(Math.random() * 30) + 1;
+        description = `VIP სტატუსის შეძენა ${days} დღით`;
+      }
+      
+      mockTransactions.push({
+        id: 100 + i,
+        amount,
+        type: randomType,
+        description,
+        status: randomStatus,
+        created_at: transactionDate.toISOString(),
+        reference_id: randomType === 'vip_purchase' ? 1000 + i : undefined,
+        user: randomUser
+      });
+    }
+    
+    // Sort by date, newest first
+    return mockTransactions.sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   }
   
   /**
