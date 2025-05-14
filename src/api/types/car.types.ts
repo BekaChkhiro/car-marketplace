@@ -120,6 +120,7 @@ export interface Category {
 
 export interface CarFilters {
   brand?: string;
+  brand_id?: string | number; // Added for API compatibility
   model?: string;
   category?: string;
   yearFrom?: number;

@@ -8,11 +8,6 @@ import Filters from './components/Filters';
 import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 import { useToast } from '../../context/ToastContext';
 
-interface ExtendedCarFilters extends CarFilters {
-  priceRange?: string;
-  location?: string;
-}
-
 const CarListing: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [cars, setCars] = useState<Car[]>([]);
@@ -20,31 +15,46 @@ const CarListing: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
   
-  const [filters, setFilters] = useState<ExtendedCarFilters>({
-    brand: searchParams.get('brand') || '',
-    model: searchParams.get('model') || '',
-    category: searchParams.get('category') || '',
-    priceRange: searchParams.get('priceRange') || '',
-    yearFrom: Number(searchParams.get('yearFrom')) || undefined,
-    yearTo: Number(searchParams.get('yearTo')) || undefined,
-    fuelType: searchParams.get('fuelType') || '',
-    transmission: searchParams.get('transmission') || '',
-    location: searchParams.get('location') || ''
+  const [filters, setFilters] = useState<CarFilters>({
+    brand_id: searchParams.get('brand_id') || '',
+    model: searchParams.get('model') || ''
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Log filters being applied with more details
+        console.log('[CarListing] Applying filters:', JSON.stringify(filters));
+        
+        // შევქმნათ სუფთა ობიექტი ვალიდური მნიშვნელობებით
+        const cleanFilters: CarFilters = {};
+        
+        if (filters.brand_id && filters.brand_id !== '') {
+          cleanFilters.brand_id = filters.brand_id;
+          console.log('[CarListing] Added brand_id filter:', filters.brand_id);
+        }
+        
+        if (filters.model && filters.model !== '') {
+          cleanFilters.model = filters.model;
+          console.log('[CarListing] Added model filter:', filters.model);
+        }
+        
+        console.log('[CarListing] Clean filters for API call:', JSON.stringify(cleanFilters));
+        
+        // Get cars and categories with clean filters
         const [carsResponse, categoriesResponse] = await Promise.all([
-          carService.getCars(filters),
+          carService.getCars(cleanFilters),
           carService.getCategories()
         ]);
+        
+        console.log('[CarListing] Cars returned from API:', carsResponse.length);
         setCars(carsResponse);
         setCategories(categoriesResponse);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        showToast('Failed to load data', 'error');
+        console.error('[CarListing] Error fetching data:', error);
+        showToast('მონაცემების ჩატვირთვა ვერ მოხერხდა', 'error');
       } finally {
         setLoading(false);
       }
@@ -53,7 +63,7 @@ const CarListing: React.FC = () => {
     fetchData();
   }, [filters, showToast]);
 
-  const handleFilterChange = (newFilters: Partial<ExtendedCarFilters>) => {
+  const handleFilterChange = (newFilters: Partial<CarFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
 

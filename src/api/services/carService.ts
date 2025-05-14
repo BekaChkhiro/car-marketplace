@@ -5,8 +5,36 @@ import { getAccessToken } from '../utils/tokenStorage';
 class CarService {
   async getCars(filters?: CarFilters): Promise<Car[]> {
     try {
+      // Log the filters we're sending to API
+      console.log('[CarService.getCars] Sending filters to API:', JSON.stringify(filters));
+      
+      // Make special note of brand_id and model if present 
+      if (filters?.brand_id) {
+        console.log('[CarService.getCars] Filter includes brand_id:', filters.brand_id);
+      }
+      
+      if (filters?.model) {
+        console.log('[CarService.getCars] Filter includes model:', filters.model);
+      }
+      
+      // Make the API request
       const response = await api.get('/api/cars', { params: filters });
       console.log('[CarService.getCars] API response data:', JSON.stringify(response.data));
+      
+      // If we're filtering by model, let's do additional client-side filtering 
+      // to make sure it works even if server-side filtering has issues
+      if (filters?.model && Array.isArray(response.data)) {
+        const modelFilter = filters.model.toLowerCase();
+        console.log('[CarService.getCars] Applying additional client-side model filter:', modelFilter);
+        
+        const filteredCars = response.data.filter(car => 
+          car.model && car.model.toLowerCase().includes(modelFilter)
+        );
+        
+        console.log(`[CarService.getCars] Client-side model filtering: ${filteredCars.length} of ${response.data.length} cars matched`);
+        return filteredCars;
+      }
+      
       return response.data;
     } catch (error: any) {
       console.error('[CarService.getCars] Error details:', error);
