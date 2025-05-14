@@ -117,7 +117,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
       <div className="bg-white rounded-xl p-6 border">
         <div className="flex flex-col md:flex-col gap-6">
           <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium  text-gray-700 mb-2">
               სათაური *
               {errors?.title && (
                 <span className="text-red-500 ml-1 text-xs">{errors.title}</span>
@@ -127,14 +127,14 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
               type="text"
               value={formData.title || ''}
               onChange={(e) => onChange('title', e.target.value)}
-              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              className="w-full px-4 py-2.5 border-2 rounded-lg text-sm sm:text-md bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
               placeholder="მაგ: BMW X5 M-პაკეტი, იდეალურ მდგომარეობაში"
             />
           </div>
           
-          <div className="w-full flex justify-between gap-6">
-            <div className='w-1/2'>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="w-full flex flex-col sm:flex-row justify-between gap-6">
+            <div className='w-full sm:w-1/2'>
+              <label className="block text-sm font-medium  text-gray-700 mb-2">
                 მარკა *
                 {errors?.brand_id && (
                   <span className="text-red-500 ml-1 text-xs">{errors.brand_id}</span>
@@ -154,8 +154,8 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
               />
             </div>
 
-            <div className='w-1/2'>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='w-full sm:w-1/2'>
+              <label className="block text-sm font-medium  text-gray-700 mb-2">
                 მოდელი *
                 {errors?.model && (
                   <span className="text-red-500 ml-1 text-xs">{errors.model}</span>
@@ -176,9 +176,10 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
             </div>
           </div>
 
-          <div className='w-full flex justify-between gap-6'>
-            <div className='w-1/3'>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+
+          <div className='w-full flex flex-col sm:flex-row justify-between items-center gap-6 '>
+            <div className='w-full sm:w-1/3'>
+                <label className="block  align-middle  font-medium text-gray-700 mb-2 ">
                   კატეგორია *
                   {errors?.category_id && (
                     <span className="text-red-500 ml-1 text-xs">{errors.category_id}</span>
@@ -197,11 +198,11 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                 />
               </div>
 
-            <div className='w-1/3'>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='w-full sm:w-1/3'>
+              <label className="block text-sm  font-medium text-gray-700 mb-2">
                 გამოშვების წელი *
                 {errors?.year && (
-                  <span className="text-red-500 ml-1 text-xs">{errors.year}</span>
+                  <span className="text-red-500 ml-1  text-xs ">{errors.year}</span>
                 )}
               </label>
               <CustomSelect
@@ -217,8 +218,8 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
               />
             </div>
 
-            <div className='w-1/3'>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='w-full sm:w-1/3'>
+              <label className="block text-sm     font-medium text-gray-700 mb-2">
                 ფასი *
                 {errors?.price && (
                   <span className="text-red-500 ml-1 text-xs">{errors.price}</span>
@@ -229,11 +230,11 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                   type="number"
                   value={formData.price || ''}
                   onChange={(e) => onChange('price', Number(e.target.value))}
-                  className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
+                  className="w-full px-2 sm:px-4 py-2.5 border-2 text-sm text-md rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
                   placeholder="მაგ: 15000"
                   min="0"
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <div className="absolute right-1 sm:right-2  top-1/2  transform -translate-y-1/2">
                   <CurrencySwitcher 
                     value={formData.currency as 'GEL' | 'USD'} 
                     onChange={(value) => onChange('currency', value)}
