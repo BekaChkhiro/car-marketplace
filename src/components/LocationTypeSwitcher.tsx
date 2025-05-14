@@ -11,10 +11,10 @@ interface LocationTypeSwitcherProps {
 
 const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onChange, className = '' }) => {
   return (
-    <div className={`inline-flex items-center p-1 bg-gray-100 rounded-lg ${className}`}>
+    <div className={`w-full sm:w-1/2 px-4 inline-flex  flex-col sm:flex-row items-center p-1 bg-gray-100 rounded-lg ${className}`}>
       <button
         type="button"
-        className={`px-3 py-1 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
+        className={`w-full px-3 py-1 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
           value === 'georgia'
             ? 'bg-white text-primary shadow-sm'
             : 'text-gray-600 hover:text-gray-800'
@@ -26,7 +26,7 @@ const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onCh
       </button>
       <button
         type="button"
-        className={`px-3 py-1 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
+        className={`w-full px-3 py-1 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
           value === 'transit'
             ? 'bg-white text-primary shadow-sm'
             : 'text-gray-600 hover:text-gray-800'
@@ -38,7 +38,7 @@ const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onCh
       </button>
       <button
         type="button"
-        className={`px-3 py-1 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
+        className={`w-full px-3 py-1 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
           value === 'international'
             ? 'bg-white text-primary shadow-sm'
             : 'text-gray-600 hover:text-gray-800'

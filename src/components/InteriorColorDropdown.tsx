@@ -54,7 +54,7 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 flex items-center justify-between ${
+        className={`w-full px-4 py-2.5 border-2 rounded-lg text-base text-left bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 flex items-center justify-between ${
           error ? 'border-red-500' : 'border-gray-300'
         }`}
       >
@@ -67,7 +67,7 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
               <span>{selectedColor.label}</span>
             </>
           ) : (
-            <span className="text-gray-500">{placeholder}</span>
+            <span className="text-gray-500 text-sm sm:text-base">{placeholder}</span>
           )}
         </div>
         <ChevronDown size={18} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />

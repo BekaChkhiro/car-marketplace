@@ -17,10 +17,10 @@ interface TransmissionSwitcherProps {
 
 const TransmissionSwitcher: React.FC<TransmissionSwitcherProps> = ({ value, onChange, className = '' }) => {
   return (
-    <div className={`flex items-center justify-between gap-2 ${className}`}>
+    <div className={`flex flex-col sm:flex-row items-start sm:items-center  justify-between gap-2 ${className}`}>
       <button
         type="button"
-        className={`flex-1 py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+        className={`w-full flex-1 py-2.5 px-4  rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
           value === 'manual'
             ? 'bg-primary text-white shadow-sm font-medium'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -32,7 +32,7 @@ const TransmissionSwitcher: React.FC<TransmissionSwitcherProps> = ({ value, onCh
       </button>
       <button
         type="button"
-        className={`flex-1 py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+        className={` w-full flex-1 py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
           value === 'automatic'
             ? 'bg-primary text-white shadow-sm font-medium'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -70,8 +70,8 @@ interface TechnicalSpecsProps {
 
 const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChange, errors = {} }) => {
   return (
-    <div className="bg-white rounded-xl p-6 border">
-      <div className="flex items-center gap-3 mb-6">
+    <div className="bg-white rounded-xl p-6 border ">
+      <div className="flex items-center gap-3 mb-6 ">
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:rotate-180">
           <Wrench size={20} className="text-primary" />
         </div>
@@ -112,7 +112,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               type="number"
               value={specifications.cylinders || ''}
               onChange={(e) => onChange('cylinders', Number(e.target.value))}
-              className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
+              className="w-full px-2 py-2.5 text-sm sm:text-md border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
               placeholder="მაგ: 4"
               min="1"
               max="16"
@@ -208,7 +208,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
 
         {/* ფერი */}
         <div className="group">
-          <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+          <label className="block text-sm  font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
             ფერი
             {errors?.color && (
               <span className="text-red-500 ml-1 text-xs">{errors.color}</span>

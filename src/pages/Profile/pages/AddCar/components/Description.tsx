@@ -60,7 +60,7 @@ const Description: React.FC<DescriptionProps> = ({
 
   return (
     <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border">
-      <div className="flex justify-between items-center border-b pb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start border-b pb-4">
         <h2 className="text-lg font-semibold text-gray-dark">
           აღწერა
         </h2>

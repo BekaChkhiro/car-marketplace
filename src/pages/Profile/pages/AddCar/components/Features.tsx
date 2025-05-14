@@ -57,9 +57,9 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
 
       <div className="space-y-8">
         {Object.entries(featureGroups).map(([groupName, groupFeatures]) => (
-          <div key={groupName} className="space-y-4">
+          <div key={groupName} className="space-y-4 ">
             <h3 className="text-base font-semibold text-gray-800 border-b pb-2">{groupName}</h3>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 w-full"> 
               {groupFeatures.map(({ key, label }) => {
                 const isActive = features[key as keyof CarFeatures] || false;
                 return (
@@ -67,20 +67,20 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
                     key={key}
                     type="button"
                     onClick={() => onChange(key as keyof CarFeatures, !isActive)}
-                    className={`
-                      px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                      flex items-center gap-2 border
+                    className={`w-full sm:w-auto
+                      px-2 sm:px-4 py-2 rounded-lg text-sm font-medium text-left transition-all duration-200
+                      flex items-center gap-2 
                       ${isActive 
                         ? 'bg-primary/10 border-primary text-primary shadow-sm' 
                         : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'}
                     `}
                   >
                     <div className={`
-                      w-4 h-4 rounded-full flex items-center justify-center
+                      w-4 h-4  rounded-full flex items-center justify-center
                       ${isActive ? 'bg-primary' : 'bg-gray-200'}
                     `}>
                       {isActive && (
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-3 h-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 h-4">
                           <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clipRule="evenodd" />
                         </svg>
                       )}
