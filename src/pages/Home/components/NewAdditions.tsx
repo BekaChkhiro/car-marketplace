@@ -24,7 +24,7 @@ const NewAdditions: React.FC = () => {
         console.log('NewAdditions - Fetched cars:', response);
         
         // Sort by created_at and take the latest 4 cars
-        const sortedCars = response
+        const sortedCars = response.cars
           .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .slice(0, 4);
         setNewCars(sortedCars);

@@ -21,7 +21,7 @@ const AdminCars: React.FC = () => {
       setLoading(true);
       setError(null);
       const response = await carService.getCars();
-      setCars(response);
+      setCars(response.cars);
     } catch (error) {
       setError('Failed to load cars');
       console.error('Error fetching cars:', error);

@@ -120,22 +120,29 @@ export interface Category {
 
 export interface CarFilters {
   brand?: string;
-  brand_id?: string | number; // Added for API compatibility
+  brand_id?: string | number;
   model?: string;
   category?: string;
   yearFrom?: number;
   yearTo?: number;
   priceFrom?: number;
   priceTo?: number;
+  engineSizeFrom?: number;
+  engineSizeTo?: number;
+  cylinders?: number;
   mileageFrom?: number;
   mileageTo?: number;
   transmission?: string;
   fuelType?: string;
   driveType?: string;
   steeringWheel?: string;
-  features?: string[];
-  excludeId?: string;  // Added for filtering out current car in similar cars list
+  color?: string;
+  interiorMaterial?: string;
+  interiorColor?: string;
+  airbags?: number;
   location?: string;
+  features?: string[];
+  excludeId?: string;  // For filtering out current car in similar cars list
   sortBy?: string;
   order?: 'asc' | 'desc';
   page?: number;

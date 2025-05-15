@@ -1,45 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Car, CarFilters, Category } from '../../api/types/car.types';
 import carService from '../../api/services/carService';
 import { Container, Loading } from '../../components/ui';
+import Pagination from '../../components/ui/Pagination';
 import CarGrid from './components/CarGrid';
 import Filters from './components/Filters';
+import SortingHeader from './components/SortingHeader';
 import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 import { useToast } from '../../context/ToastContext';
 
 const CarListing: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [cars, setCars] = useState<Car[]>([]);
+  const [totalCars, setTotalCars] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
+  const listingTopRef = useRef<HTMLDivElement>(null);
   
+  // Initialize filters with URL params or defaults
   const [filters, setFilters] = useState<CarFilters>({
     brand_id: searchParams.get('brand_id') || '',
-    model: searchParams.get('model') || ''
+    model: searchParams.get('model') || '',
+    page: Number(searchParams.get('page')) || 1,
+    limit: Number(searchParams.get('limit')) || 12,
+    sortBy: searchParams.get('sortBy') || 'newest',
+    order: (searchParams.get('order') as 'asc' | 'desc') || 'desc'
   });
 
+  // Fetch car data with filters
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Log filters being applied with more details
+        // Log filters being applied
         console.log('[CarListing] Applying filters:', JSON.stringify(filters));
         
-        // შევქმნათ სუფთა ობიექტი ვალიდური მნიშვნელობებით
-        const cleanFilters: CarFilters = {};
+        // Create clean filters object with only valid values
+        const cleanFilters: CarFilters = { 
+          page: filters.page || 1,
+          limit: filters.limit || 12,
+          sortBy: filters.sortBy,
+          order: filters.order
+        };
         
-        if (filters.brand_id && filters.brand_id !== '') {
-          cleanFilters.brand_id = filters.brand_id;
-          console.log('[CarListing] Added brand_id filter:', filters.brand_id);
-        }
-        
-        if (filters.model && filters.model !== '') {
-          cleanFilters.model = filters.model;
-          console.log('[CarListing] Added model filter:', filters.model);
-        }
+        // Add all non-empty filter values
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== '' && !['page', 'limit', 'sortBy', 'order'].includes(key)) {
+            // Type-safe assignment using type assertion
+            (cleanFilters as Record<string, any>)[key] = value;
+            console.log(`[CarListing] Added ${key} filter:`, value);
+          }
+        });
         
         console.log('[CarListing] Clean filters for API call:', JSON.stringify(cleanFilters));
         
@@ -49,8 +63,10 @@ const CarListing: React.FC = () => {
           carService.getCategories()
         ]);
         
-        console.log('[CarListing] Cars returned from API:', carsResponse.length);
-        setCars(carsResponse);
+        // Update state with response data
+        console.log('[CarListing] Cars returned from API:', carsResponse.cars.length);
+        setCars(carsResponse.cars);
+        setTotalCars(carsResponse.meta.total); // Use the total from metadata
         setCategories(categoriesResponse);
       } catch (error) {
         console.error('[CarListing] Error fetching data:', error);
@@ -63,9 +79,60 @@ const CarListing: React.FC = () => {
     fetchData();
   }, [filters, showToast]);
 
+  // Handle filter changes
   const handleFilterChange = (newFilters: Partial<CarFilters>) => {
+    // Reset to page 1 when filters change
+    if (Object.keys(newFilters).some(key => key !== 'page' && key !== 'limit')) {
+      newFilters.page = 1;
+    }
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    handleFilterChange({ page });
+    scrollToTop();
+  };
+
+  // Handle sort change
+  const handleSortChange = (sortValue: string) => {
+    // Parse the sort value to extract sortBy and order
+    let sortBy: string = 'newest';
+    let order: 'asc' | 'desc' = 'desc';
+
+    if (sortValue === 'newest') {
+      sortBy = 'created_at';
+      order = 'desc';
+    } else if (sortValue.startsWith('price')) {
+      sortBy = 'price';
+      order = sortValue.endsWith('asc') ? 'asc' : 'desc';
+    } else if (sortValue.startsWith('year')) {
+      sortBy = 'year';
+      order = sortValue.endsWith('asc') ? 'asc' : 'desc';
+    } else if (sortValue.startsWith('mileage')) {
+      sortBy = 'mileage';
+      order = sortValue.endsWith('asc') ? 'asc' : 'desc';
+    }
+
+    handleFilterChange({ sortBy, order, page: 1 });
+  };
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    if (listingTopRef.current) {
+      listingTopRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Apply filters
+  const applyFilters = () => {
+    // This function is passed to the Filters component
+    // The actual filtering happens in the useEffect when filters state changes
+    scrollToTop();
+  };
+
+  // Use the total pages from the API metadata
+  const totalPages = Math.ceil(totalCars / (filters.limit || 12));
 
   if (loading) {
     return <Loading />;
@@ -73,6 +140,9 @@ const CarListing: React.FC = () => {
 
   return (
     <Container>
+      {/* Reference div for scroll to top */}
+      <div ref={listingTopRef} className="scroll-mt-16"></div>
+      
       {/* Top Advertisement - responsive */}
       <div className="w-full flex justify-center my-4">
         <AdvertisementDisplay 
@@ -83,16 +153,42 @@ const CarListing: React.FC = () => {
       
       <div className="py-8">
         <div className="flex flex-col lg:flex-row gap-8">
+          {/* Filters sidebar */}
           <div className="w-full lg:w-1/4">
             <Filters 
               filters={filters} 
               onFilterChange={handleFilterChange}
               categories={categories}
+              totalCars={totalCars}
+              onApplyFilters={applyFilters}
+              onScrollToTop={scrollToTop}
             />
-            {/* Sidebar advertisement removed as requested */}
           </div>
-          <div className="w-full lg:w-3/4">
+          
+          {/* Main content area */}
+          <div className="w-full lg:w-3/4 space-y-6">
+            {/* Sorting header with total count */}
+            <SortingHeader 
+              total={totalCars} 
+              sortBy={filters.sortBy === 'created_at' && filters.order === 'desc' ? 'newest' : 
+                `${filters.sortBy}-${filters.order}`} 
+              onSortChange={handleSortChange}
+            />
+            
+            {/* Car grid */}
             <CarGrid cars={cars} categories={categories} />
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination 
+                  currentPage={filters.page || 1} 
+                  totalPages={totalPages} 
+                  onPageChange={handlePageChange}
+                  className="py-4"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

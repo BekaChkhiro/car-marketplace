@@ -30,7 +30,7 @@ const SimilarCars: React.FC<SimilarCarsProps> = ({ carId, category }) => {
           }),
           carService.getCategories()
         ]);
-        setCars(carsResponse);
+        setCars(carsResponse.cars);
         setCategories(categoriesResponse);
       } catch (error) {
         console.error('Error fetching data:', error);

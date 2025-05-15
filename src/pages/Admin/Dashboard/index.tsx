@@ -140,7 +140,7 @@ const AdminDashboard: React.FC = () => {
         ]);
         
         setUsers(usersData);
-        setCars(carsData);
+        setCars(carsData.cars);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {

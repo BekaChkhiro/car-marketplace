@@ -24,7 +24,7 @@ const SimilarCars: React.FC<SimilarCarsProps> = ({ carId, category }) => {
           excludeId: carId
         };
         const response = await carService.getCars(filters);
-        setCars(response);
+        setCars(response.cars);
       } catch (error) {
         console.error('Error fetching similar cars:', error);
         showToast('Failed to load similar cars', 'error');
