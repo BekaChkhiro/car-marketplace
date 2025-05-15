@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Car, Settings2, Fuel, MapPin } from 'lucide-react';
+import { Car, Settings2, MapPin, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/config/axios';
 import CustomSelect from './common/CustomSelect';
+import carService from '../api/services/carService';
+import RangeFilter from './ui/RangeFilter';
 
 interface FormData {
   brand: string;
   model: string;
   category: string;
-  year: string;
+  priceFrom: string;
+  priceTo: string;
   transmission: string;
-  fuelType: string;
   location: string;
 }
 
@@ -35,33 +37,36 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     brand: '',
     model: '',
     category: '',
-    year: '',
+    priceFrom: '',
+    priceTo: '',
     transmission: '',
-    fuelType: '',
     location: ''
   });
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const years = Array.from({ length: 35 }, (_, i) => 2024 - i);
-  const transmissions = ['ავტომატიკა', 'მექანიკა'];
-  const fuelTypes = ['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო'];
-  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი'];
-
+  const years = Array.from({ length: 35 }, (_, i) => (new Date().getFullYear() - i).toString());
+  const transmissions = ['ავტომატიკა', 'მექანიკა', 'ვარიატორი', 'ნახევრად ავტომატური'];
+  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი', 'თელავი', 'სხვა'];
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [brandsResponse, categoriesResponse] = await Promise.all([
-          axios.get('/api/cars/brands'),
-          axios.get('/api/cars/categories')
+          carService.getBrands(),
+          carService.getCategories()
         ]);
 
-        setBrands(brandsResponse.data);
-        setCategories(categoriesResponse.data);
+        setBrands(brandsResponse);
+        setCategories(categoriesResponse);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('[VerticalSearchFilter] Error fetching data:', error);
+        // Set fallback data if API fails
+        setBrands([]);
+        setCategories([]);
       }
     };
 
@@ -69,14 +74,37 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
   }, []);
 
   useEffect(() => {
-    if (!formData.brand) {
-      setAvailableModels([]);
-      return;
-    }
-
-    const selectedBrand = brands.find(b => b.id.toString() === formData.brand);
-    setAvailableModels(selectedBrand?.models || []);
-  }, [formData.brand, brands]);
+    const fetchModels = async () => {
+      if (!formData.brand) {
+        setAvailableModels([]);
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        // Make sure brand ID is a number
+        const brandId = Number(formData.brand);
+        
+        if (!isNaN(brandId)) {
+          const modelsData = await carService.getModelsByBrand(brandId);
+          
+          if (Array.isArray(modelsData) && modelsData.length > 0) {
+            setAvailableModels(modelsData);
+          } else {
+            console.warn('[VerticalSearchFilter] No models returned from API or empty array');
+            setAvailableModels([]);
+          }
+        }
+      } catch (error) {
+        console.error('[VerticalSearchFilter] Error fetching models:', error);
+        setAvailableModels([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchModels();
+  }, [formData.brand]);
 
   const handleChange = (field: keyof FormData, value: string | string[]) => {
     // Ensure we're always using a string value
@@ -93,136 +121,166 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
       return newData;
     });
   };
+  
+  // Handle price range filter change
+  const handleRangeChange = (name: string, values: { from: string; to: string }) => {
+    if (name === 'price') {
+      setFormData(prev => ({
+        ...prev,
+        priceFrom: values.from || '',
+        priceTo: values.to || ''
+      }));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) {
-        params.append(key, value);
-      }
-    });
+    
+    // Map form fields to the expected filter parameters in CarListing page
+    if (formData.brand) params.append('brand_id', formData.brand);
+    if (formData.model) params.append('model', formData.model);
+    if (formData.category) {
+      params.append('category_id', formData.category);
+      console.log('[VerticalSearchFilter] Adding category_id:', formData.category);
+    }
+    if (formData.priceFrom) params.append('priceFrom', formData.priceFrom);
+    if (formData.priceTo) params.append('priceTo', formData.priceTo);
+    if (formData.transmission) params.append('transmission', formData.transmission);
+    if (formData.location) params.append('location', formData.location);
+    
+    // Add default pagination parameters
+    params.append('page', '1');
+    params.append('limit', '12');
+    
+    // Debug log
+    console.log('[VerticalSearchFilter] Navigating to car listing with params:', params.toString());
+    
     navigate(`/cars?${params.toString()}`);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="text-xl font-semibold text-gray-dark mb-6">ძებნა</h3>
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6">
+      <div className="flex justify-between items-center mb-6 pb-3 border-b border-green-100">
+        <h2 className="text-xl font-bold text-gray-800">ძებნა</h2>
+      </div>
       
-      <div className="space-y-6">
+      <div className="space-y-5">
+        {/* Brand and Model side by side */}
         <div>
-          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <Car className="text-primary" size={18} /> მარკა და მოდელი
-          </h4>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            მარკა და მოდელი
+          </label>
           <div className="grid grid-cols-2 gap-3">
             <CustomSelect
-              options={brands.map(brand => ({
-                value: String(brand.id),
-                label: brand.name
-              }))}
+              options={[
+                { value: '', label: 'მარკა' },
+                ...brands.map(brand => ({
+                  value: String(brand.id),
+                  label: brand.name
+                }))
+              ]}
               value={formData.brand}
               onChange={value => handleChange('brand', value)}
               placeholder="მარკა"
               icon={<Car size={18} />}
-              multiple={false}
             />
             <CustomSelect
-              options={availableModels.map(model => ({
-                value: model,
-                label: model
-              }))}
+              options={availableModels.length > 0 ? [
+                { value: '', label: 'მოდელი' },
+                ...availableModels.map(model => ({
+                  value: model,
+                  label: model
+                }))
+              ] : [
+                { value: '', label: formData.brand ? 'მოდელი' : 'მოდელი' }
+              ]}
               value={formData.model}
               onChange={value => handleChange('model', value)}
-              placeholder="მოდელი"
-              disabled={!formData.brand}
-              multiple={false}
+              placeholder={loading ? 'იტვირთება...' : 'მოდელი'}
+              disabled={loading || !formData.brand}
+              loading={loading}
             />
           </div>
         </div>
-
+        
+        {/* Category */}
         <div>
-          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <Car className="text-primary" size={18} /> კატეგორია
-          </h4>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            კატეგორია
+          </label>
           <CustomSelect
-            options={categories.map(category => ({
-              value: String(category.id),
-              label: category.name
-            }))}
+            options={[
+              { value: '', label: 'ყველა კატეგორია' },
+              ...categories.map(category => ({
+                value: String(category.id),
+                label: category.name
+              }))
+            ]}
             value={formData.category}
             onChange={value => handleChange('category', value)}
-            placeholder="კატეგორია"
-            multiple={false}
+            placeholder="ყველა კატეგორია"
+            icon={<Car size={18} />}
           />
         </div>
-
+        
+        {/* Price Range */}
         <div>
-          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <Settings2 className="text-primary" size={18} /> წელი
-          </h4>
-          <CustomSelect
-            options={years.map(year => ({
-              value: String(year),
-              label: String(year)
-            }))}
-            value={formData.year}
-            onChange={value => handleChange('year', value)}
-            placeholder="წელი"
-            multiple={false}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            ფასი (GEL)
+          </label>
+          <RangeFilter
+            name="price"
+            fromValue={formData.priceFrom}
+            toValue={formData.priceTo}
+            placeholder={{ from: 'დან', to: 'მდე' }}
+            onChange={handleRangeChange}
           />
         </div>
-
+        
+        {/* Transmission */}
         <div>
-          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <Settings2 className="text-primary" size={18} /> ტრანსმისია
-          </h4>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            გადაცემათა კოლოფი
+          </label>
           <CustomSelect
-            options={transmissions.map(type => ({
-              value: type,
-              label: type
-            }))}
+            options={[
+              { value: '', label: 'ნებისმიერი' },
+              ...transmissions.map(type => ({
+                value: type,
+                label: type
+              }))
+            ]}
             value={formData.transmission}
             onChange={value => handleChange('transmission', value)}
-            placeholder="ტრანსმისია"
-            multiple={false}
+            placeholder="ნებისმიერი"
+            icon={<Sliders size={18} />}
           />
         </div>
-
+        
+        {/* Location */}
         <div>
-          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <Fuel className="text-primary" size={18} /> საწვავის ტიპი
-          </h4>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            მდებარეობა
+          </label>
           <CustomSelect
-            options={fuelTypes.map(type => ({
-              value: type,
-              label: type
-            }))}
-            value={formData.fuelType}
-            onChange={value => handleChange('fuelType', value)}
-            placeholder="საწვავის ტიპი"
-            multiple={false}
-          />
-        </div>
-
-        <div>
-          <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <MapPin className="text-primary" size={18} /> მდებარეობა
-          </h4>
-          <CustomSelect
-            options={locations.map(location => ({
-              value: location,
-              label: location
-            }))}
+            options={[
+              { value: '', label: 'ნებისმიერი' },
+              ...locations.map(location => ({
+                value: location,
+                label: location
+              }))
+            ]}
             value={formData.location}
             onChange={value => handleChange('location', value)}
-            placeholder="მდებარეობა"
-            multiple={false}
+            placeholder="ნებისმიერი"
+            icon={<MapPin size={18} />}
           />
         </div>
 
         <button
           type="submit"
-          className="w-full px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors"
+          className="w-full px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg mt-3"
         >
           ძებნა
         </button>

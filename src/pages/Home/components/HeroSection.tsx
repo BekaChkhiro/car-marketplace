@@ -6,9 +6,9 @@ interface FormData {
   brand: string;
   model: string;
   category: string;
-  year: string;
+  priceFrom: string;
+  priceTo: string;
   transmission: string;
-  fuelType: string;
   location: string;
 }
 
@@ -17,9 +17,9 @@ const HeroSection: React.FC = () => {
     brand: '',
     model: '',
     category: '',
-    year: '',
+    priceFrom: '',
+    priceTo: '',
     transmission: '',
-    fuelType: '',
     location: ''
   });
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);

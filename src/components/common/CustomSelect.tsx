@@ -17,6 +17,7 @@ interface CustomSelectProps {
   className?: string;
   icon?: React.ReactNode;
   multiple?: boolean;
+  loading?: boolean;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -29,7 +30,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   isValid,
   className = '',
   icon,
-  multiple = false
+  multiple = false,
+  loading = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -152,10 +154,17 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       >
         {icon && <span className="text-primary">{icon}</span>}
         {renderSelectedValues()}
-        <ChevronDown
-          size={18}
-          className={`text-gray-400 transition-transform duration-300 ease-in-out ${isOpen ? 'rotate-180' : ''}`}
-        />
+        {loading ? (
+          <svg className="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        ) : (
+          <ChevronDown
+            size={18}
+            className={`text-gray-400 transition-transform duration-300 ease-in-out ${isOpen ? 'rotate-180' : ''}`}
+          />
+        )}
       </div>
       {isOpen && (
         <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-lg shadow-xl py-2 max-h-60 overflow-auto

@@ -30,6 +30,14 @@ const Filters: React.FC<FiltersProps> = ({
   const [tempFilters, setTempFilters] = useState<CarFilters>({...filters});
   const filterSectionsRef = useRef<HTMLDivElement>(null);
   
+  // Update tempFilters when filters prop changes
+  useEffect(() => {
+    console.log('[Filters] Filters prop changed, updating tempFilters', filters);
+    setTempFilters(prevFilters => ({
+      ...filters
+    }));
+  }, [filters]);
+  
   // Expanded sections state
   const [expandedSections, setExpandedSections] = useState({
     basic: true,

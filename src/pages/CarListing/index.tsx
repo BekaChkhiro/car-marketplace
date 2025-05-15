@@ -20,13 +20,42 @@ const CarListing: React.FC = () => {
   const listingTopRef = useRef<HTMLDivElement>(null);
   
   // Initialize filters with URL params or defaults
-  const [filters, setFilters] = useState<CarFilters>({
-    brand_id: searchParams.get('brand_id') || '',
-    model: searchParams.get('model') || '',
-    page: Number(searchParams.get('page')) || 1,
-    limit: Number(searchParams.get('limit')) || 12,
-    sortBy: searchParams.get('sortBy') || 'newest',
-    order: (searchParams.get('order') as 'asc' | 'desc') || 'desc'
+  const [filters, setFilters] = useState<CarFilters>(() => {
+    const initialFilters: CarFilters = {
+      page: Number(searchParams.get('page')) || 1,
+      limit: Number(searchParams.get('limit')) || 12,
+      sortBy: searchParams.get('sortBy') || 'newest',
+      order: (searchParams.get('order') as 'asc' | 'desc') || 'desc'
+    };
+
+    // Add all potential filter fields from URL parameters
+    const possibleFilters = [
+      'brand_id', 'model', 'category_id', 'yearFrom', 'yearTo', 
+      'priceFrom', 'priceTo', 'location', 'transmission', 'drive_type',
+      'fuel_type', 'mileageFrom', 'mileageTo', 'steering_wheel', 'interior_color',
+      'exterior_color', 'interior_material', 'engine_volume', 'airbags'
+    ];
+
+    // Add all non-empty values from URL parameters
+    possibleFilters.forEach(key => {
+      const value = searchParams.get(key);
+      if (value !== null && value !== '') {
+        if (['yearFrom', 'yearTo', 'priceFrom', 'priceTo', 'mileageFrom', 'mileageTo'].includes(key)) {
+          // Convert to number for numeric filters
+          (initialFilters as Record<string, any>)[key] = Number(value);
+        } else if (key === 'category_id') {
+          // Handle category_id specially
+          initialFilters.category = value;
+          (initialFilters as Record<string, any>)['category_id'] = value;
+          console.log(`[CarListing] Loaded category from URL: ${value}`);
+        } else {
+          (initialFilters as Record<string, any>)[key] = value;
+        }
+        console.log(`[CarListing] Loaded ${key} from URL:`, value);
+      }
+    });
+
+    return initialFilters;
   });
 
   // Fetch car data with filters
