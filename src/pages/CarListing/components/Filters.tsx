@@ -159,28 +159,20 @@ const Filters: React.FC<FiltersProps> = ({
     }
   };
 
-  // Reset all filters
+  // Reset all filters - simplified approach that works reliably
   const resetFilters = () => {
     console.log('[Filters] Resetting all filters');
-    // Create a comprehensive reset state with only page and limit
-    const resetState: CarFilters = {
-      page: 1,
-      limit: tempFilters.limit || 12 // Keep the current limit setting or default to 12
-    };
     
-    // Log the reset state for debugging
-    console.log('[Filters] Reset state:', resetState);
-    
-    // Update local state
-    setTempFilters(resetState);
-    
-    // Call the parent component's filter change function
-    onFilterChange(resetState);
-    
-    // Scroll to top if function is provided
-    if (onScrollToTop) {
-      onScrollToTop();
+    // Clear localStorage first to ensure no old filters remain
+    try {
+      localStorage.removeItem('carFilters');
+      console.log('[Filters] Cleared filters from localStorage');
+    } catch (error) {
+      console.error('[Filters] Error clearing filters from localStorage:', error);
     }
+    
+    // Most reliable way to clear filters - navigate directly to the cars page with no parameters
+    window.location.href = '/cars';
   };
 
   // Prepare options for select inputs
@@ -593,16 +585,10 @@ const Filters: React.FC<FiltersProps> = ({
         <button
           onClick={() => {
             console.log('[Filters] Clear button clicked');
-            // Create an empty filter state with only pagination
-            const emptyFilters: CarFilters = {
-              page: 1,
-              limit: filters.limit || 12
-            };
-            // Reset both local and parent state
-            setTempFilters(emptyFilters);
-            onFilterChange(emptyFilters);
-            // Scroll to top if available
-            if (onScrollToTop) onScrollToTop();
+            // Clear localStorage
+            localStorage.removeItem('carFilters');
+            // Direct navigation - most reliable way
+            window.location.href = '/cars';
           }}
           className="flex-1 py-2.5 px-4 border border-gray-200 rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all flex items-center justify-center shadow-sm hover:shadow"
         >

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Car, CarFilters, Category } from '../../api/types/car.types';
 import carService from '../../api/services/carService';
@@ -19,13 +19,32 @@ const CarListing: React.FC = () => {
   const { showToast } = useToast();
   const listingTopRef = useRef<HTMLDivElement>(null);
   
-  // Initialize filters with URL params or defaults
+  // Initialize filters with localStorage, URL params, or defaults
   const [filters, setFilters] = useState<CarFilters>(() => {
-    const initialFilters: CarFilters = {
-      page: Number(searchParams.get('page')) || 1,
-      limit: Number(searchParams.get('limit')) || 12,
-      sortBy: searchParams.get('sortBy') || 'newest',
-      order: (searchParams.get('order') as 'asc' | 'desc') || 'desc'
+    // Try to load saved filters from localStorage
+    const savedFilters = localStorage.getItem('carFilters');
+    let initialFilters: CarFilters;
+
+    if (savedFilters) {
+      try {
+        // Use saved filters if they exist
+        initialFilters = JSON.parse(savedFilters);
+        console.log('[CarListing] Loaded filters from localStorage:', initialFilters);
+      } catch (error) {
+        console.error('[CarListing] Error parsing saved filters:', error);
+        initialFilters = {};
+      }
+    } else {
+      initialFilters = {};
+    }
+
+    // Always override with URL parameters if they exist (URL takes precedence)
+    initialFilters = {
+      ...initialFilters,
+      page: Number(searchParams.get('page')) || initialFilters.page || 1,
+      limit: Number(searchParams.get('limit')) || initialFilters.limit || 12,
+      sortBy: searchParams.get('sortBy') || initialFilters.sortBy || 'newest',
+      order: (searchParams.get('order') as 'asc' | 'desc') || initialFilters.order || 'desc'
     };
 
     // Add all potential filter fields from URL parameters
@@ -57,6 +76,16 @@ const CarListing: React.FC = () => {
 
     return initialFilters;
   });
+  
+  // Save filters to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('carFilters', JSON.stringify(filters));
+      console.log('[CarListing] Saved filters to localStorage');
+    } catch (error) {
+      console.error('[CarListing] Error saving filters to localStorage:', error);
+    }
+  }, [filters]);
 
   // Fetch car data with filters
   useEffect(() => {
