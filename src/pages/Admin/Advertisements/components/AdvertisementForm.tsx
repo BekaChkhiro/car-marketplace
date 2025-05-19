@@ -161,8 +161,8 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
 
   const renderForm = () => {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-30 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-        <div className="relative bg-white rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+      <div className=" fixed inset-0 bg-black bg-opacity-30 overflow-y-auto h-full w-full z-50 flex items-center justify-center ">
+        <div className="relative p-4 mx-4 sm:mx-0  bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto ">
           {/* Close button */}
           <button
             type="button"
@@ -177,7 +177,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
           </h2>
           
           <form onSubmit={handleSubmit}>
-            <div className="space-y-4">
+            <div className="space-y-4 ">
               {/* Placement Dropdown */}
               <div>
                 <label htmlFor="placement" className="block text-sm text-gray-600">

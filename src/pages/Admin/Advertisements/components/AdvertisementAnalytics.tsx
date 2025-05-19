@@ -209,7 +209,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
         variants={itemVariants}
         className="bg-white overflow-hidden shadow-lg rounded-xl"
       >
-        <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+        <div className="px-6 py-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center ">
           <div>
             <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center">
               <BarChart2 className="h-5 w-5 mr-2 text-primary" />
@@ -229,117 +229,237 @@ const AdvertisementAnalyticsTable: React.FC = () => {
           </div>
         </div>
 
-        <div className="shadow overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  სახელი
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  განთავსება
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <div className="flex items-center">
-                    <Eye className="h-3 w-3 mr-1" />
-                    ნახვები
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <div className="flex items-center">
-                    <MousePointerClick className="h-3 w-3 mr-1" />
-                    კლიკები
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <div className="flex items-center">
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    CTR
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  სტატუსი
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {analytics.length === 0 ? (
+        <div className="shadow overflow-hidden rounded-lg">
+          {/* Desktop Table View (hidden on mobile) */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <BarChart className="h-12 w-12 text-gray-300" />
-                      <p className="text-sm">ანალიტიკის მონაცემები არ მოიძებნა</p>
-                      <p className="text-xs text-gray-400">დაელოდეთ სანამ რეკლამა განთავსდება</p>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    სახელი
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    განთავსება
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div className="flex items-center">
+                      <Eye className="h-3 w-3 mr-1" />
+                      ნახვები
                     </div>
-                  </td>
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div className="flex items-center">
+                      <MousePointerClick className="h-3 w-3 mr-1" />
+                      კლიკები
+                    </div>
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div className="flex items-center">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      CTR
+                    </div>
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    სტატუსი
+                  </th>
                 </tr>
-              ) : (
-                analytics.map((item, index) => (
-                  <motion.tr 
-                    key={item.id}
-                    variants={itemVariants}
-                    className="hover:bg-gray-50 transition-colors duration-150"
-                    whileHover={{ backgroundColor: "#f9fafb" }}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 overflow-hidden rounded-md shadow-sm bg-gray-100 flex items-center justify-center">
-                          {/* Use a placeholder for AdvertisementAnalytics since it doesn't have image_url */}
-                          <span className="h-8 w-8 text-gray-400">
-                            <BarChart2 className="h-6 w-6" />
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {analytics.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <BarChart className="h-12 w-12 text-gray-300" />
+                        <p className="text-sm">ანალიტიკის მონაცემები არ მოიძებნა</p>
+                        <p className="text-xs text-gray-400">დაელოდეთ სანამ რეკლამა განთავსდება</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  analytics.map((item, index) => (
+                    <motion.tr 
+                      key={item.id}
+                      variants={itemVariants}
+                      className="hover:bg-gray-50 transition-colors duration-150"
+                      whileHover={{ backgroundColor: "#f9fafb" }}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10 overflow-hidden rounded-md shadow-sm bg-gray-100 flex items-center justify-center">
+                            {/* Use a placeholder for AdvertisementAnalytics since it doesn't have image_url */}
+                            <span className="h-8 w-8 text-gray-400">
+                              <BarChart2 className="h-6 w-6" />
+                            </span>
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-700">
+                          {getPlacementName(item.placement)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-700">
+                          {(item.impressions || 0).toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-700">
+                          {(item.clicks || 0).toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-16 h-4 bg-gray-200 rounded-full overflow-hidden mr-2">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${Math.min(((typeof item.ctr === 'number' ? item.ctr : 0) * 2), 100)}%` }}
+                              transition={{ duration: 1, delay: index * 0.1 }}
+                              className={`h-full rounded-full ${typeof item.ctr === 'number' ? (item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500') : 'bg-red-500'}`}
+                            />
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">{typeof item.ctr === 'number' ? item.ctr.toFixed(2) : '0.00'}%</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {item.is_active ? (
+                          <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
+                            აქტიური
                           </span>
+                        ) : (
+                          <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                            <span className="w-1.5 h-1.5 rounded-full bg-gray-600 mr-1.5"></span>
+                            არააქტიური
+                          </span>
+                        )}
+                      </td>
+                    </motion.tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View (shown only on mobile) */}
+          <div className="md:hidden">
+            {analytics.length === 0 ? (
+              <div className="px-4 py-8 text-center text-gray-500">
+                <div className="flex flex-col items-center justify-center space-y-3">
+                  <BarChart className="h-14 w-14 text-gray-300" />
+                  <p className="text-sm font-medium">ანალიტიკის მონაცემები არ მოიძებნა</p>
+                  <p className="text-xs text-gray-400">დაელოდეთ სანამ რეკლამა განთავსდება</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-4 p-4">
+                {analytics.map((item, index) => {
+                  const ctrRating = typeof item.ctr === 'number' ? 
+                    (item.ctr >= 5 ? 'კარგი' : item.ctr >= 2 ? 'საშუალო' : 'დაბალი') : 'დაბალი';
+                  const ctrColor = typeof item.ctr === 'number' ? 
+                    (item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500') : 'bg-red-500';
+                  const ctrTextColor = typeof item.ctr === 'number' ? 
+                    (item.ctr >= 5 ? 'text-green-700' : item.ctr >= 2 ? 'text-yellow-700' : 'text-red-700') : 'text-red-700';
+                  
+                  return (
+                    <motion.div
+                      key={item.id}
+                      variants={itemVariants}
+                      className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
+                      whileHover={{
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+                      }}
+                    >
+                      <div className="p-4 space-y-4">
+                        {/* Advertisement Header with Status Badge */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0 h-12 w-12 overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
+                              <span className="text-gray-400">
+                                <BarChart2 className="h-6 w-6" />
+                              </span>
+                            </div>
+                            <div>
+                              <h3 className="text-base font-medium text-gray-900 line-clamp-1">{item.title}</h3>
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                {getPlacementName(item.placement)}
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            {item.is_active ? (
+                              <span className="px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
+                                აქტიური
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                                <span className="w-1.5 h-1.5 rounded-full bg-gray-600 mr-1.5"></span>
+                                არააქტიური
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{item.title}</div>
+
+                        {/* Analytics Data */}
+                        <div className="bg-gray-50 rounded-lg p-3 grid grid-cols-2 gap-3">
+                          {/* Impressions */}
+                          <div className="bg-white rounded-md p-2 flex flex-col">
+                            <div className="text-xs text-gray-500 flex items-center mb-1">
+                              <Eye className="h-3 w-3 mr-1" />
+                              ნახვები
+                            </div>
+                            <div className="text-lg font-semibold text-gray-800">
+                              {(item.impressions || 0).toLocaleString()}
+                            </div>
+                          </div>
+
+                          {/* Clicks */}
+                          <div className="bg-white rounded-md p-2 flex flex-col">
+                            <div className="text-xs text-gray-500 flex items-center mb-1">
+                              <MousePointerClick className="h-3 w-3 mr-1" />
+                              კლიკები
+                            </div>
+                            <div className="text-lg font-semibold text-gray-800">
+                              {(item.clicks || 0).toLocaleString()}
+                            </div>
+                          </div>
+                          
+                          {/* CTR - Full width */}
+                          <div className="bg-white rounded-md p-3 col-span-2">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="text-xs text-gray-500 flex items-center">
+                                <TrendingUp className="h-3 w-3 mr-1" />
+                                CTR
+                              </div>
+                              <div className="text-sm font-medium flex items-center">
+                                <span className={`${ctrTextColor} text-xs font-medium`}>
+                                  {ctrRating}
+                                </span>
+                                <span className="ml-2 text-gray-800 font-semibold">
+                                  {typeof item.ctr === 'number' ? item.ctr.toFixed(2) : '0.00'}%
+                                </span>
+                              </div>
+                            </div>
+                            <div className="h-5 bg-gray-200 rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${Math.min(((typeof item.ctr === 'number' ? item.ctr : 0) * 2), 100)}%` }}
+                                transition={{ duration: 1, delay: index * 0.1 }}
+                                className={`h-full rounded-full ${ctrColor}`}
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-700">
-                        {getPlacementName(item.placement)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-700">
-                        {(item.impressions || 0).toLocaleString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-700">
-                        {(item.clicks || 0).toLocaleString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-16 h-4 bg-gray-200 rounded-full overflow-hidden mr-2">
-                          <motion.div 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${Math.min(((typeof item.ctr === 'number' ? item.ctr : 0) * 2), 100)}%` }}
-                            transition={{ duration: 1, delay: index * 0.1 }}
-                            className={`h-full rounded-full ${typeof item.ctr === 'number' ? (item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500') : 'bg-red-500'}`}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">{typeof item.ctr === 'number' ? item.ctr.toFixed(2) : '0.00'}%</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {item.is_active ? (
-                        <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
-                          აქტიური
-                        </span>
-                      ) : (
-                        <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gray-600 mr-1.5"></span>
-                          არააქტიური
-                        </span>
-                      )}
-                    </td>
-                  </motion.tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}          </div>
         </div>
       </motion.div>
     </motion.div>

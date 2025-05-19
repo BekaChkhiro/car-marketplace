@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TransactionHistory } from './components';
 import balanceService from '../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
 import { Button } from '../../../../components/ui';
-import { PlusCircle, RefreshCw } from 'lucide-react';
+import { PlusCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 
 // ტრანსლაციისთვის დროებითი ფუნქცია
 const useTranslation = () => {
@@ -30,13 +30,10 @@ const useTranslation = () => {
 };
 
 const BalancePage: React.FC = () => {
-  const { t } = useTranslation();
-  const [balance, setBalance] = useState<number>(0);
+  const { t } = useTranslation();  const [balance, setBalance] = useState<number>(0);
   const [addAmount, setAddAmount] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showTransactions, setShowTransactions] = useState<boolean>(true); // Always show transactions by default
-  const [transactionRefreshTrigger, setTransactionRefreshTrigger] = useState<number>(0);
-  const transactionHistoryRef = useRef<{ fetchTransactions: () => Promise<void> }>(null)
+  const [showTransactions, setShowTransactions] = useState<boolean>(true);
 
   useEffect(() => {
     fetchBalance();
@@ -63,14 +60,7 @@ const BalancePage: React.FC = () => {
       const response = await balanceService.addFunds(addAmount);
       setBalance(response.balance);
       toast.success(t('balance.fundsAdded'));
-      setAddAmount(10);
-      
-      // Trigger transaction history refresh after successful payment
-      // Using both methods to ensure compatibility
-      setTransactionRefreshTrigger(prev => prev + 1);
-      if (transactionHistoryRef.current) {
-        transactionHistoryRef.current.fetchTransactions();
-      }
+      setAddAmount(10);      // Transaction completed successfully
     } catch (error) {
       console.error('Error adding funds:', error);
       toast.error(t('error.addFunds'));
@@ -80,34 +70,36 @@ const BalancePage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 animate-fade-in">
-      <h1 className="text-xl font-semibold text-gray-dark mb-6">{t('balance.title')}</h1>
+    <div className="container mx-auto px-4 py-4 sm:py-6 animate-fade-in max-w-4xl">
+      <h1 className="text-xl sm:text-2xl font-semibold text-gray-dark mb-4 sm:mb-6">{t('balance.title')}</h1>
       
-      {/* Balance Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6 border border-green-lighter">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <h2 className="text-lg font-medium text-text-dark">{t('balance.currentBalance')}</h2>
-            <p className="text-gray-600 text-sm mt-1">თქვენი მიმდინარე ბალანსი</p>
-          </div>
-          <div className="mt-3 md:mt-0 bg-green-light px-4 py-2 rounded-md">
-            <span className="text-xl font-medium text-primary">{balance} GEL</span>
+      {/* Balance Card - Mobile Optimized */}
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6 border border-green-lighter">
+        {/* Balance Display - Always Visible */}        <div className="flex flex-col sm:flex-row items-start">
+          <div className="w-full text-left mb-3 sm:mb-0">
+            <h2 className="text-base sm:text-lg font-medium text-text-dark">{t('balance.currentBalance')}</h2>
+            <div className="mt-2">
+              <div className="bg-green-light px-4 py-2 rounded-md inline-flex">
+                <span className="text-xl sm:text-2xl font-medium text-primary">{balance} GEL</span>
+              </div>
+            </div>
+            <p className="text-gray-600 text-xs sm:text-sm mt-3">თქვენი მიმდინარე ბალანსი</p>
           </div>
         </div>
-        
-        <div className="border-t border-green-lighter mt-5 pt-5">
-          <h3 className="text-base font-medium mb-4 text-text-dark">
+          {/* Add Funds Section - Always visible on mobile and desktop */}
+        <div className="border-t-2 sm:border-t border-green-lighter mt-6 sm:mt-4 pt-6 sm:pt-4"><h3 className="text-base font-medium mb-3 text-text-dark text-left">
             {t('balance.addFunds')}
           </h3>
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative">
+            <div className="relative flex-grow">
               <input
                 type="number"
                 value={addAmount}
                 onChange={(e) => setAddAmount(Number(e.target.value))}
-                className="border border-green-lighter rounded-md px-3 py-2 w-full sm:w-48 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                className="border border-green-lighter rounded-md px-3 py-3 sm:py-2 w-full focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-left"
                 min="1"
                 placeholder="თანხა"
+                inputMode="numeric" // Better numeric keyboard on mobile
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">GEL</span>
             </div>
@@ -115,7 +107,7 @@ const BalancePage: React.FC = () => {
               onClick={handleAddFunds}
               disabled={isLoading}
               variant="primary"
-              className="py-2"
+              className="py-3 sm:py-2.5 w-full sm:w-auto"
             >
               {isLoading ? (
                 <>
@@ -133,19 +125,27 @@ const BalancePage: React.FC = () => {
         </div>
       </div>
       
-      {/* Transactions Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-green-lighter">
-        <div className="flex justify-between items-center mb-4 pb-3 border-b border-green-lighter">
-          <h2 className="text-lg font-medium text-text-dark">{t('balance.transactions')}</h2>
+      {/* Transactions Card - Mobile Optimized */}
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-green-lighter">
+        <div className="flex justify-between items-center mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-green-lighter">
+          <h2 className="text-base sm:text-lg font-medium text-text-dark">{t('balance.transactions')}</h2>
           <button
             onClick={() => setShowTransactions(!showTransactions)}
-            className="text-primary text-sm hover:underline focus:outline-none"
+            className="text-primary text-xs sm:text-sm hover:underline focus:outline-none flex items-center"
           >
-            {showTransactions ? t('common.hide') : t('common.show')}
+            {showTransactions ? (
+              <>
+                {t('common.hide')} <ChevronUp size={16} className="ml-1" />
+              </>
+            ) : (
+              <>
+                {t('common.show')} <ChevronDown size={16} className="ml-1" />
+              </>
+            )}
           </button>
         </div>
         
-        {showTransactions && <TransactionHistory ref={transactionHistoryRef} refreshTrigger={transactionRefreshTrigger} />}
+        {showTransactions && <TransactionHistory />}
       </div>
     </div>
   );

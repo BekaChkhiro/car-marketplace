@@ -46,7 +46,7 @@ const WishlistPage: React.FC = () => {
     <Container>
       <div className="py-4 sm:py-6 md:py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0 px-2 sm:px-0">
-          <h1 className="text-2xl font-bold text-gray-900">სასურველები</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">სასურველები</h1>
           {wishlistCars.length > 0 && (
             <button
               onClick={() => setIsConfirmModalOpen(true)}

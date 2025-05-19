@@ -3,10 +3,10 @@ import { Settings as SettingsIcon, DollarSign, Bell, Shield, Mail } from 'lucide
 
 const SettingsPage = () => {
   return (
-    <div className="p-6">
+    <div className="p-6 ">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">პარამეტრები</h1>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full sm:w-2/3 mx-auto">
         {/* VIP განცხადებები */}
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center gap-4 mb-6">

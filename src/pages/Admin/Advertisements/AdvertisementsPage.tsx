@@ -152,7 +152,7 @@ const AdvertisementsPage: React.FC = () => {
 
   return (
     <motion.div 
-      className="p-8 bg-white rounded-lg shadow-sm"
+      className="p-2 sm:p-8 bg-white rounded-lg shadow-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -161,7 +161,7 @@ const AdvertisementsPage: React.FC = () => {
       {/* Navigation tabs */}
       <div className="mb-8">
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-10" aria-label="Tabs">
+          <nav className="-mb-px grid grid-cols-2 sm:flex space-x-10" aria-label="Tabs">
             <NavLink
               to={routes.adminAdvertisementsAll}
               className={({isActive}) => 

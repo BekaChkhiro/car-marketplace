@@ -10,22 +10,20 @@ const Settings: React.FC = () => {
     { id: 'profile', label: 'პროფილის რედაქტირება', icon: User },
     { id: 'password', label: 'პაროლის შეცვლა', icon: Lock }
   ];
-
   return (
-    <div className="p-6">
-      <div className="mb-6 border-b border-gray-200">
-        <div className="flex gap-4">
+    <div className="p-4 sm:p-6"><div className="mb-6 border-b border-gray-200">
+        <div className="flex w-full justify-around sm:justify-start sm:gap-6">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as 'profile' | 'password')}
-              className={`flex items-center gap-2 px-4 py-2 -mb-px text-sm font-medium transition-all duration-200
+              className={`flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-4 py-3 sm:py-2 -mb-px text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-initial
                 ${activeTab === tab.id 
                   ? 'text-primary border-b-2 border-primary' 
-                  : 'text-gray-500 hover:text-gray-700'}`}
+                  : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent'}`}
             >
-              <tab.icon size={18} />
-              {tab.label}
+              <tab.icon size={activeTab === tab.id ? 22 : 18} className="mb-1 sm:mb-0" />
+              <span className="text-center sm:text-left whitespace-nowrap">{tab.label}</span>
             </button>
           ))}
         </div>

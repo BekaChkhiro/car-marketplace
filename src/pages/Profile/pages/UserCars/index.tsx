@@ -324,8 +324,8 @@ const UserCars: React.FC = () => {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 sm:mb-6 md:mb-8 gap-3 sm:gap-4">
           <div className="w-full md:w-auto text-center md:text-left mb-3 md:mb-0">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 text-primary">ჩემი განცხადებები</h2>
-            <p className="text-sm sm:text-base text-gray-600">მართეთ თქვენი გამოქვეყნებული განცხადებები</p>
+            <h2 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-primary text-left">ჩემი განცხადებები</h2>
+            <p className="text-sm sm:text-base text-gray-600 text-left">მართეთ თქვენი გამოქვეყნებული განცხადებები</p>
           </div>
           <Button 
             onClick={() => navigate('/profile/add-car')}
