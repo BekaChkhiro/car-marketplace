@@ -224,7 +224,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
       {/* Desktop view - Table */}
       {/* დებაგ: VIP სტატუსის მანქანების ჩვენება გამორთულია */}
       
-      <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+      <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -418,8 +418,8 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
               key={car.id} 
               className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
             >
-              <div className="flex items-center p-4 border-b border-gray-100">
-                  <div className="flex-shrink-0 h-20 w-28 bg-gray-100 rounded-md overflow-hidden mr-4 relative">
+              <div className="flex items-center p-2 border-b border-gray-100">
+                  <div className="flex-shrink-0 h-18 w-20 bg-gray-100 rounded-md overflow-hidden mr-4 relative">
                     <img 
                       src={car.images[0]?.medium_url || '/images/car-placeholder.png'} 
                       alt={`${car.brand} ${car.model}`} 
@@ -434,17 +434,18 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                       </div>
                       {/* VIP სტატუსის ბეჯი გამორთულია */}
                     </div>
-                  <div className="text-lg font-semibold text-primary mb-1">
+                  <div className="text-md font-semibold text-primary mb-1">
                     {formatPrice(car.price)}
                   </div>
-                  <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bgColor} ${statusStyle.textColor}`}>
+                  <div className={`inline-flex items-center mr-2 py-1 rounded-full text-xs font-medium ${statusStyle.bgColor} ${statusStyle.textColor}`}>
                     {statusStyle.icon}
                     {getStatusText(car.status)}
-                  </div>
+                  </div> 
                 </div>
               </div>
               
               <div className="p-4 border-b border-gray-100 bg-gray-50">
+                
                 {car.vip_status && car.vip_status !== 'none' && (
                   <div className={`mb-3 p-2 rounded-lg ${car.vip_status === 'vip' ? 'bg-blue-100 text-blue-700' : car.vip_status === 'vip_plus' ? 'bg-purple-100 text-purple-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     <div className="flex items-center justify-center gap-2">
@@ -507,7 +508,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     </div>
                   </div>
                 )}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2  ">
                   <div className="flex flex-col items-center p-2 bg-white rounded-lg">
                     <div className="flex items-center text-xs text-gray-500 mb-1">
                       <Calendar size={16} />
@@ -533,7 +534,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin size={16} className="mr-1" /> {car.location.city}
                 </div>
-                <div className="flex gap-2 mt-3 justify-end p-3 pt-0">
+                <div className="flex gap-2 mt-3 justify-end p-1 pt-0">
                 {car.vip_status && car.vip_status !== 'none' ? (
                   <div className="flex gap-1">
                     <button

@@ -79,7 +79,7 @@ const AdminEditCar: React.FC = () => {
           </div>
         </div>
         
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col justify-between items-start sm:flex-row sm:items-center mb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">მანქანის რედაქტირება</h1>
             <p className="text-gray-500 mt-1">
@@ -123,7 +123,7 @@ const AdminEditCar: React.FC = () => {
       {/* Form Card */}
       {car && (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-          <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+          <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 ">
             <h2 className="text-lg font-medium text-gray-800">მანქანის ინფორმაცია</h2>
             <p className="text-sm text-gray-500">შეავსეთ ყველა საჭირო ველი მანქანის განახლებისთვის</p>
           </div>

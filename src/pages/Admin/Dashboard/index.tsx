@@ -22,8 +22,8 @@ import { Link } from 'react-router-dom';
 // Recent users component
 const RecentUsers = ({ users }: { users: User[] }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-xl shadow-sm p-5 ">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 ">
         <h3 className="text-lg font-semibold text-gray-800">ბოლოს დარეგისტრირებული</h3>
         <Link to="/admin/users" className="text-primary text-sm flex items-center hover:underline">
           ყველა მომხმარებელი <ChevronRight size={16} />
@@ -38,9 +38,9 @@ const RecentUsers = ({ users }: { users: User[] }) => {
           <p className="text-gray-500">მომხმარებლები ვერ მოიძებნა</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 py-6 sm:py-0">
           {users.slice(0, 5).map(user => (
-            <div key={user.id} className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div key={user.id} className=" flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-3 ">
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
                   <Users size={16} className="text-primary" />
@@ -67,7 +67,7 @@ const RecentUsers = ({ users }: { users: User[] }) => {
 const RecentCars = ({ cars }: { cars: CarType[] }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-5">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">ბოლოს დამატებული</h3>
         <Link to="/admin/cars" className="text-primary text-sm flex items-center hover:underline">
           ყველა განცხადება <ChevronRight size={16} />
@@ -82,9 +82,9 @@ const RecentCars = ({ cars }: { cars: CarType[] }) => {
           <p className="text-gray-500">განცხადებები ვერ მოიძებნა</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4  mt-6 sm:mt-0">
           {cars.slice(0, 5).map(car => (
-            <div key={car.id} className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div key={car.id} className=" flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center">
                 <div className="w-12 h-12 overflow-hidden rounded-lg mr-3 border border-gray-100">
                   <img 
@@ -98,7 +98,7 @@ const RecentCars = ({ cars }: { cars: CarType[] }) => {
                   <p className="text-sm text-gray-500">{car.price.toLocaleString()} ₾</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between w-full sm:w-auto mt-2 sm:mt-0 ">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                   car.status === 'available' ? 'bg-green-100 text-green-800' : 
                   car.status === 'sold' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
@@ -166,8 +166,8 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">ადმინ პანელი</h1>
-        <p className="text-gray-500 mb-8">საიტის სტატისტიკა და ბოლოს დამატებული მონაცემები</p>
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">ადმინ პანელი</h1>
+        <p className="text-gray-500 mb-8 text-md">საიტის სტატისტიკა და ბოლოს დამატებული მონაცემები</p>
         
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -190,7 +190,7 @@ const AdminDashboard: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-700">მომხმარებლები</h3>
                 </div>
                 <p className="text-3xl font-bold text-primary">{users.length}</p>
-                <div className="flex gap-3 mt-3">
+                <div className="flex  gap-3 mt-3">
                   <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
                     აქტიური: {activeUsers}
                   </span>

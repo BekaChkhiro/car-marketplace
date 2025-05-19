@@ -279,7 +279,7 @@ const TransactionList: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 border border-green-lighter">
+    <div className="bg-white rounded-lg shadow-sm p-4 border border-green-lighter ">
       <style>{fadeInAnimation}</style>
       
       <div className="flex justify-between items-center mb-4">
@@ -325,7 +325,7 @@ const TransactionList: React.FC = () => {
             {showDateFilter && (
               <div 
                 ref={dateFilterRef}
-                className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 w-72 animate-fadeIn"
+                className=" absolute left-0 sm:right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 w-72 animate-fadeIn"
               >
                 <div className="flex flex-col gap-3">
                   <div>
@@ -471,88 +471,150 @@ const TransactionList: React.FC = () => {
             )}
           </div>
         </div>
-      </div>
-      
-      {/* Transaction table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left table-auto">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">ID</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">მომხმარებელი</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">თარიღი</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">ტიპი</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">თანხა</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">აღწერა</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-500">სტატუსი</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {isLoading ? (
-              <tr>
-                <td colSpan={7} className="py-10 text-center text-gray-500">
-                  <div className="flex flex-col items-center">
-                    <RefreshCw size={24} className="animate-spin mb-2" />
-                    <span>იტვირთება...</span>
+      </div>        {/* Transaction table */}      
+      <div className="overflow-x-auto overflow-y-visible rounded-lg -mx-4 sm:mx-0">
+        {/* Mobile View - Card Layout */}
+        <div className="md:hidden space-y-3 px-4 py-2">
+          {isLoading ? (
+            <div className="py-10 text-center text-gray-500">
+              <div className="flex flex-col items-center">
+                <RefreshCw size={24} className="animate-spin mb-2" />
+                <span>იტვირთება...</span>
+              </div>
+            </div>
+          ) : currentTransactions.length === 0 ? (
+            <div className="py-10 text-center text-gray-500">
+              ტრანზაქციები არ მოიძებნა
+            </div>
+          ) : (
+            currentTransactions.map((transaction) => (
+              <div key={transaction.id} className="bg-white p-1 sm:p-3 rounded-lg shadow-sm border border-gray-100">
+                <div className="flex justify-between items-start mb-2 ">
+                  <div className="flex items-center gap-2">
+                    <UserCircle size={20} className="text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{transaction.user?.name}</p>
+                      <p className="text-xs text-gray-500">{transaction.user?.email}</p>
+                    </div>
                   </div>
-                </td>
-              </tr>
-            ) : currentTransactions.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="py-10 text-center text-gray-500">
-                  ტრანზაქციები არ მოიძებნა
-                </td>
-              </tr>
-            ) : (
-              currentTransactions.map((transaction) => (
-                <tr key={transaction.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 text-sm text-gray-700">{transaction.id}</td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <UserCircle size={20} className="text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-800">{transaction.user?.name}</p>
-                        <p className="text-xs text-gray-500">{transaction.user?.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-600 whitespace-nowrap">
-                    {formatDate(new Date(transaction.created_at))}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
+                    {getStatusLabel(transaction.status)}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 text-xs mt-2">
+                  <div>
+                    <p className="text-gray-500">თარიღი</p>
+                    <p className="font-medium">{formatDate(new Date(transaction.created_at))}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">ტიპი</p>
+                    <div className="flex items-center gap-1 ">
                       {getTransactionTypeIcon(transaction.type)}
-                      <span className="text-sm">{getTransactionTypeLabel(transaction.type)}</span>
+                      <span>{getTransactionTypeLabel(transaction.type)}</span>
                     </div>
-                  </td>
-                  <td className="py-3 px-4 text-sm whitespace-nowrap">
-                    <span className={getAmountColor(transaction.amount)}>
-                      {/* კონვერტირება რიცხვად შედარებისთვის */}
-                      {typeof transaction.amount === 'string' 
+                  </div>
+                  <div>
+                    <p className="text-gray-500">თანხა</p>
+                    <p className={getAmountColor(transaction.amount)}>
+                      {typeof transaction.amount === 'string'
                         ? (parseFloat(transaction.amount) > 0 ? '+' : '') 
                         : (transaction.amount > 0 ? '+' : '')}
                       {transaction.amount} GEL
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
-                    {transaction.description || '—'}
-                  </td>
-                  <td className="py-3 px-4 text-sm whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
-                      {getStatusLabel(transaction.status)}
-                    </span>
+                    </p>
+                  </div>
+                  {transaction.description && (
+                    <div className="col-span-1 sm:col-span-2 mt-1">
+                      <p className="text-gray-500">აღწერა</p>
+                      <p className="text-gray-600">{transaction.description || '—'}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        
+        {/* Desktop View - Table Layout */}
+        <div className="min-w-[600px]">
+          <table className="w-full text-left table-auto hidden md:table">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500 hidden sm:table-cell">ID</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">მომხმარებელი</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">თარიღი</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">ტიპი</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">თანხა</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500 hidden lg:table-cell">აღწერა</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">სტატუსი</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-gray-500">
+                    <div className="flex flex-col items-center">
+                      <RefreshCw size={24} className="animate-spin mb-2" />
+                      <span>იტვირთება...</span>
+                    </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : currentTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-gray-500">
+                    ტრანზაქციები არ მოიძებნა
+                  </td>
+                </tr>
+              ) : (
+                currentTransactions.map((transaction) => (
+                  <tr key={transaction.id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm text-gray-700 hidden sm:table-cell">{transaction.id}</td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <UserCircle size={20} className="text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">{transaction.user?.name}</p>
+                          <p className="text-xs text-gray-500">{transaction.user?.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-600 whitespace-nowrap">
+                      {formatDate(new Date(transaction.created_at))}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        {getTransactionTypeIcon(transaction.type)}
+                        <span className="text-sm">{getTransactionTypeLabel(transaction.type)}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-sm whitespace-nowrap">
+                      <span className={getAmountColor(transaction.amount)}>
+                        {/* კონვერტირება რიცხვად შედარებისთვის */}
+                        {typeof transaction.amount === 'string' 
+                          ? (parseFloat(transaction.amount) > 0 ? '+' : '') 
+                          : (transaction.amount > 0 ? '+' : '')}
+                        {transaction.amount} GEL
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-600 hidden lg:table-cell">
+                      {transaction.description || '—'}
+                    </td>
+                    <td className="py-3 px-4 text-sm whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
+                        {getStatusLabel(transaction.status)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-      
-      {/* Pagination controls */}
+        {/* Pagination controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg mt-4">
-        <div className="text-sm text-gray-600 flex items-center gap-4">
-          <span>სულ {filteredTransactions.length} ტრანზაქცია</span>
+        <div className="text-sm text-gray-600 flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto mb-2 sm:mb-0">
+          <span className="mb-2 sm:mb-0">სულ {filteredTransactions.length} ტრანზაქცია</span>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">გვერდზე:</span>
             <select 
@@ -567,12 +629,11 @@ const TransactionList: React.FC = () => {
             </select>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-center">
           <button 
             onClick={() => handlePageChange(currentPage - 1)} 
             disabled={currentPage === 1}
-            className={`px-3 py-1 border border-green-lighter rounded text-sm ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 text-gray-700'}`}
+            className={`px-3 py-2 sm:py-1 border border-green-lighter rounded text-sm min-w-[70px] ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 active:bg-gray-100 text-gray-700'}`}
           >
             წინა
           </button>
@@ -581,17 +642,18 @@ const TransactionList: React.FC = () => {
             {/* Page number buttons */}
             {[...Array(totalPages)].map((_, index) => {
               const pageNumber = index + 1;
-              // Show limited page numbers for better UX
+              // Show limited page numbers for better UX on different screen sizes
               if (
                 pageNumber === 1 || 
                 pageNumber === totalPages || 
-                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                (window.innerWidth < 640 && pageNumber === currentPage) ||
+                (window.innerWidth >= 640 && pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
               ) {
                 return (
                   <button
                     key={pageNumber}
                     onClick={() => handlePageChange(pageNumber)}
-                    className={`w-8 h-8 flex items-center justify-center rounded text-sm ${pageNumber === currentPage ? 'bg-primary text-white' : 'border border-green-lighter bg-white hover:bg-green-light/10 text-gray-700'}`}
+                    className={`w-8 h-8 flex items-center justify-center rounded text-sm ${pageNumber === currentPage ? 'bg-primary text-white' : 'border border-green-lighter bg-white hover:bg-green-light/10 active:bg-gray-100 text-gray-700'}`}
                   >
                     {pageNumber}
                   </button>
@@ -609,11 +671,10 @@ const TransactionList: React.FC = () => {
               return null;
             })}
           </div>
-          
-          <button 
+            <button 
             onClick={() => handlePageChange(currentPage + 1)} 
             disabled={currentPage === totalPages || totalPages === 0}
-            className={`px-3 py-1 border border-green-lighter rounded text-sm ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 text-gray-700'}`}
+            className={`px-3 py-2 sm:py-1 border border-green-lighter rounded text-sm min-w-[70px] ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 active:bg-gray-100 text-gray-700'}`}
           >
             შემდეგი
           </button>

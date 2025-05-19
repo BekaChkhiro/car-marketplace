@@ -295,13 +295,13 @@ const TransactionAnalytics: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4  ">
           {/* Main Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-start  gap-2 mb-1">
                     <div className="p-1.5 bg-green-100 rounded-lg">
                       <DollarSign size={16} className="text-green-600" />
                     </div>
@@ -316,7 +316,7 @@ const TransactionAnalytics: React.FC = () => {
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-start gap-2 mb-1">
                     <div className="p-1.5 bg-blue-100 rounded-lg">
                       <BarChart4 size={16} className="text-blue-600" />
                     </div>
@@ -331,22 +331,22 @@ const TransactionAnalytics: React.FC = () => {
             <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-4 rounded-xl border border-teal-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-start  gap-2 mb-1">
                     <div className="p-1.5 bg-teal-100 rounded-lg">
                       <Calendar size={16} className="text-teal-600" />
                     </div>
                     <p className="text-sm text-gray-600">ბოლო კვირა</p>
                   </div>
                   <p className="text-lg font-bold text-gray-800">{stats.lastWeekAmount.toLocaleString()} ₾</p>
-                  <div className="flex items-center gap-1 mt-1">
+                  <div className=" flex items-start  gap-1 mt-1">
                     {stats.weeklyGrowth > 0 ? (
                       <>
-                        <TrendingUp size={12} className="text-green-600" />
+                        <TrendingUp size={12} className="text-green-600 mt-1 " />
                         <p className="text-xs text-green-600 font-medium">+{stats.weeklyGrowth}%</p>
                       </>
                     ) : stats.weeklyGrowth < 0 ? (
                       <>
-                        <TrendingDown size={12} className="text-red-600" />
+                        <TrendingDown size={12} className="text-red-600 mt-1" />
                         <p className="text-xs text-red-600 font-medium">{stats.weeklyGrowth}%</p>
                       </>
                     ) : (
@@ -360,7 +360,7 @@ const TransactionAnalytics: React.FC = () => {
             <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-start gap-2 mb-1">
                     <div className="p-1.5 bg-orange-100 rounded-lg">
                       <Activity size={16} className="text-orange-600" />
                     </div>
@@ -389,9 +389,9 @@ const TransactionAnalytics: React.FC = () => {
                 ტრანზაქციების სტატუსი
               </h3>
               
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex flex-col items-center gap-1.5 mb-1">
                     <div className="p-1 bg-green-100 rounded-lg">
                       <CheckCircle size={14} className="text-green-600" />
                     </div>
@@ -404,7 +404,7 @@ const TransactionAnalytics: React.FC = () => {
                 </div>
                 
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex flex-col items-center gap-1.5 mb-1">
                     <div className="p-1 bg-yellow-100 rounded-lg">
                       <Clock size={14} className="text-yellow-600" />
                     </div>
@@ -417,7 +417,7 @@ const TransactionAnalytics: React.FC = () => {
                 </div>
                 
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex flex-col items-center gap-1.5 mb-1">
                     <div className="p-1 bg-red-100 rounded-lg">
                       <XCircle size={14} className="text-red-600" />
                     </div>
@@ -468,7 +468,7 @@ const TransactionAnalytics: React.FC = () => {
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm font-medium">ბოლო 7 დღე</p>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-start gap-1.5">
                       {stats.weeklyGrowth > 0 ? (
                         <>
                           <div className="p-1 bg-green-100 rounded-lg">
@@ -508,7 +508,7 @@ const TransactionAnalytics: React.FC = () => {
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm font-medium">ბოლო 30 დღე</p>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-start gap-1.5">
                       {stats.monthlyGrowth > 0 ? (
                         <>
                           <div className="p-1 bg-green-100 rounded-lg">
@@ -556,27 +556,27 @@ const TransactionAnalytics: React.FC = () => {
               </h3>
               
               {stats.topUsers && stats.topUsers.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-2 ">
                   {stats.topUsers.slice(0, 3).map((user: any, index: number) => (
-                    <div key={user.id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:bg-gray-50">
+                    <div key={user.id} className=" bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:bg-gray-50">
                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center text-purple-700 text-sm font-bold">
                           {index + 1}
                         </div>
-                        <div className="flex-grow">
+                        <div className="flex-grow ">
                           <p className="text-sm font-medium truncate">{user.name}</p>
-                          <div className="flex justify-between items-center mt-1">
-                            <div className="flex items-center gap-2">
+                          <div className="flex justify-between items-center mt-1 ">
+                            <div className="flex items-start gap-2">
                               <div className="p-1 bg-blue-100 rounded-lg">
                                 <Activity size={12} className="text-blue-600" />
                               </div>
                               <p className="text-xs text-gray-500">{user.count} შევს.</p>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-start gap-2 ">
                               <div className="p-1 bg-green-100 rounded-lg">
                                 <CircleDollarSign size={12} className="text-green-600" />
                               </div>
-                              <p className="text-xs font-semibold">{user.amount.toLocaleString()} ₾</p>
+                              <p className="text-xs  font-semibold">{user.amount.toLocaleString()} ₾</p>
                             </div>
                           </div>
                         </div>

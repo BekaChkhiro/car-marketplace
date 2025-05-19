@@ -160,8 +160,8 @@ const AdvertisementsPage: React.FC = () => {
       
       {/* Navigation tabs */}
       <div className="mb-8">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-10" aria-label="Tabs">
+        <div className="border-b border-gray-200 ">
+          <nav className="-mb-px flex space-x-10 " aria-label="Tabs">
             <NavLink
               to={routes.adminAdvertisementsAll}
               className={({isActive}) => 

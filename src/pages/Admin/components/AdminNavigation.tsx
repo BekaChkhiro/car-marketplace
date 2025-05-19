@@ -14,11 +14,16 @@ import {
   Rows,
   PanelRight,
   BarChart2,
-  CreditCard
+  CreditCard,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
-const AdminNavigation: React.FC = () => {
+interface AdminNavigationProps {
+  onCloseMobileMenu?: () => void;
+}
+
+const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) => {
   const location = useLocation();
   const { logout } = useAuth();
 
@@ -64,11 +69,20 @@ const AdminNavigation: React.FC = () => {
       setExpandedMenus([...expandedMenus, 'advertisements']);
     }
   }, [location.pathname]);
-
   return (
-    <div className="w-64 bg-white border-r border-gray-100 h-screen sticky top-0 shadow-sm rounded-lg">
-      <div className="p-6 border-b border-gray-100">
-        <h1 className="text-xl font-bold text-primary">ადმინ პანელი</h1>
+    <div className="w-64 bg-white border-r border-gray-100  shadow-sm rounded-lg overflow-y-auto">
+      <div className="p-4 sm:p-6 border-b border-gray-100 flex items-left justify-center relative">
+        <h1 className="text-lg sm:text-xl  font-bold text-primary  mr-2">ადმინ პანელი</h1>
+        {/* Close button for mobile - positioned absolute right */}
+        {onCloseMobileMenu && (
+          <button 
+            onClick={onCloseMobileMenu}
+            className="lg:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 absolute right-4"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       <div className="p-4">
@@ -89,7 +103,7 @@ const AdminNavigation: React.FC = () => {
                       isActive ? 'bg-primary/10 text-primary font-medium' : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 ">
                       {item.icon}
                       <span>{item.label}</span>
                     </div>
@@ -134,11 +148,12 @@ const AdminNavigation: React.FC = () => {
             );
           })}
         </nav>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-100">
+      </div>      <div className="sticky bottom-0 left-0 right-0 p-4 sm:p-6 border-t border-gray-100 bg-white mt-8">
         <button
-          onClick={logout}
+          onClick={() => {
+            if (onCloseMobileMenu) onCloseMobileMenu();
+            logout();
+          }}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-red-600 hover:bg-red-50 transition-all duration-300"
         >
           <LogOut size={20} />

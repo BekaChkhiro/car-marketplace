@@ -94,18 +94,18 @@ const UsersPage = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">მომხმარებლები</h1>
-        <div className="flex gap-4">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">მომხმარებლები</h1>
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <input
             type="text"
             placeholder="მოძებნე მომხმარებელი..."
-            className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="px-4 py-3 sm:py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <select 
-            className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="px-4 py-3 sm:py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:w-auto"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -137,7 +137,8 @@ const UsersPage = () => {
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm">
-        <div className="overflow-x-auto">
+        {/* Desktop View - Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-gray-200">
@@ -230,18 +231,129 @@ const UsersPage = () => {
               ))}
             </tbody>
           </table>
+        </div>          {/* Mobile View - Card Layout */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-end border-b border-gray-200 py-4 px-4">
+            <span className="text-xs text-gray-500">
+              {users.filter(u => {
+                if (searchTerm) {
+                  const searchLower = searchTerm.toLowerCase();
+                  return (
+                    u.username?.toLowerCase().includes(searchLower) ||
+                    u.email?.toLowerCase().includes(searchLower) ||
+                    u.first_name?.toLowerCase().includes(searchLower) ||
+                    u.last_name?.toLowerCase().includes(searchLower)
+                  );
+                }
+                return true;
+              }).filter(u => {
+                if (statusFilter === 'all') return true;
+                return u.status === statusFilter;
+              }).length} მომხმარებელი
+            </span>
+          </div>
+          
+          {users
+            .filter(user => {
+              // Apply search filter
+              if (searchTerm) {
+                const searchLower = searchTerm.toLowerCase();
+                return (
+                  user.username?.toLowerCase().includes(searchLower) ||
+                  user.email?.toLowerCase().includes(searchLower) ||
+                  user.first_name?.toLowerCase().includes(searchLower) ||
+                  user.last_name?.toLowerCase().includes(searchLower)
+                );
+              }
+              return true;
+            })
+            .filter(user => {
+              // Apply status filter
+              if (statusFilter === 'all') return true;
+              return user.status === statusFilter;
+            })
+            .sort((a, b) => {
+              // Apply sorting
+              const nameA = a.username?.toLowerCase() || '';
+              const nameB = b.username?.toLowerCase() || '';
+              return sortDirection === 'asc' 
+                ? nameA.localeCompare(nameB) 
+                : nameB.localeCompare(nameA);
+            })
+            .map((user) => (
+            <div key={user.id} className=" border-b border-gray-100 p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+              <div className="flex flex-col items-center justify-between mb-4 ">
+                <div className="flex items-center gap-3 ">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <UserIcon size={18} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-900 block">{user.username}</span>
+                    <span className="text-sm text-gray-500">{user.email}</span>
+                  </div>
+                </div>
+                <div className="flex items-center w-full justify-between">
+                  <button 
+                    className="p-3 hover:bg-gray-200 active:bg-gray-300 rounded-lg transition-colors" 
+                    aria-label="რედაქტირება"
+                  >
+                    <Edit size={18} className="text-gray-600" />
+                  </button>
+                  <button 
+                    className="p-3 hover:bg-gray-200 active:bg-gray-300 rounded-lg transition-colors"
+                    aria-label="წაშლა"
+                  >
+                    <Trash2 size={18} className="text-red-600" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-y-3 text-sm bg-gray-50 p-3 rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-gray-500">როლი:</span>
+                </div>
+                <div className="flex justify-end">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {user.role}
+                  </span>
+                </div>
+                
+                <div className="flex items-center">
+                  <span className="text-gray-500">სტატუსი:</span>
+                </div>
+                <div className="flex justify-end">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {user.status === 'active' ? 'აქტიური' : 'დაბლოკილი'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center">
+                  <span className="text-gray-500">რეგისტრაცია:</span>
+                </div>
+                <div className="flex justify-end">
+                  <span className="text-gray-600 font-medium">
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString('ka-GE') : '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
         
-        {/* Pagination */}
-        <div className="px-6 py-4 flex items-center justify-between border-t border-gray-100">
-          <div className="text-sm text-gray-600">
+        {/* Pagination - Responsive */}
+        <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-100">
+          <div className="text-sm text-gray-600 text-center sm:text-left">
             ნაჩვენებია 1-10 / 100
           </div>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">
+          <div className="flex gap-2 w-full sm:w-auto justify-center">
+            <button className="px-5 py-3 sm:py-2 text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 active:bg-gray-100 rounded-lg flex-1 sm:flex-auto max-w-[120px]">
               უკან
             </button>
-            <button className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-secondary">
+            <button className="px-5 py-3 sm:py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-secondary active:bg-secondary/90 flex-1 sm:flex-auto max-w-[120px]">
               შემდეგი
             </button>
           </div>

@@ -78,8 +78,8 @@ const SliderAdvertisementsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-1 sm:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">სლაიდერის რეკლამები</h1>
         <button
           onClick={handleAddClick}
