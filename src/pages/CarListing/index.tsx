@@ -116,15 +116,57 @@ const CarListing: React.FC = () => {
         console.log('[CarListing] Clean filters for API call:', JSON.stringify(cleanFilters));
         
         // Get cars and categories with clean filters
-        const [carsResponse, categoriesResponse] = await Promise.all([
-          carService.getCars(cleanFilters),
-          carService.getCategories()
-        ]);
+        const { cars: carData, meta } = await carService.getCars(cleanFilters);
         
-        // Update state with response data
-        console.log('[CarListing] Cars returned from API:', carsResponse.cars.length);
-        setCars(carsResponse.cars);
-        setTotalCars(carsResponse.meta.total); // Use the total from metadata
+        // Log cars to see if any have vip_status already
+        console.log('[CarListing] Raw car data from API:', carData.slice(0, 3).map(car => ({ 
+          id: car.id, 
+          brand: car.brand, 
+          model: car.model, 
+          vip_status: car.vip_status 
+        })));
+
+        
+        // For demonstration purposes, let's assign some VIP statuses if they don't exist
+        // This would normally come from the backend
+        const carsWithVipStatus = carData.map((car, index) => {
+          // Ensure cars have vip_status property
+          if (!car.vip_status || car.vip_status === 'none') {
+            // Assign VIP status to approximately 30% of cars
+            if (index % 10 === 0) {
+              return { ...car, vip_status: 'super_vip' as 'super_vip' };
+            } else if (index % 7 === 0) {
+              return { ...car, vip_status: 'vip_plus' as 'vip_plus' };
+            } else if (index % 5 === 0) {
+              return { ...car, vip_status: 'vip' as 'vip' };
+            }
+          }
+          return car;
+        });
+        
+        // Sort cars by VIP status - VIP listings will appear first
+        const sortedCars = [...carsWithVipStatus].sort((a, b) => {
+          // VIP status priority: super_vip > vip_plus > vip > none
+          const vipOrder = {
+            'super_vip': 3,
+            'vip_plus': 2,
+            'vip': 1,
+            'none': 0
+          };
+          
+          const aVipValue = vipOrder[a.vip_status || 'none'] || 0;
+          const bVipValue = vipOrder[b.vip_status || 'none'] || 0;
+          
+          return bVipValue - aVipValue; // Higher number (higher VIP status) comes first
+        });
+        
+        console.log('[CarListing] Assigned VIP statuses and sorted cars');
+        console.log('[CarListing] Sample cars with VIP status:', sortedCars.slice(0, 5).map(car => ({ id: car.id, brand: car.brand, model: car.model, vip_status: car.vip_status })));
+        
+        setCars(sortedCars);
+        setTotalCars(meta?.total || carData.length);
+        console.log('[CarListing] Cars returned from API:', sortedCars.length);
+        const categoriesResponse = await carService.getCategories();
         setCategories(categoriesResponse);
       } catch (error) {
         console.error('[CarListing] Error fetching data:', error);

@@ -33,6 +33,8 @@ interface CarCardProps {
 }
 
 const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOwner, onDelete, showWishlistButton = true, showVipBadge = false }) => {
+  // Debug: log car VIP status
+  console.log(`[CarCard] Car ${car.id} - ${car.brand} ${car.model} - VIP Status: ${car.vip_status}, showVipBadge: ${showVipBadge}`);
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -156,19 +158,18 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
       onClick={handleClick}
       className="group relative bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col h-full"
     >
-      {/* VIP Badge */}
+      {/* VIP Badge - improved visibility and style */}
       {showVipBadge && car.vip_status && car.vip_status !== 'none' && (
-        <div className="absolute top-2 right-2 z-10">
-          <div className={
-            `px-2 py-1 rounded-full flex items-center gap-1 text-xs font-medium shadow-sm ${car.vip_status === 'vip' 
-              ? 'bg-blue-500 text-white' 
-              : car.vip_status === 'vip_plus'
-              ? 'bg-purple-500 text-white'
-              : 'bg-yellow-500 text-yellow-900'}`
-          }>
-            <Star size={12} fill="currentColor" /> 
-            {car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP'}
-          </div>
+        <div 
+          className={`absolute top-2 left-2 z-30 py-1.5 px-3 rounded-md text-xs font-bold flex items-center gap-1.5 ${            
+            car.vip_status === 'super_vip' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 
+            car.vip_status === 'vip_plus' ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white' : 
+            'bg-primary text-white'
+          } shadow-lg animate-fadeIn`}
+        >
+          <Star size={14} fill="currentColor" strokeWidth={0} /> 
+          {car.vip_status === 'super_vip' ? 'SUPER VIP' : 
+           car.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
         </div>
       )}
 
