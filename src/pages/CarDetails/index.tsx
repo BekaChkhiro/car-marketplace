@@ -11,6 +11,7 @@ import CarSpecs from './components/CarSpecs';
 import CarPriceCard from './components/CarPriceCard';
 import VipStatusPurchase from './components/VipStatusPurchase';
 import SimilarCarsSection from './components/SimilarCarsSection';
+import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 import { useAuth } from '../../context/AuthContext';
 import './styles.css';
 
@@ -93,7 +94,14 @@ const CarDetails: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+    <>
+      {/* Top advertisement banner - at the very beginning of the page without any background */}
+      <div className="w-full py-3 flex justify-center">
+        <AdvertisementDisplay placement="car_details_top" className="w-[728px] h-[140px] rounded-md overflow-hidden" />
+      </div>
+      
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+
       {/* Top navigation bar */}
       <CarHeader 
         isFavorite={isFavorite} 
@@ -142,6 +150,11 @@ const CarDetails: React.FC = () => {
           </div>
         </div>
         
+        {/* Bottom advertisement banner */}
+        <div className="w-full my-6 md:my-8 flex justify-center">
+          <AdvertisementDisplay placement="car_details_bottom" className="w-[728px] h-[140px] rounded-md overflow-hidden" />
+        </div>
+        
         {/* Similar Cars Section */}
         <div className="mt-6 md:mt-10 similar-cars-section">
           <SimilarCarsSection carId={car?.id?.toString() || ''} categoryId={categoryId} />
@@ -159,6 +172,7 @@ const CarDetails: React.FC = () => {
         )}
       </Container>
     </div>
+    </>
   );
 };
 

@@ -145,7 +145,8 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
         formDataToSend.append('image', imageFile);
       }
       
-      if (advertisement) {
+      // Check if advertisement exists and has a valid ID (greater than 0)
+      if (advertisement && advertisement.id > 0) {
         await advertisementService.update(advertisement.id, formDataToSend);
       } else {
         await advertisementService.create(formDataToSend);
