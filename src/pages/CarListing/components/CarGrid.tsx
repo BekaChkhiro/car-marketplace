@@ -8,9 +8,10 @@ interface CarGridProps {
   categories: Category[];
   inWishlistPage?: boolean;
   onRemoveFromWishlist?: (car: Car) => void;
+  className?: string;
 }
 
-const CarGrid: React.FC<CarGridProps> = ({ cars, categories, inWishlistPage = false, onRemoveFromWishlist }) => {
+const CarGrid: React.FC<CarGridProps> = ({ cars, categories, inWishlistPage = false, onRemoveFromWishlist, className = '' }) => {
   if (!cars || cars.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -20,7 +21,7 @@ const CarGrid: React.FC<CarGridProps> = ({ cars, categories, inWishlistPage = fa
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 ${className}`}>
       {cars.map((car) => (
         <div key={car.id} className="relative">
           {inWishlistPage && onRemoveFromWishlist && (

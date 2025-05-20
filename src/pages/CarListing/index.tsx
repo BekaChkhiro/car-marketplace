@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Car, CarFilters, Category } from '../../api/types/car.types';
 import carService from '../../api/services/carService';
+import vipService, { VipStatus } from '../../api/services/vipService';
 import { Container, Loading } from '../../components/ui';
 import Pagination from '../../components/ui/Pagination';
 import CarGrid from './components/CarGrid';
@@ -13,9 +14,11 @@ import { useToast } from '../../context/ToastContext';
 const CarListing: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [cars, setCars] = useState<Car[]>([]);
+  const [vipCars, setVipCars] = useState<Car[]>([]);
   const [totalCars, setTotalCars] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [vipLoading, setVipLoading] = useState(true);
   const { showToast } = useToast();
   const listingTopRef = useRef<HTMLDivElement>(null);
   
@@ -87,6 +90,57 @@ const CarListing: React.FC = () => {
     }
   }, [filters]);
 
+  // Fetch all VIP cars regardless of filters
+  useEffect(() => {
+    const fetchVipCars = async () => {
+      try {
+        setVipLoading(true);
+        
+        console.log('[CarListing] Fetching all VIP listings');
+        
+        // Get all VIP cars - combining all three VIP types
+        const vipTypes: VipStatus[] = ['vip', 'vip_plus', 'super_vip'];
+        const allVipCars: Car[] = [];
+        
+        // Fetch cars with each VIP status and combine them
+        for (const vipType of vipTypes) {
+          try {
+            const { cars: vipCarsOfType } = await vipService.getCarsByVipStatus(vipType, 100, 0);
+            console.log(`[CarListing] Found ${vipCarsOfType.length} cars with ${vipType} status`);
+            allVipCars.push(...vipCarsOfType);
+          } catch (err) {
+            console.error(`[CarListing] Error fetching ${vipType} cars:`, err);
+          }
+        }
+        
+        // Sort VIP cars by VIP status
+        const sortedVipCars = [...allVipCars].sort((a, b) => {
+          // VIP status priority: super_vip > vip_plus > vip
+          const vipOrder = {
+            'super_vip': 3,
+            'vip_plus': 2,
+            'vip': 1
+          };
+          
+          const aVipValue = vipOrder[a.vip_status || 'vip'] || 0;
+          const bVipValue = vipOrder[b.vip_status || 'vip'] || 0;
+          
+          return bVipValue - aVipValue; // Higher VIP status comes first
+        });
+        
+        console.log(`[CarListing] Total VIP cars found: ${sortedVipCars.length}`);
+        setVipCars(sortedVipCars);
+      } catch (error) {
+        console.error('[CarListing] Error fetching VIP cars:', error);
+        showToast('VIP განცხადებების ჩატვირთვა ვერ მოხერხდა', 'error');
+      } finally {
+        setVipLoading(false);
+      }
+    };
+    
+    fetchVipCars();
+  }, [showToast]);
+
   // Fetch car data with filters
   useEffect(() => {
     const fetchData = async () => {
@@ -125,47 +179,18 @@ const CarListing: React.FC = () => {
           model: car.model, 
           vip_status: car.vip_status 
         })));
-
         
-        // For demonstration purposes, let's assign some VIP statuses if they don't exist
-        // This would normally come from the backend
-        const carsWithVipStatus = carData.map((car, index) => {
-          // Ensure cars have vip_status property
-          if (!car.vip_status || car.vip_status === 'none') {
-            // Assign VIP status to approximately 30% of cars
-            if (index % 10 === 0) {
-              return { ...car, vip_status: 'super_vip' as 'super_vip' };
-            } else if (index % 7 === 0) {
-              return { ...car, vip_status: 'vip_plus' as 'vip_plus' };
-            } else if (index % 5 === 0) {
-              return { ...car, vip_status: 'vip' as 'vip' };
-            }
-          }
-          return car;
-        });
+        // Filter out cars that might be duplicates from VIP cars already fetched
+        const vipCarIds = vipCars.map(vipCar => vipCar.id);
+        const filteredCarData = carData.filter(car => !vipCarIds.includes(car.id));
         
-        // Sort cars by VIP status - VIP listings will appear first
-        const sortedCars = [...carsWithVipStatus].sort((a, b) => {
-          // VIP status priority: super_vip > vip_plus > vip > none
-          const vipOrder = {
-            'super_vip': 3,
-            'vip_plus': 2,
-            'vip': 1,
-            'none': 0
-          };
-          
-          const aVipValue = vipOrder[a.vip_status || 'none'] || 0;
-          const bVipValue = vipOrder[b.vip_status || 'none'] || 0;
-          
-          return bVipValue - aVipValue; // Higher number (higher VIP status) comes first
-        });
+        // Create combined cars array with VIP cars at the top
+        const combinedCars = [...vipCars, ...filteredCarData];
         
-        console.log('[CarListing] Assigned VIP statuses and sorted cars');
-        console.log('[CarListing] Sample cars with VIP status:', sortedCars.slice(0, 5).map(car => ({ id: car.id, brand: car.brand, model: car.model, vip_status: car.vip_status })));
-        
-        setCars(sortedCars);
+        setCars(combinedCars);
         setTotalCars(meta?.total || carData.length);
-        console.log('[CarListing] Cars returned from API:', sortedCars.length);
+        console.log('[CarListing] Combined cars:', combinedCars.length, 
+          '(VIP:', vipCars.length, ', Regular:', filteredCarData.length, ')');
         const categoriesResponse = await carService.getCategories();
         setCategories(categoriesResponse);
       } catch (error) {
@@ -177,7 +202,7 @@ const CarListing: React.FC = () => {
     };
 
     fetchData();
-  }, [filters, showToast]);
+  }, [filters, showToast, vipCars]);  // Added vipCars as a dependency
 
   // Handle filter changes
   const handleFilterChange = (newFilters: Partial<CarFilters>) => {
@@ -234,7 +259,7 @@ const CarListing: React.FC = () => {
   // Use the total pages from the API metadata
   const totalPages = Math.ceil(totalCars / (filters.limit || 12));
 
-  if (loading) {
+  if (loading && vipLoading) {
     return <Loading />;
   }
 
@@ -275,7 +300,7 @@ const CarListing: React.FC = () => {
               onSortChange={handleSortChange}
             />
             
-            {/* Car grid */}
+            {/* Combined Car grid with VIP listings at the top */}
             <CarGrid cars={cars} categories={categories} />
             
             {/* Pagination */}

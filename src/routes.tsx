@@ -20,6 +20,7 @@ import NewAdvertisementPage from './pages/Admin/Advertisements/pages/NewAdvertis
 import EditAdvertisementPage from './pages/Admin/Advertisements/pages/EditAdvertisement';
 import SettingsPage from './pages/Admin/Settings';
 import TransactionsPage from './pages/Admin/Transactions';
+import VipListingsPage from './pages/Admin/VipListings';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
@@ -55,6 +56,7 @@ const AppRoutes = () => {
         <Route path={routes.adminCars} element={<CarsPage />} />
         <Route path={routes.adminEditCar} element={<AdminEditCar />} />
         <Route path={routes.adminTransactions} element={<TransactionsPage />} />
+        <Route path={routes.adminVipListings} element={<VipListingsPage />} />
         <Route path={routes.adminAdvertisements} element={<AdvertisementsPage />}>
           <Route index element={<Navigate to={routes.adminAdvertisementsAll} replace />} />
           <Route path="all" element={<AllAdvertisementsPage />} />

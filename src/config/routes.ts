@@ -9,6 +9,7 @@ export const routes = {
   adminCars: '/admin/cars',
   adminEditCar: '/admin/cars/edit/:id',
   adminTransactions: '/admin/transactions',
+  adminVipListings: '/admin/vip-listings',
   adminAdvertisements: '/admin/advertisements',
   adminAdvertisementsAll: '/admin/advertisements/all',
   adminAdvertisementsSlider: '/admin/advertisements/slider',

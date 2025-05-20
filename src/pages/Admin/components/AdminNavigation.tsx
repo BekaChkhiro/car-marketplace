@@ -15,6 +15,7 @@ import {
   PanelRight,
   BarChart2,
   CreditCard,
+  Award,
   X
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
@@ -47,6 +48,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
     { icon: <Users size={20} />, label: 'მომხმარებლები', path: '/admin/users' },
     { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/cars' },
     { icon: <CreditCard size={20} />, label: 'ტრანზაქციები', path: '/admin/transactions' },
+    { icon: <Award size={20} />, label: 'VIP განცხადებები', path: '/admin/vip-listings' },
     { 
       icon: <Image size={20} />, 
       label: 'რეკლამები', 
