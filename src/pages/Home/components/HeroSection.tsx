@@ -39,8 +39,8 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className='flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 lg:gap-8 p-2 sm:p-4 h-auto lg:h-[680px]'>
-      <div className='w-full lg:w-3/4 h-[400px] sm:h-[500px] md:h-[550px] lg:h-full'>
+    <section className='flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 lg:gap-8 p-0 sm:p-4 h-auto lg:h-[680px] w-full'>
+      <div className='w-full lg:w-3/4 h-[200px] sm:h-[380px] md:h-[550px] lg:h-full'>
         <FeaturedSlider />
       </div>
       <div className='w-full lg:w-1/4 h-auto mt-4 lg:mt-0'>

@@ -160,7 +160,7 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6">
+    <form onSubmit={handleSubmit} className="w-full h-full rounded-lg sm:rounded-2xl bg-white shadow-md p-4 sm:p-6">
       <div className="flex justify-between items-center mb-6 pb-3 border-b border-green-100">
         <h2 className="text-xl font-bold text-gray-800">ძებნა</h2>
       </div>

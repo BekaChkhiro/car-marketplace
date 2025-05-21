@@ -30,7 +30,7 @@ const Home: React.FC = () => {
       <HeroSection />
       <AdvertisementDisplay 
         placement="home_banner" 
-        className="w-[95%] sm:w-[90%] md:w-full h-36 sm:h-40 md:h-48 lg:h-64 mx-auto my-4 sm:my-6 rounded-lg shadow-md" 
+        className="w-full sm:w-[90%] md:w-full h-36 sm:h-40 md:h-48 lg:h-64 mx-0 sm:mx-auto my-4 sm:my-6 rounded-none sm:rounded-lg shadow-md" 
       />
       <VipListings />
       <NewAdditions />

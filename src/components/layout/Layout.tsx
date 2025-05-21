@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 import ScrollToTop from '../ScrollToTop';
+import MobileBottomNav from './MobileBottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,10 +20,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <LayoutWrapper>
       <ScrollToTop />
       <Header />
-      <main className="w-[90%] mx-auto py-6">
+      <main className="w-[100%] lg:w-[90%] mx-auto py-6 px-4 lg:px-0">
         {children}
       </main>
       <Footer />
+      <MobileBottomNav />
     </LayoutWrapper>
   );
 };

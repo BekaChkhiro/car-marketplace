@@ -75,7 +75,7 @@ const FeaturedSlider: React.FC = () => {
     <section className="h-full">
       <div className="w-full h-full">
         <div className="relative h-full">
-          <div className="overflow-hidden rounded-2xl h-full">
+          <div className="overflow-hidden rounded-lg sm:rounded-2xl h-full w-full">
             <div 
               className="flex h-full transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -88,22 +88,18 @@ const FeaturedSlider: React.FC = () => {
                   {ad.link_url ? (
                     <Link to={ad.link_url} className="w-full h-full block">
                       <div 
-                        className="w-full h-full bg-cover bg-center flex flex-col justify-end"
+                        className="w-full h-full bg-cover bg-center"
                         style={{ backgroundImage: `url(${ad.image_url})` }}
                       >
-                        <div className="bg-black bg-opacity-50 p-4 text-white">
-                          <h3 className="text-xl font-bold">{ad.title}</h3>
-                        </div>
+
                       </div>
                     </Link>
                   ) : (
                     <div 
-                      className="w-full h-full bg-cover bg-center flex flex-col justify-end"
+                      className="w-full h-full bg-cover bg-center"
                       style={{ backgroundImage: `url(${ad.image_url})` }}
                     >
-                      <div className="bg-black bg-opacity-50 p-4 text-white">
-                        <h3 className="text-xl font-bold">{ad.title}</h3>
-                      </div>
+
                     </div>
                   )}
                 </div>
@@ -115,15 +111,15 @@ const FeaturedSlider: React.FC = () => {
             <>
               <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-primary hover:bg-white hover:scale-110 transition-all duration-200"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-12 sm:h-12 bg-white/90 rounded-full flex items-center justify-center text-primary hover:bg-white hover:scale-110 transition-all duration-200"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
               </button>
               <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-primary hover:bg-white hover:scale-110 transition-all duration-200"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-12 sm:h-12 bg-white/90 rounded-full flex items-center justify-center text-primary hover:bg-white hover:scale-110 transition-all duration-200"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
               </button>
 
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">

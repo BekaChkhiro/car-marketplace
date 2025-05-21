@@ -30,7 +30,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="პაროლის აღდგენა">
-      <div className="p-6">
+      <div className="p-3 sm:p-5">
         {success && (
           <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-lg">
             {success}
@@ -43,9 +43,9 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
               ელ-ფოსტა
             </label>
             <input
@@ -53,7 +53,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
               required
             />
           </div>
@@ -62,7 +62,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-6 py-3 bg-primary text-white rounded-xl hover:bg-secondary transition-colors disabled:bg-gray-400"
+              className="w-full px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-primary text-white rounded-lg sm:rounded-xl hover:bg-secondary transition-colors disabled:bg-gray-400"
             >
               {isLoading ? 'გთხოვთ მოიცადოთ...' : 'პაროლის აღდგენა'}
             </button>
@@ -72,7 +72,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
             <button
               type="button"
               onClick={onShowLogin}
-              className="text-primary hover:text-secondary text-sm"
+              className="text-primary hover:text-secondary text-xs sm:text-sm"
             >
               დაბრუნება ავტორიზაციაზე
             </button>

@@ -9,8 +9,8 @@ const VipListings: React.FC = () => {
   };
 
   return (
-    <section className="w-full py-8 sm:py-12">
-      <div className="w-full px-4 mx-auto">
+    <section className="w-full py-6 sm:py-12">
+      <div className="w-full px-0 sm:px-4 mx-auto">
         
         
         {/* SUPER VIP განცხადებები */}
