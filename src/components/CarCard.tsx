@@ -162,15 +162,18 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
       {/* VIP Badge - improved visibility and style */}
       {showVipBadge && car.vip_status && car.vip_status !== 'none' && (
         <div 
-          className={`absolute top-2 left-2 z-30 py-1.5 px-3 rounded-md text-xs font-bold flex items-center gap-1.5 ${            
+          className={`absolute top-1.5 sm:top-2 left-1.5 sm:left-2 z-30 py-1 sm:py-1.5 px-2 sm:px-3 rounded text-[10px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 ${            
             car.vip_status === 'super_vip' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 
             car.vip_status === 'vip_plus' ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white' : 
             'bg-primary text-white'
-          } shadow-lg animate-fadeIn`}
+          } shadow-sm sm:shadow-lg animate-fadeIn`}
         >
-          <Star size={14} fill="currentColor" strokeWidth={0} /> 
-          {car.vip_status === 'super_vip' ? 'SUPER VIP' : 
-           car.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
+          <Star size={12} className="block sm:hidden" fill="currentColor" strokeWidth={0} />
+          <Star size={14} className="hidden sm:block" fill="currentColor" strokeWidth={0} />
+          <span className="text-[10px] sm:text-xs">
+            {car.vip_status === 'super_vip' ? 'SUPER VIP' : 
+             car.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
+          </span>
         </div>
       )}
 
@@ -203,7 +206,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         {showWishlistButton && (
           <button
             onClick={handleWishlistClick}
-            className={`absolute top-3 right-3 p-2 rounded-full ${  
+            className={`absolute top-2 sm:top-3 right-2 sm:right-3 p-1.5 sm:p-2 rounded-full ${  
               isInWishlistState 
                 ? 'bg-primary text-white' 
                 : 'bg-white/90 text-gray-400 hover:bg-primary hover:text-white'
@@ -212,7 +215,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             title={isInWishlistState ? 'წაშლა ფავორიტებიდან' : 'დამატება ფავორიტებში'}
           >
             <Heart 
-              className="h-5 w-5" 
+              className="h-4 w-4 sm:h-5 sm:w-5" 
               fill={isInWishlistState ? "currentColor" : "none"} 
               strokeWidth={isInWishlistState ? 0 : 2}
             />
@@ -285,7 +288,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             <Tag size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
             <span className="truncate">{localCategory?.name || (car.category_id ? `კატეგორია ${car.category_id}` : 'არ არის')}</span>
           </div>
-          <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
+          <div className="hidden sm:flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <MapPin size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
             <span className="truncate">{car.location?.city}</span>
           </div>

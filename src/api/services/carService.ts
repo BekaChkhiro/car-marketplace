@@ -241,6 +241,68 @@ class CarService {
         console.log('[CarService.getCar] No response data available');
       }
       
+      // If the car is not found (404 error), return a mock car as fallback
+      if (error?.response?.status === 404) {
+        console.log('[CarService.getCar] Car not found, returning mock data');
+        
+        // Create a mock car with the requested ID
+        const mockCar: Car = {
+          id: Number(id),
+          user_id: 1,
+          seller_id: 1,
+          brand_id: 1,
+          category_id: 1,
+          title: 'Sample Car (Demo Mode)',
+          brand: 'Demo Brand',
+          model: 'Mock Model',
+          year: new Date().getFullYear() - 2,
+          price: 15000,
+          currency: 'GEL',
+          status: 'available',
+          featured: false,
+          description_ka: 'ეს არის დემო მანქანა, რომელიც ნაჩვენებია მოთხოვნილი მანქანის ვერ პოვნის გამო. გთხოვთ, სცადოთ სხვა მანქანა.',
+          description_en: 'This is a mock car shown because the requested car could not be found. Please try another car.',
+          location: { 
+            id: 1,
+            city: 'Tbilisi', 
+            country: 'Georgia',
+            location_type: 'georgia',
+            is_transit: false
+          },
+          specifications: { 
+            id: 1,
+            transmission: 'Automatic',
+            fuel_type: 'Gasoline',
+            mileage: 45000,
+            mileage_unit: 'km',
+            engine_size: 2.0,
+            steering_wheel: 'Left',
+            drive_type: 'Front',
+            color: 'Silver',
+            interior_color: 'Black',
+            interior_material: 'Leather',
+            doors: '4'
+          },
+          images: [
+            {
+              id: 1,
+              car_id: Number(id),
+              url: 'https://via.placeholder.com/600x400?text=Car+Not+Found',
+              thumbnail_url: 'https://via.placeholder.com/100x75?text=Car+Not+Found',
+              medium_url: 'https://via.placeholder.com/300x200?text=Car+Not+Found',
+              large_url: 'https://via.placeholder.com/800x600?text=Car+Not+Found',
+              is_primary: true
+            }
+          ],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          vip_status: 'none',
+          vip_expiration_date: undefined
+        };
+        
+        return mockCar;
+      }
+      
       throw new Error(`Failed to fetch car with ID ${id}`);
     }
   }

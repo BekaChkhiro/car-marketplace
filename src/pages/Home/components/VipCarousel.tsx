@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Car, Category } from '../../../api/types/car.types';
-import carService from '../../../api/services/carService';
-import vipService from '../../../api/services/vipService';
-import CarCard from '../../../components/CarCard';
-import { useToast } from '../../../context/ToastContext';
-import { ArrowRight } from 'lucide-react';
+import { Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import vipService, { VipStatus } from '../../../api/services/vipService';
+import carService from '../../../api/services/carService';
+import CarCard from '../../../components/CarCard';
+import { Car, Category } from '../../../api/types/car.types';
 
-const NewAdditions: React.FC = () => {
-  const [newCars, setNewCars] = useState<Car[]>([]);
+interface VipCarouselProps {
+  vipType: VipStatus;
+  limit?: number;
+}
+
+const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
+  const [cars, setCars] = useState<Car[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { showToast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleItemsCount, setVisibleItemsCount] = useState(4);
   const [isMobile, setIsMobile] = useState(false);
@@ -41,75 +44,111 @@ const NewAdditions: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchVipCars = async () => {
       try {
         setLoading(true);
 
-        // Fetch categories first
+        // First, get categories for proper display
         const categoriesData = await carService.getCategories();
-        console.log('NewAdditions - Fetched categories:', categoriesData);
         setCategories(categoriesData);
         
-        // Get latest 8 cars, including VIP and non-VIP cars
-        const allCarsResponse = await carService.getCars({});
+        // Get VIP car IDs from VIP service
+        const response = await vipService.getCarsByVipStatus(vipType, limit);
+        const vipCarsData = response.cars;
         
-        // Sort by created_at and take the latest 8 cars for the carousel
-        const sortedCars = allCarsResponse.cars
-          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          .slice(0, 8);
-        
-        console.log('NewAdditions - All cars count:', allCarsResponse.cars.length);
-        console.log('NewAdditions - Selected cars count:', sortedCars.length);
-        setNewCars(sortedCars);
-        
-        // Log category IDs for debugging
-        if (sortedCars.length > 0) {
-          console.log('NewAdditions - Car category IDs:', sortedCars.map(car => ({ 
-            id: car.id, 
-            category_id: car.category_id, 
-            type: typeof car.category_id 
-          })));
+        // If VIP cars already have complete data, use them directly
+        if (vipCarsData.length > 0 && 
+            vipCarsData[0]?.specifications?.mileage !== undefined && 
+            vipCarsData[0]?.specifications?.fuel_type && 
+            vipCarsData[0]?.location?.city) {
+          console.log(`[VipCarousel] Using VIP cars data directly for ${vipType}`);
+          setCars(vipCarsData);
+        } else {
+          // Otherwise, fetch each car's complete data individually
+          console.log(`[VipCarousel] Fetching complete data for ${vipCarsData.length} ${vipType} cars`);
+          const carDetailsPromises = vipCarsData.map(async (vipCar: any) => {
+            try {
+              // Get complete car data by ID
+              const carDetailsResponse = await carService.getCar(vipCar.id);
+              // Merge VIP status information with complete car data
+              return {
+                ...carDetailsResponse,
+                vip_status: vipCar.vip_status || vipType
+              };
+            } catch (error) {
+              console.error(`Error fetching details for car ${vipCar.id}:`, error);
+              return vipCar; // Return original data if fetch fails
+            }
+          });
+          
+          const completeCars = await Promise.all(carDetailsPromises);
+          setCars(completeCars);
         }
       } catch (err) {
-        console.error('Error fetching new cars or categories:', err);
-        setError('ახალი მანქანების ჩატვირთვა ვერ მოხერხდა');
-        showToast('Failed to load new cars', 'error');
+        console.error('Error fetching VIP cars:', err);
+        setError('VIP მანქანების ჩატვირთვა ვერ მოხერხდა');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [showToast]);
+    fetchVipCars();
+  }, [vipType, limit]);
 
   // Auto-advance slides every 4 seconds
   useEffect(() => {
-    if (newCars.length <= visibleItemsCount) return;
+    if (cars.length <= visibleItemsCount) return;
     
     const interval = setInterval(() => {
       nextSlide();
     }, 4000);
     
     return () => clearInterval(interval);
-  }, [newCars.length, currentSlide, visibleItemsCount]);
+  }, [cars.length, currentSlide, visibleItemsCount]);
 
   const nextSlide = () => {
-    if (newCars.length <= visibleItemsCount) return;
+    if (cars.length <= visibleItemsCount) return;
     setCurrentSlide((prev) => {
-      const maxSlide = newCars.length - visibleItemsCount;
+      const maxSlide = cars.length - visibleItemsCount;
       return prev >= maxSlide ? 0 : prev + 1;
     });
   };
 
   const prevSlide = () => {
-    if (newCars.length <= visibleItemsCount) return;
+    if (cars.length <= visibleItemsCount) return;
     setCurrentSlide((prev) => {
-      const maxSlide = newCars.length - visibleItemsCount;
+      const maxSlide = cars.length - visibleItemsCount;
       return prev <= 0 ? maxSlide : prev - 1;
     });
   };
 
-  if (newCars.length === 0 && !loading) {
+  const getVipTitle = (vipType: VipStatus) => {
+    switch (vipType) {
+      case 'vip':
+        return 'VIP მანქანები';
+      case 'vip_plus':
+        return 'VIP+ განცხადებები';
+      case 'super_vip':
+        return 'SUPER VIP განცხადებები';
+      default:
+        return '';
+    }
+  };
+
+  const getVipBadgeStyle = (vipType: VipStatus) => {
+    switch (vipType) {
+      case 'vip':
+        return 'bg-blue-500 text-white';
+      case 'vip_plus':
+        return 'bg-purple-500 text-white';
+      case 'super_vip':
+        return 'bg-yellow-500 text-yellow-900';
+      default:
+        return 'bg-gray-200 text-gray-700';
+    }
+  };
+
+  if (cars.length === 0 && !loading) {
     return null;
   }
 
@@ -117,11 +156,15 @@ const NewAdditions: React.FC = () => {
     <div className="mb-10 bg-white rounded-lg shadow-sm p-4">
       <div className="flex items-center justify-between mb-4 pb-3 border-b">
         <div className="flex items-center space-x-2">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">ახალი განცხადებები</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">{getVipTitle(vipType)}</h2>
+          <div className={`px-2 py-0.5 rounded ${getVipBadgeStyle(vipType)} flex items-center`}>
+            <Star size={14} fill="currentColor" className="mr-1" />
+            <span className="text-xs font-medium">{vipType === 'vip_plus' ? 'VIP+' : vipType === 'super_vip' ? 'SUPER VIP' : 'VIP'}</span>
+          </div>
         </div>
         
         <Link
-          to="/cars"
+          to={`/cars?filter=${vipType}`}
           className="hidden sm:flex items-center gap-1 px-3 py-2 text-sm text-primary font-semibold border border-primary/30 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-200 group"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
@@ -131,7 +174,7 @@ const NewAdditions: React.FC = () => {
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 animate-pulse">
-          {Array.from({ length: 8 }).map((_, index) => (
+          {Array.from({ length: limit }).map((_, index) => (
             <div key={index} className="bg-gray-200 rounded-lg h-64"></div>
           ))}
         </div>
@@ -145,7 +188,7 @@ const NewAdditions: React.FC = () => {
             className="flex gap-4 transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${currentSlide * (100 / visibleItemsCount)}%)` }}
           >
-            {newCars.map((car) => (
+            {cars.map((car) => (
               <div key={car.id} className={`flex-none ${
                 visibleItemsCount === 2 ? 'w-1/2' : 
                 visibleItemsCount === 3 ? 'w-1/3' : 
@@ -161,10 +204,10 @@ const NewAdditions: React.FC = () => {
       )}
       
       {/* Indicator dots for visual guidance */}
-      {newCars.length > visibleItemsCount && !loading && (
+      {cars.length > visibleItemsCount && !loading && (
         <div className='flex justify-center items-center'>
           <div className="flex justify-center gap-2 mt-4 bg-white px-3 py-2 rounded-lg">
-          {Array.from({ length: newCars.length - visibleItemsCount + 1 }).map((_, index) => (
+          {Array.from({ length: cars.length - visibleItemsCount + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
@@ -176,14 +219,14 @@ const NewAdditions: React.FC = () => {
       )}
       
       {/* "View All" button for mobile (shown at bottom for better UX) */}
-      {!loading && newCars.length > 0 && isMobile && (
+      {!loading && cars.length > 0 && isMobile && (
         <div className="flex justify-center mt-6">
           <Link
-            to="/cars"
+            to={`/cars?filter=${vipType}`}
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-primary-dark transition-all duration-200 w-full max-w-xs"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            ყველა მანქანის ნახვა <ArrowRight className="w-4 h-4" />
+            ყველა {vipType === 'vip_plus' ? 'VIP+' : vipType === 'super_vip' ? 'SUPER VIP' : 'VIP'} მანქანის ნახვა <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       )}
@@ -191,4 +234,4 @@ const NewAdditions: React.FC = () => {
   );
 };
 
-export default NewAdditions;
+export default VipCarousel;
