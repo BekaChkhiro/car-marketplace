@@ -180,17 +180,63 @@ const CarListing: React.FC = () => {
           vip_status: car.vip_status 
         })));
         
-        // Filter out cars that might be duplicates from VIP cars already fetched
-        const vipCarIds = vipCars.map(vipCar => vipCar.id);
-        const filteredCarData = carData.filter(car => !vipCarIds.includes(car.id));
+        // Create a map of all VIP cars by ID for easy lookup
+        const vipCarMap = new Map();
+        vipCars.forEach(vipCar => {
+          vipCarMap.set(vipCar.id, vipCar);
+        });
         
-        // Create combined cars array with VIP cars at the top
-        const combinedCars = [...vipCars, ...filteredCarData];
+        // Check if active filters are applied (other than sorting, pagination)
+        const hasActiveFilters = Object.keys(cleanFilters).some(key => 
+          !['page', 'limit', 'sortBy', 'order'].includes(key)
+        );
         
-        setCars(combinedCars);
+        let displayCars;
+        
+        // Whether filtering or not, always ensure VIP cars are at the top
+        // First, preserve VIP status for any filtered cars
+        const carsWithVipStatus = carData.map(car => {
+          // If this car has VIP status in our VIP cars, use that data to preserve VIP status
+          if (vipCarMap.has(car.id)) {
+            const vipCar = vipCarMap.get(car.id);
+            return {
+              ...car,
+              vip_status: vipCar.vip_status,
+              vip_expiration_date: vipCar.vip_expiration_date
+            };
+          }
+          return car;
+        });
+        
+        // For filtering, split cars into VIP and non-VIP groups
+        const vipFilteredCars = carsWithVipStatus.filter(car => car.vip_status);
+        const regularFilteredCars = carsWithVipStatus.filter(car => !car.vip_status);
+        
+        // Sort VIP cars by their status priority
+        const sortedVipFilteredCars = [...vipFilteredCars].sort((a, b) => {
+          // VIP status priority: super_vip > vip_plus > vip
+          const vipOrder = {
+            'super_vip': 3,
+            'vip_plus': 2,
+            'vip': 1
+          };
+          const aVipValue = vipOrder[a.vip_status || 'vip'] || 0;
+          const bVipValue = vipOrder[b.vip_status || 'vip'] || 0;
+          return bVipValue - aVipValue; // Higher VIP status comes first
+        });
+        
+        // Always combine with VIP cars at the top
+        displayCars = [...sortedVipFilteredCars, ...regularFilteredCars];
+        
+        console.log('[CarListing] Displaying cars with VIP cars at top:', displayCars.length, 
+          `(VIP: ${sortedVipFilteredCars.length}, Regular: ${regularFilteredCars.length})`);
+        
+        setCars(displayCars);
         setTotalCars(meta?.total || carData.length);
-        console.log('[CarListing] Combined cars:', combinedCars.length, 
-          '(VIP:', vipCars.length, ', Regular:', filteredCarData.length, ')');
+        
+        // Count how many cars in the display list have VIP status
+        const vipStatusCount = displayCars.filter(car => car.vip_status).length;
+        console.log(`[CarListing] Final display cars: ${displayCars.length} (with ${vipStatusCount} VIP status cars)`);
         const categoriesResponse = await carService.getCategories();
         setCategories(categoriesResponse);
       } catch (error) {

@@ -8,17 +8,55 @@ class CarService {
       // Log the filters we're sending to API
       console.log('[CarService.getCars] Sending filters to API:', JSON.stringify(filters));
       
-      // Make special note of brand_id and model if present 
-      if (filters?.brand_id) {
-        console.log('[CarService.getCars] Filter includes brand_id:', filters.brand_id);
+      // Create a new object for server-side filters with mapped parameter names
+      const serverFilters: Record<string, any> = {};
+      
+      if (filters) {
+        // Map client-side filter names to server-side expected names
+        if (filters.page) serverFilters.page = filters.page;
+        if (filters.limit) serverFilters.limit = filters.limit;
+        if (filters.sortBy) serverFilters.sort = filters.sortBy;
+        if (filters.order) serverFilters.order = filters.order;
+        
+        // Brand and category IDs
+        if (filters.brand_id) serverFilters.brand_id = filters.brand_id;
+        if (filters.category) serverFilters.category_id = filters.category;
+        
+        // Model name
+        if (filters.model) serverFilters.model = filters.model;
+        
+        // Price range - use server parameter names (priceFrom, priceTo)
+        if (filters.priceFrom) serverFilters.priceFrom = filters.priceFrom;
+        if (filters.priceTo) serverFilters.priceTo = filters.priceTo;
+        
+        // Year range - use server parameter names (yearFrom, yearTo)
+        if (filters.yearFrom) serverFilters.yearFrom = filters.yearFrom;
+        if (filters.yearTo) serverFilters.yearTo = filters.yearTo;
+        
+        // Mileage range - use server parameter names (mileageFrom, mileageTo)
+        if (filters.mileageFrom) serverFilters.mileageFrom = filters.mileageFrom;
+        if (filters.mileageTo) serverFilters.mileageTo = filters.mileageTo;
+        
+        // Location
+        if (filters.location) serverFilters.location = filters.location;
+        
+        // Other specifications - match server parameter names
+        if (filters.transmission) serverFilters.transmission = filters.transmission;
+        if (filters.driveType) serverFilters.driveType = filters.driveType;
+        if (filters.fuelType) serverFilters.fuelType = filters.fuelType;
+        if (filters.steeringWheel) serverFilters.steeringWheel = filters.steeringWheel;
+        if (filters.interiorColor) serverFilters.interiorColor = filters.interiorColor;
+        if (filters.color) serverFilters.color = filters.color;
+        if (filters.interiorMaterial) serverFilters.interiorMaterial = filters.interiorMaterial;
+        if (filters.engineSizeFrom) serverFilters.engineSizeFrom = filters.engineSizeFrom;
+        if (filters.engineSizeTo) serverFilters.engineSizeTo = filters.engineSizeTo;
+        if (filters.airbags) serverFilters.airbags = filters.airbags;
       }
       
-      if (filters?.model) {
-        console.log('[CarService.getCars] Filter includes model:', filters.model);
-      }
+      console.log('[CarService.getCars] Mapped server filters:', serverFilters);
       
-      // Make the API request
-      const response = await api.get('/api/cars', { params: filters });
+      // Make the API request with properly mapped filters
+      const response = await api.get('/api/cars', { params: serverFilters });
       console.log('[CarService.getCars] API response received');
       
       // Check if the response follows the new data structure with meta information

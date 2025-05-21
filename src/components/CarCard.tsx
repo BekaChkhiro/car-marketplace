@@ -54,31 +54,32 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        console.log('CarCard - Fetching category for category_id:', car.category_id);
-        if (car.category_id) {
+        // Try to use category_id from car if available
+        const categoryId = car.category_id;
+        
+        if (categoryId) {
           // Try to use provided categories first
           let categories = propCategories || [];
           
           // If no categories provided, fetch them
           if (categories.length === 0) {
-            console.log('CarCard - No categories provided, fetching from service');
             categories = await carService.getCategories();
           }
           
-          console.log('CarCard - Available categories:', categories);
-          
           // Compare as strings to handle type differences (number vs string)
-          const foundCategory = categories.find(cat => String(cat.id) === String(car.category_id));
-          console.log('CarCard - Found category:', foundCategory);
+          const foundCategory = categories.find(cat => String(cat.id) === String(categoryId));
           
           if (foundCategory) {
             setLocalCategory(foundCategory);
           } else {
-            console.log('CarCard - Category not found for ID:', car.category_id);
-            setLocalCategory(null);
+            // If no matching category was found, create a placeholder
+            setLocalCategory({
+              id: Number(categoryId),
+              name: `კატეგორია ${categoryId}`
+            });
           }
         } else {
-          console.log('CarCard - No category_id provided in car object');
+          // No category information at all
           setLocalCategory(null);
         }
       } catch (error) {
