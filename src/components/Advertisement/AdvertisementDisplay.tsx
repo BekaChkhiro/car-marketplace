@@ -91,7 +91,7 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
   
   const content = (
     <motion.div 
-      className={`relative overflow-hidden ${className} cursor-pointer hover:shadow-lg transition-shadow duration-300`}
+      className={`relative overflow-hidden ${className} cursor-pointer`}
       initial={{ opacity: 0.9 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

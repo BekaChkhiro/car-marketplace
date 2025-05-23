@@ -57,7 +57,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         // Try to use category_id from car if available
         const categoryId = car.category_id;
         
-        if (categoryId) {
+        if (categoryId !== undefined && categoryId !== null) {
           // Try to use provided categories first
           let categories = propCategories || [];
           
@@ -66,13 +66,22 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             categories = await carService.getCategories();
           }
           
+          console.log(`[CarCard ${car.id}] Comparing category_id: ${categoryId} (${typeof categoryId}) with available categories:`, categories);
+          
           // Compare as strings to handle type differences (number vs string)
-          const foundCategory = categories.find(cat => String(cat.id) === String(categoryId));
+          // Force both to be strings for comparison
+          const foundCategory = categories.find(cat => 
+            String(cat.id) === String(categoryId) || 
+            cat.id === Number(categoryId) || 
+            Number(cat.id) === Number(categoryId)
+          );
           
           if (foundCategory) {
+            console.log(`[CarCard ${car.id}] Found matching category:`, foundCategory);
             setLocalCategory(foundCategory);
           } else {
             // If no matching category was found, create a placeholder
+            console.log(`[CarCard ${car.id}] No matching category found, using placeholder`);
             setLocalCategory({
               id: Number(categoryId),
               name: `კატეგორია ${categoryId}`
@@ -80,16 +89,17 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
           }
         } else {
           // No category information at all
+          console.log(`[CarCard ${car.id}] No category_id available`);
           setLocalCategory(null);
         }
       } catch (error) {
-        console.error('Error fetching category:', error);
+        console.error(`[CarCard ${car.id}] Error fetching category:`, error);
         setLocalCategory(null);
       }
     };
 
     fetchCategory();
-  }, [car.category_id, propCategories]);
+  }, [car.category_id, propCategories, car.id]);
 
   useEffect(() => {
     if (showWishlistButton && isAuthenticated) {

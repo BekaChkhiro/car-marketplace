@@ -9,7 +9,7 @@ const VipListings: React.FC = () => {
   };
 
   return (
-    <section className="w-full py-6 sm:py-12">
+    <section className="w-full pt-6 sm:pt-12">
       <div className="w-full px-0 sm:px-4 mx-auto">
         
         

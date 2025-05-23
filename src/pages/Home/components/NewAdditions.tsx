@@ -48,7 +48,15 @@ const NewAdditions: React.FC = () => {
         // Fetch categories first
         const categoriesData = await carService.getCategories();
         console.log('NewAdditions - Fetched categories:', categoriesData);
-        setCategories(categoriesData);
+        
+        // Ensure categories have valid IDs (convert string IDs to numbers if needed)
+        const normalizedCategories = categoriesData.map(cat => ({
+          ...cat,
+          id: typeof cat.id === 'string' ? parseInt(cat.id, 10) : cat.id
+        }));
+        
+        setCategories(normalizedCategories);
+        console.log('NewAdditions - Normalized categories:', normalizedCategories);
         
         // Get latest 8 cars, including VIP and non-VIP cars
         const allCarsResponse = await carService.getCars({});
@@ -60,15 +68,33 @@ const NewAdditions: React.FC = () => {
         
         console.log('NewAdditions - All cars count:', allCarsResponse.cars.length);
         console.log('NewAdditions - Selected cars count:', sortedCars.length);
-        setNewCars(sortedCars);
+        
+        // Ensure car category_ids are also normalized
+        const normalizedCars = sortedCars.map(car => ({
+          ...car,
+          category_id: car.category_id !== undefined ? 
+            (typeof car.category_id === 'string' ? parseInt(car.category_id, 10) : car.category_id) : 
+            null
+        }));
+        
+        setNewCars(normalizedCars);
         
         // Log category IDs for debugging
-        if (sortedCars.length > 0) {
-          console.log('NewAdditions - Car category IDs:', sortedCars.map(car => ({ 
+        if (normalizedCars.length > 0) {
+          console.log('NewAdditions - Car category IDs:', normalizedCars.map(car => ({ 
             id: car.id, 
             category_id: car.category_id, 
             type: typeof car.category_id 
           })));
+          
+          // Log full category matches
+          normalizedCars.forEach(car => {
+            const matchingCategory = normalizedCategories.find(cat => cat.id === car.category_id);
+            console.log(`NewAdditions - Car ${car.id} category match:`, {
+              car_category_id: car.category_id,
+              matching_category: matchingCategory || 'No match'
+            });
+          });
         }
       } catch (err) {
         console.error('Error fetching new cars or categories:', err);
@@ -114,7 +140,7 @@ const NewAdditions: React.FC = () => {
   }
 
   return (
-    <div className="mb-10 bg-white rounded-lg sm:rounded-lg shadow-sm p-3 sm:p-4 w-full">
+    <div className="bg-white rounded-lg sm:rounded-lg shadow-sm p-3 sm:p-4 w-full">
       <div className="flex items-center justify-between mb-4 pb-3 border-b">
         <div className="flex items-center space-x-2">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">ახალი განცხადებები</h2>

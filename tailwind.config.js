@@ -52,6 +52,11 @@ module.exports = {
           '0%': { transform: 'scale(0)' },
           '50%': { transform: 'scale(1.2)' },
           '100%': { transform: 'scale(1)' }
+        },
+        'quick-pulse': {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.95)' },
+          '100%': { transform: 'scale(1)' }
         }
       },
       animation: {
@@ -60,7 +65,8 @@ module.exports = {
         'slowly-move': 'slowly-move 20s ease-in-out infinite',
         'fade-in-up': 'fade-in-up 0.5s ease-out',
         'fade-in': 'fade-in 0.3s ease-out forwards',
-        'bounce-in': 'bounce-in 0.2s ease-out'
+        'bounce-in': 'bounce-in 0.2s ease-out',
+        'quick-pulse': 'quick-pulse 0.3s ease-in-out'
       },
       fontSize: {
         'xs': '0.75rem',

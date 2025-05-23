@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Info, Monitor, Smartphone } from 'lucide-react';
 import advertisementService, { Advertisement } from '../../../../api/services/advertisementService';
 
 interface AdvertisementFormProps {
@@ -21,6 +21,8 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPlacementPreview, setShowPlacementPreview] = useState(false);
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
 
   useEffect(() => {
     if (advertisement) {
@@ -83,12 +85,18 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
         return 'მთავარი გვერდის სლაიდერი';
       case 'home_banner':
         return 'მთავარი გვერდის ბანერი';
+      case 'home_after_vip':
+        return 'მთავარი გვერდის VIP განცხადებების შემდეგ';
       case 'car_listing_top':
         return 'მანქანების ყიდვის გვერდი - ზედა';
+      case 'car_listing_bottom':
+        return 'მანქანების ყიდვის გვერდი - ქვედა';
       case 'car_details_top':
         return 'მანქანის დეტალების გვერდი - ზედა';
       case 'car_details_bottom':
-        return 'მანქანის დეტალების გვერდი - ქვედა';
+        return 'მანქანის დეტალების გვერდი - შუა';
+      case 'car_details_after_similar':
+        return 'მანქანის დეტალების გვერდი - მსგავსი მანქანების შემდეგ';
       default:
         return placement;
     }
@@ -179,29 +187,353 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
           
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 ">
-              {/* Placement Dropdown */}
+              {/* Placement Dropdown with Preview */}
               <div>
-                <label htmlFor="placement" className="block text-sm text-gray-600">
-                  განთავსების ადგილი <span className="text-red-500">*</span>
-                </label>
+                <div className="flex justify-between items-center">
+                  <label htmlFor="placement" className="block text-sm text-gray-600">
+                    განთავსების ადგილი <span className="text-red-500">*</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPlacementPreview(!showPlacementPreview)}
+                    className="text-xs flex items-center gap-1 text-blue-500 hover:text-blue-700 transition-colors"
+                  >
+                    {showPlacementPreview ? 'დამალვა' : 'პრევიუ'}
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </div>
                 <select
                   id="placement"
                   name="placement"
                   value={formData.placement}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    if (e.target.value && !showPlacementPreview) {
+                      setShowPlacementPreview(true);
+                    }
+                  }}
                   className={`mt-1 block w-full px-3 py-2 border ${errors.placement ? 'border-red-300' : 'border-gray-200'} rounded focus:outline-none focus:border-blue-500 text-sm`}
                 >
                   <option value="" disabled>აირჩიეთ განთავსების ადგილი</option>
-                  <option value="home_slider">მთავარი გვერდის სლაიდერი (1200×600px)</option>
-                  <option value="home_banner">მთავარი გვერდის ბანერი (1200×300px)</option>
-                  <option value="car_listing_top">მანქანების ყიდვის გვერდი - ზედა (728×140px)</option>
-                  <option value="car_details_top">მანქანის დეტალების გვერდი - ზედა (728×140px)</option>
-                  <option value="car_details_bottom">მანქანის დეტალების გვერდი - ქვედა (728×140px)</option>
+                  
+                  {/* მთავარი გვერდი */}
+                  <optgroup label="მთავარი გვერდი">
+                    <option value="home_slider">სლაიდერი (1200×600px)</option>
+                    <option value="home_banner">ზედა ბანერი (1200×300px)</option>
+                    <option value="home_after_vip">VIP განცხადებების შემდეგ (720×140px)</option>
+                  </optgroup>
+                  
+                  {/* მანქანების ყიდვის გვერდი */}
+                  <optgroup label="მანქანების ყიდვის გვერდი">
+                    <option value="car_listing_top">ზედა ბანერი (728×140px)</option>
+                    <option value="car_listing_bottom">ქვედა ბანერი (720×140px)</option>
+                  </optgroup>
+                  
+                  {/* მანქანის დეტალების გვერდი */}
+                  <optgroup label="მანქანის დეტალების გვერდი">
+                    <option value="car_details_top">ზედა ბანერი (728×140px)</option>
+                    <option value="car_details_bottom">შუა ბანერი (728×140px)</option>
+                    <option value="car_details_after_similar">მსგავსი მანქანების შემდეგ (720×140px)</option>
+                  </optgroup>
                 </select>
                 {errors.placement && (
                   <p className="mt-1 text-xs text-red-500">
                     {errors.placement}
                   </p>
+                )}
+                
+                {/* Placement Preview */}
+                {showPlacementPreview && formData.placement && (
+                  <div className="mt-3 border border-gray-200 rounded-lg p-3 bg-gray-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-medium text-gray-700">რეკლამის ადგილის პრევიუ</h4>
+                      <div className="flex items-center gap-1.5">
+                        <button 
+                          type="button"
+                          onClick={() => setPreviewDevice('desktop')}
+                          className={`flex items-center gap-1 text-xs px-1.5 py-0.5 ${previewDevice === 'desktop' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-700'} rounded transition-colors`}
+                        >
+                          <Monitor className="h-3 w-3" />
+                          <span>დესკტოპი</span>
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => setPreviewDevice('mobile')}
+                          className={`flex items-center gap-1 text-xs px-1.5 py-0.5 ${previewDevice === 'mobile' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-700'} rounded transition-colors`}
+                        >
+                          <Smartphone className="h-3 w-3" />
+                          <span>მობილური</span>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className={`relative overflow-hidden rounded border border-gray-300 bg-white ${previewDevice === 'mobile' ? 'w-[320px] max-w-full mx-auto' : 'w-full'} transition-all duration-300`}>
+                      {/* Home Page Preview */}
+                      {formData.placement.startsWith('home_') && (
+                        <div className="p-2">
+                          {/* Home Slider */}
+                          {formData.placement === 'home_slider' && (
+                            <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-16' : 'h-24'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა სლაიდერში</span>
+                                  </div>
+                                  <span className="text-xs mt-1 text-blue-600">1200 × 600 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Hero Section */}
+                          <div className={`w-full ${previewDevice === 'mobile' ? 'h-20' : 'h-28'} bg-gradient-to-b from-gray-100 to-gray-200 rounded mb-2 flex items-center justify-center p-2 shadow-sm`}>
+                            <div className="w-full h-full border border-gray-300 rounded bg-white/70 flex items-center justify-center">
+                              <span className="text-xs text-gray-500 font-medium">მთავარი ბანერი</span>
+                            </div>
+                          </div>
+                          
+                          {/* Home Banner Highlight */}
+                          {formData.placement === 'home_banner' && (
+                            <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-10' : 'h-14'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">1200 × 300 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* VIP Section */}
+                          <div className="w-full bg-white border border-gray-200 rounded p-2 mb-2 shadow-sm">
+                            <div className="flex items-center mb-1.5">
+                              <div className="w-4 h-4 bg-yellow-400 rounded-full mr-1.5"></div>
+                              <span className="text-xs font-medium text-gray-700">VIP განცხადებები</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="bg-gray-100 rounded p-1 flex flex-col">
+                                  <div className="bg-gray-200 w-full rounded-sm h-8 mb-1"></div>
+                                  <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-1"></div>
+                                  <div className="h-1.5 bg-gray-200 rounded-full w-1/2"></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* After VIP Highlight */}
+                          {formData.placement === 'home_after_vip' && (
+                            <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">720 × 140 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* New Additions */}
+                          <div className="w-full bg-white border border-gray-200 rounded p-2 shadow-sm">
+                            <div className="flex items-center mb-1.5">
+                              <div className="w-4 h-4 bg-green-400 rounded-full mr-1.5"></div>
+                              <span className="text-xs font-medium text-gray-700">ახალი განცხადებები</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="bg-gray-100 rounded p-1 flex flex-col">
+                                  <div className="bg-gray-200 w-full rounded-sm h-8 mb-1"></div>
+                                  <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-1"></div>
+                                  <div className="h-1.5 bg-gray-200 rounded-full w-1/2"></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Car Listing Preview */}
+                      {formData.placement.startsWith('car_listing_') && (
+                        <div className="p-2">
+                          {/* Top Banner Highlight */}
+                          {formData.placement === 'car_listing_top' && (
+                            <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">728 × 140 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Filter and Content */}
+                          <div className={`${previewDevice === 'mobile' ? 'flex flex-col gap-2' : 'flex gap-2'}`}>
+                            <div className={`${previewDevice === 'mobile' ? 'w-full h-20' : 'w-1/4 h-32'} bg-white border border-gray-200 rounded p-2 shadow-sm`}>
+                              <div className="flex items-center mb-1.5">
+                                <div className="w-3 h-3 bg-blue-400 rounded-full mr-1.5"></div>
+                                <span className="text-xs font-medium text-gray-700">ფილტრები</span>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="h-1.5 bg-gray-200 rounded-full w-full"></div>
+                                <div className="h-1.5 bg-gray-200 rounded-full w-3/4"></div>
+                                <div className="h-1.5 bg-gray-200 rounded-full w-1/2"></div>
+                              </div>
+                            </div>
+                            <div className={`${previewDevice === 'mobile' ? 'w-full' : 'w-3/4'} bg-white border border-gray-200 rounded p-2 shadow-sm`}>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-xs font-medium text-gray-700">მანქანების სია</span>
+                                <span className="text-xs text-gray-500">12 მანქანა</span>
+                              </div>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+                                {[1, 2, 3, 4, 5, 6].map(i => (
+                                  <div key={i} className="bg-gray-100 rounded p-1 flex flex-col">
+                                    <div className="bg-gray-200 w-full rounded-sm h-6 mb-1"></div>
+                                    <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-1"></div>
+                                    <div className="h-1.5 bg-gray-200 rounded-full w-1/2"></div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Bottom Banner Highlight */}
+                          {formData.placement === 'car_listing_bottom' && (
+                            <div className="w-full mt-2 bg-blue-100 border-2 border-blue-500 rounded overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">720 × 140 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* Car Details Preview */}
+                      {formData.placement.startsWith('car_details_') && (
+                        <div className="p-2">
+                          {/* Top Banner Highlight */}
+                          {formData.placement === 'car_details_top' && (
+                            <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">728 × 140 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Navigation */}
+                          <div className="w-full flex items-center text-xs mb-2 px-2 py-1 bg-gray-100 rounded">
+                            <span className="text-blue-500">მთავარი</span>
+                            <span className="mx-1 text-gray-400">/</span>
+                            <span className="text-blue-500">მანქანები</span>
+                            <span className="mx-1 text-gray-400">/</span>
+                            <span className="text-gray-500 truncate">მანქანის დასახელება</span>
+                          </div>
+                          
+                          {/* Car Images & Details */}
+                          <div className={`${previewDevice === 'mobile' ? 'flex flex-col gap-2' : 'flex gap-2'}`}>
+                            <div className={`${previewDevice === 'mobile' ? 'w-full h-24' : 'w-2/3 h-32'} bg-white border border-gray-200 rounded p-2 shadow-sm`}>
+                              <div className="flex justify-between items-center mb-1.5">
+                                <span className="text-xs font-medium text-gray-700">მანქანის ფოტოები</span>
+                                <div className="flex gap-1">
+                                  <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                                  <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                                </div>
+                              </div>
+                              <div className="h-full bg-gray-100 rounded flex items-center justify-center">
+                                <div className="bg-gray-200 w-full h-16 rounded"></div>
+                              </div>
+                            </div>
+                            <div className={`${previewDevice === 'mobile' ? 'w-full' : 'w-1/3'} bg-white border border-gray-200 rounded p-2 shadow-sm`}>
+                              <div className="flex items-center mb-1.5">
+                                <span className="text-xs font-medium text-gray-700">მანქანის დეტალები</span>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="h-1.5 bg-gray-200 rounded-full w-full"></div>
+                                <div className="h-1.5 bg-gray-200 rounded-full w-3/4"></div>
+                                <div className="h-6 bg-blue-100 rounded mt-2 flex items-center justify-center">
+                                  <span className="text-[8px] text-blue-700 font-medium">ფასი: 15,000 ₾</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Middle Banner Highlight */}
+                          {formData.placement === 'car_details_bottom' && (
+                            <div className="w-full mt-2 mb-2 bg-blue-100 border-2 border-blue-500 rounded overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">728 × 140 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Similar Cars */}
+                          <div className="w-full bg-white border border-gray-200 rounded p-2 shadow-sm mb-2">
+                            <div className="flex items-center mb-1.5">
+                              <div className="w-3 h-3 bg-green-400 rounded-full mr-1.5"></div>
+                              <span className="text-xs font-medium text-gray-700">მსგავსი მანქანები</span>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1">
+                              {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="bg-gray-100 rounded p-1 flex flex-col">
+                                  <div className="bg-gray-200 w-full rounded-sm h-6 mb-1"></div>
+                                  <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-1"></div>
+                                  <div className="h-1.5 bg-gray-200 rounded-full w-1/2"></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* After Similar Cars Highlight */}
+                          {formData.placement === 'car_details_after_similar' && (
+                            <div className="w-full bg-blue-100 border-2 border-blue-500 rounded overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+                                <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+                                  <div className="flex items-center justify-center">
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                  </div>
+                                  <span className="text-xs mt-0.5 text-blue-600">720 × 140 px</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Placement Description */}
+                    <div className="mt-2 text-xs text-gray-600">
+                      <p>პოზიცია: <span className="font-medium">{getPlacementName(formData.placement)}</span></p>
+                      <p className="mt-0.5">
+                        {formData.placement.includes('720') || formData.placement.includes('728') ? 
+                          'რეკომენდირებული ზომა: 720×140 პიქსელი (სიგანე × სიმაღლე)' : 
+                          formData.placement === 'home_slider' ? 
+                            'რეკომენდირებული ზომა: 1200×600 პიქსელი (სიგანე × სიმაღლე)' : 
+                            'რეკომენდირებული ზომა: 1200×300 პიქსელი (სიგანე × სიმაღლე)'}
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
               {/* Title */}

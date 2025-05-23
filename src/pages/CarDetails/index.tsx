@@ -172,6 +172,14 @@ const CarDetails: React.FC = () => {
         )}
       </Container>
     </div>
+    
+    {/* Bottom advertisement - outside the background container */}
+    <div className="w-full py-6 flex justify-center">
+      <AdvertisementDisplay 
+        placement="car_details_after_similar" 
+        className="w-full md:w-[720px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+      />
+    </div>
     </>
   );
 };

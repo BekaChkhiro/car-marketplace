@@ -153,7 +153,7 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
   }
 
   return (
-    <div className="mb-10 bg-white rounded-lg sm:rounded-lg shadow-sm p-3 sm:p-4 w-full">
+    <div className="bg-white rounded-lg sm:rounded-lg shadow-sm p-3 sm:p-4 w-full">
       <div className="flex items-center justify-between mb-4 pb-3 border-b">
         <div className="flex items-center space-x-2">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">{getVipTitle(vipType)}</h2>

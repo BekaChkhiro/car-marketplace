@@ -363,6 +363,14 @@ const CarListing: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Bottom Advertisement */}
+      <div className="w-full flex justify-center my-8">
+        <AdvertisementDisplay 
+          placement="car_listing_bottom" 
+          className="w-full md:w-[720px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+        />
+      </div>
     </Container>
   );
 };
