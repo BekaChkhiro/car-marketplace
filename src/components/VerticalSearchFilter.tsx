@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Car, Settings2, MapPin, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
+import { Car, Settings2, MapPin, Sliders, ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/config/axios';
 import CustomSelect from './common/CustomSelect';
 import carService from '../api/services/carService';
 import RangeFilter from './ui/RangeFilter';
+import AdvancedFiltersModal, { AdvancedFilters } from './AdvancedFiltersModal';
 
 interface FormData {
   brand: string;
@@ -14,6 +15,19 @@ interface FormData {
   priceTo: string;
   transmission: string;
   location: string;
+  // Advanced filters
+  yearFrom: string;
+  yearTo: string;
+  engineSizeFrom: string;
+  engineSizeTo: string;
+  mileageFrom: string;
+  mileageTo: string;
+  fuelType: string;
+  color: string;
+  driveType: string;
+  seats: string;
+  condition: string;
+  steeringWheel: string;
 }
 
 interface Brand {
@@ -40,8 +54,23 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     priceFrom: '',
     priceTo: '',
     transmission: '',
-    location: ''
+    location: '',
+    // Advanced filters
+    yearFrom: '',
+    yearTo: '',
+    engineSizeFrom: '',
+    engineSizeTo: '',
+    mileageFrom: '',
+    mileageTo: '',
+    fuelType: '',
+    color: '',
+    driveType: '',
+    seats: '',
+    condition: '',
+    steeringWheel: ''
   });
+  
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -133,11 +162,23 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     }
   };
 
+  // Handle advanced filters
+  const handleAdvancedFiltersApply = (advancedFilters: AdvancedFilters) => {
+    setFormData(prev => {
+      const updatedData = {
+        ...prev,
+        ...advancedFilters
+      };
+      onFilterChange(updatedData);
+      return updatedData;
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     
-    // Map form fields to the expected filter parameters in CarListing page
+    // Map basic form fields to the expected filter parameters in CarListing page
     if (formData.brand) params.append('brand_id', formData.brand);
     if (formData.model) params.append('model', formData.model);
     if (formData.category) {
@@ -148,6 +189,48 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     if (formData.priceTo) params.append('priceTo', formData.priceTo);
     if (formData.transmission) params.append('transmission', formData.transmission);
     if (formData.location) params.append('location', formData.location);
+    
+    // Add advanced filter parameters - ensuring parameter names match what CarListing expects
+    if (formData.yearFrom) params.append('yearFrom', formData.yearFrom);
+    if (formData.yearTo) params.append('yearTo', formData.yearTo);
+    if (formData.engineSizeFrom) params.append('engineSizeFrom', formData.engineSizeFrom);
+    if (formData.engineSizeTo) params.append('engineSizeTo', formData.engineSizeTo);
+    if (formData.mileageFrom) params.append('mileageFrom', formData.mileageFrom);
+    if (formData.mileageTo) params.append('mileageTo', formData.mileageTo);
+    if (formData.fuelType) params.append('fuel_type', formData.fuelType);
+    if (formData.color) params.append('exterior_color', formData.color);
+    if (formData.driveType) params.append('drive_type', formData.driveType);
+    if (formData.seats) params.append('seats', formData.seats);
+    if (formData.condition) params.append('condition', formData.condition);
+    if (formData.steeringWheel) params.append('steering_wheel', formData.steeringWheel);
+    
+    // Save filters to localStorage to maintain them across both pages
+    try {
+      localStorage.setItem('carFilters', JSON.stringify({
+        brand_id: formData.brand || undefined,
+        model: formData.model || undefined,
+        category: formData.category || undefined,
+        priceFrom: formData.priceFrom || undefined,
+        priceTo: formData.priceTo || undefined,
+        transmission: formData.transmission || undefined,
+        location: formData.location || undefined,
+        yearFrom: formData.yearFrom || undefined,
+        yearTo: formData.yearTo || undefined,
+        engineSizeFrom: formData.engineSizeFrom || undefined,
+        engineSizeTo: formData.engineSizeTo || undefined,
+        mileageFrom: formData.mileageFrom || undefined,
+        mileageTo: formData.mileageTo || undefined,
+        fuel_type: formData.fuelType || undefined,
+        exterior_color: formData.color || undefined,
+        drive_type: formData.driveType || undefined,
+        seats: formData.seats || undefined,
+        condition: formData.condition || undefined,
+        steering_wheel: formData.steeringWheel || undefined
+      }));
+      console.log('[VerticalSearchFilter] Saved filters to localStorage');
+    } catch (error) {
+      console.error('[VerticalSearchFilter] Error saving filters to localStorage:', error);
+    }
     
     // Add default pagination parameters
     params.append('page', '1');
@@ -278,12 +361,43 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg mt-3"
-        >
-          ძებნა
-        </button>
+        <div className="flex gap-3 mt-3">
+          <button
+            type="button"
+            onClick={() => setShowAdvancedFilters(true)}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-primary border-2 border-primary font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-md hover:shadow-lg w-1/3"
+          >
+            <Filter size={18} />
+            <span className="hidden sm:inline">მეტი</span>
+          </button>
+          <button
+            type="submit"
+            className="w-2/3 px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg"
+          >
+            ძებნა
+          </button>
+        </div>
+        
+        {/* Advanced Filters Modal */}
+        <AdvancedFiltersModal
+          isOpen={showAdvancedFilters}
+          onClose={() => setShowAdvancedFilters(false)}
+          onApply={handleAdvancedFiltersApply}
+          currentFilters={{
+            yearFrom: formData.yearFrom,
+            yearTo: formData.yearTo,
+            engineSizeFrom: formData.engineSizeFrom,
+            engineSizeTo: formData.engineSizeTo,
+            mileageFrom: formData.mileageFrom,
+            mileageTo: formData.mileageTo,
+            fuelType: formData.fuelType,
+            color: formData.color,
+            driveType: formData.driveType,
+            seats: formData.seats,
+            condition: formData.condition,
+            steeringWheel: formData.steeringWheel
+          }}
+        />
       </div>
     </form>
   );

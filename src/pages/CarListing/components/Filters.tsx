@@ -33,9 +33,20 @@ const Filters: React.FC<FiltersProps> = ({
   // Update tempFilters when filters prop changes
   useEffect(() => {
     console.log('[Filters] Filters prop changed, updating tempFilters', filters);
-    setTempFilters(prevFilters => ({
-      ...filters
-    }));
+    setTempFilters(prevFilters => {
+      // Map specific fields that might have different names in the filters prop
+      const mappedFilters = {
+        ...filters,
+        // Map advanced filter fields that might have different names
+        fuelType: (filters as any).fuel_type || prevFilters.fuelType,
+        color: (filters as any).exterior_color || prevFilters.color,
+        driveType: (filters as any).drive_type || prevFilters.driveType,
+        steeringWheel: (filters as any).steering_wheel || prevFilters.steeringWheel
+      };
+      
+      console.log('[Filters] Mapped filters:', mappedFilters);
+      return mappedFilters;
+    });
   }, [filters]);
   
   // Expanded sections state
@@ -149,8 +160,30 @@ const Filters: React.FC<FiltersProps> = ({
 
   // Apply all filters 
   const applyFilters = () => {
-    // Convert all the temp filters to the expected format before sending to API
-    onFilterChange(tempFilters);
+    console.log('[Filters] Apply filters clicked with temp filters:', tempFilters);
+    
+    // Create a clean copy of filters without additional properties
+    const cleanFilters = { ...tempFilters };
+    
+    // Create an "any" type object for storage that includes all mappings
+    const storageFilters: any = {
+      ...cleanFilters,
+      fuel_type: tempFilters.fuelType,
+      exterior_color: tempFilters.color,
+      drive_type: tempFilters.driveType,
+      steering_wheel: tempFilters.steeringWheel
+    };
+    
+    // Save filters to localStorage
+    try {
+      localStorage.setItem('carFilters', JSON.stringify(storageFilters));
+      console.log('[Filters] Saved filters to localStorage');
+    } catch (error) {
+      console.error('[Filters] Error saving filters to localStorage:', error);
+    }
+    
+    onFilterChange(cleanFilters);
+    
     if (onApplyFilters) {
       onApplyFilters();
     }
@@ -161,17 +194,16 @@ const Filters: React.FC<FiltersProps> = ({
 
   // Reset all filters - simplified approach that works reliably
   const resetFilters = () => {
-    console.log('[Filters] Resetting all filters');
+    console.log('[Filters] Reset filters clicked');
+    setTempFilters({});
     
-    // Clear localStorage first to ensure no old filters remain
-    try {
-      localStorage.removeItem('carFilters');
-      console.log('[Filters] Cleared filters from localStorage');
-    } catch (error) {
-      console.error('[Filters] Error clearing filters from localStorage:', error);
-    }
+    // Clear localStorage
+    localStorage.removeItem('carFilters');
     
-    // Most reliable way to clear filters - navigate directly to the cars page with no parameters
+    // Clear all URL parameters
+    window.history.replaceState(null, '', '/cars');
+    
+    // Direct full page refresh to reset URL params and refetch everything
     window.location.href = '/cars';
   };
 
