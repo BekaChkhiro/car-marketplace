@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import LoadingOverlay from '../common/LoadingOverlay';
 
@@ -16,18 +16,24 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
+  const { lang } = useParams<{ lang: string }>();
 
   if (isLoading) {
     return <LoadingOverlay isVisible={true} />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={redirectTo} state={{ from: location }} replace />;
+    // Include language prefix in redirect
+    const localizedRedirect = lang ? `/${lang}${redirectTo === '/' ? '' : redirectTo}` : redirectTo;
+    return <Navigate to={localizedRedirect} state={{ from: location }} replace />;
   }
 
   // Check for role-based access
   if (requiredRole && user?.role !== requiredRole) {
-    return <Navigate to={user?.role === 'admin' ? '/admin' : '/'} replace />;
+    // Create language-aware redirect path
+    const adminPath = lang ? `/${lang}/admin` : '/admin';
+    const homePath = lang ? `/${lang}` : '/';
+    return <Navigate to={user?.role === 'admin' ? adminPath : homePath} replace />;
   }
 
   return <>{children}</>;

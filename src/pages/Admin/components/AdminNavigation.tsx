@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -27,6 +27,7 @@ interface AdminNavigationProps {
 const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) => {
   const location = useLocation();
   const { logout } = useAuth();
+  const { lang } = useParams<{ lang: string }>();
 
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
@@ -42,27 +43,32 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
     }
   };
 
+  // Helper to build language-aware paths
+  const buildPath = (path: string): string => {
+    return lang ? `/${lang}${path}` : path;
+  };
+
   // Top level nav items
   const navItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'დაფა', path: '/admin' },
-    { icon: <Users size={20} />, label: 'მომხმარებლები', path: '/admin/users' },
-    { icon: <Car size={20} />, label: 'განცხადებები', path: '/admin/cars' },
-    { icon: <CreditCard size={20} />, label: 'ტრანზაქციები', path: '/admin/transactions' },
-    { icon: <Award size={20} />, label: 'VIP განცხადებები', path: '/admin/vip-listings' },
+    { icon: <LayoutDashboard size={20} />, label: 'დაფა', path: buildPath('/admin') },
+    { icon: <Users size={20} />, label: 'მომხმარებლები', path: buildPath('/admin/users') },
+    { icon: <Car size={20} />, label: 'განცხადებები', path: buildPath('/admin/cars') },
+    { icon: <CreditCard size={20} />, label: 'ტრანზაქციები', path: buildPath('/admin/transactions') },
+    { icon: <Award size={20} />, label: 'VIP განცხადებები', path: buildPath('/admin/vip-listings') },
     { 
       icon: <Image size={20} />, 
       label: 'რეკლამები', 
-      path: '/admin/advertisements',
+      path: buildPath('/admin/advertisements'),
       hasSubmenu: true,
       submenuId: 'advertisements',
       submenu: [
-        { icon: <LayoutGrid size={18} />, label: 'ყველა რეკლამა', path: '/admin/advertisements/all' },
-        { icon: <SlidersHorizontal size={18} />, label: 'სლაიდერი', path: '/admin/advertisements/slider' },
-        { icon: <Rows size={18} />, label: 'ბანერები', path: '/admin/advertisements/banners' },
-        { icon: <BarChart2 size={18} />, label: 'ანალიტიკა', path: '/admin/advertisements/analytics' },
+        { icon: <LayoutGrid size={18} />, label: 'ყველა რეკლამა', path: buildPath('/admin/advertisements/all') },
+        { icon: <SlidersHorizontal size={18} />, label: 'სლაიდერი', path: buildPath('/admin/advertisements/slider') },
+        { icon: <Rows size={18} />, label: 'ბანერები', path: buildPath('/admin/advertisements/banners') },
+        { icon: <BarChart2 size={18} />, label: 'ანალიტიკა', path: buildPath('/admin/advertisements/analytics') },
       ]
     },
-    { icon: <Settings size={20} />, label: 'პარამეტრები', path: '/admin/settings' },
+    { icon: <Settings size={20} />, label: 'პარამეტრები', path: buildPath('/admin/settings') },
   ];
   
   // Auto-expand advertisements menu if we're in that section
@@ -70,7 +76,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
     if (isAdvertisementsPath && !expandedMenus.includes('advertisements')) {
       setExpandedMenus([...expandedMenus, 'advertisements']);
     }
-  }, [location.pathname]);
+  }, [location.pathname, isAdvertisementsPath, expandedMenus]);
   return (
     <div className="w-64 bg-white border-r border-gray-100  shadow-sm rounded-lg overflow-y-auto">
       <div className="p-4 sm:p-6 border-b border-gray-100 flex items-left justify-center relative">
