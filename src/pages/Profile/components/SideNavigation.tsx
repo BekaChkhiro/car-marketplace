@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { 
   Car, 
   Heart, 
@@ -11,6 +11,8 @@ import {
   Wallet
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 
 interface SideNavigationProps {
   onCloseMobileMenu?: () => void;
@@ -19,36 +21,41 @@ interface SideNavigationProps {
 const SideNavigation: React.FC<SideNavigationProps> = ({ onCloseMobileMenu }) => {
   const { logout, user } = useAuth();
   const location = useLocation();
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or use default
+  const currentLang = lang || 'ka';
 
   const menuItems = [
     {
-      name: 'მთავარი',
-      path: '/profile',
+      name: t('profile:navigation.main'),
+      path: `/${currentLang}/profile`,
       icon: Home
     },
     {
-      name: 'ჩემი განცხადებები',
-      path: '/profile/cars',
+      name: t('profile:navigation.myListings'),
+      path: `/${currentLang}/profile/cars`,
       icon: Car
     },
     {
-      name: 'მანქანის დამატება',
-      path: '/profile/add-car',
+      name: t('profile:navigation.addCar'),
+      path: `/${currentLang}/profile/add-car`,
       icon: PlusCircle
     },
     {
-      name: 'ბალანსი',
-      path: '/profile/balance',
+      name: t('profile:navigation.balance'),
+      path: `/${currentLang}/profile/balance`,
       icon: Wallet
     },
     {
-      name: 'ფავორიტები',
-      path: '/profile/wishlist',
+      name: t('profile:navigation.favorites'),
+      path: `/${currentLang}/profile/wishlist`,
       icon: Heart
     },
     {
-      name: 'პარამეტრები',
-      path: '/profile/settings',
+      name: t('profile:navigation.settings'),
+      path: `/${currentLang}/profile/settings`,
       icon: Settings
     }
   ];
@@ -108,7 +115,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({ onCloseMobileMenu }) =>
         >
           <div className="flex items-center gap-3">
             <LogOut size={20} className="transition-transform duration-300 group-hover:-translate-x-1" />
-            <span>გასვლა</span>
+            <span>{t('profile:navigation.logout')}</span>
           </div>
         </button>
       </div>

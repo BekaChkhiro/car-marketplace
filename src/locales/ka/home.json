@@ -1,0 +1,22 @@
+{
+  "newAdditions": "ახალი დამატებები",
+  "viewAll": "ყველას ნახვა",
+  "viewAllCars": "ყველა მანქანის ნახვა",
+  "viewAllVipCars": "ყველა {{type}} მანქანის ნახვა",
+  "superVipListings": "SUPER VIP განცხადებები",
+  "vipPlusListings": "VIP+ განცხადებები",
+  "vipListings": "VIP განცხადებები",
+  "regularListings": "ჩვეულებრივი განცხადებები",
+  "featured": "რჩეული განცხადებები",
+  "findYourDreamCar": "იპოვეთ თქვენი ოცნების მანქანა",
+  "browseCars": "მანქანების დათვალიერება",
+  "latestAdditions": "ბოლოს დამატებული",
+  "slide": "სლაიდი",
+  "of": "-დან",
+  "featuredCarsPlaceholder": "რჩეული მანქანები",
+  "comingSoon": "მალე...",
+  "errorLoadingVipCars": "ვერ მოხერხდა VIP მანქანების ჩატვირთვა",
+  "vip": "VIP",
+  "vipPlus": "VIP+",
+  "superVip": "SUPER VIP"
+}

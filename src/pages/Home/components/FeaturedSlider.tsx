@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import advertisementService, { Advertisement } from '../../../api/services/advertisementService';
 
 const FeaturedSlider: React.FC = () => {
+  const { t } = useTranslation('home');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,8 +66,8 @@ const FeaturedSlider: React.FC = () => {
     return (
       <section className="h-full bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center">
         <div className="text-center p-8">
-          <h2 className="text-2xl font-bold mb-2">გამოყოფილი მანქანებისთვის ადგილი</h2>
-          <p className="text-gray-600">აქ მალე განთავსდება რეკლამები.</p>
+          <h2 className="text-2xl font-bold mb-2">{t('featuredCarsPlaceholder')}</h2>
+          <p className="text-gray-600">{t('comingSoon')}</p>
         </div>
       </section>
     );

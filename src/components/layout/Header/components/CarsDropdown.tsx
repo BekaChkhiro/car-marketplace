@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const CarsDropdown = () => {
+  const { t } = useTranslation('header');
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -12,7 +14,7 @@ const CarsDropdown = () => {
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
       >
-        <span>მანქანები</span>
+        <span>{t('cars')}</span>
         <ChevronDown size={16} />
       </button>
 
@@ -26,13 +28,13 @@ const CarsDropdown = () => {
             to="/cars"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
-            ყიდვა
+            {t('buy')}
           </Link>
           <Link
             to="/how-to-sell"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
-            გაყიდვა
+            {t('sell')}
           </Link>
         </div>
       )}

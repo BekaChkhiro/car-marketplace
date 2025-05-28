@@ -1,6 +1,8 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
 import { VipStatus } from '../../../../../api/services/vipService';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../../i18n';
 
 interface VipStatusOptionProps {
   status: VipStatus;
@@ -19,6 +21,7 @@ const VipStatusOption: React.FC<VipStatusOptionProps> = ({
   description,
   onClick
 }) => {
+  const { t } = useTranslation([namespaces.common]);
   // სტატუსის ფერის მიღება
   const getStatusColor = () => {
     switch (status) {
@@ -50,7 +53,7 @@ const VipStatusOption: React.FC<VipStatusOptionProps> = ({
       />
       <span className={`font-medium ${colors.text}`}>{label}</span>
       <span className="text-xs text-gray-500 mt-1">{description}</span>
-      <span className={`text-sm font-medium ${colors.text} mt-2`}>{price} ₾/დღეში</span>
+      <span className={`text-sm font-medium ${colors.text} mt-2`}>{price} ₾/{t('common:perDay')}</span>
     </div>
   );
 };

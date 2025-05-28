@@ -13,6 +13,9 @@ import VipStatusPurchase from './components/VipStatusPurchase';
 import SimilarCarsSection from './components/SimilarCarsSection';
 import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../i18n';
+import { useParams, Link } from 'react-router-dom';
 import './styles.css';
 
 const CarDetails: React.FC = () => {
@@ -20,6 +23,11 @@ const CarDetails: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const [refreshCarData, setRefreshCarData] = useState(false);
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or use default
+  const currentLang = lang || 'ka';
   
   const {
     car,
@@ -65,22 +73,22 @@ const CarDetails: React.FC = () => {
   const keySpecs: KeySpec[] = [
     { 
       icon: <Calendar className="w-5 h-5 text-primary" />, 
-      label: 'წელი', 
+      label: t('carDetails:specs.year'), 
       value: year
     },
     { 
       icon: <Gauge className="w-5 h-5 text-primary" />, 
-      label: 'გარბენი', 
+      label: t('carDetails:specs.mileage'), 
       value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : 'N/A'
     },
     { 
       icon: <Fuel className="w-5 h-5 text-primary" />, 
-      label: 'საწვავი', 
+      label: t('carDetails:specs.fuel'), 
       value: car.specifications?.fuel_type || 'N/A'
     },
     { 
       icon: <Shield className="w-5 h-5 text-primary" />, 
-      label: 'სათავსო', 
+      label: t('carDetails:specs.transmission'), 
       value: car.specifications?.transmission || 'N/A'
     },
   ];
@@ -112,9 +120,9 @@ const CarDetails: React.FC = () => {
       <Container className="px-3 sm:px-4 md:px-6 lg:px-8 pb-16">
         {/* Breadcrumb navigation */}
         <nav className="py-3 mb-2 flex items-center text-sm text-gray-500 breadcrumb-nav">
-          <a href="/" className="hover:text-primary transition-colors">მთავარი</a>
+          <Link to={`/${currentLang}`} className="hover:text-primary transition-colors">{t('carDetails:breadcrumb.home')}</Link>
           <span className="mx-2">/</span>
-          <a href="/cars" className="hover:text-primary transition-colors">მანქანები</a>
+          <Link to={`/${currentLang}/cars`} className="hover:text-primary transition-colors">{t('carDetails:breadcrumb.cars')}</Link>
           <span className="mx-2">/</span>
           <span className="text-primary font-medium truncate max-w-[150px] sm:max-w-xs">
             {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}

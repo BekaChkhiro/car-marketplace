@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Car, Settings2, MapPin, Sliders, ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from '../api/config/axios';
 import CustomSelect from './common/CustomSelect';
 import carService from '../api/services/carService';
 import RangeFilter from './ui/RangeFilter';
 import AdvancedFiltersModal, { AdvancedFilters } from './AdvancedFiltersModal';
+import { namespaces } from '../i18n';
 
 interface FormData {
   brand: string;
@@ -47,6 +49,7 @@ interface VerticalSearchFilterProps {
 
 const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterChange }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation([namespaces.common, namespaces.filter]);
   const [formData, setFormData] = useState<FormData>({
     brand: '',
     model: '',
@@ -78,8 +81,8 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
   const [loading, setLoading] = useState(false);
 
   const years = Array.from({ length: 35 }, (_, i) => (new Date().getFullYear() - i).toString());
-  const transmissions = ['ავტომატიკა', 'მექანიკა', 'ვარიატორი', 'ნახევრად ავტომატური'];
-  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი', 'თელავი', 'სხვა'];
+  const transmissions = [t('filter:automatic'), t('filter:manual'), t('filter:variator'), t('filter:semiAutomatic')];
+  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი', 'თელავი', 'სხვა']; // These are proper names, so we won't translate them
   
   useEffect(() => {
     const fetchData = async () => {
@@ -245,19 +248,19 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
   return (
     <form onSubmit={handleSubmit} className="w-full h-full rounded-lg sm:rounded-2xl bg-white shadow-md p-4 sm:p-6">
       <div className="flex justify-between items-center mb-6 pb-3 border-b border-green-100">
-        <h2 className="text-xl font-bold text-gray-800">ძებნა</h2>
+        <h2 className="text-xl font-bold text-gray-800">{t('common:search')}</h2>
       </div>
       
       <div className="space-y-5">
         {/* Brand and Model side by side */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            მარკა და მოდელი
+            {t('filter:brand')} & {t('filter:model')}
           </label>
           <div className="grid grid-cols-2 gap-3">
             <CustomSelect
               options={[
-                { value: '', label: 'მარკა' },
+                { value: '', label: t('filter:selectBrand') },
                 ...brands.map(brand => ({
                   value: String(brand.id),
                   label: brand.name
@@ -265,22 +268,22 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
               ]}
               value={formData.brand}
               onChange={value => handleChange('brand', value)}
-              placeholder="მარკა"
+              placeholder={t('filter:selectBrand')}
               icon={<Car size={18} />}
             />
             <CustomSelect
               options={availableModels.length > 0 ? [
-                { value: '', label: 'მოდელი' },
+                { value: '', label: t('filter:selectModel') },
                 ...availableModels.map(model => ({
                   value: model,
                   label: model
                 }))
               ] : [
-                { value: '', label: formData.brand ? 'მოდელი' : 'მოდელი' }
+                { value: '', label: t('filter:selectModel') }
               ]}
               value={formData.model}
               onChange={value => handleChange('model', value)}
-              placeholder={loading ? 'იტვირთება...' : 'მოდელი'}
+              placeholder={loading ? t('common:loading') : t('filter:selectModel')}
               disabled={loading || !formData.brand}
               loading={loading}
             />
@@ -290,11 +293,11 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
         {/* Category */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            კატეგორია
+            {t('filter:category')}
           </label>
           <CustomSelect
             options={[
-              { value: '', label: 'ყველა კატეგორია' },
+              { value: '', label: t('filter:selectCategory') },
               ...categories.map(category => ({
                 value: String(category.id),
                 label: category.name
@@ -302,7 +305,7 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
             ]}
             value={formData.category}
             onChange={value => handleChange('category', value)}
-            placeholder="ყველა კატეგორია"
+            placeholder={t('filter:selectCategory')}
             icon={<Car size={18} />}
           />
         </div>
@@ -310,13 +313,13 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
         {/* Price Range */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ფასი (GEL)
+            {t('filter:price')} (GEL)
           </label>
           <RangeFilter
             name="price"
             fromValue={formData.priceFrom}
             toValue={formData.priceTo}
-            placeholder={{ from: 'დან', to: 'მდე' }}
+            placeholder={{ from: t('filter:priceFrom'), to: t('filter:priceTo') }}
             onChange={handleRangeChange}
           />
         </div>
@@ -324,11 +327,11 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
         {/* Transmission */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            გადაცემათა კოლოფი
+            {t('filter:transmission')}
           </label>
           <CustomSelect
             options={[
-              { value: '', label: 'ნებისმიერი' },
+              { value: '', label: t('filter:anyOption') },
               ...transmissions.map(type => ({
                 value: type,
                 label: type
@@ -336,7 +339,7 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
             ]}
             value={formData.transmission}
             onChange={value => handleChange('transmission', value)}
-            placeholder="ნებისმიერი"
+            placeholder={t('filter:anyOption')}
             icon={<Sliders size={18} />}
           />
         </div>
@@ -344,11 +347,11 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
         {/* Location */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            მდებარეობა
+            {t('filter:location')}
           </label>
           <CustomSelect
             options={[
-              { value: '', label: 'ნებისმიერი' },
+              { value: '', label: t('filter:anyOption') },
               ...locations.map(location => ({
                 value: location,
                 label: location
@@ -356,7 +359,7 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
             ]}
             value={formData.location}
             onChange={value => handleChange('location', value)}
-            placeholder="ნებისმიერი"
+            placeholder={t('filter:anyOption')}
             icon={<MapPin size={18} />}
           />
         </div>
@@ -368,13 +371,13 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
             className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-primary border-2 border-primary font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-md hover:shadow-lg w-1/3"
           >
             <Filter size={18} />
-            <span className="hidden sm:inline">მეტი</span>
+            <span className="hidden sm:inline">{t('filter:advancedFilters')}</span>
           </button>
           <button
             type="submit"
             className="w-2/3 px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg"
           >
-            ძებნა
+            {t('common:search')}
           </button>
         </div>
         

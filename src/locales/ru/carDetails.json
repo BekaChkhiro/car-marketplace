@@ -1,0 +1,50 @@
+{
+  "breadcrumbs": {
+    "home": "Главная",
+    "cars": "Автомобили",
+    "carDetails": "Детали автомобиля"
+  },
+  "loading": {
+    "loadingCarData": "Загрузка данных автомобиля..."
+  },
+  "notFound": {
+    "carNotFound": "Автомобиль не найден",
+    "homePage": "Главная страница"
+  },
+  "header": {
+    "backToCars": "Вернуться к автомобилям",
+    "addToWishlist": "Добавить в избранное",
+    "removeFromWishlist": "Удалить из избранного",
+    "share": "Поделиться"
+  },
+  "priceCard": {
+    "price": "Цена",
+    "contactSeller": "Связаться с продавцом",
+    "callSeller": "Позвонить продавцу",
+    "messageSeller": "Написать продавцу",
+    "safetyTips": "Советы по безопасности",
+    "meetInPublic": "Встречайтесь в общественном месте",
+    "inspectBefore": "Осмотрите автомобиль перед оплатой",
+    "verifyDocuments": "Проверьте все документы"
+  },
+  "carSpecs": {
+    "generalInfo": "Общая информация",
+    "specifications": "Характеристики",
+    "description": "Описание",
+    "features": "Особенности",
+    "brand": "Марка",
+    "model": "Модель",
+    "year": "Год",
+    "mileage": "Пробег",
+    "engine": "Двигатель",
+    "transmission": "Трансмиссия",
+    "fuelType": "Тип топлива",
+    "color": "Цвет",
+    "driveType": "Привод",
+    "interiorColor": "Цвет салона",
+    "additionalFeatures": "Дополнительные функции",
+    "navigation": "Навигация",
+    "parkingControl": "Парктроник",
+    "bluetooth": "Блютуз"
+  }
+}

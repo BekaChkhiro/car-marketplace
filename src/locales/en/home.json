@@ -1,0 +1,22 @@
+{
+  "newAdditions": "New Additions",
+  "viewAll": "View All",
+  "viewAllCars": "View All Cars",
+  "viewAllVipCars": "View All {{type}} Cars",
+  "superVipListings": "SUPER VIP Listings",
+  "vipPlusListings": "VIP+ Listings",
+  "vipListings": "VIP Listings",
+  "regularListings": "Regular Listings",
+  "featured": "Featured Listings",
+  "findYourDreamCar": "Find Your Dream Car",
+  "browseCars": "Browse Cars",
+  "latestAdditions": "Latest Additions",
+  "slide": "Slide",
+  "of": "of",
+  "featuredCarsPlaceholder": "Featured Cars",
+  "comingSoon": "Coming Soon",
+  "errorLoadingVipCars": "Failed to load VIP cars",
+  "vip": "VIP",
+  "vipPlus": "VIP+",
+  "superVip": "SUPER VIP"
+}

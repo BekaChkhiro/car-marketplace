@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import SideNavigation from './components/SideNavigation';
 import { Menu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../i18n';
 
 const ProfilePage = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -10,6 +12,8 @@ const ProfilePage = () => {
   const activeTab = location.pathname.split('/')[2] || 'info';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
 
   // Track window resize for responsive design
   useEffect(() => {
@@ -38,7 +42,7 @@ const ProfilePage = () => {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <p className="text-gray-600 animate-pulse">გთხოვთ მოიცადოთ...</p>
+          <p className="text-gray-600 animate-pulse">{t('profile:common.pleaseWait')}</p>
         </div>
       </div>
     );

@@ -2,6 +2,8 @@ import React from 'react';
 import CarCard from '../../../components/CarCard';
 import { Car, Category } from '../../../api/types/car.types';
 import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 
 interface CarGridProps {
   cars: Car[];
@@ -12,10 +14,11 @@ interface CarGridProps {
 }
 
 const CarGrid: React.FC<CarGridProps> = ({ cars, categories, inWishlistPage = false, onRemoveFromWishlist, className = '' }) => {
+  const { t } = useTranslation([namespaces.carListing]);
   if (!cars || cars.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-gray-500 text-lg">მანქანები ვერ მოიძებნა</p>
+        <p className="text-gray-500 text-lg">{t('carListing:noResults')}</p>
       </div>
     );
   }
@@ -28,7 +31,7 @@ const CarGrid: React.FC<CarGridProps> = ({ cars, categories, inWishlistPage = fa
             <button 
               onClick={() => onRemoveFromWishlist(car)}
               className="absolute top-2 right-2 z-10 bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-full shadow transition-colors duration-200"
-              title="წაშლა ფავორიტებიდან"
+              title={t('carListing:removeFromWishlist')}
             >
               <Trash2 size={16} />
             </button>

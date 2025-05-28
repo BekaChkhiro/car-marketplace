@@ -6,8 +6,10 @@ import CarCard from '../../../components/CarCard';
 import { useToast } from '../../../context/ToastContext';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const NewAdditions: React.FC = () => {
+  const { t } = useTranslation('home');
   const [newCars, setNewCars] = useState<Car[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -143,7 +145,7 @@ const NewAdditions: React.FC = () => {
     <div className="bg-white rounded-lg sm:rounded-lg shadow-sm p-3 sm:p-4 w-full">
       <div className="flex items-center justify-between mb-4 pb-3 border-b">
         <div className="flex items-center space-x-2">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">ახალი განცხადებები</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">{t('newAdditions')}</h2>
         </div>
         
         <Link
@@ -151,7 +153,7 @@ const NewAdditions: React.FC = () => {
           className="hidden sm:flex items-center gap-1 px-3 py-2 text-sm text-primary font-semibold border border-primary/30 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-200 group"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          ყველას ნახვა <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          {t('viewAll')} <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
       </div>
 
@@ -209,7 +211,7 @@ const NewAdditions: React.FC = () => {
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-primary-dark transition-all duration-200 w-full max-w-xs"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            ყველა მანქანის ნახვა <ArrowRight className="w-4 h-4" />
+            {t('viewAllCars')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       )}

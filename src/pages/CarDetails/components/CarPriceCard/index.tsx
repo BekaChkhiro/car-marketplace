@@ -3,6 +3,8 @@ import { MapPin, Phone, MessageCircle, Calendar, Shield, Gauge, Fuel, User, Awar
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 import './styles.css';
 
 interface CarPriceCardProps {
@@ -14,6 +16,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
   const [showContactOptions, setShowContactOptions] = useState(false);
   const [showFinanceInfo, setShowFinanceInfo] = useState(false);
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
 
   // Format price (no discount available in the Car type)
   const price = car.price || 0;
@@ -29,7 +32,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
         <div className="bg-green-50 p-4 border-b border-green-100">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">ფასი</h2>
+              <h2 className="text-lg font-semibold text-gray-800">{t('carDetails:specs.price')}</h2>
               <div className="flex items-end gap-2">
                 <span className="text-3xl font-bold text-primary">
                   {formatPrice(price)}
@@ -89,7 +92,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center mr-2">
                   <AlertCircle className="w-4 h-4 text-primary" />
                 </div>
-                <span className="font-medium text-gray-800">სავარაუდო განვადება</span>
+                <span className="font-medium text-gray-800">{t('carDetails:specs.estimatedLoan', 'სავარაუდო განვადება')}</span>
               </div>
               {showFinanceInfo ? (
                 <ChevronUp className="w-5 h-5 text-gray-500" />
@@ -147,7 +150,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             aria-expanded={showContactOptions}
           >
             <Phone className="w-5 h-5" />
-            <span>დაგვიკავშირდით</span>
+            <span>{t('carDetails:specs.contact')}</span>
             {showContactOptions ? (
               <ChevronUp className="w-5 h-5 ml-1" />
             ) : (
@@ -163,7 +166,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
               >
                 <Phone className="w-5 h-5" />
-                <span>დარეკვა: +995 555 123456</span>
+                <span>{t('carDetails:specs.call', 'დარეკვა')}: +995 555 123456</span>
               </a>
               
               <a 
@@ -171,7 +174,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
               >
                 <MessageCircle className="w-5 h-5" />
-                <span>მესიჯის გაგზავნა</span>
+                <span>{t('carDetails:specs.sendMessage', 'მესიჯის გაგზავნა')}</span>
               </a>
               
               <a 
@@ -179,7 +182,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
               >
                 <Mail className="w-5 h-5" />
-                <span>ელ-ფოსტის გაგზავნა</span>
+                <span>{t('carDetails:specs.sendEmail', 'ელ-ფოსტის გაგზავნა')}</span>
               </a>
             </div>
           )}
@@ -189,12 +192,12 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
         <div className="p-4 pt-0 grid grid-cols-2 gap-3">
           <button className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-green-100 hover:bg-green-50 transition-colors">
             <Heart className="w-5 h-5 text-primary" />
-            <span className="text-sm font-medium">ფავორიტი</span>
+            <span className="text-sm font-medium">{t('carDetails:specs.favorite', 'ფავორიტი')}</span>
           </button>
           
           <button className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-green-100 hover:bg-green-50 transition-colors">
             <Share2 className="w-5 h-5 text-primary" />
-            <span className="text-sm font-medium">გაზიარება</span>
+            <span className="text-sm font-medium">{t('carDetails:specs.shareButton')}</span>
           </button>
         </div>
       </div>
@@ -204,8 +207,8 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
         <div className="flex items-start">
           <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
           <div>
-            <p className="font-medium text-yellow-800 mb-1">უსაფრთხოების რჩევები</p>
-            <p className="text-yellow-700">მანქანის ყიდვამდე შეამოწმეთ გამყიდველის რეპუტაცია და დოკუმენტაცია.</p>
+            <p className="font-medium text-yellow-800 mb-1">{t('carDetails:specs.safetyTips', 'უსაფრთხოების რჩევები')}</p>
+            <p className="text-yellow-700">{t('carDetails:specs.safetyTipsText', 'მანქანის ყიდვამდე შეამოწმეთ გამყიდველის რეპუტაცია და დოკუმენტაცია.')}</p>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import HeroSection from './components/HeroSection';
 import NewAdditions from './components/NewAdditions';
 import VipListings from './components/VipListings';

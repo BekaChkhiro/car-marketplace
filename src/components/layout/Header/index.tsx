@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Logo from './components/Logo';
 import Navigation from './components/Navigation';
 import AddButton from './components/AddButton';
@@ -12,26 +13,35 @@ import { Home, Car, Info, Phone, Heart, Settings, User, ChevronRight, LogOut } f
 import { useAuth } from '../../../context/AuthContext';
 
 const Header = () => {
+  const { t, i18n } = useTranslation('header');
   const location = useLocation();
+  const { lang } = useParams<{ lang: string }>();
   const { isAuthenticated, logout } = useAuth();
-  const [currentLanguage, setCurrentLanguage] = useState('ქარ');
+  
+  // Current language from URL or default
+  const currentLang = lang || i18n.language || 'ka';
+  // Language is now managed by i18n system
   const [currentCurrency, setCurrentCurrency] = useState('GEL');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [touchFeedback, setTouchFeedback] = useState<string | null>(null);
 
-  const languages = [
-    { id: 'ka', name: 'ქარ' },
-    { id: 'ru', name: 'რუს' },
-    { id: 'en', name: 'ინგ' },
-  ];
+  // Languages are now managed by the LanguageSelector component internally
 
   const menuItems = [
-    { id: 1, text: 'მთავარი', href: '/', icon: Home },
+    { id: 1, text: t('home'), href: '/', icon: Home },
     { id: 2, component: CarsDropdown, icon: Car },
-    { id: 3, text: 'კომპანიის შესახებ', href: '/about', icon: Info },
-    { id: 4, text: 'კონტაქტი', href: '/contact', icon: Phone },
+    { id: 3, text: t('aboutUs'), href: '/about', icon: Info },
+    { id: 4, text: t('contact'), href: '/contact', icon: Phone },
   ];
+  
+  // Helper function to prefix paths with current language
+  const langPath = (path: string): string => {
+    // If path already starts with lang code, don't add it again
+    if (path.startsWith(`/${currentLang}/`)) return path;
+    if (path === '/') return `/${currentLang}`;
+    return `/${currentLang}${path}`;
+  };
   
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -74,9 +84,7 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [mobileMenuOpen]);
 
-  const handleLanguageChange = (langName: string) => {
-    setCurrentLanguage(langName);
-  };
+  // Language change is now handled by the LanguageSelector component internally
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -127,11 +135,7 @@ const Header = () => {
             <div className="flex items-center space-x-6">
               <WishlistButton />
               <CurrencySelector />
-              <LanguageSelector 
-                currentLanguage={currentLanguage}
-                languages={languages}
-                onLanguageChange={handleLanguageChange}
-              />
+              <LanguageSelector />
               <AuthButtons />
             </div>
           </div>
@@ -232,7 +236,7 @@ const Header = () => {
                 <span>+ მანქანის დამატება</span>
               </Link>
               <Link 
-                to="/wishlist" 
+                to={langPath('/wishlist')} 
                 className={`flex items-center justify-center py-2.5 px-3 bg-gray-100 text-gray-700 rounded-md text-sm font-medium flex-1 hover:bg-gray-200 transition-colors ${isActive('/wishlist') ? 'border-l-4 border-primary pl-2' : ''} ${touchFeedback === '/wishlist' ? 'animate-quick-pulse' : ''}`}
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -240,7 +244,7 @@ const Header = () => {
                 }}
               >
                 <Heart size={16} className="mr-1.5" />
-                <span>რჩეულები</span>
+                <span>{t('favorites')}</span>
               </Link>
             </div>
           </div>
@@ -252,7 +256,7 @@ const Header = () => {
               {isAuthenticated ? (
                 <>
                   <Link 
-                    to="/profile" 
+                    to={langPath('/profile')} 
                     className={`py-3 px-3 flex items-center space-x-3 border-b border-gray-100 ${isActive('/profile') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile' ? 'animate-quick-pulse' : ''}`}
                     onClick={() => {
                       setMobileMenuOpen(false);
@@ -260,11 +264,11 @@ const Header = () => {
                     }}
                   >
                     <User size={18} className={isActive('/profile') ? 'text-primary' : 'text-gray-500'} />
-                    <span>პროფილი</span>
+                    <span>{t('profile')}</span>
                     <ChevronRight size={16} className="text-gray-400 ml-auto" />
                   </Link>
                   <Link 
-                    to="/profile/settings" 
+                    to={langPath('/profile/settings')} 
                     className={`py-3 px-3 flex items-center space-x-3 border-b border-gray-100 ${isActive('/profile/settings') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile/settings' ? 'animate-quick-pulse' : ''}`}
                     onClick={() => {
                       setMobileMenuOpen(false);
@@ -272,7 +276,7 @@ const Header = () => {
                     }}
                   >
                     <Settings size={18} className={isActive('/profile/settings') ? 'text-primary' : 'text-gray-500'} />
-                    <span>პარამეტრები</span>
+                    <span>{t('settings')}</span>
                     <ChevronRight size={16} className="text-gray-400 ml-auto" />
                   </Link>
                   <button 
@@ -283,7 +287,7 @@ const Header = () => {
                     className="w-full py-3 px-3 flex items-center space-x-3 text-gray-700 hover:bg-gray-50"
                   >
                     <LogOut size={18} className="text-gray-500" />
-                    <span>გასვლა</span>
+                    <span>{t('logout')}</span>
                   </button>
                 </>
               ) : (
@@ -296,21 +300,17 @@ const Header = () => {
 
           {/* Settings */}
           <div className="mb-2">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">პარამეტრები</h3>
+            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('settings')}</h3>
             <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100 p-3">
               <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center">
-                  <span className="text-sm text-gray-700 mr-2">ვალუტა:</span>
+                  <span className="text-sm text-gray-700 mr-2">{t('currency')}:</span>
                   <CurrencySelector />
                 </div>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-gray-700 mr-2">ენა:</span>
-                <LanguageSelector 
-                  currentLanguage={currentLanguage}
-                  languages={languages}
-                  onLanguageChange={handleLanguageChange}
-                />
+                <span className="text-sm text-gray-700 mr-2">{t('language')}:</span>
+                <LanguageSelector />
               </div>
             </div>
           </div>

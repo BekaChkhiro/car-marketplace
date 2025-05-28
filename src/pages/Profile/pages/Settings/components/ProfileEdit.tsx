@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { User, Mail, Phone } from 'lucide-react';
 import { useAuth } from '../../../../../context/AuthContext';
 import { useToast } from '../../../../../context/ToastContext';
+import { useTranslation } from 'react-i18next';
 
 const ProfileEdit: React.FC = () => {
+  const { t } = useTranslation(['profile']);
   const { user, updateProfile } = useAuth();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,11 +24,13 @@ const ProfileEdit: React.FC = () => {
     setSuccess(null);
     try {
       await updateProfile(formData);
-      setSuccess('პროფილი წარმატებით განახლდა');
-      showToast('პროფილი წარმატებით განახლდა', 'success');
+      const successMsg = t('profileEdit.success');
+      setSuccess(successMsg);
+      showToast(successMsg, 'success');
     } catch (error: any) {
-      setError(error.message || 'პროფილის განახლება ვერ მოხერხდა');
-      showToast(error.message || 'პროფილის განახლება ვერ მოხერხდა', 'error');
+      const errorMsg = error.message || t('profileEdit.error');
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -51,14 +55,14 @@ const ProfileEdit: React.FC = () => {
       <div className="flex items-center gap-4 p-4 sm:p-6 bg-gray-50 rounded-xl mb-6">
        
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800">პროფილის რედაქტირება</h2>
-          <p className="text-gray-500 text-sm sm:text-base mt-1">შეიყვანეთ თქვენი პერსონალური მონაცემები</p>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800">{t('profileEdit.title')}</h2>
+          <p className="text-gray-500 text-sm sm:text-base mt-1">{t('profileEdit.personalInfo')}</p>
         </div>
       </div>
       <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
         <div>
           <label htmlFor="username" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            სახელი
+            {t('profileEdit.username')}
           </label>
           <div className="relative">
             <input
@@ -77,7 +81,7 @@ const ProfileEdit: React.FC = () => {
 
         <div>
           <label htmlFor="email" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            ელ.ფოსტა
+            {t('profileEdit.email')}
           </label>
           <div className="relative">
             <input
@@ -97,7 +101,7 @@ const ProfileEdit: React.FC = () => {
 
         <div>
           <label htmlFor="phone" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            ტელეფონი
+            {t('profileEdit.phone')}
           </label>
           <div className="relative">
             <input
@@ -124,12 +128,12 @@ const ProfileEdit: React.FC = () => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
-            გთხოვთ მოიცადოთ...
+            {t('common.pleaseWait')}
           </>
         ) : (
           <>
             <User size={18} />
-            შენახვა
+            {t('common.save')}
           </>
         )}
       </button>

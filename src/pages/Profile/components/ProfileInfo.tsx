@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { User, Mail, Shield, Calendar, Hash, Phone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
+import { useParams } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -28,6 +31,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or use default
+  const currentLang = lang || 'ka';
 
   if (!user) return null;
 
@@ -49,16 +57,23 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
         username: formData.username,
         email: formData.email
       });
-      setSuccess('პროფილი განახლდა წარმატებით');
+      setSuccess(t('profile:settings.profileUpdated'));
       setIsEditing(false);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'პროფილის განახლება ვერ მოხერხდა');
+      setError(err.response?.data?.message || t('profile:settings.updateFailed', 'პროფილის განახლება ვერ მოხერხდა'));
     }
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'არ არის ხელმისაწვდომი';
-    return new Date(dateString).toLocaleDateString('ka-GE', {
+    if (!dateString) return t('profile:common.notAvailable', 'არ არის ხელმისაწვდომი');
+    
+    const localeMap: Record<string, string> = {
+      'en': 'en-US',
+      'ka': 'ka-GE',
+      'ru': 'ru-RU'
+    };
+    
+    return new Date(dateString).toLocaleDateString(localeMap[currentLang] || 'ka-GE', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -96,7 +111,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                სახელი
+                {t('profile:profileInfo.username')}
               </label>
               <div className="relative">
                 <input
@@ -114,7 +129,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                ელ-ფოსტა
+                {t('profile:profileInfo.email')}
               </label>
               <div className="relative">
                 <input
@@ -188,7 +203,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <User size={18} />
-                <h3 className="font-medium">მომხმარებლის სახელი</h3>
+                <h3 className="font-medium">{t('profile:profileInfo.username')}</h3>
               </div>
               <p className="text-lg text-gray-900">{user.username}</p>
             </div>
@@ -196,15 +211,15 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <Calendar size={18} />
-                <h3 className="font-medium">ასაკი</h3>
+                <h3 className="font-medium">{t('profile:profileInfo.age', 'ასაკი')}</h3>
               </div>
-              <p className="text-lg text-gray-900">{user.age} წლის</p>
+              <p className="text-lg text-gray-900">{user.age} {currentLang === 'ka' ? 'წლის' : currentLang === 'ru' ? 'лет' : 'years'}</p>
             </div>
 
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <Mail size={18} />
-                <h3 className="font-medium">ელ-ფოსტა</h3>
+                <h3 className="font-medium">{t('profile:profileInfo.email')}</h3>
               </div>
               <p className="text-lg text-gray-900">{user.email}</p>
             </div>
@@ -212,7 +227,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <Phone size={18} />
-                <h3 className="font-medium">ტელეფონი</h3>
+                <h3 className="font-medium">{t('profile:profileInfo.phone')}</h3>
               </div>
               <p className="text-lg text-gray-900">{user.phone}</p>
             </div>
@@ -220,11 +235,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
             <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-3 text-gray-500 mb-3">
                 <User size={18} />
-                <h3 className="font-medium">სქესი</h3>
+                <h3 className="font-medium">{t('profile:profileInfo.gender', 'სქესი')}</h3>
               </div>
               <p className="text-lg text-gray-900">
-                {user.gender === 'male' ? 'მამრობითი' : 
-                 user.gender === 'female' ? 'მდედრობითი' : 'სხვა'}
+                {user.gender === 'male' ? t('profile:profileInfo.male', 'მამრობითი') : 
+                 user.gender === 'female' ? t('profile:profileInfo.female', 'მდედრობითი') : t('profile:profileInfo.other', 'სხვა')}
               </p>
             </div>
 
@@ -232,7 +247,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
               <div className="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300">
                 <div className="flex items-center gap-3 text-gray-500 mb-3">
                   <Calendar size={18} />
-                  <h3 className="font-medium">რეგისტრაციის თარიღი</h3>
+                  <h3 className="font-medium">{t('profile:profileInfo.joinedDate')}</h3>
                 </div>
                 <p className="text-lg text-gray-900">{formatDate(user.created_at)}</p>
               </div>
@@ -245,7 +260,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
               className="px-6 py-3 bg-primary text-white rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md flex items-center gap-2"
             >
               <User size={18} />
-              რედაქტირება
+              {t('profile:common.edit')}
             </button>
           </div>
         </div>

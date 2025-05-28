@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
 import ProfileEdit from './components/ProfileEdit';
 import PasswordChange from '../../components/PasswordChange';
+import { useTranslation } from 'react-i18next';
 
 const Settings: React.FC = () => {
+  const { t } = useTranslation(['profile']);
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
 
   const tabs = [
-    { id: 'profile', label: 'პროფილის რედაქტირება', icon: User },
-    { id: 'password', label: 'პაროლის შეცვლა', icon: Lock }
+    { id: 'profile', label: t('settings.editProfile'), icon: User },
+    { id: 'password', label: t('settings.changePassword'), icon: Lock }
   ];
   return (
     <div className="p-4 sm:p-6"><div className="mb-6 border-b border-gray-200">

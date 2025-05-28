@@ -1,0 +1,22 @@
+{
+  "newAdditions": "Новые поступления",
+  "viewAll": "Посмотреть все",
+  "viewAllCars": "Посмотреть все автомобили",
+  "viewAllVipCars": "Посмотреть все {{type}} автомобили",
+  "superVipListings": "SUPER VIP объявления",
+  "vipPlusListings": "VIP+ объявления",
+  "vipListings": "VIP объявления",
+  "regularListings": "Обычные объявления",
+  "featured": "Избранные объявления",
+  "findYourDreamCar": "Найдите автомобиль своей мечты",
+  "browseCars": "Просмотр автомобилей",
+  "latestAdditions": "Последние поступления",
+  "slide": "Слайд",
+  "of": "из",
+  "featuredCarsPlaceholder": "Избранные автомобили",
+  "comingSoon": "Скоро будет доступно",
+  "errorLoadingVipCars": "Не удалось загрузить VIP автомобили",
+  "vip": "VIP",
+  "vipPlus": "VIP+",
+  "superVip": "SUPER VIP"
+}

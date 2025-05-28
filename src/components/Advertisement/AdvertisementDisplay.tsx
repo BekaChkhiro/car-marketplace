@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import advertisementService, { Advertisement } from '../../api/services/advertisementService';
 
 interface AdvertisementDisplayProps {
@@ -8,6 +9,7 @@ interface AdvertisementDisplayProps {
 }
 
 const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, className = '' }) => {
+  const { t } = useTranslation('common');
   const [advertisement, setAdvertisement] = useState<Advertisement | null>(null);
   const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -80,7 +82,7 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
   if (loading) {
     return (
       <div className={`flex items-center justify-center bg-gray-100 animate-pulse ${className}`}>
-        <div className="text-gray-400">იტვირთება...</div>
+        <div className="text-gray-400">{t('loading')}</div>
       </div>
     );
   }

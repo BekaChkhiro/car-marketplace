@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import vipService, { VipStatus } from '../../../api/services/vipService';
 import carService from '../../../api/services/carService';
 import CarCard from '../../../components/CarCard';
@@ -12,6 +13,7 @@ interface VipCarouselProps {
 }
 
 const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
+  const { t } = useTranslation('home');
   const [cars, setCars] = useState<Car[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +88,7 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
         }
       } catch (err) {
         console.error('Error fetching VIP cars:', err);
-        setError('VIP მანქანების ჩატვირთვა ვერ მოხერხდა');
+        setError(t('errorLoadingVipCars'));
       } finally {
         setLoading(false);
       }
@@ -122,16 +124,16 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
     });
   };
 
-  const getVipTitle = (vipType: VipStatus) => {
+  const getVipTitle = (vipType: VipStatus): string => {
     switch (vipType) {
       case 'vip':
-        return 'VIP მანქანები';
+        return `${t('vip')} ${t('vipListings')}`;
       case 'vip_plus':
-        return 'VIP+ განცხადებები';
+        return `${t('vipPlus')} ${t('vipListings')}`;
       case 'super_vip':
-        return 'SUPER VIP განცხადებები';
+        return `${t('superVip')} ${t('vipListings')}`;
       default:
-        return '';
+        return t('vipListings');
     }
   };
 
@@ -159,7 +161,7 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-0">{getVipTitle(vipType)}</h2>
           <div className={`px-2 py-0.5 rounded ${getVipBadgeStyle(vipType)} flex items-center`}>
             <Star size={14} fill="currentColor" className="mr-1" />
-            <span className="text-xs font-medium">{vipType === 'vip_plus' ? 'VIP+' : vipType === 'super_vip' ? 'SUPER VIP' : 'VIP'}</span>
+            <span className="text-xs font-medium">{vipType === 'vip_plus' ? t('vipPlus') : vipType === 'super_vip' ? t('superVip') : t('vip')}</span>
           </div>
         </div>
         
@@ -168,7 +170,7 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
           className="hidden sm:flex items-center gap-1 px-3 py-2 text-sm text-primary font-semibold border border-primary/30 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-200 group"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          ყველას ნახვა <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          {t('viewAll')} <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
       </div>
 
@@ -226,7 +228,7 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-primary-dark transition-all duration-200 w-full max-w-xs"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            ყველა {vipType === 'vip_plus' ? 'VIP+' : vipType === 'super_vip' ? 'SUPER VIP' : 'VIP'} მანქანის ნახვა <ArrowRight className="w-4 h-4" />
+            {t('viewAllVipCars', { type: vipType === 'vip_plus' ? t('vipPlus') : vipType === 'super_vip' ? t('superVip') : t('vip') })} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       )}

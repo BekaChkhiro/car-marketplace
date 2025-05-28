@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
 import { routes } from './config/routes';
 import Home from './pages/Home';
 import CarListing from './pages/CarListing';
@@ -35,30 +35,51 @@ import EditCar from './pages/Profile/pages/EditCar/index';
 import Wishlist from './pages/Profile/pages/Wishlist';
 import Balance from './pages/Profile/pages/Balance';
 import HowToSell from './pages/HowToSell';
+import i18n, { getLanguageFromUrl } from './i18n';
 
 const AppRoutes = () => {
+  const { lang } = useParams<{ lang: string }>();
+  const location = useLocation();
+  
+  // Update i18n language when language parameter changes
+  useEffect(() => {
+    if (lang && ['ka', 'en', 'ru'].includes(lang)) {
+      if (i18n.language !== lang) {
+        i18n.changeLanguage(lang);
+        localStorage.setItem('i18nextLng', lang);
+      }
+    }
+  }, [lang]);
+  // Function to build path with language prefix removed
+  const buildPath = (path: string): string => {
+    // Convert paths like '/cars' to just 'cars' since we're already under /:lang/*
+    return path.startsWith('/') ? path.substring(1) : path;
+  };
+  
+  console.log('Current language in routes:', lang);
+
   return (
     <Routes>
-      <Route path={routes.home} element={<Home />} />
-      <Route path={routes.carListing} element={<CarListing />} />
-      <Route path={routes.carDetails} element={<CarDetails />} />
-      <Route path="/how-to-sell" element={<HowToSell />} />
+      <Route index element={<Home />} />
+      <Route path="cars" element={<CarListing />} />
+      <Route path="cars/:id" element={<CarDetails />} />
+      <Route path="how-to-sell" element={<HowToSell />} />
       
       {/* Protected Admin Routes */}
-      <Route path={routes.admin} element={
+      <Route path="admin" element={
         <ProtectedRoute requiredRole="admin">
           <AdminLayout />
         </ProtectedRoute>
       }>
         <Route index element={<AdminDashboard />} />
-        <Route path={routes.adminDashboard} element={<AdminDashboard />} />
-        <Route path={routes.adminUsers} element={<UsersPage />} />
-        <Route path={routes.adminCars} element={<CarsPage />} />
-        <Route path={routes.adminEditCar} element={<AdminEditCar />} />
-        <Route path={routes.adminTransactions} element={<TransactionsPage />} />
-        <Route path={routes.adminVipListings} element={<VipListingsPage />} />
-        <Route path={routes.adminAdvertisements} element={<AdvertisementsPage />}>
-          <Route index element={<Navigate to={routes.adminAdvertisementsAll} replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="cars" element={<CarsPage />} />
+        <Route path="cars/edit/:id" element={<AdminEditCar />} />
+        <Route path="transactions" element={<TransactionsPage />} />
+        <Route path="vip-listings" element={<VipListingsPage />} />
+        <Route path="advertisements" element={<AdvertisementsPage />}>
+          <Route index element={<Navigate to="all" replace />} />
           <Route path="all" element={<AllAdvertisementsPage />} />
           <Route path="slider" element={<SliderAdvertisementsPage />} />
           <Route path="banners" element={<BannersAdvertisementsPage />} />
@@ -66,29 +87,30 @@ const AppRoutes = () => {
           <Route path="new" element={<NewAdvertisementPage />} />
           <Route path="edit/:id" element={<EditAdvertisementPage />} />
         </Route>
-        <Route path={routes.adminSettings} element={<SettingsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
 
       {/* Protected Profile Routes */}
-      <Route path={routes.profile} element={
+      <Route path="profile" element={
         <ProtectedRoute>
           <ProfilePage />
         </ProtectedRoute>
       }>
         <Route index element={<ProfileHome />} />
-        <Route path={routes.cars} element={<UserCars />} />
+        <Route path="cars" element={<UserCars />} />
         <Route path="cars/edit/:id" element={<EditCar />} />
-        <Route path={routes.addCar} element={<AddCar />} />
-        <Route path={routes.profileBalance} element={<Balance />} />
-        <Route path={routes.profileSettings} element={<Settings />} />
+        <Route path="add-car" element={<AddCar />} />
+        <Route path="balance" element={<Balance />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="wishlist" element={<Wishlist />} />
       </Route>
 
       {/* Auth Routes */}
-      <Route path={routes.auth.login} element={<Login />} />
-      <Route path={routes.auth.register} element={<Register />} />
-      <Route path={routes.auth.forgotPassword} element={<ForgotPassword />} />
-      <Route path={routes.auth.resetPassword} element={<ResetPassword />} />
+      <Route path="login" element={<Login />} />
+      <Route path="register" element={<Register />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
+      <Route path="reset-password" element={<ResetPassword />} />
+      <Route path="wishlist" element={<Wishlist />} />
     </Routes>
   );
 };

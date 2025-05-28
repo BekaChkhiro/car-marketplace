@@ -1,0 +1,50 @@
+{
+  "breadcrumbs": {
+    "home": "მთავარი",
+    "cars": "მანქანები",
+    "carDetails": "მანქანის დეტალები"
+  },
+  "loading": {
+    "loadingCarData": "იტვირთება მანქანის მონაცემები..."
+  },
+  "notFound": {
+    "carNotFound": "მანქანა ვერ მოიძებნა",
+    "homePage": "მთავარი გვერდი"
+  },
+  "header": {
+    "backToCars": "მანქანებზე დაბრუნება",
+    "addToWishlist": "რჩეულებში დამატება",
+    "removeFromWishlist": "რჩეულებიდან ამოშლა",
+    "share": "გაზიარება"
+  },
+  "priceCard": {
+    "price": "ფასი",
+    "contactSeller": "გამყიდველთან დაკავშირება",
+    "callSeller": "გამყიდველთან დარეკვა",
+    "messageSeller": "გამყიდველთან მიწერა",
+    "safetyTips": "უსაფრთხოების რჩევები",
+    "meetInPublic": "შეხვდით საჯარო ადგილას",
+    "inspectBefore": "შეამოწმეთ მანქანა გადახდამდე",
+    "verifyDocuments": "გადაამოწმეთ ყველა დოკუმენტი"
+  },
+  "carSpecs": {
+    "generalInfo": "ზოგადი ინფორმაცია",
+    "specifications": "სპეციფიკაციები",
+    "description": "აღწერა",
+    "features": "მახასიათებლები",
+    "brand": "მარკა",
+    "model": "მოდელი",
+    "year": "წელი",
+    "mileage": "გარბენი",
+    "engine": "ძრავა",
+    "transmission": "ტრანსმისია",
+    "fuelType": "საწვავის ტიპი",
+    "color": "ფერი",
+    "driveType": "წამყვანი თვლები",
+    "interiorColor": "სალონის ფერი",
+    "additionalFeatures": "დამატებითი მახასიათებლები",
+    "navigation": "ნავიგაცია",
+    "parkingControl": "პარკინგის კონტროლი",
+    "bluetooth": "ბლუთუზი"
+  }
+}

@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Globe, ChevronDown } from 'lucide-react';
-import { getStoredPreferences, storePreferences } from '../../../../utils/userPreferences';
+import { Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { changeLanguage } from '../../../../i18n';
 
 interface Language {
   id: string;
   name: string;
 }
 
-interface LanguageSelectorProps {
-  languages: Language[];
-  currentLanguage: string;
-  onLanguageChange: (langName: string) => void;
-}
-
-const LanguageSelector: React.FC<LanguageSelectorProps> = ({ languages, currentLanguage, onLanguageChange }) => {
+const LanguageSelector: React.FC = () => {
+  const { t, i18n } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
+  const currentLanguage = i18n.language;
+  
+  const languages = [
+    { id: 'ka', name: t('georgian') },
+    { id: 'en', name: t('english') },
+    { id: 'ru', name: t('russian') }
+  ];
 
-  const handleLanguageChange = (langId: string, langName: string) => {
-    onLanguageChange(langName);
-    storePreferences({ language: langId });
+  const handleLanguageChange = (langId: string) => {
+    // Will handle page refresh via the changeLanguage function
+    changeLanguage(langId);
     setIsOpen(false);
   };
 
@@ -43,7 +46,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ languages, currentL
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
       >
-        <span>{currentLanguage}</span>
+        <Globe className="w-4 h-4 mr-1" />
+        <span>
+          {currentLanguage === 'ka' ? 'Geo' : currentLanguage === 'ru' ? 'Rus' : 'Eng'}
+        </span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -60,18 +66,18 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ languages, currentL
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 py-2 w-32 bg-white rounded-xl shadow-lg border border-gray-100">
+        <div className="absolute right-0 mt-2 py-2 w-32 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
           {languages.map((lang) => (
             <button
               key={lang.id}
-              onClick={() => handleLanguageChange(lang.id, lang.name)}
+              onClick={() => handleLanguageChange(lang.id)}
               className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                currentLanguage === lang.name
+                currentLanguage === lang.id
                   ? 'text-primary font-medium'
                   : 'text-gray-700'
               }`}
             >
-              {lang.name}
+              {lang.id === 'ka' ? 'Geo' : lang.id === 'ru' ? 'Rus' : 'Eng'}
             </button>
           ))}
         </div>

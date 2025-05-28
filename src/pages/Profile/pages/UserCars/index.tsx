@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Car } from '../../../../api/types/car.types';
 import carService from '../../../../api/services/carService';
 import { useAuth } from '../../../../context/AuthContext';
@@ -8,6 +8,8 @@ import { Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { useToast } from '../../../../context/ToastContext';
 import EmptyState from './components/EmptyState';
 import UserCarsList from './components/UserCarsList';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 
 const UserCars: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +18,11 @@ const UserCars: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or use default
+  const currentLang = lang || 'ka';
 
   const fetchUserCars = async () => {
     setLoading(true);
@@ -279,14 +286,14 @@ const UserCars: React.FC = () => {
   }, []);
 
   const handleDeleteCar = async (carId: number) => {
-    if (window.confirm('დარწმუნებული ხართ რომ გსურთ წაშალოთ ეს განცხადება?')) {
+    if (window.confirm(t('profile:cars.confirmDelete'))) {
       try {
         await carService.deleteCar(carId);
         fetchUserCars();
-        showToast('განცხადება წარმატებით წაიშალა', 'success');
+        showToast(t('profile:cars.deleteSuccess'), 'success');
       } catch (error) {
         console.error('Error deleting car:', error);
-        showToast('შეცდომა განცხადების წაშლისას', 'error');
+        showToast(t('profile:cars.deleteError'), 'error');
       }
     }
   };
@@ -312,7 +319,7 @@ const UserCars: React.FC = () => {
             className="flex items-center gap-2"
           >
             <RefreshCw size={16} />
-            სცადეთ თავიდან
+            {t('profile:cars.tryAgain')}
           </Button>
         </div>
       </Container>
@@ -324,15 +331,15 @@ const UserCars: React.FC = () => {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 sm:mb-6 md:mb-8 gap-3 sm:gap-4">
           <div className="w-full md:w-auto text-center md:text-left mb-3 md:mb-0">
-            <h2 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-primary text-left">ჩემი განცხადებები</h2>
-            <p className="text-sm sm:text-base text-gray-600 text-left">მართეთ თქვენი გამოქვეყნებული განცხადებები</p>
+            <h2 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-primary text-left">{t('profile:cars.title')}</h2>
+            <p className="text-sm sm:text-base text-gray-600 text-left">{t('profile:cars.subtitle')}</p>
           </div>
           <Button 
-            onClick={() => navigate('/profile/add-car')}
+            onClick={() => navigate(`/${currentLang}/profile/add-car`)}
             className="w-full md:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 hover:shadow-md"
           >
             <Plus size={18} />
-            ახალი განცხადება
+            {t('profile:cars.newListing')}
           </Button>
         </div>
 

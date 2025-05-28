@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from '../../../../../api/types/car.types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { usePrice } from '../../../../../context/usePrice';
 import { useCurrency } from '../../../../../context/CurrencyContext';
 import { Edit2, Trash2, Eye, Calendar, MapPin, Gauge, Fuel, Settings, CheckCircle, Clock, AlertTriangle, Star, XCircle, Crown } from 'lucide-react';
 import UserVipModal from './UserVipModal';
 import vipService, { VipStatusResponse } from '../../../../../api/services/vipService';
 import { useToast } from '../../../../../context/ToastContext';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../../i18n';
 
 interface UserCarsListProps {
   cars: Car[];
@@ -85,6 +87,11 @@ const formatRemainingDays = (days: number): string => {
 };
 
 const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate }) => {
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or use default
+  const currentLang = lang || 'ka';
   // ვინახავთ მანქანების VIP სტატუსის ინფორმაციას
   const [vipStatusInfo, setVipStatusInfo] = useState<Record<number, VipStatusResponse>>({});
   const [loadingVipInfo, setLoadingVipInfo] = useState<boolean>(false);
@@ -142,21 +149,20 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
   const [loading, setLoading] = useState<number | null>(null);
   const { showToast } = useToast();
 
-  // ფუნქცია სტატუსის მნიშვნელობის ქართულად გადასათარგმნად
+  // Function to translate status value based on i18n
   const getStatusText = (status: string): string => {
     switch (status) {
+      case 'active':
       case 'available':
-        return 'ხელმისაწვდომია';
-      case 'pending':
-        return 'დასტურის მოლოდინში';
-      case 'sold':
-        return 'გაყიდულია';
+        return t('profile:cars.active');
       case 'inactive':
-        return 'არააქტიური';
-      case 'deleted':
-        return 'წაშლილია';
+        return t('profile:cars.inactive');
+      case 'pending':
+        return t('profile:cars.pending');
+      case 'sold':
+        return t('profile:cars.sold');
       default:
-        return 'უცნობია';
+        return status;
     }
   };
   
@@ -167,11 +173,11 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
     try {
       setLoading(carId);
       await vipService.disableVipStatus(carId);
-      showToast('VIP სტატუსი გაუქმებულია', 'success');
+      showToast(t('profile:cars.vip.disabled'), 'success');
       onVipUpdate(); // განაახლეთ მშობელი კომპონენტი
     } catch (error) {
       console.error('Error disabling VIP status:', error);
-      showToast('შეცდომა VIP სტატუსის გაუქმებისას', 'error');
+      showToast(t('profile:cars.vip.disableError'), 'error');
     } finally {
       setLoading(null);
     }
@@ -230,19 +236,19 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  მანქანა
+                  {t('profile:cars.tableHeaders.car')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ფასი
+                  {t('profile:cars.price', 'ფასი')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ძირითადი მონაცემები
+                  {t('profile:cars.tableHeaders.basicInfo')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  სტატუსი
+                  {t('profile:cars.tableHeaders.status')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  მოქმედებები
+                  {t('profile:cars.tableHeaders.actions')}
                 </th>
               </tr>
             </thead>
@@ -288,11 +294,11 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col space-y-1">
-                        <div className="flex items-center text-xs text-gray-500">
+                        <div className="flex items-center text-xs text-gray-500" title={t('profile:cars.tableHeaders.km')}>
                           <Gauge size={14} className="mr-2" /> 
-                          <span>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
+                          <span>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {t('profile:cars.tableHeaders.km')}</span>
                         </div>
-                        <div className="flex items-center text-xs text-gray-500">
+                        <div className="flex items-center text-xs text-gray-500" title={t('profile:cars.tableHeaders.fuel')}>
                           <Fuel size={14} className="mr-2" /> 
                           <span>{car.specifications?.fuel_type}</span>
                         </div>
@@ -319,7 +325,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                                 setIsVipModalOpen(true);
                               }}
                               className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 ${car.vip_status === 'vip' ? 'bg-blue-100 hover:bg-blue-200 text-blue-700' : car.vip_status === 'vip_plus' ? 'bg-purple-100 hover:bg-purple-200 text-purple-700' : 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700'}`}
-                              title={`აქტიური VIP სტატუსი: ${car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP'}`}
+                              title={t('profile:cars.vip.title') + ': ' + (car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER VIP')}
                             >
                               <Star 
                                 size={16} 
@@ -327,21 +333,21 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                               />
                               <span className="text-xs font-medium">
                                 {car.vip_status === 'vip' ? 'VIP' : car.vip_status === 'vip_plus' ? 'VIP+' : 'SUPER'}
-                                {/* დარჩენილი დღეების ჩვენება დესკტოპის ვერსიაში */}
+                                {/* Days remaining display in desktop version */}
                                 <span className="ml-1 px-1 py-0.5 bg-white bg-opacity-70 rounded text-xs">
                                   {(() => {
                                     if (loadingVipInfo) {
                                       return '...';
                                     }
                                     
-                                    // პირველად ვცდილობთ vipStatusInfo-დან მივიღოთ თარიღი
+                                    // First try to get date from vipStatusInfo
                                     if (vipStatusInfo[car.id]?.vip_expiration_date) {
-                                      return `დარჩენილია ${getRemainingDays(vipStatusInfo[car.id].vip_expiration_date)} დღე`;
+                                      return `${t('profile:cars.vip.daysLeft')}: ${getRemainingDays(vipStatusInfo[car.id].vip_expiration_date)}`;
                                     }
                                     
-                                    // თუ vipStatusInfo-ში არ არის, ვცდილობთ car ობიექტიდან
+                                    // If not in vipStatusInfo, try from car object
                                     if (car.vip_expiration_date) {
-                                      return `${getRemainingDays(car.vip_expiration_date)} დღე`;
+                                      return `${getRemainingDays(car.vip_expiration_date)} ${t('profile:cars.vip.daysLeft')}`;
                                     }
                                     
                                     return '?';
@@ -574,7 +580,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                           <span>
                             {(() => {
                               if (loadingVipInfo) {
-                                return 'იტვირთება...';
+                                return t('common:loading');
                               }
                               
                               if (vipStatusInfo[car.id]?.vip_expiration_date) {
@@ -585,7 +591,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                                 return formatRemainingTime(car.vip_expiration_date);
                               }
                               
-                              return 'დღეები არ არის მითითებული';
+                              return t('profile:cars.vip.inactive');
                             })()}
                           </span>
                         </div>

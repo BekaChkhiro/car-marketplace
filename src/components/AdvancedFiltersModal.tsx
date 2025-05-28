@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Filter, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import CustomSelect from './common/CustomSelect';
 import RangeFilter from './ui/RangeFilter';
+import { namespaces } from '../i18n';
 
 interface AdvancedFiltersModalProps {
   isOpen: boolean;
@@ -44,12 +46,47 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     steeringWheel: ''
   }
 }) => {
+  const { t } = useTranslation([namespaces.common, namespaces.filter]);
   const [filters, setFilters] = useState<AdvancedFilters>(currentFilters);
-  const [fuelTypes] = useState<string[]>(['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო', 'ბუნებრივი აირი', 'თხევადი აირი']);
-  const [colors] = useState<string[]>(['შავი', 'თეთრი', 'ვერცხლისფერი', 'ნაცრისფერი', 'ლურჯი', 'წითელი', 'მწვანე', 'ყავისფერი', 'ყვითელი']);
-  const [driveTypes] = useState<string[]>(['წინა', 'უკანა', '4x4']);
-  const [conditions] = useState<string[]>(['ახალი', 'მეორადი']);
-  const [steeringWheels] = useState<string[]>(['მარჯვენა', 'მარცხენა']);
+  
+  // Get translated values from i18n
+  const [fuelTypes] = useState<string[]>([
+    t('filter:fuel.petrol'),
+    t('filter:fuel.diesel'),
+    t('filter:fuel.hybrid'),
+    t('filter:fuel.electric'),
+    t('filter:fuel.naturalGas'),
+    t('filter:fuel.lpg')
+  ]);
+  
+  const [colors] = useState<string[]>([
+    t('filter:colors.black'),
+    t('filter:colors.white'),
+    t('filter:colors.silver'),
+    t('filter:colors.gray'),
+    t('filter:colors.blue'),
+    t('filter:colors.red'),
+    t('filter:colors.green'),
+    t('filter:colors.brown'),
+    t('filter:colors.yellow')
+  ]);
+  
+  const [driveTypes] = useState<string[]>([
+    t('filter:driveTypes.front'),
+    t('filter:driveTypes.rear'),
+    t('filter:driveTypes.allWheel')
+  ]);
+  
+  const [conditions] = useState<string[]>([
+    t('filter:conditions.new'),
+    t('filter:conditions.used')
+  ]);
+  
+  const [steeringWheels] = useState<string[]>([
+    t('filter:steeringWheels.right'),
+    t('filter:steeringWheels.left')
+  ]);
+  
   const [seats] = useState<string[]>(['2', '3', '4', '5', '6', '7', '8', '9+']);
   const modalRef = useRef<HTMLDivElement>(null);
   
@@ -149,7 +186,7 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         <div className="p-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-primary" />
-            <h2 className="text-xl font-semibold text-gray-800">დამატებითი ფილტრები</h2>
+            <h2 className="text-xl font-semibold text-gray-800">{t('filter:advancedFilters')}</h2>
             {activeFiltersCount > 0 && (
               <span className="bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
                 {activeFiltersCount}
@@ -159,7 +196,7 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           <button 
             onClick={onClose}
             className="p-1.5 rounded-full hover:bg-gray-200 transition-colors"
-            aria-label="დახურვა"
+            aria-label={t('common:close')}
           >
             <X size={22} />
           </button>
@@ -169,12 +206,12 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Year Range */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              გამოშვების წელი
+              {t('filter:year')}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <CustomSelect
                 options={[
-                  { value: '', label: 'დან' },
+                  { value: '', label: t('filter:yearFrom') },
                   ...years.map(year => ({
                     value: year,
                     label: year
@@ -182,11 +219,11 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 ]}
                 value={filters.yearFrom}
                 onChange={value => handleChange('yearFrom', value)}
-                placeholder="დან"
+                placeholder={t('filter:yearFrom')}
               />
               <CustomSelect
                 options={[
-                  { value: '', label: 'მდე' },
+                  { value: '', label: t('filter:yearTo') },
                   ...years.map(year => ({
                     value: year,
                     label: year
@@ -194,7 +231,7 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 ]}
                 value={filters.yearTo}
                 onChange={value => handleChange('yearTo', value)}
-                placeholder="მდე"
+                placeholder={t('filter:yearTo')}
               />
             </div>
           </div>
@@ -202,13 +239,13 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Engine Size Range */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              ძრავის მოცულობა (ლ)
+              {t('filter:engineSize')}
             </label>
             <RangeFilter
               name="engineSize"
               fromValue={filters.engineSizeFrom}
               toValue={filters.engineSizeTo}
-              placeholder={{ from: 'დან', to: 'მდე' }}
+              placeholder={{ from: t('filter:engineSizeFrom'), to: t('filter:engineSizeTo') }}
               onChange={handleRangeChange}
             />
           </div>
@@ -216,13 +253,13 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Mileage Range */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              გარბენი (კმ)
+              {t('filter:mileage')}
             </label>
             <RangeFilter
               name="mileage"
               fromValue={filters.mileageFrom}
               toValue={filters.mileageTo}
-              placeholder={{ from: 'დან', to: 'მდე' }}
+              placeholder={{ from: t('filter:mileageFrom'), to: t('filter:mileageTo') }}
               onChange={handleRangeChange}
             />
           </div>
@@ -230,11 +267,11 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Fuel Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              საწვავის ტიპი
+              {t('filter:fuelType')}
             </label>
             <CustomSelect
               options={[
-                { value: '', label: 'ნებისმიერი' },
+                { value: '', label: t('filter:anyOption') },
                 ...fuelTypes.map(type => ({
                   value: type,
                   label: type
@@ -242,18 +279,18 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               ]}
               value={filters.fuelType}
               onChange={value => handleChange('fuelType', value)}
-              placeholder="ნებისმიერი"
+              placeholder={t('filter:anyOption')}
             />
           </div>
           
           {/* Color */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              ფერი
+              {t('filter:color')}
             </label>
             <CustomSelect
               options={[
-                { value: '', label: 'ნებისმიერი' },
+                { value: '', label: t('filter:anyOption') },
                 ...colors.map(color => ({
                   value: color,
                   label: color
@@ -261,18 +298,18 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               ]}
               value={filters.color}
               onChange={value => handleChange('color', value)}
-              placeholder="ნებისმიერი"
+              placeholder={t('filter:anyOption')}
             />
           </div>
           
           {/* Drive Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              წამყვანი თვლები
+              {t('filter:driveType')}
             </label>
             <CustomSelect
               options={[
-                { value: '', label: 'ნებისმიერი' },
+                { value: '', label: t('filter:anyOption') },
                 ...driveTypes.map(type => ({
                   value: type,
                   label: type
@@ -280,18 +317,18 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               ]}
               value={filters.driveType}
               onChange={value => handleChange('driveType', value)}
-              placeholder="ნებისმიერი"
+              placeholder={t('filter:anyOption')}
             />
           </div>
           
           {/* Seats */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              ადგილების რაოდენობა
+              {t('filter:numberOfSeats')}
             </label>
             <CustomSelect
               options={[
-                { value: '', label: 'ნებისმიერი' },
+                { value: '', label: t('filter:anyOption') },
                 ...seats.map(seat => ({
                   value: seat,
                   label: seat
@@ -299,18 +336,18 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               ]}
               value={filters.seats}
               onChange={value => handleChange('seats', value)}
-              placeholder="ნებისმიერი"
+              placeholder={t('filter:anyOption')}
             />
           </div>
           
           {/* Condition */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              მდგომარეობა
+              {t('filter:condition')}
             </label>
             <CustomSelect
               options={[
-                { value: '', label: 'ნებისმიერი' },
+                { value: '', label: t('filter:anyOption') },
                 ...conditions.map(condition => ({
                   value: condition,
                   label: condition
@@ -318,18 +355,18 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               ]}
               value={filters.condition}
               onChange={value => handleChange('condition', value)}
-              placeholder="ნებისმიერი"
+              placeholder={t('filter:anyOption')}
             />
           </div>
           
           {/* Steering Wheel */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              საჭე
+              {t('filter:steeringWheel')}
             </label>
             <CustomSelect
               options={[
-                { value: '', label: 'ნებისმიერი' },
+                { value: '', label: t('filter:anyOption') },
                 ...steeringWheels.map(wheel => ({
                   value: wheel,
                   label: wheel
@@ -337,7 +374,7 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               ]}
               value={filters.steeringWheel}
               onChange={value => handleChange('steeringWheel', value)}
-              placeholder="ნებისმიერი"
+              placeholder={t('filter:anyOption')}
             />
           </div>
         </div>
@@ -347,10 +384,10 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             onClick={handleClearAll}
             disabled={!hasActiveFilters}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${hasActiveFilters ? 'text-red-600 hover:bg-red-50' : 'text-gray-400 cursor-not-allowed'}`}
-            aria-label="ყველა ფილტრის გასუფთავება"
+            aria-label={t('filter:clearAll')}
           >
             <Trash2 size={16} />
-            <span>გასუფთავება</span>
+            <span>{t('filter:clearAll')}</span>
             {activeFiltersCount > 0 && (
               <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">
                 {activeFiltersCount}
@@ -363,13 +400,13 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              გაუქმება
+              {t('filter:cancel')}
             </button>
             <button
               onClick={handleApply}
               className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors"
             >
-              გამოყენება
+              {t('filter:apply')}
             </button>
           </div>
         </div>

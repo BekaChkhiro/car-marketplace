@@ -1,0 +1,1176 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
+// Import translations
+// English translations
+import enProfile from './locales/en/profile.json';
+import enCarDetails from './locales/en/carDetails.json';
+
+// Georgian translations
+import kaProfile from './locales/ka/profile.json';
+import kaCarDetails from './locales/ka/carDetails.json';
+
+// Russian translations
+import ruProfile from './locales/ru/profile.json';
+import ruCarDetails from './locales/ru/carDetails.json';
+
+// Define namespaces for better organization
+export const namespaces = {
+  common: 'common',
+  balance: 'balance',
+  transaction: 'transaction',
+  vip: 'vip',
+  error: 'error',
+  filter: 'filter',
+  home: 'home',
+  header: 'header',
+  car: 'car',
+  carListing: 'carListing',
+  carDetails: 'carDetails',
+  profile: 'profile'
+};
+
+// Translation resources
+const resources = {
+  en: {
+    profile: enProfile,
+    carDetails: enCarDetails,
+
+    // Add other namespaces as they are created
+        fuel: 'Fuel Type',
+        transmission: 'Transmission',
+        color: 'Color',
+        upload: 'Upload',
+        dragAndDrop: 'Drag and drop files here, or click to select files',
+        maxFiles: 'You can upload up to 10 images',
+        next: 'Next',
+        previous: 'Previous',
+        submit: 'Submit Listing',
+        success: 'Your car has been listed successfully!',
+        viewListing: 'View Listing'
+      },
+      wishlist: {
+        title: 'Favorites',
+        noFavorites: 'You don\'t have any favorites yet.',
+        browseMore: 'Browse more cars',
+        removedFromFavorites: 'Removed from favorites',
+        addedToFavorites: 'Added to favorites'
+      }
+    },
+    carDetails: {
+
+        color: 'Color',
+        driveType: 'Drive Type',
+        steeringWheel: 'Steering Wheel',
+        condition: 'Condition',
+        doors: 'Doors',
+        seats: 'Seats',
+        airbags: 'Airbags',
+        interiorColor: 'Interior Color',
+        interiorMaterial: 'Interior Material',
+        features: 'Features',
+        price: 'Price',
+        contact: 'Contact',
+        title: 'Car Details',
+        sellerInfo: 'Seller Information',
+        description: 'Description',
+        similarCars: 'Similar Cars',
+        viewAll: 'View All',
+        noSimilarCars: 'No similar cars found',
+        shareButton: 'Share',
+        copyLink: 'Link copied to clipboard',
+        galleryThumbnail: 'Thumbnail',
+        notFound: 'Car not found',
+        notFoundDescription: 'Sorry, the car with the specified ID could not be found.',
+        carsList: 'Cars List',
+        loading: 'Loading car details...',
+        estimatedLoan: 'Estimated Loan',
+        call: 'Call',
+        sendMessage: 'Send Message',
+        sendEmail: 'Send Email',
+        favorite: 'Favorite',
+        safetyTips: 'Safety Tips',
+        safetyTipsText: 'Before buying a car, check the seller\'s reputation and documentation.'
+      },
+
+
+      yearDesc: 'Year: Newest to Oldest',
+      yearAsc: 'Year: Oldest to Newest',
+      mileageAsc: 'Mileage: Low to High',
+      mileageDesc: 'Mileage: High to Low',
+      filters: {
+        title: 'Filters',
+        basic: 'Basic Filters',
+        price: 'Price',
+        engineDetails: 'Engine Details',
+        transmission: 'Transmission',
+        appearance: 'Appearance',
+        location: 'Location',
+        priceFrom: 'Price from',
+        priceTo: 'Price to',
+        yearFrom: 'Year from',
+        yearTo: 'Year to',
+        engineSizeFrom: 'Engine size from',
+        engineSizeTo: 'Engine size to',
+        engineSize: 'Engine size',
+        interiorColor: 'Interior color',
+        airbags: 'Number of airbags',
+        clear: 'Clear',
+        apply: 'Apply',
+        scrollUp: 'Scroll Up'
+      }
+    },
+    car: {
+      category: 'Category',
+      noCategoryInfo: 'No category',
+      mileage: 'Mileage',
+      fuelType: 'Fuel type',
+      location: 'Location',
+      year: 'Year',
+      edit: 'Edit',
+      delete: 'Delete',
+      categoryPlaceholder: 'Category {id}'
+
+      adminPanel: 'Admin Panel',
+      login: 'Login',
+      register: 'Register',
+      add: 'Add',
+      language: 'Language',
+      currency: 'Currency'
+    },
+    home: {
+      featuredCarsPlaceholder: 'Featured Cars Space',
+      comingSoon: 'Advertisements will be placed here soon.',
+      viewAll: 'View All',
+      errorLoadingVipCars: 'Failed to load VIP cars',
+      viewAllVipCars: 'View all {type} cars',
+      newAdditions: 'New Additions',
+      viewAllCars: 'View all cars',
+      vipListings: 'VIP Listings',
+      superVip: 'SUPER VIP',
+      vipPlus: 'VIP+',
+      vip: 'VIP'
+
+      search: 'Search',
+      filter: 'Filter',
+      clear: 'Clear',
+      apply: 'Apply',
+      noResults: 'No results found',
+      close: 'Close',
+      submit: 'Submit',
+      select: 'Select',
+      language: 'Language',
+      english: 'English',
+      georgian: 'Georgian',
+      mainSpecifications: 'Main Specifications',
+      additionalSpecifications: 'Additional Specifications',
+      featuresAndEquipment: 'Features and Equipment',
+      horsepower: 'Horsepower',
+      specs: 'Specifications',
+      features: {
+        airConditioning: 'Air Conditioning',
+        abs: 'ABS',
+        boardComputer: 'Board Computer',
+        cruiseControl: 'Cruise Control',
+        seatHeating: 'Seat Heating',
+        navigation: 'Navigation',
+        rearCamera: 'Rear View Camera',
+        parkingControl: 'Parking Control'
+      },
+      addToFavorites: 'Add to favorites'
+    },
+    balance: {
+      title: 'My Balance',
+      currentBalance: 'Current Balance',
+      addFunds: 'Add Funds',
+      add: 'Add',
+      transactions: 'Transaction History',
+      vipPackages: 'VIP Packages',
+      invalidAmount: 'Please enter a valid amount',
+      fundsAdded: 'Funds added successfully'
+
+      completed: 'Completed',
+      pending: 'Pending',
+      failed: 'Failed',
+      noTransactions: 'No transactions found'
+    },
+    vip: {
+      status: 'VIP Status',
+      selectCar: 'Select a Car',
+      selectCarOption: 'Choose a car',
+      purchase: 'Purchase',
+      purchaseSuccess: 'VIP status purchased successfully',
+      activate: 'Activate',
+      deactivate: 'Deactivate',
+      days: 'days',
+      insufficientBalance: 'Insufficient balance',
+      needMoreFunds: 'Need more funds',
+      feature: {
+        highlighted: 'Highlighted in listings',
+        topCategory: 'Top position in category',
+        topSearch: 'Appears at top in search results',
+        priority5: '5x more visibility',
+        priority10: '10x more visibility',
+        priority20: '20x more visibility'
+      }
+    },
+    error: {
+      fetchBalance: 'Failed to fetch balance',
+      addFunds: 'Failed to add funds',
+      fetchTransactions: 'Failed to fetch transactions',
+      fetchVipPrices: 'Failed to fetch VIP prices',
+      fetchUserCars: 'Failed to fetch your cars',
+      purchaseVip: 'Failed to purchase VIP status'
+    },
+    filter: {
+      brand: 'Brand',
+      model: 'Model',
+      category: 'Category',
+      price: 'Price',
+      priceFrom: 'Price from',
+      priceTo: 'Price to',
+      transmission: 'Transmission',
+      location: 'Location',
+      advancedFilters: 'Advanced Filters',
+      year: 'Year',
+      yearFrom: 'Year from',
+      yearTo: 'Year to',
+      engineSize: 'Engine size',
+      engineSizeFrom: 'Engine size from',
+      engineSizeTo: 'Engine size to',
+      mileage: 'Mileage',
+      mileageFrom: 'Mileage from',
+      mileageTo: 'Mileage to',
+      fuelType: 'Fuel type',
+      color: 'Color',
+      driveType: 'Drive type',
+      seats: 'Seats',
+      condition: 'Condition',
+      steeringWheel: 'Steering wheel',
+      selectBrand: 'Select brand',
+      selectModel: 'Select model',
+      selectCategory: 'Select category',
+      selectTransmission: 'Select transmission',
+      selectLocation: 'Select location',
+      automatic: 'Automatic',
+      manual: 'Manual',
+      variator: 'Variator',
+      semiAutomatic: 'Semi-automatic',
+      anyOption: 'Any',
+      clearAll: 'Clear all',
+      apply: 'Apply',
+      cancel: 'Cancel',
+      fuel: {
+        petrol: 'Petrol',
+        diesel: 'Diesel',
+        hybrid: 'Hybrid',
+        electric: 'Electric',
+        naturalGas: 'Natural Gas',
+        lpg: 'LPG'
+      },
+      colors: {
+        black: 'Black',
+        white: 'White',
+        silver: 'Silver',
+        gray: 'Gray',
+        blue: 'Blue',
+        red: 'Red',
+        green: 'Green',
+        brown: 'Brown',
+        yellow: 'Yellow'
+      },
+      driveTypes: {
+        front: 'Front',
+        rear: 'Rear',
+        allWheel: '4x4'
+      },
+      conditions: {
+        new: 'New',
+        used: 'Used'
+      },
+      steeringWheels: {
+        right: 'Right',
+        left: 'Left'
+      },
+      numberOfSeats: 'Number of seats'
+    }
+  },
+  ka: {
+    profile: kaProfile,
+      navigation: {
+        main: 'მთავარი',
+        myListings: 'ჩემი განცხადებები',
+        addCar: 'მანქანის დამატება',
+        balance: 'ბალანსი',
+        favorites: 'ფავორიტები',
+        settings: 'პარამეტრები',
+        logout: 'გასვლა'
+      },
+      common: {
+        pleaseWait: 'გთხოვთ მოიცადოთ...',
+        loading: 'იტვირთება...',
+        save: 'შენახვა',
+        cancel: 'გაუქმება',
+        edit: 'რედაქტირება',
+        delete: 'წაშლა',
+        confirm: 'დადასტურება',
+        back: 'უკან',
+        notAvailable: 'არ არის ხელმისაწვდომი'
+      },
+      profileInfo: {
+        title: 'პროფილის ინფორმაცია',
+        username: 'მომხმარებლის სახელი',
+        email: 'ელ-ფოსტა',
+        joinedDate: 'რეგისტრაციის თარიღი',
+        phone: 'ტელეფონის ნომერი',
+        location: 'მდებარეობა',
+        about: 'ჩემს შესახებ',
+        age: 'ასაკი',
+        gender: 'სქესი',
+        male: 'მამრობითი',
+        female: 'მდედრობითი',
+        other: 'სხვა'
+      },
+      settings: {
+        title: 'პარამეტრები',
+        changePassword: 'პაროლის შეცვლა',
+        editProfile: 'პროფილის რედაქტირება',
+        notifications: 'შეტყობინებები',
+        language: 'ენა',
+        currentPassword: 'მიმდინარე პაროლი',
+        newPassword: 'ახალი პაროლი',
+        confirmPassword: 'პაროლის დადასტურება',
+        passwordRequirements: 'პაროლი უნდა შეიცავდეს მინიმუმ 8 სიმბოლოს, ერთ დიდ ასოს, ერთ პატარა ასოს და ერთ ციფრს.',
+        saveChanges: 'ცვლილებების შენახვა',
+        profileUpdated: 'პროფილი წარმატებით განახლდა!',
+        passwordChanged: 'პაროლი წარმატებით შეიცვალა!',
+        updateFailed: 'პროფილის განახლება ვერ მოხერხდა',
+        passwordsDoNotMatch: 'პაროლები არ ემთხვევა',
+        passwordChangeFailed: 'პაროლის შეცვლა ვერ მოხერხდა',
+        enterCurrentAndNewPassword: 'შეიყვანეთ მიმდინარე და ახალი პაროლი'
+      },
+      cars: {
+        title: 'ჩემი განცხადებები',
+        subtitle: 'მართეთ თქვენი გამოქვეყნებული განცხადებები',
+        noCars: 'თქვენ ჯერ არ გაქვთ დამატებული მანქანები.',
+        addYourFirst: 'დაამატეთ თქვენი პირველი მანქანა',
+        emptyState: 'თქვენ ჯერ არ გაქვთ განცხადებები',
+        emptyStateDescription: 'დაამატეთ თქვენი პირველი განცხადება და გაყიდეთ თქვენი ავტომობილი სწრაფად',
+        addYourFirstListing: 'პირველი განცხადების დამატება',
+        status: 'სტატუსი',
+        active: 'აქტიური',
+        inactive: 'არააქტიური',
+        pending: 'მოლოდინში',
+        sold: 'გაყიდული',
+        viewDetails: 'დეტალების ნახვა',
+        editListing: 'განცხადების რედაქტირება',
+        deleteListing: 'განცხადების წაშლა',
+        confirmDelete: 'დარწმუნებული ხართ რომ გსურთ წაშალოთ ეს განცხადება?',
+        addNew: 'ახალი მანქანის დამატება',
+        views: 'ნახვები',
+        expiration: 'ვადა იწურება',
+        upgrade: 'VIP-ზე გადასვლა',
+        renewListing: 'განცხადების განახლება',
+        deleteSuccess: 'განცხადება წარმატებით წაიშალა',
+        deleteError: 'შეცდომა განცხადების წაშლისას',
+        tryAgain: 'სცადეთ თავიდან',
+        newListing: 'ახალი განცხადება'
+      },
+      addCar: {
+        title: 'ახალი მანქანის დამატება',
+        basicInfo: 'ძირითადი ინფორმაცია',
+        technicalSpecs: 'ტექნიკური მახასიათებლები',
+        features: 'ფუნქციები',
+        location: 'მდებარეობა',
+        description: 'აღწერა',
+        photos: 'ფოტოები',
+        brand: 'მარკა',
+        model: 'მოდელი',
+        year: 'წელი',
+        price: 'ფასი',
+        mileage: 'გარბენი',
+        fuel: 'საწვავის ტიპი',
+        transmission: 'ტრანსმისია',
+        color: 'ფერი',
+        upload: 'ატვირთვა',
+        dragAndDrop: 'გადმოათრიეთ ფაილები ამ არეალში, ან დააწკაპუნეთ ფაილების ასარჩევად',
+        maxFiles: 'შეგიძლიათ ატვირთოთ მაქსიმუმ 10 ფოტო',
+        next: 'შემდეგი',
+        previous: 'წინა',
+        submit: 'განცხადების გამოქვეყნება',
+        success: 'თქვენი მანქანა წარმატებით დაემატა!',
+        viewListing: 'განცხადების ნახვა'
+      },
+      wishlist: {
+        title: 'ფავორიტები',
+        noFavorites: 'თქვენ ჯერ არ გაქვთ ფავორიტები.',
+        browseMore: 'მეტი მანქანის დათვალიერება',
+        removedFromFavorites: 'ფავორიტებიდან ამოშლილია',
+        addedToFavorites: 'ფავორიტებში დამატებულია'
+      }
+    },
+    carDetails: {
+      breadcrumb: {
+        home: 'მთავარი',
+        cars: 'მანქანები'
+      },
+      specs: {
+        year: 'წელი',
+        mileage: 'გარბენი',
+        fuel: 'საწვავი',
+        transmission: 'ტრანსმისია',
+        category: 'კატეგორია',
+        engine: 'ძრავი',
+        color: 'ფერი',
+        driveType: 'წამყვანი თვლები',
+        steeringWheel: 'საჭე',
+        condition: 'მდგომარეობა',
+        doors: 'კარები',
+        seats: 'ადგილები',
+        airbags: 'უსაფრთხოების ბალიშები',
+        interiorColor: 'სალონის ფერი',
+        interiorMaterial: 'სალონის მასალა',
+        features: 'ფუნქციები',
+        price: 'ფასი',
+        contact: 'კონტაქტი',
+        title: 'მანქანის დეტალები',
+        sellerInfo: 'გამყიდველის ინფორმაცია',
+        description: 'აღწერა',
+        similarCars: 'მსგავსი მანქანები',
+        viewAll: 'ყველას ნახვა',
+        noSimilarCars: 'მსგავსი მანქანები ვერ მოიძებნა',
+        shareButton: 'გაზიარება',
+        copyLink: 'ბმული დაკოპირებულია',
+        galleryThumbnail: 'მინიატურა',
+        notFound: 'მანქანა ვერ მოიძებნა',
+        notFoundDescription: 'სამწუხაროდ, მითითებული ID-ით მანქანა ვერ მოიძებნა.',
+        carsList: 'მანქანების სია',
+        loading: 'იტვირთება მანქანის დეტალები...',
+        estimatedLoan: 'სავარაუდო განვადება',
+        call: 'დარეკვა',
+        sendMessage: 'მესიჯის გაგზავნა',
+        sendEmail: 'ელ-ფოსტის გაგზავნა',
+        favorite: 'ფავორიტი',
+        safetyTips: 'უსაფრთხოების რჩევები',
+        safetyTipsText: 'მანქანის ყიდვამდე შეამოწმეთ გამყიდველის რეპუტაცია და დოკუმენტაცია.'
+      },
+      vip: {
+        title: 'VIP-ზე გადასვლა',
+        description: 'გამოარჩიეთ თქვენი განცხადება',
+        upgrade: 'გაუმჯობესება',
+        vipPlans: 'VIP გეგმები',
+        success: 'წარმატებით გადავიდა VIP-ზე',
+        selectPlan: 'აირჩიეთ გეგმა'
+      }
+    },
+    carListing: {
+      foundCars: 'აღმოჩენილია',
+      carSingular: 'მანქანა',
+      carPlural: 'მანქანა',
+      sortBy: 'დალაგება',
+      newest: 'უახლესი',
+      priceAsc: 'ფასი: დაბლიდან მაღლა',
+      priceDesc: 'ფასი: მაღლიდან დაბლა',
+      yearDesc: 'წელი: ახლიდან ძველისკენ',
+      yearAsc: 'წელი: ძველიდან ახლისკენ',
+      mileageAsc: 'გარბენი: დაბლიდან მაღლა',
+      mileageDesc: 'გარბენი: მაღლიდან დაბლა',
+      filters: {
+        title: 'ფილტრები',
+        basic: 'ძირითადი ფილტრები',
+        price: 'ფასი',
+        engineDetails: 'ძრავის დეტალები',
+        transmission: 'ტრანსმისია',
+        appearance: 'გარეგნობა',
+        location: 'მდებარეობა',
+        priceFrom: 'ფასიდან',
+        priceTo: 'ფასამდე',
+        yearFrom: 'წელიდან',
+        yearTo: 'წლამდე',
+        engineSizeFrom: 'ძრავის მოცულობიდან',
+        engineSizeTo: 'ძრავის მოცულობამდე',
+        engineSize: 'ძრავის მოცულობა',
+        interiorColor: 'სალონის ფერი',
+        airbags: 'უსაფრთხოების ბალიშების რაოდენობა',
+        clear: 'გასუფთავება',
+        apply: 'გაფილტვრა',
+        scrollUp: 'ზემოთ ასვლა'
+      }
+    },
+    car: {
+      category: 'კატეგორია',
+      noCategoryInfo: 'არ არის',
+      mileage: 'გარბენი',
+      fuelType: 'საწვავის ტიპი',
+      location: 'მდებარეობა',
+      year: 'წელი',
+      edit: 'რედაქტირება',
+      delete: 'წაშლა',
+      categoryPlaceholder: 'კატეგორია {id}'
+    },
+    header: {
+      home: 'მთავარი',
+      cars: 'მანქანები',
+      buy: 'ყიდვა',
+      sell: 'გაყიდვა',
+      aboutUs: 'კომპანიის შესახებ',
+      contact: 'კონტაქტი',
+      favorites: 'რჩეულები',
+      profile: 'პროფილი',
+      settings: 'პარამეტრები',
+      logout: 'გასვლა',
+      adminPanel: 'ადმინ პანელი',
+      login: 'შესვლა',
+      register: 'რეგისტრაცია',
+      add: 'დამატება',
+      language: 'ენა',
+      currency: 'ვალუტა'
+    },
+    home: {
+      featuredCarsPlaceholder: 'გამოყოფილი მანქანებისთვის ადგილი',
+      comingSoon: 'აქ მალე განთავსდება რეკლამები.',
+      viewAll: 'ყველას ნახვა',
+      errorLoadingVipCars: 'VIP მანქანების ჩატვირთვა ვერ მოხერხდა',
+      viewAllVipCars: 'ყველა {type} მანქანის ნახვა',
+      newAdditions: 'ახალი განცხადებები',
+      viewAllCars: 'ყველა მანქანის ნახვა',
+      vipListings: 'VIP განცხადებები',
+      superVip: 'SUPER VIP',
+      vipPlus: 'VIP+',
+      vip: 'VIP'
+    },
+    common: {
+      loading: 'იტვირთება...',
+      processing: 'მუშავდება...',
+      show: 'ჩვენება',
+      hide: 'დამალვა',
+      edit: 'რედაქტირება',
+      delete: 'წაშლა',
+      save: 'შენახვა',
+      cancel: 'გაუქმება',
+      back: 'უკან',
+      confirm: 'დადასტურება',
+      search: 'ძიება',
+      filter: 'ფილტრი',
+      clear: 'გასუფთავება',
+      apply: 'გამოყენება',
+      noResults: 'შედეგები არ მოიძებნა',
+      close: 'დახურვა',
+      submit: 'გაგზავნა',
+      select: 'არჩევა',
+      language: 'ენა',
+      english: 'ინგლისური',
+      georgian: 'ქართული',
+      mainSpecifications: 'ძირითადი სპეციფიკაციები',
+      additionalSpecifications: 'დამატებითი სპეციფიკაციები',
+      featuresAndEquipment: 'ფუნქციები და აღჭურვილობა',
+      horsepower: 'ცხენის ძალა',
+      specs: 'სპეციფიკაციები',
+      features: {
+        airConditioning: 'კონდიციონერი',
+        abs: 'აბს',
+        boardComputer: 'საბარგო კომპიუტერი',
+        cruiseControl: 'კრუიზ კონტროლი',
+        seatHeating: 'სავარძლების გათბობა',
+        navigation: 'სატელიტური ნავიგაცია',
+        rearCamera: 'უკანა ხედის კამერა',
+        parkingControl: 'საბურავის კონტროლი'
+      },
+      addToFavorites: 'ფავორიტებში დამატება'
+    },
+    balance: {
+      title: 'ჩემი ბალანსი',
+      currentBalance: 'მიმდინარე ბალანსი',
+      addFunds: 'თანხის დამატება',
+      add: 'დამატება',
+      transactions: 'ტრანზაქციების ისტორია',
+      vipPackages: 'VIP პაკეტები',
+      invalidAmount: 'გთხოვთ შეიყვანოთ სწორი თანხა',
+      fundsAdded: 'თანხა წარმატებით დაემატა'
+    },
+    transaction: {
+      date: 'თარიღი',
+      type: 'ტიპი',
+      amount: 'თანხა',
+      description: 'აღწერა',
+      status: 'სტატუსი',
+      deposit: 'შევსება',
+      withdrawal: 'გატანა',
+      vipPurchase: 'VIP შეძენა',
+      completed: 'დასრულებული',
+      pending: 'მიმდინარე',
+      failed: 'წარუმატებელი',
+      noTransactions: 'ტრანზაქციები არ მოიძებნა'
+    },
+    vip: {
+      status: 'VIP სტატუსი',
+      selectCar: 'აირჩიეთ მანქანა',
+      selectCarOption: 'აირჩიეთ მანქანა',
+      purchase: 'შეძენა',
+      purchaseSuccess: 'VIP სტატუსი წარმატებით შეძენილია',
+      activate: 'აქტივაცია',
+      deactivate: 'დეაქტივაცია',
+      days: 'დღე',
+      insufficientBalance: 'არასაკმარისი ბალანსი',
+      needMoreFunds: 'საჭიროა მეტი თანხა',
+      feature: {
+        highlighted: 'გამოკვეთილია სიაში',
+        topCategory: 'ზედა პოზიცია კატეგორიაში',
+        topSearch: 'ჩანს ძიების შედეგების თავში',
+        priority5: '5-ჯერ მეტი ხილვადობა',
+        priority10: '10-ჯერ მეტი ხილვადობა',
+        priority20: '20-ჯერ მეტი ხილვადობა'
+      }
+    },
+    error: {
+      fetchBalance: 'ბალანსის მიღება ვერ მოხერხდა',
+      addFunds: 'თანხის დამატება ვერ მოხერხდა',
+      fetchTransactions: 'ტრანზაქციების ისტორიის მიღება ვერ მოხერხდა',
+      fetchVipPrices: 'VIP ფასების მიღება ვერ მოხერხდა',
+      fetchUserCars: 'თქვენი მანქანების მიღება ვერ მოხერხდა',
+      purchaseVip: 'VIP სტატუსის შეძენა ვერ მოხერხდა'
+    },
+    filter: {
+      brand: 'ბრენდი',
+      model: 'მოდელი',
+      category: 'კატეგორია',
+      price: 'ფასი',
+      priceFrom: 'ფასი -დან',
+      priceTo: 'ფასი -მდე',
+      transmission: 'ტრანსმისია',
+      location: 'მდებარეობა',
+      advancedFilters: 'დამატებითი ფილტრები',
+      year: 'წელი',
+      yearFrom: 'წელი -დან',
+      yearTo: 'წელი -მდე',
+      engineSize: 'ძრავის მოცულობა',
+      engineSizeFrom: 'ძრავის მოცულობა -დან',
+      engineSizeTo: 'ძრავის მოცულობა -მდე',
+      mileage: 'გარბენი',
+      mileageFrom: 'გარბენი -დან',
+      mileageTo: 'გარბენი -მდე',
+      fuelType: 'საწვავის ტიპი',
+      color: 'ფერი',
+      driveType: 'წამყვანი თვლები',
+      seats: 'ადგილები',
+      condition: 'მდგომარეობა',
+      steeringWheel: 'საჭე',
+      selectBrand: 'აირჩიეთ ბრენდი',
+      selectModel: 'აირჩიეთ მოდელი',
+      selectCategory: 'აირჩიეთ კატეგორია',
+      selectTransmission: 'აირჩიეთ ტრანსმისია',
+      selectLocation: 'აირჩიეთ მდებარეობა',
+      automatic: 'ავტომატიკა',
+      manual: 'მექანიკა',
+      variator: 'ვარიატორი',
+      semiAutomatic: 'ნახევრად ავტომატური',
+      anyOption: 'ნებისმიერი',
+      clearAll: 'გასუფთავება',
+      apply: 'გამოყენება',
+      cancel: 'გაუქმება',
+      fuel: {
+        petrol: 'ბენზინი',
+        diesel: 'დიზელი',
+        hybrid: 'ჰიბრიდი',
+        electric: 'ელექტრო',
+        naturalGas: 'ბუნებრივი აირი',
+        lpg: 'თხევადი აირი'
+      },
+      colors: {
+        black: 'შავი',
+        white: 'თეთრი',
+        silver: 'ვერცხლისფერი',
+        gray: 'ნაცრისფერი',
+        blue: 'ლურჯი',
+        red: 'წითელი',
+        green: 'მწვანე',
+        brown: 'ყავისფერი',
+        yellow: 'ყვითელი'
+      },
+      driveTypes: {
+        front: 'წინა',
+        rear: 'უკანა',
+        allWheel: '4x4'
+      },
+      conditions: {
+        new: 'ახალი',
+        used: 'მეორადი'
+      },
+      steeringWheels: {
+        right: 'მარჯვენა',
+        left: 'მარცხენა'
+      },
+      numberOfSeats: 'ადგილების რაოდენობა'
+    }
+  },
+  ru: {
+    profile: ruProfile,
+      navigation: {
+        main: 'Главная',
+        myListings: 'Мои объявления',
+        addCar: 'Добавить автомобиль',
+        balance: 'Баланс',
+        favorites: 'Избранное',
+        settings: 'Настройки',
+        logout: 'Выход'
+      },
+      common: {
+        pleaseWait: 'Пожалуйста, подождите...',
+        loading: 'Загрузка...',
+        save: 'Сохранить',
+        cancel: 'Отмена',
+        edit: 'Редактировать',
+        delete: 'Удалить',
+        confirm: 'Подтвердить',
+        back: 'Назад',
+        notAvailable: 'Недоступно'
+      },
+      profileInfo: {
+        title: 'Информация о профиле',
+        username: 'Имя пользователя',
+        email: 'Электронная почта',
+        joinedDate: 'Дата регистрации',
+        phone: 'Номер телефона',
+        location: 'Местоположение',
+        about: 'Обо мне',
+        age: 'Возраст',
+        gender: 'Пол',
+        male: 'Мужской',
+        female: 'Женский',
+        other: 'Другой'
+      },
+      settings: {
+        title: 'Настройки',
+        changePassword: 'Изменить пароль',
+        editProfile: 'Редактировать профиль',
+        notifications: 'Уведомления',
+        language: 'Язык',
+        currentPassword: 'Текущий пароль',
+        newPassword: 'Новый пароль',
+        confirmPassword: 'Подтвердите пароль',
+        passwordRequirements: 'Пароль должен содержать минимум 8 символов, включая одну заглавную букву, одну строчную букву и одну цифру.',
+        saveChanges: 'Сохранить изменения',
+        profileUpdated: 'Профиль успешно обновлен!',
+        passwordChanged: 'Пароль успешно изменен!',
+        updateFailed: 'Не удалось обновить профиль',
+        passwordsDoNotMatch: 'Пароли не совпадают',
+        passwordChangeFailed: 'Не удалось изменить пароль',
+        enterCurrentAndNewPassword: 'Введите текущий и новый пароль'
+      },
+      cars: {
+        title: 'Мои объявления',
+        subtitle: 'Управляйте своими опубликованными объявлениями',
+        noCars: 'У вас еще нет добавленных автомобилей.',
+        addYourFirst: 'Добавить ваш первый автомобиль',
+        emptyState: 'У вас еще нет объявлений',
+        emptyStateDescription: 'Добавьте ваше первое объявление и быстро продайте свой автомобиль',
+        addYourFirstListing: 'Добавить ваше первое объявление',
+        status: 'Статус',
+        active: 'Активный',
+        inactive: 'Неактивный',
+        pending: 'Ожидание',
+        sold: 'Продано',
+        viewDetails: 'Посмотреть детали',
+        editListing: 'Редактировать объявление',
+        deleteListing: 'Удалить объявление',
+        confirmDelete: 'Вы уверены, что хотите удалить это объявление?',
+        addNew: 'Добавить новый автомобиль',
+        views: 'Просмотры',
+        expiration: 'Истекает',
+        upgrade: 'Обновить до VIP',
+        renewListing: 'Обновить объявление',
+        deleteSuccess: 'Объявление успешно удалено',
+        deleteError: 'Ошибка при удалении объявления',
+        tryAgain: 'Попробовать снова',
+        newListing: 'Новое объявление'
+      },
+      addCar: {
+        title: 'Добавить новый автомобиль',
+        basicInfo: 'Основная информация',
+        technicalSpecs: 'Технические характеристики',
+        features: 'Функции',
+        location: 'Местоположение',
+        description: 'Описание',
+        photos: 'Фотографии',
+        brand: 'Марка',
+        model: 'Модель',
+        year: 'Год',
+        price: 'Цена',
+        mileage: 'Пробег',
+        fuel: 'Тип топлива',
+        transmission: 'Трансмиссия',
+        color: 'Цвет',
+        upload: 'Загрузить',
+        dragAndDrop: 'Перетащите файлы сюда или нажмите, чтобы выбрать файлы',
+        maxFiles: 'Вы можете загрузить до 10 изображений',
+        next: 'Далее',
+        previous: 'Назад',
+        submit: 'Опубликовать объявление',
+        success: 'Ваш автомобиль успешно добавлен!',
+        viewListing: 'Посмотреть объявление'
+      },
+      wishlist: {
+        title: 'Избранное',
+        noFavorites: 'У вас еще нет избранных автомобилей.',
+        browseMore: 'Посмотреть больше автомобилей',
+        removedFromFavorites: 'Удалено из избранного',
+        addedToFavorites: 'Добавлено в избранное'
+      }
+    },
+    carDetails: {
+      breadcrumb: {
+        home: 'Главная',
+        cars: 'Автомобили'
+      },
+      specs: {
+        year: 'Год',
+        mileage: 'Пробег',
+        fuel: 'Топливо',
+        transmission: 'Трансмиссия',
+        category: 'Категория',
+        engine: 'Двигатель',
+        color: 'Цвет',
+        driveType: 'Привод',
+        steeringWheel: 'Руль',
+        condition: 'Состояние',
+        doors: 'Двери',
+        seats: 'Места',
+        airbags: 'Подушки безопасности',
+        interiorColor: 'Цвет салона',
+        interiorMaterial: 'Материал салона',
+        features: 'Функции',
+        price: 'Цена',
+        contact: 'Контакт',
+        title: 'Информация об автомобиле',
+        sellerInfo: 'Информация о продавце',
+        description: 'Описание',
+        similarCars: 'Похожие автомобили',
+        viewAll: 'Посмотреть все',
+        noSimilarCars: 'Похожие автомобили не найдены',
+        shareButton: 'Поделиться',
+        copyLink: 'Ссылка скопирована',
+        galleryThumbnail: 'Эскиз',
+        notFound: 'Автомобиль не найден',
+        notFoundDescription: 'Извините, автомобиль с указанным ID не найден.',
+        carsList: 'Список автомобилей',
+        loading: 'Загрузка информации об автомобиле...',
+        estimatedLoan: 'Примерный кредит',
+        call: 'Позвонить',
+        sendMessage: 'Отправить сообщение',
+        sendEmail: 'Отправить электронное письмо',
+        favorite: 'Избранное',
+        safetyTips: 'Советы по безопасности',
+        safetyTipsText: 'Перед покупкой автомобиля проверьте репутацию продавца и документацию.'
+      },
+      vip: {
+        title: 'Перейти на VIP',
+        description: 'Выделите ваше объявление',
+        upgrade: 'Улучшить',
+        vipPlans: 'VIP планы',
+        success: 'Успешно обновлено до VIP',
+        selectPlan: 'Выберите план'
+      }
+    },
+    carListing: {
+      foundCars: 'Найдено',
+      carSingular: 'автомобиль',
+      carPlural: 'автомобилей',
+      sortBy: 'Сортировать по',
+      newest: 'Новизна',
+      priceAsc: 'Цена: от низкой к высокой',
+      priceDesc: 'Цена: от высокой к низкой',
+      yearDesc: 'Год: от новых к старым',
+      yearAsc: 'Год: от старых к новым',
+      mileageAsc: 'Пробег: от низкого к высокому',
+      mileageDesc: 'Пробег: от высокого к низкому',
+      filters: {
+        title: 'Фильтры',
+        basic: 'Основные фильтры',
+        price: 'Цена',
+        engineDetails: 'Детали двигателя',
+        transmission: 'Трансмиссия',
+        appearance: 'Внешний вид',
+        location: 'Местоположение',
+        priceFrom: 'Цена от',
+        priceTo: 'Цена до',
+        yearFrom: 'Год от',
+        yearTo: 'Год до',
+        engineSizeFrom: 'Объем двигателя от',
+        engineSizeTo: 'Объем двигателя до',
+        engineSize: 'Объем двигателя',
+        interiorColor: 'Цвет салона',
+        airbags: 'Количество подушек безопасности',
+        clear: 'Очистить',
+        apply: 'Применить',
+        scrollUp: 'Прокрутить вверх'
+      }
+    },
+    car: {
+      category: 'Категория',
+      noCategoryInfo: 'Нет данных',
+      mileage: 'Пробег',
+      fuelType: 'Тип топлива',
+      location: 'Местоположение',
+      year: 'Год',
+      edit: 'Изменить',
+      delete: 'Удалить',
+      categoryPlaceholder: 'Категория {id}'
+    },
+    header: {
+      home: 'Главная',
+      cars: 'Автомобили',
+      buy: 'Купить',
+      sell: 'Продать',
+      aboutUs: 'О компании',
+      contact: 'Контакты',
+      favorites: 'Избранное',
+      profile: 'Профиль',
+      settings: 'Настройки',
+      logout: 'Выход',
+      adminPanel: 'Панель администратора',
+      login: 'Вход',
+      register: 'Регистрация',
+      add: 'Добавить',
+      language: 'Язык',
+      currency: 'Валюта'
+    },
+    home: {
+      featuredCarsPlaceholder: 'Место для избранных автомобилей',
+      comingSoon: 'Здесь скоро появится реклама.',
+      viewAll: 'Смотреть все',
+      errorLoadingVipCars: 'Не удалось загрузить VIP автомобили',
+      viewAllVipCars: 'Смотреть все {type} автомобили',
+      newAdditions: 'Новые объявления',
+      viewAllCars: 'Смотреть все автомобили',
+      vipListings: 'VIP объявления',
+      superVip: 'SUPER VIP',
+      vipPlus: 'VIP+',
+      vip: 'VIP'
+    },
+    common: {
+      loading: 'Загрузка...',
+      processing: 'Обработка...',
+      show: 'Показать',
+      hide: 'Скрыть',
+      edit: 'Редактировать',
+      delete: 'Удалить',
+      save: 'Сохранить',
+      cancel: 'Отмена',
+      back: 'Назад',
+      confirm: 'Подтвердить',
+      search: 'Поиск',
+      filter: 'Фильтр',
+      clear: 'Очистить',
+      apply: 'Применить',
+      noResults: 'Результаты не найдены',
+      close: 'Закрыть',
+      submit: 'Отправить',
+      select: 'Выбрать',
+      language: 'Язык',
+      english: 'Английский',
+      georgian: 'Грузинский',
+      mainSpecifications: 'Основные характеристики',
+      additionalSpecifications: 'Дополнительные характеристики',
+      featuresAndEquipment: 'Функции и оборудование',
+      horsepower: 'Лошадиные силы',
+      specs: 'Характеристики',
+      features: {
+        airConditioning: 'Кондиционер',
+        abs: 'АБС',
+        boardComputer: 'Бортовой компьютер',
+        cruiseControl: 'Круиз-контроль',
+        seatHeating: 'Подогрев сидений',
+        navigation: 'Спутниковая навигация',
+        rearCamera: 'Камера заднего вида',
+        parkingControl: 'Контроль парковки'
+      },
+      addToFavorites: 'Добавить в избранное',
+      russian: 'Русский'
+    },
+    balance: {
+      title: 'Мой баланс',
+      currentBalance: 'Текущий баланс',
+      addFunds: 'Пополнить счет',
+      add: 'Добавить',
+      transactions: 'История транзакций',
+      vipPackages: 'VIP пакеты',
+      invalidAmount: 'Пожалуйста, введите корректную сумму',
+      fundsAdded: 'Средства успешно добавлены'
+    },
+    transaction: {
+      date: 'Дата',
+      type: 'Тип',
+      amount: 'Сумма',
+      description: 'Описание',
+      status: 'Статус',
+      deposit: 'Пополнение',
+      withdrawal: 'Вывод',
+      vipPurchase: 'Покупка VIP',
+      completed: 'Завершено',
+      pending: 'В обработке',
+      failed: 'Ошибка',
+      noTransactions: 'Транзакции не найдены'
+    },
+    vip: {
+      status: 'VIP статус',
+      selectCar: 'Выбрать автомобиль',
+      selectCarOption: 'Выберите автомобиль',
+      purchase: 'Купить',
+      purchaseSuccess: 'VIP статус успешно приобретен',
+      activate: 'Активировать',
+      deactivate: 'Деактивировать',
+      days: 'дней',
+      insufficientBalance: 'Недостаточно средств',
+      needMoreFunds: 'Требуется больше средств',
+      feature: {
+        highlighted: 'Выделение в списках',
+        topCategory: 'Верхняя позиция в категории',
+        topSearch: 'Отображается вверху результатов поиска',
+        priority5: 'В 5 раз больше просмотров',
+        priority10: 'В 10 раз больше просмотров',
+        priority20: 'В 20 раз больше просмотров'
+      }
+    },
+    error: {
+      fetchBalance: 'Не удалось получить баланс',
+      addFunds: 'Не удалось добавить средства',
+      fetchTransactions: 'Не удалось получить историю транзакций',
+      fetchVipPrices: 'Не удалось получить цены VIP',
+      fetchUserCars: 'Не удалось получить ваши автомобили',
+      purchaseVip: 'Не удалось приобрести VIP статус'
+    },
+    filter: {
+      brand: 'Марка',
+      model: 'Модель',
+      category: 'Категория',
+      price: 'Цена',
+      priceFrom: 'Цена от',
+      priceTo: 'Цена до',
+      transmission: 'Коробка передач',
+      location: 'Местоположение',
+      advancedFilters: 'Расширенные фильтры',
+      year: 'Год',
+      yearFrom: 'Год от',
+      yearTo: 'Год до',
+      engineSize: 'Объем двигателя',
+      engineSizeFrom: 'Объем двигателя от',
+      engineSizeTo: 'Объем двигателя до',
+      mileage: 'Пробег',
+      mileageFrom: 'Пробег от',
+      mileageTo: 'Пробег до',
+      fuelType: 'Тип топлива',
+      color: 'Цвет',
+      driveType: 'Привод',
+      seats: 'Мест',
+      condition: 'Состояние',
+      steeringWheel: 'Руль',
+      selectBrand: 'Выберите марку',
+      selectModel: 'Выберите модель',
+      selectCategory: 'Выберите категорию',
+      selectTransmission: 'Выберите коробку передач',
+      selectLocation: 'Выберите местоположение',
+      automatic: 'Автоматическая',
+      manual: 'Механическая',
+      variator: 'Вариатор',
+      semiAutomatic: 'Полуавтоматическая',
+      anyOption: 'Любой',
+      clearAll: 'Очистить все',
+      apply: 'Применить',
+      cancel: 'Отмена',
+      fuel: {
+        petrol: 'Бензин',
+        diesel: 'Дизель',
+        hybrid: 'Гибрид',
+        electric: 'Электро',
+        naturalGas: 'Природный газ',
+        lpg: 'Сжиженный газ'
+      },
+      colors: {
+        black: 'Черный',
+        white: 'Белый',
+        silver: 'Серебристый',
+        gray: 'Серый',
+        blue: 'Синий',
+        red: 'Красный',
+        green: 'Зеленый',
+        brown: 'Коричневый',
+        yellow: 'Желтый'
+      },
+      driveTypes: {
+        front: 'Передний',
+        rear: 'Задний',
+        allWheel: '4x4'
+      },
+      conditions: {
+        new: 'Новый',
+        used: 'Подержанный'
+      },
+      steeringWheels: {
+        right: 'Правый',
+        left: 'Левый'
+      },
+      numberOfSeats: 'Количество мест'
+    }
+  }
+};
+
+// Helper function to change language with URL redirection
+export const changeLanguage = (lng: string) => {
+  localStorage.setItem('i18nextLng', lng);
+  
+  // Get current path without language prefix
+  const currentPath = window.location.pathname;
+  const pathSegments = currentPath.split('/');
+  
+  // Check if the first segment is a language code
+  const knownLanguages = ['ka', 'en', 'ru'];
+  let newPath;
+  
+  if (pathSegments.length > 1 && knownLanguages.includes(pathSegments[1])) {
+    // Replace language segment
+    pathSegments[1] = lng;
+    newPath = pathSegments.join('/');
+  } else {
+    // Add language segment
+    newPath = `/${lng}${currentPath}`;
+  }
+  
+  // Redirect to the new URL with the selected language
+  window.location.href = newPath;
+};
+
+// Helper function to get language from URL
+export const getLanguageFromUrl = (): string => {
+  const pathname = window.location.pathname;
+  const pathSegments = pathname.split('/');
+  const knownLanguages = ['ka', 'en', 'ru'];
+  
+  // Check if the first segment after the root is a language code
+  if (pathSegments.length > 1 && knownLanguages.includes(pathSegments[1])) {
+    return pathSegments[1];
+  }
+  
+  // Default to stored language or 'ka'
+  return localStorage.getItem('i18nextLng') || 'ka';
+};
+
+// Initialize i18next
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    defaultNS: 'common',
+    fallbackNS: 'common',
+    lng: typeof window !== 'undefined' ? getLanguageFromUrl() : (localStorage.getItem('i18nextLng') || 'ka'),
+    fallbackLng: 'en',
+    ns: Object.values(namespaces), // Explicitly include all namespaces
+    interpolation: {
+      escapeValue: false // React already safes from XSS
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage']
+    }
+  });
+
+export default i18n;

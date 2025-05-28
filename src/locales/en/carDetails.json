@@ -1,0 +1,50 @@
+{
+  "breadcrumbs": {
+    "home": "Home",
+    "cars": "Cars",
+    "carDetails": "Car Details"
+  },
+  "loading": {
+    "loadingCarData": "Loading car data..."
+  },
+  "notFound": {
+    "carNotFound": "Car not found",
+    "homePage": "Home Page"
+  },
+  "header": {
+    "backToCars": "Back to cars",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "share": "Share"
+  },
+  "priceCard": {
+    "price": "Price",
+    "contactSeller": "Contact Seller",
+    "callSeller": "Call Seller",
+    "messageSeller": "Message Seller",
+    "safetyTips": "Safety Tips",
+    "meetInPublic": "Meet in a public place",
+    "inspectBefore": "Inspect the car before paying",
+    "verifyDocuments": "Verify all documents"
+  },
+  "carSpecs": {
+    "generalInfo": "General Info",
+    "specifications": "Specifications",
+    "description": "Description",
+    "features": "Features",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "mileage": "Mileage",
+    "engine": "Engine",
+    "transmission": "Transmission",
+    "fuelType": "Fuel Type",
+    "color": "Color",
+    "driveType": "Drive Type",
+    "interiorColor": "Interior Color",
+    "additionalFeatures": "Additional Features",
+    "navigation": "Navigation",
+    "parkingControl": "Parking Control",
+    "bluetooth": "Bluetooth"
+  }
+}

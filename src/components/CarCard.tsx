@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../i18n';
 import { 
   ChevronLeft,
   ChevronRight,
@@ -33,6 +35,18 @@ interface CarCardProps {
 }
 
 const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOwner, onDelete, showWishlistButton = true, showVipBadge = false }) => {
+  // Explicitly use the car namespace to ensure translations are loaded
+  const { t, i18n } = useTranslation([namespaces.car, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or i18n
+  const currentLang = lang || i18n.language || 'ka';
+  
+  // Force rerender when language changes
+  useEffect(() => {
+    // This effect will run whenever the language changes
+    console.log('Current language in CarCard:', i18n.language);
+  }, [i18n.language]);
   // Debug: log car VIP status
   console.log(`[CarCard] Car ${car.id} - ${car.brand} ${car.model} - VIP Status: ${car.vip_status}, showVipBadge: ${showVipBadge}`);
   const navigate = useNavigate();
@@ -84,7 +98,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             console.log(`[CarCard ${car.id}] No matching category found, using placeholder`);
             setLocalCategory({
               id: Number(categoryId),
-              name: `კატეგორია ${categoryId}`
+              name: t('car:categoryPlaceholder', { id: categoryId })
             });
           }
         } else {
@@ -118,7 +132,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/cars/${car.id}`);
+    navigate(`/${currentLang}/cars/${car.id}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -151,10 +165,10 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     try {
       if (isInWishlistState) {
         await removeFromWishlist(car.id);
-        showToast('მანქანა წაიშალა სასურველებიდან', 'success');
+        showToast(t('car:removedFromWishlist'), 'success');
       } else {
         await addToWishlist(car.id);
-        showToast('მანქანა დაემატა სასურველებში', 'success');
+        showToast(t('car:addedToWishlist'), 'success');
       }
       setIsInWishlistState(!isInWishlistState);
     } catch (err: any) {
@@ -208,7 +222,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
               ? 'bg-blue-100 text-blue-800' 
               : 'bg-primary/10 text-primary'
           }`}>
-            {car.status === 'sold' ? 'გაყიდულია' : 'VIP'}
+            {car.status === 'sold' ? t('car:sold') : t('home:vip')}
           </div>
         )}
 
@@ -222,7 +236,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
                 : 'bg-white/90 text-gray-400 hover:bg-primary hover:text-white'
             } transition-all duration-200 shadow-sm hover:shadow`}
             disabled={isLoadingWishlist}
-            title={isInWishlistState ? 'წაშლა ფავორიტებიდან' : 'დამატება ფავორიტებში'}
+            title={isInWishlistState ? t('car:removeFromWishlist') : t('car:addToWishlist')}
           >
             <Heart 
               className="h-4 w-4 sm:h-5 sm:w-5" 
@@ -288,19 +302,19 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         <div className="grid grid-cols-2 gap-0.5 sm:gap-2 mt-1 sm:mt-3 mt-auto">
           <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <Gauge size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate">{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {car.specifications?.mileage_unit || 'km'}</span>
+            <span className="truncate" title={t('car:mileage')}>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {car.specifications?.mileage_unit || 'km'}</span>
           </div>
           <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <Fuel size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate">{car.specifications?.fuel_type}</span>
+            <span className="truncate" title={t('car:fuelType')}>{car.specifications?.fuel_type}</span>
           </div>
           <div className="hidden sm:flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <Tag size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate">{localCategory?.name || (car.category_id ? `კატეგორია ${car.category_id}` : 'არ არის')}</span>
+            <span className="truncate" title={t('car:category')}>{localCategory?.name || (car.category_id ? t('car:categoryPlaceholder', { id: car.category_id }) : t('car:noCategoryInfo'))}</span>
           </div>
           <div className="hidden sm:flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <MapPin size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate">{car.location?.city}</span>
+            <span className="truncate" title={t('car:location')}>{car.location?.city}</span>
           </div>
         </div>
 
@@ -314,7 +328,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
               }}
               className="px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 text-xs sm:text-sm bg-white text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
             >
-              რედაქტირება
+              {t('car:edit')}
             </button>
             <button
               onClick={(e) => {
@@ -323,7 +337,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
               }}
               className="px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 text-xs sm:text-sm bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 transition-colors"
             >
-              წაშლა
+              {t('car:delete')}
             </button>
           </div>
         )}

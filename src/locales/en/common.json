@@ -1,0 +1,19 @@
+{
+  "loading": "Loading...",
+  "days": "days",
+  "other": "Other",
+  "select": "Select",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "save": "Save",
+  "edit": "Edit",
+  "delete": "Delete",
+  "yes": "Yes",
+  "no": "No",
+  "success": "Success",
+  "error": "Error",
+  "warning": "Warning",
+  "info": "Information",
+  "perDay": "per day",
+  "search": "Search"
+}

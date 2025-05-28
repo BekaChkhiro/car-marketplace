@@ -2,33 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import balanceService, { Transaction } from '../../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
 import { RefreshCw, ArrowUpCircle, ArrowDownCircle, CreditCard, Search, Calendar, Filter, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
-
-// ტრანსლაციისთვის დროებითი ფუნქცია
-const useTranslation = () => {
-  return {
-    t: (key: string) => {
-      // დროებითი ტრანსლაციების ობიექტი
-      const translations: {[key: string]: string} = {
-        'common.loading': 'იტვირთება...',
-        'transaction.deposit': 'შევსება',
-        'transaction.vipPurchase': 'VIP შეძენა',
-        'transaction.completed': 'დასრულებული',
-        'transaction.pending': 'მიმდინარე',
-        'transaction.failed': 'წარუმატებელი',
-        'transaction.noTransactions': 'ტრანზაქციები არ მოიძებნა',
-        'transaction.date': 'თარიღი',
-        'transaction.type': 'ტიპი',
-        'transaction.amount': 'თანხა',
-        'transaction.description': 'აღწერა',
-        'transaction.status': 'სტატუსი',
-        'error.fetchTransactions': 'ტრანზაქციების ისტორიის მიღება ვერ მოხერხდა',
-        'transaction.filters': 'ფილტრები',
-        'transaction.search': 'ძიება'
-      };
-      return translations[key] || key;
-    }
-  };
-};
+import { useTranslation } from 'react-i18next';
 
 // ფორმატირების ფუნქცია თარიღისთვის
 const formatDate = (date: Date): string => {
@@ -53,7 +27,7 @@ const fadeInAnimation = `
 `;
 
 const TransactionHistory: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['transaction', 'common']);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -122,7 +96,7 @@ const TransactionHistory: React.FC = () => {
       setTransactions(data);
     } catch (error) {
       console.error('Error fetching transactions:', error);
-      toast.error(t('error.fetchTransactions'));
+      toast.error(t('transaction:noTransactions', 'ტრანზაქციების ისტორიის მიღება ვერ მოხერხდა'));
     } finally {
       setIsLoading(false);
     }
@@ -132,9 +106,9 @@ const TransactionHistory: React.FC = () => {
   const getTransactionTypeLabel = (type: string): string => {
     switch (type) {
       case 'deposit':
-        return t('transaction.deposit');
+        return t('transaction:deposit');
       case 'vip_purchase':
-        return t('transaction.vipPurchase');
+        return t('transaction:vipPurchase');
       default:
         return type;
     }
@@ -154,11 +128,11 @@ const TransactionHistory: React.FC = () => {
   const getStatusLabel = (status: string): string => {
     switch (status) {
       case 'completed':
-        return t('transaction.completed');
+        return t('transaction:completed');
       case 'pending':
-        return t('transaction.pending');
+        return t('transaction:pending');
       case 'failed':
-        return t('transaction.failed');
+        return t('transaction:failed');
       default:
         return status;
     }
@@ -188,7 +162,7 @@ const TransactionHistory: React.FC = () => {
     return (
       <div className="flex items-center justify-center py-8 sm:py-12 rounded-lg bg-green-light/5">
         <RefreshCw size={20} className="animate-spin text-primary inline-block mr-3" />
-        <span className="text-gray-600 font-medium">{t('common.loading')}</span>
+        <span className="text-gray-600 font-medium">{t('common:loading', 'იტვირთება...')}</span>
       </div>
     );
   }
@@ -200,8 +174,8 @@ const TransactionHistory: React.FC = () => {
         <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-green-light/20 rounded-full mb-3 sm:mb-4">
           <CreditCard size={20} className="text-primary" />
         </div>
-        <p className="text-gray-700 font-medium text-base sm:text-lg">{t('transaction.noTransactions')}</p>
-        <p className="text-gray-500 text-xs sm:text-sm mt-2 max-w-xs mx-auto">ტრანზაქციები გამოჩნდება ბალანსის შევსების შემდეგ</p>
+        <p className="text-gray-700 font-medium text-base sm:text-lg">{t('transaction:noTransactions')}</p>
+        <p className="text-gray-500 text-xs sm:text-sm mt-2 max-w-xs mx-auto">{t('transaction:transactionsWillAppear', 'ტრანზაქციები გამოჩნდება ბალანსის შევსების შემდეგ')}</p>
       </div>
     );
   }
@@ -355,7 +329,7 @@ const TransactionHistory: React.FC = () => {
         >
           <div className="flex items-center">
             <Filter size={16} className="text-primary mr-2" />
-            <span className="font-medium text-sm">{t('transaction.filters')}</span>
+            <span className="font-medium text-sm">{t('transaction:filters')}</span>
             {activeFiltersCount > 0 && (
               <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
                 {activeFiltersCount}
@@ -381,7 +355,7 @@ const TransactionHistory: React.FC = () => {
             value={searchQuery}
             onChange={handleSearch}
             className="block w-full pl-10 pr-3 py-2 border border-green-lighter rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm transition-all duration-200"
-            placeholder={t('transaction.search')}
+            placeholder={t('transaction:search')}
           />
         </div>
         
@@ -394,7 +368,7 @@ const TransactionHistory: React.FC = () => {
               className={`inline-flex w-full sm:w-auto justify-center items-center px-3 py-2 border rounded-md text-xs sm:text-sm font-medium transition-all duration-200 ${isDateFilterActive ? 'bg-primary/10 border-primary text-primary shadow-sm' : 'border-green-lighter text-gray-700 bg-white hover:bg-green-light/10'} focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary`}
             >
               <Calendar size={16} className={`mr-2 ${isDateFilterActive ? 'text-primary' : 'text-primary'}`} />
-              <span className="font-medium">თარიღი</span>
+              <span className="font-medium">{t('transaction:date')}</span>
               {isDateFilterActive && (
                 <span className="ml-1.5 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm">✓</span>
               )}
@@ -406,13 +380,13 @@ const TransactionHistory: React.FC = () => {
                 <div className="bg-primary/5 p-3 border-b border-green-lighter">
                   <div className="text-gray-800 text-sm font-semibold flex items-center">
                     <Calendar size={16} className="mr-2 text-primary" />
-                    აირჩიეთ თარიღის დიაპაზონი
+                    {t('transaction:selectDateRange', 'აირჩიეთ თარიღის დიაპაზონი')}
                   </div>
                 </div>
                 <div className="p-4 space-y-4">
                   <div className="flex flex-col space-y-4">
                     <div className="space-y-1.5">
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700">საწყისი თარიღი</label>                        <div className="relative">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700">{t('transaction:startDate', 'საწყისი თარიღი')}</label>                        <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <Calendar size={14} className="text-gray-400 hidden sm:inline" />
                             <Calendar size={16} className="text-gray-400 sm:hidden" />
@@ -425,7 +399,7 @@ const TransactionHistory: React.FC = () => {
                           />
                       </div>
                     </div>                    <div className="space-y-1.5">
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700">საბოლოო თარიღი</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700">{t('transaction:endDate', 'საბოლოო თარიღი')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <Calendar size={14} className="text-gray-400 hidden sm:inline" />
@@ -466,7 +440,7 @@ const TransactionHistory: React.FC = () => {
               className={`inline-flex w-full sm:w-auto justify-center items-center px-3 py-2 border rounded-md text-xs sm:text-sm font-medium transition-all duration-200 ${isFilterActive ? 'bg-primary/10 border-primary text-primary shadow-sm' : 'border-green-lighter text-gray-700 bg-white hover:bg-green-light/10'} focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary`}
             >
               <Filter size={16} className={`mr-2 ${isFilterActive ? 'text-primary' : 'text-primary'}`} />
-              <span className="font-medium">ფილტრი</span>
+              <span className="font-medium">{t('transaction:filter')}</span>
               {isFilterActive && (
                 <span className="ml-1.5 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm">
                   {selectedTypes.length + selectedStatuses.length}
@@ -480,7 +454,7 @@ const TransactionHistory: React.FC = () => {
                 <div className="bg-primary/5 p-3 border-b border-green-lighter">
                   <div className="text-gray-800 text-sm font-semibold flex items-center">
                     <Filter size={16} className="mr-2 text-primary" />
-                    ფილტრის პარამეტრები
+                    {t('transaction:filterParameters', 'ფილტრის პარამეტრები')}
                   </div>
                 </div>
                 
@@ -488,7 +462,7 @@ const TransactionHistory: React.FC = () => {
                   <div>
                     <h3 className="text-gray-800 text-sm font-semibold mb-3 flex items-center">
                       <span className="w-2 h-5 bg-primary rounded-sm mr-2"></span>
-                      ტრანზაქციის ტიპი
+                      {t('transaction:transactionType', 'ტრანზაქციის ტიპი')}
                     </h3>
                     <div className="grid grid-cols-1 gap-2 ml-2">
                       {allTransactionTypes.map(type => (
@@ -516,7 +490,7 @@ const TransactionHistory: React.FC = () => {
                   <div>
                     <h3 className="text-gray-800 text-sm font-semibold mb-3 flex items-center">
                       <span className="w-2 h-5 bg-primary rounded-sm mr-2"></span>
-                      სტატუსი
+                      {t('transaction:status', 'სტატუსი')}
                     </h3>
                     <div className="grid grid-cols-1 gap-2 ml-2">
                       {allTransactionStatuses.map(status => (
@@ -602,11 +576,11 @@ const TransactionHistory: React.FC = () => {
         <table className="min-w-full divide-y divide-green-lighter">
           <thead>
             <tr className="bg-green-light/20">
-              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction.date')}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction.type')}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction.amount')}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction.description')}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction.status')}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction:date')}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction:type')}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction:amount')}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction:description')}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">{t('transaction:status')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-green-lighter">
@@ -649,9 +623,9 @@ const TransactionHistory: React.FC = () => {
       {/* Pagination controls - Simplified for mobile */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-lg border border-green-lighter shadow-sm mt-4">
         <div className="text-xs sm:text-sm text-gray-600 flex items-center flex-wrap justify-center sm:justify-start gap-3 sm:gap-4 w-full sm:w-auto">
-          <span>სულ {filteredTransactions.length} ტრანზაქცია</span>
+          <span>{t('transaction:totalTransactions', {count: filteredTransactions.length})}</span>
           <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm text-gray-600">გვერდზე:</span>
+            <span className="text-xs sm:text-sm text-gray-600">{t('transaction:perPage', 'გვერდზე:')}</span>
             <select 
               value={itemsPerPage} 
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
@@ -672,7 +646,7 @@ const TransactionHistory: React.FC = () => {
             disabled={currentPage === 1}
             className={`px-2 sm:px-3 py-1 border border-green-lighter rounded text-xs sm:text-sm ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 text-gray-700'}`}
           >
-            წინა
+            {t('transaction:previous', 'წინა')}
           </button>
           
           <div className="flex items-center gap-1">
@@ -741,7 +715,7 @@ const TransactionHistory: React.FC = () => {
             disabled={currentPage === totalPages || totalPages === 0}
             className={`px-2 sm:px-3 py-1 border border-green-lighter rounded text-xs sm:text-sm ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 text-gray-700'}`}
           >
-            შემდეგი
+            {t('transaction:next', 'შემდეგი')}
           </button>
         </div>
       </div>

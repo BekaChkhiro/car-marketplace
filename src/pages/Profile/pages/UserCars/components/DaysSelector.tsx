@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../../i18n';
 
 interface DaysSelectorProps {
   daysCount: number;
@@ -15,6 +17,7 @@ const DaysSelector: React.FC<DaysSelectorProps> = ({
   minDays = 1,
   maxDays = 30
 }) => {
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customDays, setCustomDays] = useState<string>(daysCount.toString());
 
@@ -44,7 +47,7 @@ const DaysSelector: React.FC<DaysSelectorProps> = ({
 
   return (
     <div className="mb-6">
-      <label className="block text-gray-700 font-medium mb-2">დღეების რაოდენობა</label>
+      <label className="block text-gray-700 font-medium mb-2">{t('profile:cars.vip.modal.daysCount')}</label>
       
       {/* სწრაფი არჩევის ღილაკები */}
       <div className="flex flex-wrap gap-2 mb-3">
@@ -64,7 +67,7 @@ const DaysSelector: React.FC<DaysSelectorProps> = ({
               setCustomDays(days.toString());
             }}
           >
-            {days} დღე
+            {days} {t('common:days')}
           </button>
         ))}
         
@@ -81,7 +84,7 @@ const DaysSelector: React.FC<DaysSelectorProps> = ({
             setCustomDays(daysCount.toString());
           }}
         >
-          სხვა
+          {t('common:other')}
         </button>
       </div>
       
@@ -97,13 +100,13 @@ const DaysSelector: React.FC<DaysSelectorProps> = ({
             onKeyDown={(e) => e.key === 'Enter' && handleCustomDaysSubmit()}
             autoFocus
           />
-          <span className="text-gray-600">დღე ({minDays}-{maxDays})</span>
+          <span className="text-gray-600">{t('common:days')} ({minDays}-{maxDays})</span>
           <button
             type="button"
             className="px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-green-600 transition-colors"
             onClick={handleCustomDaysSubmit}
           >
-            არჩევა
+            {t('common:select')}
           </button>
         </div>
       )}

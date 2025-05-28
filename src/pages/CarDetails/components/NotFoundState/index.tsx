@@ -1,9 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Container } from '../../../../components/ui';
 import { ArrowLeft, AlertCircle, Car } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 
 const NotFoundState: React.FC = () => {
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Get current language from URL params or use default
+  const currentLang = lang || 'ka';
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
       <Container>
@@ -14,18 +21,18 @@ const NotFoundState: React.FC = () => {
                 <AlertCircle className="w-10 h-10 text-primary" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">მანქანა ვერ მოიძებნა</h2>
-            <p className="text-gray-600 text-center mb-8">სამწუხაროდ, მითითებული ID-ით მანქანა ვერ მოიძებნა.</p>
+            <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">{t('carDetails:specs.notFound')}</h2>
+            <p className="text-gray-600 text-center mb-8">{t('carDetails:specs.notFoundDescription', 'სამწუხაროდ, მითითებული ID-ით მანქანა ვერ მოიძებნა.')}</p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/" className="bg-green-50 text-primary px-6 py-3 rounded-lg transition-all duration-300 border border-primary hover:bg-green-100 flex items-center justify-center">
+              <Link to={`/${currentLang}`} className="bg-green-50 text-primary px-6 py-3 rounded-lg transition-all duration-300 border border-primary hover:bg-green-100 flex items-center justify-center">
                 <Car className="w-4 h-4 mr-2" />
-                მთავარი გვერდი
+                {t('carDetails:breadcrumb.home')}
               </Link>
               
-              <Link to="/cars" className="bg-primary hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center">
+              <Link to={`/${currentLang}/cars`} className="bg-primary hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                მანქანების სია
+                {t('carDetails:specs.carsList', 'მანქანების სია')}
               </Link>
             </div>
           </div>

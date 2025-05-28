@@ -6,6 +6,8 @@ import {
   Settings, List, Grid
 } from 'lucide-react';
 import { KeySpec } from '../../hooks/useCarDetails';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 import './styles.css';
 
 interface CarSpecsProps {
@@ -14,6 +16,7 @@ interface CarSpecsProps {
 
 const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   const [activeTab, setActiveTab] = useState<'specs'|'features'>('specs');
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
   
   // Format year
   const year = car.year ? car.year.toString() : '';
@@ -22,28 +25,28 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   const keySpecs: KeySpec[] = [
     { 
       icon: <Calendar className="w-5 h-5 text-primary" />, 
-      label: 'წელი', 
+      label: t('carDetails:specs.year'), 
       value: year,
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
       icon: <Gauge className="w-5 h-5 text-primary" />, 
-      label: 'გარბენი', 
+      label: t('carDetails:specs.mileage'), 
       value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : 'N/A',
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
       icon: <Fuel className="w-5 h-5 text-primary" />, 
-      label: 'საწვავი', 
+      label: t('carDetails:specs.fuel'), 
       value: car.specifications?.fuel_type || 'N/A',
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
       icon: <Shield className="w-5 h-5 text-primary" />, 
-      label: 'სათავსო', 
+      label: t('carDetails:specs.transmission'), 
       value: car.specifications?.transmission || 'N/A',
       color: 'bg-green-50',
       textColor: 'text-primary'
@@ -54,25 +57,25 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   const additionalSpecs: KeySpec[] = [
     { 
       icon: <Sliders className="w-5 h-5 text-primary" />, 
-      label: 'ძრავის ტიპი', 
+      label: t('carDetails:specs.engine'), 
       value: car.specifications?.engine_type || 'N/A',
       color: 'bg-green-50'
     },
     { 
       icon: <Truck className="w-5 h-5 text-primary" />, 
-      label: 'სათადარიგო', 
+      label: t('carDetails:specs.driveType'), 
       value: car.specifications?.drive_type || 'N/A',
       color: 'bg-green-50'
     },
     { 
       icon: <Zap className="w-5 h-5 text-primary" />, 
-      label: 'ცხენის ძალა', 
+      label: t('common:horsepower'), 
       value: car.specifications?.horsepower ? `${car.specifications.horsepower} HP` : 'N/A',
       color: 'bg-green-50'
     },
     { 
       icon: <Tag className="w-5 h-5 text-primary" />, 
-      label: 'ფერი', 
+      label: t('carDetails:specs.color'), 
       value: car.specifications?.color || 'N/A',
       color: 'bg-green-50'
     },
@@ -80,14 +83,14 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   
   // Features list
   const carFeatures = [
-    { name: 'კონდიციონერი', value: car.specifications?.has_air_conditioning },
-    { name: 'აბს', value: car.specifications?.has_abs },
-    { name: 'საბარგო კომპიუტერი', value: car.specifications?.has_board_computer },
-    { name: 'კრუიზ კონტროლი', value: car.specifications?.has_cruise_control },
-    { name: 'სავარძლების გათბობა', value: car.specifications?.has_seat_heating },
-    { name: 'სატელიტური ნავიგაცია', value: car.specifications?.has_navigation },
-    { name: 'უკანა ხედის კამერა', value: car.specifications?.has_rear_view_camera },
-    { name: 'საბურავის კონტროლი', value: car.specifications?.has_parking_control },
+    { name: t('common:features.airConditioning'), value: car.specifications?.has_air_conditioning },
+    { name: t('common:features.abs'), value: car.specifications?.has_abs },
+    { name: t('common:features.boardComputer'), value: car.specifications?.has_board_computer },
+    { name: t('common:features.cruiseControl'), value: car.specifications?.has_cruise_control },
+    { name: t('common:features.seatHeating'), value: car.specifications?.has_seat_heating },
+    { name: t('common:features.navigation'), value: car.specifications?.has_navigation },
+    { name: t('common:features.rearCamera'), value: car.specifications?.has_rear_view_camera },
+    { name: t('common:features.parkingControl'), value: car.specifications?.has_parking_control },
   ].filter(feature => feature.value !== undefined);
 
   return (
@@ -100,7 +103,7 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
         >
           <div className="flex items-center gap-1 sm:gap-2">
             <Settings size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span className="text-sm sm:text-base">სპეციფიკაციები</span>
+            <span className="text-sm sm:text-base">{t('carDetails:specs.specs', 'სპეციფიკაციები')}</span>
           </div>
         </button>
         <button
@@ -109,14 +112,14 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
         >
           <div className="flex items-center gap-1 sm:gap-2">
             <List size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span className="text-sm sm:text-base">ფუნქციები</span>
+            <span className="text-sm sm:text-base">{t('carDetails:specs.features')}</span>
           </div>
         </button>
       </div>
       
       {activeTab === 'specs' && (
         <div className="animate-fade-in">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">ძირითადი სპეციფიკაციები</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">{t('common:mainSpecifications')}</h3>
           
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {keySpecs.map((spec, index) => (
@@ -133,7 +136,7 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
             ))}
           </div>
           
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">დამატებითი სპეციფიკაციები</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">{t('common:additionalSpecifications')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {additionalSpecs.map((spec, index) => (
               <div 
@@ -153,7 +156,7 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       
       {activeTab === 'features' && carFeatures.length > 0 && (
         <div className="animate-fade-in">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">ფუნქციები და აღჭურვილობა</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">{t('common:featuresAndEquipment')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {carFeatures.map((feature, index) => (
               <div 

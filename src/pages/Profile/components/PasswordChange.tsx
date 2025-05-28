@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Lock, Eye, EyeOff, KeyRound } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 
 const PasswordChange = () => {
   const { updatePassword, isLoading } = useAuth();
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -38,20 +41,20 @@ const PasswordChange = () => {
     setSuccess(null);
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setError('პაროლები არ ემთხვევა');
+      setError(t('profile:settings.passwordsDoNotMatch', 'პაროლები არ ემთხვევა'));
       return;
     }
 
     try {
       await updatePassword(formData.currentPassword, formData.newPassword);
-      setSuccess('პაროლი წარმატებით შეიცვალა');
+      setSuccess(t('profile:settings.passwordChanged'));
       setFormData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'პაროლის შეცვლა ვერ მოხერხდა');
+      setError(err.response?.data?.message || t('profile:settings.passwordChangeFailed', 'პაროლის შეცვლა ვერ მოხერხდა'));
     }
   };  return (
     <div className="max-w-md mx-auto space-y-5 sm:space-y-6">
@@ -72,12 +75,12 @@ const PasswordChange = () => {
       <div className="flex items-center gap-4 p-4 sm:p-6 bg-gray-50 rounded-xl mb-6">
         
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800">პაროლის შეცვლა</h2>
-          <p className="text-gray-500 text-sm sm:text-base mt-1">შეიყვანეთ მიმდინარე და ახალი პაროლი</p>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800">{t('profile:settings.changePassword')}</h2>
+          <p className="text-gray-500 text-sm sm:text-base mt-1">{t('profile:settings.enterCurrentAndNewPassword', 'შეიყვანეთ მიმდინარე და ახალი პაროლი')}</p>
         </div>
       </div>      <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">        <div>
           <label htmlFor="currentPassword" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            მიმდინარე პაროლი
+            {t('profile:settings.currentPassword')}
           </label>
           <div className="relative">
             <input
@@ -103,7 +106,7 @@ const PasswordChange = () => {
 
         <div>
           <label htmlFor="newPassword" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            ახალი პაროლი
+            {t('profile:settings.newPassword')}
           </label>
           <div className="relative">
             <input
@@ -129,7 +132,7 @@ const PasswordChange = () => {
 
         <div>
           <label htmlFor="confirmPassword" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
-            გაიმეორეთ ახალი პაროლი
+            {t('profile:settings.confirmNewPassword')}
           </label>
           <div className="relative">
             <input
@@ -162,12 +165,12 @@ const PasswordChange = () => {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              გთხოვთ მოიცადოთ...
+              {t('common:pleaseWait')}
             </>
           ) : (
             <>
               <KeyRound size={18} />
-              პაროლის შეცვლა
+              {t('profile:settings.changePassword')}
             </>
           )}
         </button>

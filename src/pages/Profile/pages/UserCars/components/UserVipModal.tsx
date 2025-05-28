@@ -5,6 +5,8 @@ import { VipStatus } from '../../../../../api/services/vipService';
 import balanceService from '../../../../../api/services/balanceService';
 import { useToast } from '../../../../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../../i18n';
 
 // Import subcomponents
 import VipStatusOption from './VipStatusOption';
@@ -28,8 +30,9 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
   onStatusUpdate
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation([namespaces.profile, namespaces.common]);
   const [selectedStatus, setSelectedStatus] = useState<VipStatus>('none');
-  const [daysCount, setDaysCount] = useState<number>(7); // დეფოლტად 7 დღე
+  const [daysCount, setDaysCount] = useState<number>(7); // default 7 days
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,14 +49,14 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     super_vip: 8
   };
   
-  // VIP პაკეტების აღწერები
+  // VIP packages descriptions
   const vipStatusDescriptions: Record<Exclude<VipStatus, 'none'>, string> = {
-    vip: 'სტანდარტული',
-    vip_plus: 'გაძლიერებული',
-    super_vip: 'პრემიუმი'
+    vip: t('profile:cars.vip.modal.types.standard'),
+    vip_plus: t('profile:cars.vip.modal.types.enhanced'),
+    super_vip: t('profile:cars.vip.modal.types.premium')
   };
   
-  // VIP პაკეტების სახელები
+  // VIP package labels
   const vipStatusLabels: Record<Exclude<VipStatus, 'none'>, string> = {
     vip: 'VIP',
     vip_plus: 'VIP+',
@@ -158,7 +161,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     
     // შევამოწმოთ, აქვს თუ არა მომხმარებელს საკმარისი ბალანსი
     if (userBalance !== null && userBalance < totalPrice) {
-      setError(`არასაკმარისი ბალანსი. გესაჭიროებათ ${totalPrice} ₾, თქვენი ბალანსია ${userBalance} ₾`);
+      setError(t('profile:cars.vip.modal.insufficientBalance'));
       return;
     }
     
@@ -198,7 +201,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
         
         // გამოვიძახოთ სტატუსის განახლების callback
         onStatusUpdate();
-        showToast(result.message || 'VIP სტატუსი წარმატებით შეძენილია', 'success');
+        showToast(t('profile:cars.vip.modal.success'), 'success');
         onClose();
         
         // დავაყოვნოთ 500ms და გადავტვირთოთ გვერდი
@@ -208,13 +211,13 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
       } else {
         // თუ არასაკმარისი ბალანსია
         if (result.requiredAmount && result.currentBalance) {
-          setError(`არასაკმარისი ბალანსი. გესაჭიროებათ ${result.requiredAmount} ₾, თქვენი ბალანსია ${result.currentBalance} ₾`);
+          setError(t('profile:cars.vip.modal.insufficientBalance', { requiredAmount: result.requiredAmount, currentBalance: result.currentBalance }));
         } else {
-          setError(result.message || 'შეცდომა VIP სტატუსის შეძენისას');
+          setError(result.message || t('common:error'));
         }
       }
     } catch (err: any) {
-      setError(err.message || 'შეცდომა VIP სტატუსის შეძენისას');
+      setError(err.message || t('common:error'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -253,7 +256,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center">
             <Crown className="w-5 h-5 mr-2 text-yellow-500" fill="currentColor" />
-            VIP სტატუსის შეძენა
+            {t('profile:cars.vip.modal.buyVip')}
           </h3>
           <button
             onClick={onClose}
@@ -271,7 +274,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
           <form onSubmit={handleSubmit}>
             {/* VIP სტატუსის არჩევა */}
             <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-2">VIP სტატუსი</label>
+              <label className="block text-gray-700 font-medium mb-2">{t('profile:cars.vip.modal.selectStatus')}</label>
               <div className="grid grid-cols-3 gap-3">
                 {(['vip', 'vip_plus', 'super_vip'] as Array<Exclude<VipStatus, 'none'>>).map(status => (
                   <VipStatusOption
@@ -322,14 +325,14 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 disabled={loading}
               >
-                გაუქმება
+                {t('profile:cars.vip.modal.cancel')}
               </button>
               <button
                 type="submit"
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${userBalance !== null && userBalance < totalPrice ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary text-white hover:bg-green-600 transition-colors'}`}
                 disabled={loading || (userBalance !== null && userBalance < totalPrice)}
               >
-                {loading ? 'მიმდინარეობს...' : 'VIP სტატუსის შეძენა'}
+                {loading ? t('profile:cars.vip.modal.loading') : t('profile:cars.vip.modal.buy')}
                 {!loading && <Check className="w-4 h-4" />}
               </button>
             </div>

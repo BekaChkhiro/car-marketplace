@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { CarFilters, Category, Brand } from '../../../api/types/car.types';
 import carService from '../../../api/services/carService';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 import { RefreshCw, Filter, ChevronDown, ChevronUp, ArrowUp, Check, Car, Droplets, Gauge, Activity, Sliders, MapPin } from 'lucide-react';
 import RangeFilter from '../../../components/ui/RangeFilter';
 import CustomSelect from '../../../components/common/CustomSelect';
@@ -24,6 +26,7 @@ const Filters: React.FC<FiltersProps> = ({
   onApplyFilters,
   onScrollToTop
 }) => {
+  const { t } = useTranslation([namespaces.carListing, namespaces.filter]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -225,7 +228,9 @@ const Filters: React.FC<FiltersProps> = ({
     <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
       {/* Filter Header */}
       <div className="flex justify-between items-center mb-6 pb-3 border-b border-green-100">
-        <h2 className="text-xl font-bold text-gray-800">ფილტრი</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <Filter size={22} className="text-primary" /> {t('carListing:filters.title')}
+      </h2>
         <div className="text-sm font-medium px-2 py-1 bg-green-50 text-primary rounded-full">
           {totalCars > 0 ? `${totalCars} განცხადება` : ""}
         </div>
@@ -233,28 +238,28 @@ const Filters: React.FC<FiltersProps> = ({
 
       <div ref={filterSectionsRef} className="space-y-6 pr-1">
         {/* Basic Filters Section */}
-        <div className="pb-5 border-b border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer" 
-            onClick={() => toggleSection('basic')}
-          >
-            <h3 className="text-md font-semibold text-gray-700">ძირითადი</h3>
-            {expandedSections.basic ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
-          </div>
+      <div className="pb-5 border-b border-gray-100">
+        <div 
+          className="flex justify-between items-center cursor-pointer" 
+          onClick={() => toggleSection('basic')}
+        >
+          <h3 className="text-md font-semibold text-gray-700">{t('carListing:filters.basic')}</h3>
+          {expandedSections.basic ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
+        </div>
           
           {expandedSections.basic && (
             <div className="mt-5 space-y-4">
               {/* Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  კატეგორია
+                  {t('carListing:filters.category')}
                 </label>
                 <CustomSelect
                   value={tempFilters.category || ''}
                   onChange={(value) => handleFilterChange('category', value as string)}
-                  placeholder="ყველა კატეგორია"
+                  placeholder={t('carListing:filters.allCategories')}
                   options={[
-                    { value: '', label: 'ყველა კატეგორია' },
+                    { value: '', label: t('carListing:filters.allCategories') },
                     ...categories.map(category => ({
                       value: category.id.toString(),
                       label: category.name
@@ -267,7 +272,7 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Brand */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  მარკა
+                  {t('carListing:filters.brand')}
                 </label>
                 <CustomSelect
                   value={tempFilters.brand_id?.toString() || ''}
@@ -275,9 +280,9 @@ const Filters: React.FC<FiltersProps> = ({
                     handleFilterChange('brand_id', value as string);
                     handleFilterChange('model', '');
                   }}
-                  placeholder="ყველა მარკა"
+                  placeholder={t('carListing:filters.allBrands')}
                   options={[
-                    { value: '', label: 'ყველა მარკა' },
+                    { value: '', label: t('carListing:filters.allBrands') },
                     ...brands.map(brand => ({
                       value: brand.id.toString(),
                       label: brand.name
@@ -289,21 +294,21 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Model */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  მოდელი
+                  {t('carListing:filters.model')}
                 </label>
                 <CustomSelect
                   value={tempFilters.model || ''}
                   onChange={(value) => handleFilterChange('model', value as string)}
-                  placeholder={loading ? 'იტვირთება...' : 'ყველა მოდელი'}
+                  placeholder={loading ? t('carListing:filters.loading') : t('carListing:filters.allModels')}
                   disabled={loading || !tempFilters.brand_id}
                   options={models.length > 0 ? [
-                    { value: '', label: 'ყველა მოდელი' },
+                    { value: '', label: t('carListing:filters.allModels') },
                     ...models.map(model => ({
                       value: model,
                       label: model
                     }))
                   ] : [
-                    { value: '', label: tempFilters.brand_id ? 'ყველა მოდელი' : 'აირჩიეთ მარკა' }
+                    { value: '', label: tempFilters.brand_id ? t('carListing:filters.allModels') : t('carListing:filters.selectBrand') }
                   ]}
                 />
               </div>
@@ -311,13 +316,13 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Year Range */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  გამოშვების წელი
+                  {t('carListing:filters.year')}
                 </label>
                 <RangeFilter
                   name="year"
                   fromValue={tempFilters.yearFrom?.toString() || ''}
                   toValue={tempFilters.yearTo?.toString() || ''}
-                  placeholder={{ from: 'დან', to: 'მდე' }}
+                  placeholder={{ from: t('carListing:filters.from'), to: t('carListing:filters.to') }}
                   onChange={handleRangeChange}
                 />
               </div>
@@ -325,15 +330,15 @@ const Filters: React.FC<FiltersProps> = ({
           )}
         </div>
 
-        {/* Price Section */}
-        <div className="pb-5 border-b border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer" 
-            onClick={() => toggleSection('price')}
-          >
-            <h3 className="text-md font-semibold text-gray-700">ფასი და წელი</h3>
-            {expandedSections.price ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
-          </div>
+        {/* Price Range Section */}
+      <div className="py-5 border-b border-gray-100">
+        <div 
+          className="flex justify-between items-center cursor-pointer" 
+          onClick={() => toggleSection('price')}
+        >
+          <h3 className="text-md font-semibold text-gray-700">{t('carListing:filters.price')}</h3>
+          {expandedSections.price ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
+        </div>
           
           {expandedSections.price && (
             <div className="mt-5 space-y-5">
@@ -341,7 +346,7 @@ const Filters: React.FC<FiltersProps> = ({
                 name="price"
                 fromValue={tempFilters.priceFrom?.toString() || ''}
                 toValue={tempFilters.priceTo?.toString() || ''}
-                placeholder={{ from: 'დან', to: 'მდე' }}
+                placeholder={{ from: t('carListing:filters.from'), to: t('carListing:filters.to') }}
                 onChange={handleRangeChange}
               />
             </div>
@@ -349,27 +354,27 @@ const Filters: React.FC<FiltersProps> = ({
         </div>
 
         {/* Engine Details Section */}
-        <div className="pb-5 border-b border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer" 
-            onClick={() => toggleSection('engineDetails')}
-          >
-            <h3 className="text-md font-semibold text-gray-700">ძრავი</h3>
-            {expandedSections.engineDetails ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
-          </div>
+      <div className="py-5 border-b border-gray-100">
+        <div 
+          className="flex justify-between items-center cursor-pointer" 
+          onClick={() => toggleSection('engineDetails')}
+        >
+          <h3 className="text-md font-semibold text-gray-700">{t('carListing:filters.engineDetails')}</h3>
+          {expandedSections.engineDetails ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
+        </div>
           
           {expandedSections.engineDetails && (
             <div className="mt-5 space-y-4">
               {/* Engine Size */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ძრავის მოცულობა (ლიტრი)
+                  {t('carListing:filters.engineSize')}
                 </label>
                 <RangeFilter
                   name="engineSize"
                   fromValue={tempFilters.engineSizeFrom?.toString() || ''}
                   toValue={tempFilters.engineSizeTo?.toString() || ''}
-                  placeholder={{ from: 'დან', to: 'მდე' }}
+                  placeholder={{ from: t('carListing:filters.from'), to: t('carListing:filters.to') }}
                   onChange={handleRangeChange}
                 />
               </div>
@@ -377,14 +382,14 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Cylinders */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ცილინდრების რაოდენობა
+                  {t('carListing:filters.cylinders')}
                 </label>
                 <CustomSelect
                   value={tempFilters.cylinders?.toString() || ''}
                   onChange={(value) => handleFilterChange('cylinders', value ? Number(value) : undefined)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...cylinderOptions.map(option => ({
                       value: option.toString(),
                       label: option.toString()
@@ -397,13 +402,13 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Mileage */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  გარბენი (კმ)
+                  {t('carListing:filters.mileage')}
                 </label>
                 <RangeFilter
                   name="mileage"
                   fromValue={tempFilters.mileageFrom?.toString() || ''}
                   toValue={tempFilters.mileageTo?.toString() || ''}
-                  placeholder={{ from: 'დან', to: 'მდე' }}
+                  placeholder={{ from: t('carListing:filters.from'), to: t('carListing:filters.to') }}
                   onChange={handleRangeChange}
                 />
               </div>
@@ -411,14 +416,14 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Fuel Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  საწვავის ტიპი
+                  {t('carListing:filters.fuelType')}
                 </label>
                 <CustomSelect
                   value={tempFilters.fuelType || ''}
                   onChange={(value) => handleFilterChange('fuelType', value as string)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...fuelTypes.map(type => ({
                       value: type,
                       label: type
@@ -432,28 +437,28 @@ const Filters: React.FC<FiltersProps> = ({
         </div>
 
         {/* Transmission Section */}
-        <div className="pb-5 border-b border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer" 
-            onClick={() => toggleSection('transmission')}
-          >
-            <h3 className="text-md font-semibold text-gray-700">გადაცემათა კოლოფი</h3>
-            {expandedSections.transmission ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
-          </div>
+      <div className="py-5 border-b border-gray-100">
+        <div 
+          className="flex justify-between items-center cursor-pointer" 
+          onClick={() => toggleSection('transmission')}
+        >
+          <h3 className="text-md font-semibold text-gray-700">{t('carListing:filters.transmission')}</h3>
+          {expandedSections.transmission ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
+        </div>
           
           {expandedSections.transmission && (
             <div className="mt-4 space-y-4">
               {/* Transmission */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  გადაცემათა კოლოფი
+                  {t('carListing:filters.transmission')}
                 </label>
                 <CustomSelect
                   value={tempFilters.transmission || ''}
                   onChange={(value) => handleFilterChange('transmission', value as string)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...transmissions.map(type => ({
                       value: type,
                       label: type
@@ -466,14 +471,14 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Drive Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  წამყვანი თვლები
+                  {t('carListing:filters.driveType')}
                 </label>
                 <CustomSelect
                   value={tempFilters.driveType || ''}
                   onChange={(value) => handleFilterChange('driveType', value as string)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...driveTypes.map(type => ({
                       value: type,
                       label: type
@@ -486,14 +491,14 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Steering Wheel */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  საჭე
+                  {t('carListing:filters.steeringWheel')}
                 </label>
                 <CustomSelect
                   value={tempFilters.steeringWheel || ''}
                   onChange={(value) => handleFilterChange('steeringWheel', value as string)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...steeringWheels.map(type => ({
                       value: type,
                       label: type
@@ -506,40 +511,40 @@ const Filters: React.FC<FiltersProps> = ({
         </div>
 
         {/* Appearance Section */}
-        <div className="pb-5 border-b border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer" 
-            onClick={() => toggleSection('appearance')}
-          >
-            <h3 className="text-md font-semibold text-gray-700">გარეგნობა</h3>
-            {expandedSections.appearance ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
-          </div>
+      <div className="py-5 border-b border-gray-100">
+        <div 
+          className="flex justify-between items-center cursor-pointer" 
+          onClick={() => toggleSection('appearance')}
+        >
+          <h3 className="text-md font-semibold text-gray-700">{t('carListing:filters.appearance')}</h3>
+          {expandedSections.appearance ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
+        </div>
           
           {expandedSections.appearance && (
             <div className="mt-5 space-y-4 grid grid-cols-1 gap-4">
               {/* Color */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ფერი
+                  {t('carListing:filters.color')}
                 </label>
                 <ColorDropdown
                   value={tempFilters.color || ''}
                   onChange={(value) => handleFilterChange('color', value)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                 />
               </div>
 
               {/* Interior Material */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  სალონის მასალა
+                  {t('carListing:filters.interiorMaterial')}
                 </label>
                 <CustomSelect
                   value={tempFilters.interiorMaterial || ''}
                   onChange={(value) => handleFilterChange('interiorMaterial', value as string)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...interiorMaterials.map(material => ({
                       value: material,
                       label: material
@@ -551,26 +556,26 @@ const Filters: React.FC<FiltersProps> = ({
               {/* Interior Color */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  სალონის ფერი
+                  {t('carListing:filters.interiorColor')}
                 </label>
                 <InteriorColorDropdown
                   value={tempFilters.interiorColor || ''}
                   onChange={(value) => handleFilterChange('interiorColor', value)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                 />
               </div>
 
               {/* Airbags Count */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  უსაფრთხოების ბალიშების რაოდენობა
+                  {t('carListing:filters.airbags')}
                 </label>
                 <CustomSelect
                   value={tempFilters.airbags?.toString() || ''}
                   onChange={(value) => handleFilterChange('airbags', value ? Number(value) : undefined)}
-                  placeholder="ნებისმიერი"
+                  placeholder={t('carListing:filters.any')}
                   options={[
-                    { value: '', label: 'ნებისმიერი' },
+                    { value: '', label: t('carListing:filters.any') },
                     ...airbagOptions.map(option => ({
                       value: option.toString(),
                       label: option.toString()
@@ -583,23 +588,23 @@ const Filters: React.FC<FiltersProps> = ({
         </div>
 
         {/* Location Section */}
-        <div className="pb-5 border-b border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer" 
-            onClick={() => toggleSection('location')}
-          >
-            <h3 className="text-md font-semibold text-gray-700">მდებარეობა</h3>
-            {expandedSections.location ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
-          </div>
+      <div className="pb-5 border-b border-gray-100">
+        <div 
+          className="flex justify-between items-center cursor-pointer" 
+          onClick={() => toggleSection('location')}
+        >
+          <h3 className="text-md font-semibold text-gray-700">{t('carListing:filters.location')}</h3>
+          {expandedSections.location ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-primary" />}
+        </div>
           
           {expandedSections.location && (
             <div className="mt-5 space-y-4">
               <CustomSelect
                 value={tempFilters.location || ''}
                 onChange={(value) => handleFilterChange('location', value as string)}
-                placeholder="ნებისმიერი"
+                placeholder={t('carListing:filters.any')}
                 options={[
-                  { value: '', label: 'ნებისმიერი' },
+                  { value: '', label: t('carListing:filters.any') },
                   ...locations.map(location => ({
                     value: location,
                     label: location
@@ -625,14 +630,14 @@ const Filters: React.FC<FiltersProps> = ({
           className="flex-1 py-2.5 px-4 border border-gray-200 rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all flex items-center justify-center shadow-sm hover:shadow"
         >
           <RefreshCw className="mr-2" size={16} />
-          გასუფთავება
+          {t('carListing:filters.clear')}
         </button>
         <button
           onClick={applyFilters}
           className="flex-1 py-2.5 px-4 bg-primary text-white rounded-xl hover:bg-primary/90 transition-all flex items-center justify-center shadow-md hover:shadow-lg"
         >
           <Filter className="mr-2" size={16} />
-          გაფილტვრა
+          {t('carListing:filters.apply')}
         </button>
       </div>
 
@@ -643,7 +648,7 @@ const Filters: React.FC<FiltersProps> = ({
           className="mt-2 w-full py-2 text-primary flex items-center justify-center hover:text-primary/80 transition-all font-medium"
         >
           <ArrowUp size={16} className="mr-1" />
-          ზემოთ ასვლა
+          {t('carListing:filters.scrollUp')}
         </button>
       )}
     </div>
