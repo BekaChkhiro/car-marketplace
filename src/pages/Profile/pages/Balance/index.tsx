@@ -3,16 +3,65 @@ import { TransactionHistory } from './components';
 import balanceService from '../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
 import { Button } from '../../../../components/ui';
-import { PlusCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { PlusCircle, RefreshCw, ChevronDown, ChevronUp, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
 const BalancePage: React.FC = () => {
-  const { t } = useTranslation(['profile', 'common', 'transaction']);  const [balance, setBalance] = useState<number>(0);
+  const { t } = useTranslation(['profile', 'common', 'transaction']);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const [balance, setBalance] = useState<number>(0);
   const [addAmount, setAddAmount] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOnlineLoading, setIsOnlineLoading] = useState<boolean>(false);
   const [showTransactions, setShowTransactions] = useState<boolean>(true);
+  const [paymentProcessing, setPaymentProcessing] = useState<boolean>(false);
+
+  // Check for query parameters on component mount for payment completion
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const paymentStatus = queryParams.get('status');
+    const orderId = queryParams.get('orderId');
+    const errorParam = queryParams.get('error');
+
+    if (orderId) {
+      if (paymentStatus === 'success') {
+        toast.success(t('profile:balance.onlinePaymentSuccess', 'ონლაინ გადახდა წარმატებით დასრულდა'));
+        // Clear query params
+        navigate('/profile/balance', { replace: true });
+        // Refresh balance
+        fetchBalance();
+      } else if (paymentStatus === 'failed') {
+        toast.error(t('profile:balance.onlinePaymentFailed', 'ონლაინ გადახდა ვერ დასრულდა'));
+        // Clear query params
+        navigate('/profile/balance', { replace: true });
+      } else {
+        setPaymentProcessing(true);
+        // Show a toast that we're waiting for payment confirmation
+        toast.loading(t('profile:balance.waitingForPayment', 'ველოდებით გადახდის დასტურს...'), {
+          duration: 5000
+        });
+        
+        // After 5 seconds, check balance and clear processing state
+        setTimeout(() => {
+          fetchBalance();
+          setPaymentProcessing(false);
+          // Clear query params
+          navigate('/profile/balance', { replace: true });
+        }, 5000);
+      }
+    }
+    
+    if (errorParam) {
+      toast.error(t('profile:balance.paymentError', 'გადახდის დამუშავებისას მოხდა შეცდომა'));
+      // Clear query params
+      navigate('/profile/balance', { replace: true });
+    }
+  }, [location.search, navigate, t]);
 
   useEffect(() => {
     fetchBalance();
@@ -47,6 +96,32 @@ const BalancePage: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
+  // New method for online payment
+  const handleOnlinePayment = async () => {
+    if (addAmount <= 0) {
+      toast.error(t('profile:balance.invalidAmount', 'გთხოვთ შეიყვანოთ სწორი თანხა'));
+      return;
+    }
+    
+    setIsOnlineLoading(true);
+    try {
+      const response = await balanceService.addFundsOnline(addAmount);
+      
+      if (response.success && response.paymentUrl) {
+        // Redirect to payment page
+        window.location.href = response.paymentUrl;
+        // Don't reset loading state as we're redirecting away
+      } else {
+        toast.error(t('profile:balance.paymentInitFailed', 'გადახდის ინიციალიზაცია ვერ მოხერხდა'));
+        setIsOnlineLoading(false);
+      }
+    } catch (error) {
+      console.error('Error initializing online payment:', error);
+      toast.error(t('profile:balance.paymentInitFailed', 'გადახდის ინიციალიზაცია ვერ მოხერხდა'));
+      setIsOnlineLoading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-6 animate-fade-in max-w-4xl">
@@ -66,7 +141,8 @@ const BalancePage: React.FC = () => {
           </div>
         </div>
           {/* Add Funds Section - Always visible on mobile and desktop */}
-        <div className="border-t-2 sm:border-t border-green-lighter mt-6 sm:mt-4 pt-6 sm:pt-4"><h3 className="text-base font-medium mb-3 text-text-dark text-left">
+        <div className="border-t-2 sm:border-t border-green-lighter mt-6 sm:mt-4 pt-6 sm:pt-4">
+          <h3 className="text-base font-medium mb-3 text-text-dark text-left">
             {t('profile:balance.addFunds')}
           </h3>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -79,28 +155,42 @@ const BalancePage: React.FC = () => {
                 min="1"
                 placeholder={t('profile:balance.amount', 'თანხა')}
                 inputMode="numeric" // Better numeric keyboard on mobile
+                disabled={paymentProcessing}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">GEL</span>
             </div>
-            <Button
-              onClick={handleAddFunds}
-              disabled={isLoading}
-              variant="primary"
-              className="py-3 sm:py-2.5 w-full sm:w-auto"
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCw size={16} className="mr-2 animate-spin" />
-                  {t('common:loading')}
-                </>
-              ) : (
-                <>
-                  <PlusCircle size={16} className="mr-2" />
-                  {t('transaction:add')}
-                </>
-              )}
-            </Button>
+            
+            {/* Payment button */}
+            <div className="w-full sm:w-auto">
+              {/* Online payment with Flitt */}
+              <Button
+                onClick={handleOnlinePayment}
+                disabled={isOnlineLoading || paymentProcessing}
+                variant="primary"
+                className="py-3 sm:py-2.5 w-full"
+              >
+                {isOnlineLoading ? (
+                  <>
+                    <RefreshCw size={16} className="mr-2 animate-spin" />
+                    {t('common:loading')}
+                  </>
+                ) : (
+                  <>
+                    <CreditCard size={16} className="mr-2" />
+                    {t('profile:balance.payOnline', 'ონლაინ გადახდა')}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
+          
+          {/* Payment processing indicator */}
+          {paymentProcessing && (
+            <div className="mt-3 text-sm text-primary flex items-center">
+              <RefreshCw size={14} className="mr-2 animate-spin" />
+              {t('profile:balance.processingPayment', 'მიმდინარეობს გადახდის დამუშავება...')}
+            </div>
+          )}
         </div>
       </div>
       

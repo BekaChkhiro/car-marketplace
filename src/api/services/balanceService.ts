@@ -79,6 +79,16 @@ export interface PurchaseVipResponse {
   currentBalance?: number;
 }
 
+/**
+ * Interface for online payment initialization response
+ */
+export interface OnlinePaymentResponse {
+  success: boolean;
+  orderId: string;
+  paymentUrl: string;
+  message: string;
+}
+
 class BalanceService {
   /**
    * Get user balance
@@ -106,7 +116,7 @@ class BalanceService {
   }
   
   /**
-   * Add funds to user balance
+   * Add funds to user balance (direct method - for testing)
    * @param amount Amount to add
    * @returns Updated balance information
    */
@@ -131,6 +141,36 @@ class BalanceService {
       return response.data;
     } catch (error) {
       console.error('Error adding funds:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Add funds using online payment (Flitt)
+   * @param amount Amount to add in GEL
+   * @returns Payment session information including redirect URL
+   */
+  async addFundsOnline(amount: number): Promise<OnlinePaymentResponse> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const response = await api.post<OnlinePaymentResponse>(
+        '/api/balance/add-online',
+        { amount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error initializing online payment:', error);
       throw error;
     }
   }

@@ -6,7 +6,7 @@ interface CurrencySwitcherProps {
   className?: string;
 }
 
-const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({ value, onChange, className = '' }) => {
+export const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({ value, onChange, className = '' }) => {
   return (
     <div className={`inline-flex items-center p-1 bg-gray-100 rounded-lg ${className}`}>
       <button

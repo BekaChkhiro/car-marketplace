@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 interface ImageProgressProps {
