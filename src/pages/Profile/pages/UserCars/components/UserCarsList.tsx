@@ -255,6 +255,10 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
             <tbody className="bg-white divide-y divide-gray-200">
               {cars.map((car) => {
                 const statusStyle = getStatusStyle(car.status);
+                // Check if VIP has expired
+                const isVipExpired = car.vip_expiration_date ? getRemainingDays(car.vip_expiration_date) <= 0 : true;
+                // Force vip_status to 'none' if expired to hide all VIP related UI elements
+                const effectiveVipStatus = isVipExpired ? 'none' : car.vip_status;
                 
                 return (
                   <tr 
@@ -317,7 +321,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center gap-2 justify-end">
-                        {car.vip_status && car.vip_status !== 'none' ? (
+                        {effectiveVipStatus && effectiveVipStatus !== 'none' ? (
                           <div className="flex gap-1">
                             <button
                               onClick={() => {

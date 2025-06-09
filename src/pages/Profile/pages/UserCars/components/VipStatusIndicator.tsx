@@ -2,6 +2,21 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import { Car } from '../../../../../api/types/car.types';
 
+// Function to check if VIP status is expired
+const isVipExpired = (expirationDate: string | undefined | null): boolean => {
+  if (!expirationDate) return true;
+  
+  const expDate = new Date(expirationDate);
+  const now = new Date();
+  
+  // Calculate difference in days
+  const diffTime = expDate.getTime() - now.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  // If days remaining is 0 or negative, consider it expired
+  return diffDays <= 0;
+};
+
 interface VipStatusIndicatorProps {
   cars: Car[];
 }
@@ -34,7 +49,7 @@ const VipStatusIndicator: React.FC<VipStatusIndicatorProps> = ({ cars }) => {
           <tbody className="bg-white divide-y divide-gray-200">
             {cars.map((car) => {
               const vipStatus = car.vip_status || 'none';
-              const hasVip = vipStatus !== 'none';
+              const hasVip = vipStatus !== 'none' && !isVipExpired(car.vip_expiration_date);
               
               return (
                 <tr key={car.id} className={hasVip ? 'bg-yellow-50' : ''}>
