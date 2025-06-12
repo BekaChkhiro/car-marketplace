@@ -5,10 +5,10 @@ import partService, { Part, PartFilters as PartFilterOptions } from '../../api/s
 import { Container, Loading } from '../../components/ui';
 import Pagination from '../../components/ui/Pagination';
 import { namespaces } from '../../i18n';
-// Use explicit paths to fix module resolution issues
-import PartGrid from '/home/bekolozi/Desktop/big-way/client/src/pages/PartListing/components/PartGrid';
-import PartFilters from '/home/bekolozi/Desktop/big-way/client/src/pages/PartListing/components/PartFilters';
-import SortingHeader from '/home/bekolozi/Desktop/big-way/client/src/pages/PartListing/components/SortingHeader';
+// Use relative paths for component imports
+import PartGrid from './components/PartGrid';
+import PartFilters from './components/PartFilters';
+import SortingHeader from './components/SortingHeader';
 import { useToast } from '../../context/ToastContext';
 
 const PartListing: React.FC = () => {
