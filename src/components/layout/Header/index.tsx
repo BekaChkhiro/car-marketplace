@@ -31,8 +31,9 @@ const Header = () => {
   const menuItems = [
     { id: 1, text: t('home'), href: '/', icon: Home },
     { id: 2, component: CarsDropdown, icon: Car },
-    { id: 3, text: t('aboutUs'), href: '/about', icon: Info },
-    { id: 4, text: t('contact'), href: '/contact', icon: Phone },
+    { id: 3, text: t('parts'), href: '/parts', icon: Car },
+    { id: 4, text: t('aboutUs'), href: '/about', icon: Info },
+    { id: 5, text: t('contact'), href: '/contact', icon: Phone },
   ];
   
   // Helper function to prefix paths with current language
@@ -46,6 +47,7 @@ const Header = () => {
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/cars' && location.pathname.includes('/cars')) return true;
+    if (path === '/parts' && location.pathname.includes('/parts')) return true;
     if (path === '/about' && location.pathname.includes('/about')) return true;
     if (path === '/contact' && location.pathname.includes('/contact')) return true;
     if (path === '/wishlist' && location.pathname.includes('/wishlist')) return true;

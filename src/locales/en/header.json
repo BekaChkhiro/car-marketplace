@@ -4,6 +4,7 @@
   "allCars": "All Cars",
   "newCars": "New Cars",
   "usedCars": "Used Cars",
+  "parts": "Parts",
   "aboutUs": "About Us",
   "contact": "Contact",
   "profile": "Profile",
@@ -25,5 +26,7 @@
   "menu": "Menu",
   "close": "Close",
   "welcome": "Welcome",
-  "account": "Account"
+  "account": "Account",
+  "buy": "Buy",
+  "sell": "Sell"
 }

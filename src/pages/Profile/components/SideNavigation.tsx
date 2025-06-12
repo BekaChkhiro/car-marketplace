@@ -44,6 +44,16 @@ const SideNavigation: React.FC<SideNavigationProps> = ({ onCloseMobileMenu }) =>
       icon: PlusCircle
     },
     {
+      name: t('profile:navigation.myParts'),
+      path: `/${currentLang}/profile/parts`,
+      icon: Car
+    },
+    {
+      name: t('profile:navigation.addPart'),
+      path: `/${currentLang}/profile/add-part`,
+      icon: PlusCircle
+    },
+    {
       name: t('profile:navigation.balance'),
       path: `/${currentLang}/profile/balance`,
       icon: Wallet

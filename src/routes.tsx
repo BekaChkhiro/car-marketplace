@@ -4,6 +4,8 @@ import { routes } from './config/routes';
 import Home from './pages/Home';
 import CarListing from './pages/CarListing';
 import CarDetails from './pages/CarDetails';
+import PartListing from './pages/PartListing';
+import PartDetails from './pages/PartDetails';
 import ProfilePage from './pages/Profile';
 import AdminLayout from './pages/Admin/components/AdminLayout';
 import AdminDashboard from './pages/Admin/Dashboard';
@@ -34,7 +36,11 @@ import UserCars from './pages/Profile/pages/UserCars/index';
 import EditCar from './pages/Profile/pages/EditCar/index';
 import Wishlist from './pages/Profile/pages/Wishlist';
 import Balance from './pages/Profile/pages/Balance';
+import AddPart from './pages/Profile/AddPart';
+import UserParts from './pages/Profile/pages/UserParts';
+import EditPart from './pages/Profile/EditPart';
 import HowToSell from './pages/HowToSell';
+import TermsAndConditions from './pages/Terms';
 import i18n, { getLanguageFromUrl } from './i18n';
 
 const AppRoutes = () => {
@@ -63,7 +69,10 @@ const AppRoutes = () => {
       <Route index element={<Home />} />
       <Route path="cars" element={<CarListing />} />
       <Route path="cars/:id" element={<CarDetails />} />
+      <Route path="parts" element={<PartListing />} />
+      <Route path="parts/:id" element={<PartDetails />} />
       <Route path="how-to-sell" element={<HowToSell />} />
+      <Route path="terms" element={<TermsAndConditions />} />
       
       {/* Protected Admin Routes */}
       <Route path="admin" element={
@@ -100,6 +109,9 @@ const AppRoutes = () => {
         <Route path="cars" element={<UserCars />} />
         <Route path="cars/edit/:id" element={<EditCar />} />
         <Route path="add-car" element={<AddCar />} />
+        <Route path="parts" element={<UserParts />} />
+        <Route path="parts/edit/:id" element={<EditPart />} />
+        <Route path="add-part" element={<AddPart />} />
         <Route path="balance" element={<Balance />} />
         <Route path="settings" element={<Settings />} />
         <Route path="wishlist" element={<Wishlist />} />

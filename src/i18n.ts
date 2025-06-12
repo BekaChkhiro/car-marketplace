@@ -12,6 +12,7 @@ import enFilter from './locales/en/filter.json';
 import enHeader from './locales/en/header.json';
 import enAdmin from './locales/en/admin.json';
 import enCarListing from './locales/en/carListing.json';
+import enParts from './locales/en/parts.json';
 
 // Georgian translations
 import kaProfile from './locales/ka/profile.json';
@@ -23,6 +24,7 @@ import kaFilter from './locales/ka/filter.json';
 import kaHeader from './locales/ka/header.json';
 import kaAdmin from './locales/ka/admin.json';
 import kaCarListing from './locales/ka/carListing.json';
+import kaParts from './locales/ka/parts.json';
 
 // Russian translations
 import ruProfile from './locales/ru/profile.json';
@@ -34,6 +36,7 @@ import ruFilter from './locales/ru/filter.json';
 import ruHeader from './locales/ru/header.json';
 import ruAdmin from './locales/ru/admin.json';
 import ruCarListing from './locales/ru/carListing.json';
+import ruParts from './locales/ru/parts.json';
 
 // Define namespaces for better organization
 export const namespaces = {
@@ -49,6 +52,7 @@ export const namespaces = {
   carListing: 'carListing',
   carDetails: 'carDetails',
   profile: 'profile',
+  parts: 'parts',
   admin: 'admin'
 };
 
@@ -64,6 +68,7 @@ const resources = {
     header: enHeader,
     admin: enAdmin,
     carListing: enCarListing,
+    parts: enParts,
     // Other namespaces will be added here as needed
   },
   ka: {
@@ -76,6 +81,7 @@ const resources = {
     header: kaHeader,
     admin: kaAdmin,
     carListing: kaCarListing,
+    parts: kaParts,
     // Other namespaces will be added here as needed
   },
   ru: {
@@ -88,6 +94,7 @@ const resources = {
     header: ruHeader,
     admin: ruAdmin,
     carListing: ruCarListing,
+    parts: ruParts,
     // Other namespaces will be added here as needed
   }
 };
