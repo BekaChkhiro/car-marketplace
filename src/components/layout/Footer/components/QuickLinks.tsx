@@ -12,7 +12,7 @@ const QuickLinks: React.FC = () => {
           { to: '/transports', text: 'მანქანები' },
           { to: '/about', text: 'ჩვენს შესახებ' },
           { to: '/contact', text: 'კონტაქტი' },
-          { to: '/terms', text: 'წესები და პირობები' },
+          { to: '/ka/terms', text: 'წესები და პირობები' },
           { to: '/privacy', text: 'კონფიდენციალურობა' },
         ].map((link) => (
           <li key={link.to}>
