@@ -110,7 +110,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo and Menu Toggle */}
           <div className="flex items-center">
-            <Logo text="Big Way" />
+            <Logo />
             
             {/* Desktop Navigation */}
             <div className="hidden md:block ml-12">
@@ -168,7 +168,7 @@ const Header = () => {
         {/* Menu Header */}
         <div className="sticky top-0 bg-white z-10 border-b border-gray-100 shadow-sm">
           <div className="flex justify-between items-center px-4 py-3.5">
-            <Logo text="Big Way" />
+            <Logo />
             <button 
               onClick={toggleMobileMenu}
               className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
