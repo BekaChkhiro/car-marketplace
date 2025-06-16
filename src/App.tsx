@@ -32,6 +32,7 @@ const App = () => {
                       <Route path="/login" element={<Navigate to={`/ka/login`} replace />} />
                       <Route path="/register" element={<Navigate to={`/ka/register`} replace />} />
                       <Route path="/admin/*" element={<Navigate to={`/ka/admin`} replace />} />
+                      <Route path="/auth/google/callback" element={<Navigate to={`/ka/auth/google/callback`} replace />} />
                       
                       {/* Language-specific routes */}
                       <Route path="/:lang/*" element={<AppRoutes />} />
