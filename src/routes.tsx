@@ -26,7 +26,7 @@ import VipListingsPage from './pages/Admin/VipListings';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
-import GoogleCallback from './pages/auth/GoogleCallback';
+import GoogleCallback from './pages/Auth/GoogleCallback';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import ProfileHome from './pages/Profile/pages/ProfileHome';
