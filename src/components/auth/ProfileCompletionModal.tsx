@@ -3,7 +3,7 @@ import { Modal, Button, Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { userProfileService } from '../../api/services/userProfileService';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 
 interface ProfileCompletionModalProps {
   onComplete: () => void;
