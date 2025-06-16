@@ -3,9 +3,30 @@ import { AuthResponse } from '../types/auth.types';
 import { setStoredToken } from '../utils/tokenStorage';
 
 class SocialAuthService {
+  // Redirect to Google OAuth login page
+  initiateGoogleLogin(): string {
+    return `${process.env.REACT_APP_API_URL || ''}/api/auth/google`;
+  }
+
+  // Handle Google OAuth callback
+  async handleGoogleCallback(code: string): Promise<AuthResponse> {
+    try {
+      const response = await api.post<AuthResponse>('/api/auth/google/callback', { code });
+      
+      if (response.data.token && response.data.refreshToken) {
+        setStoredToken(response.data.token, response.data.refreshToken);
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Google login failed');
+    }
+  }
+
+  // Legacy method for compatibility
   async googleLogin(accessToken: string): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>('/api/auth/google', { 
+      const response = await api.post<AuthResponse>('/api/auth/google-token', { 
         access_token: accessToken 
       });
       

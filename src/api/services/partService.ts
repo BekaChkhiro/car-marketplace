@@ -108,6 +108,29 @@ class PartService {
         price: Number(partData.price)
       };
 
+      console.log('[PartService.createPart] Processed data:', processedPartData);
+      
+      // Check data validity before sending
+      if (!processedPartData.title || processedPartData.title.trim() === '') {
+        throw new Error('Title is required');
+      }
+      
+      if (!processedPartData.category_id || processedPartData.category_id <= 0) {
+        throw new Error('Valid category is required');
+      }
+      
+      if (!processedPartData.brand_id || processedPartData.brand_id <= 0) {
+        throw new Error('Valid brand is required');
+      }
+      
+      if (!processedPartData.model_id || processedPartData.model_id <= 0) {
+        throw new Error('Valid model is required');
+      }
+      
+      if (!processedPartData.price || processedPartData.price <= 0) {
+        throw new Error('Valid price is required');
+      }
+
       const formData = new FormData();
       formData.append('partData', JSON.stringify(processedPartData));
 
@@ -115,8 +138,12 @@ class PartService {
         partData.images.forEach(image => {
           formData.append('images', image);
         });
+        console.log(`[PartService.createPart] Added ${partData.images.length} images to form data`);
+      } else {
+        console.warn('[PartService.createPart] No images provided');
       }
 
+      console.log('[PartService.createPart] Sending request to server...');
       const response = await api.post('/api/parts', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

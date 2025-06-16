@@ -26,6 +26,7 @@ import VipListingsPage from './pages/Admin/VipListings';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
+import GoogleCallback from './pages/auth/GoogleCallback';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import ProfileHome from './pages/Profile/pages/ProfileHome';
@@ -122,6 +123,7 @@ const AppRoutes = () => {
       <Route path="register" element={<Register />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />
+      <Route path="auth/google/callback" element={<GoogleCallback />} />
       <Route path="wishlist" element={<Wishlist />} />
     </Routes>
   );
