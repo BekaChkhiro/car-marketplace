@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { LoadingProvider } from './context/LoadingContext';
 import { WishlistProvider } from './context/WishlistContext';
+import ProfileCompletionModalProvider from './components/auth/ProfileCompletionModalProvider';
 
 const App = () => {
   return (
@@ -21,7 +22,8 @@ const App = () => {
               <CurrencyProvider>
                 <WishlistProvider>
                   <Layout>
-                    <Routes>
+                    <ProfileCompletionModalProvider>
+                      <Routes>
                       {/* Root path redirect to current language or default language */}
                       <Route path="/" element={<Navigate to={`/ka`} replace />} />
                       
@@ -37,6 +39,7 @@ const App = () => {
                       {/* Language-specific routes */}
                       <Route path="/:lang/*" element={<AppRoutes />} />
                     </Routes>
+                    </ProfileCompletionModalProvider>
                   </Layout>
                 </WishlistProvider>
               </CurrencyProvider>

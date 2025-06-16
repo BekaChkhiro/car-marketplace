@@ -26,6 +26,7 @@ interface AuthContextType {
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
+  refreshUserData: () => Promise<void>;
 }
 
 // Create context with default values
@@ -268,6 +269,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Refresh user data handler
+  const refreshUserData = async () => {
+    showLoading();
+    try {
+      const userData = await authService.getProfile();
+      if (userData) {
+        setUser(userData);
+        storeUserData(userData);
+        return userData;
+      }
+    } catch (err: any) {
+      const message = err.message || 'პროფილის განახლება ვერ მოხერხდა';
+      showToast(message, 'error');
+      throw err;
+    } finally {
+      hideLoading();
+    }
+  };
+
   // Context value
   const value = {
     user,
@@ -280,6 +300,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updatePassword,
     forgotPassword,
     resetPassword,
+    refreshUserData,
   };
 
   if (isInitializing) {
