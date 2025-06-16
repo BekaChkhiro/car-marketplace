@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useLoading } from '../../context/LoadingContext';
+import { setStoredToken } from '../../api/utils/tokenStorage';
+import { storeUserData } from '../../utils/userStorage';
 
 const GoogleCallback: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
   const { showLoading, hideLoading } = useLoading();
-  const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,12 +29,15 @@ const GoogleCallback: React.FC = () => {
         // Parse the user data from JSON string
         const userData = JSON.parse(decodeURIComponent(userDataString));
         
-        // Log in the user using the authentication context
-        await login(userData.email, token, refreshToken);
+        // Store tokens and force a page reload to let the main AuthProvider initialize with new tokens
+        setStoredToken(token, refreshToken);
+        storeUserData(userData);
         
         // Show success message and redirect
         showToast('Google-ით ავტორიზაცია წარმატებით დასრულდა', 'success');
-        navigate('/');
+        
+        // Redirect to home page and force reload to re-initialize auth context
+        window.location.href = '/';
       } catch (error: any) {
         console.error('Google callback error:', error);
         setError(error.message || 'Google-ით ავტორიზაცია ვერ მოხერხდა');
@@ -46,7 +49,7 @@ const GoogleCallback: React.FC = () => {
     };
 
     handleCallback();
-  }, [location, navigate, showToast, showLoading, hideLoading, login]);
+  }, [location, navigate, showToast, showLoading, hideLoading]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
