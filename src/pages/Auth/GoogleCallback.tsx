@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import socialAuthService from '../../api/services/socialAuthService';
 import { useLoading } from '../../context/LoadingContext';
 
 const GoogleCallback: React.FC = () => {
@@ -10,22 +9,28 @@ const GoogleCallback: React.FC = () => {
   const location = useLocation();
   const { showToast } = useToast();
   const { showLoading, hideLoading } = useLoading();
+  const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleCallback = async () => {
       showLoading();
       try {
-        // Get code from URL query params
+        // Get tokens and user data from URL params
         const urlParams = new URLSearchParams(location.search);
-        const code = urlParams.get('code');
+        const token = urlParams.get('token');
+        const refreshToken = urlParams.get('refreshToken');
+        const userDataString = urlParams.get('user');
 
-        if (!code) {
-          throw new Error('კოდი არ იქნა მიღებული Google-დან');
+        if (!token || !refreshToken || !userDataString) {
+          throw new Error('ტოკენები ან მომხმარებლის მონაცემები არ იქნა მიღებული');
         }
 
-        // Process Google callback
-        await socialAuthService.handleGoogleCallback(code);
+        // Parse the user data from JSON string
+        const userData = JSON.parse(decodeURIComponent(userDataString));
+        
+        // Log in the user using the authentication context
+        await login(userData.email, token, refreshToken);
         
         // Show success message and redirect
         showToast('Google-ით ავტორიზაცია წარმატებით დასრულდა', 'success');
@@ -34,14 +39,14 @@ const GoogleCallback: React.FC = () => {
         console.error('Google callback error:', error);
         setError(error.message || 'Google-ით ავტორიზაცია ვერ მოხერხდა');
         showToast(error.message || 'Google-ით ავტორიზაცია ვერ მოხერხდა', 'error');
-        navigate('/auth/login');
+        navigate('/login');
       } finally {
         hideLoading();
       }
     };
 
     handleCallback();
-  }, [location, navigate, showToast, showLoading, hideLoading]);
+  }, [location, navigate, showToast, showLoading, hideLoading, login]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
