@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
         {/* Copyright section */}
         <div className="text-center mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t">
           <p className="text-gray-dark text-sm pb-6">
-            &copy; {new Date().getFullYear()} CarMarket. ყველა უფლება დაცულია.
+            &copy; {new Date().getFullYear()} Autovend.ge ყველა უფლება დაცულია.
           </p>
         </div>
       </div>
