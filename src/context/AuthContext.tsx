@@ -26,7 +26,7 @@ interface AuthContextType {
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
-  refreshUserData: () => Promise<void>;
+  refreshUserData: () => Promise<any>;
 }
 
 // Create context with default values

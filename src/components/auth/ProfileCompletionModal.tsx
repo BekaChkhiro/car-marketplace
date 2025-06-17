@@ -3,7 +3,7 @@ import { Modal, Button, Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { userProfileService } from '../../api/services/userProfileService';
-import { useAuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface ProfileCompletionModalProps {
   onComplete: () => void;
@@ -11,7 +11,7 @@ interface ProfileCompletionModalProps {
 
 const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({ onComplete }) => {
   const { t } = useTranslation();
-  const { refreshUserData } = useAuthContext();
+  const { refreshUserData } = useAuth();
   const [show, setShow] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({ onCompl
     checkProfileStatus();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,

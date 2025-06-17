@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import ProfileCompletionModal from './ProfileCompletionModal';
 import { userProfileService } from '../../api/services/userProfileService';
 
@@ -8,7 +8,7 @@ interface ProfileCompletionModalProviderProps {
 }
 
 const ProfileCompletionModalProvider: React.FC<ProfileCompletionModalProviderProps> = ({ children }) => {
-  const { user, isAuthenticated } = useAuthContext();
+  const { user, isAuthenticated } = useAuth();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [checkingStatus, setCheckingStatus] = useState<boolean>(true);
 
