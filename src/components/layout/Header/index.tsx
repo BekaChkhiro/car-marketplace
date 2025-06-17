@@ -34,6 +34,7 @@ const Header = () => {
     { id: 3, text: t('parts'), href: '/parts', icon: Car },
     { id: 4, text: t('aboutUs'), href: '/about', icon: Info },
     { id: 5, text: t('contact'), href: '/contact', icon: Phone },
+    { id: 6, text: t('advertisingSpaces'), href: '/advertising-spaces', icon: Info },
   ];
   
   // Helper function to prefix paths with current language
@@ -50,6 +51,7 @@ const Header = () => {
     if (path === '/parts' && location.pathname.includes('/parts')) return true;
     if (path === '/about' && location.pathname.includes('/about')) return true;
     if (path === '/contact' && location.pathname.includes('/contact')) return true;
+    if (path === '/advertising-spaces' && location.pathname.includes('/advertising-spaces')) return true;
     if (path === '/wishlist' && location.pathname.includes('/wishlist')) return true;
     if (path === '/profile' && location.pathname.includes('/profile')) return true;
     return false;
