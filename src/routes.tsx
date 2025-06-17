@@ -42,6 +42,8 @@ import UserParts from './pages/Profile/pages/UserParts';
 import EditPart from './pages/Profile/EditPart';
 import HowToSell from './pages/HowToSell';
 import TermsAndConditions from './pages/Terms';
+import AboutPage from './pages/About';
+import ContactPage from './pages/Contact';
 import i18n, { getLanguageFromUrl } from './i18n';
 
 const AppRoutes = () => {
@@ -74,6 +76,8 @@ const AppRoutes = () => {
       <Route path="parts/:id" element={<PartDetails />} />
       <Route path="how-to-sell" element={<HowToSell />} />
       <Route path="terms" element={<TermsAndConditions />} />
+      <Route path="about" element={<AboutPage />} />
+      <Route path="contact" element={<ContactPage />} />
       
       {/* Protected Admin Routes */}
       <Route path="admin" element={

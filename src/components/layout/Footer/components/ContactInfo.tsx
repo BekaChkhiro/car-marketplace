@@ -9,19 +9,19 @@ const ContactInfo: React.FC = () => {
         <li>
           <div className="flex items-center gap-4 text-gray-dark hover:text-primary transition-colors">
             <MapPin className="text-primary" size={20} />
-            <span>ჭავჭავაძის 123, თბილისი, საქართველო</span>
+            <span>მცხეთის რაიონი, სოფელი მისაქციელი, 1-ლი ქუჩის VII შესახვევი, N10</span>
           </div>
         </li>
         <li>
           <div className="flex items-center gap-4 text-gray-dark hover:text-primary transition-colors">
             <Phone className="text-primary" size={20} />
-            <span>+995 555 123 456</span>
+            <span>+995 595 03 88 88</span>
           </div>
         </li>
         <li>
           <div className="flex items-center gap-4 text-gray-dark hover:text-primary transition-colors">
             <Mail className="text-primary" size={20} />
-            <span>info@carmarket.ge</span>
+            <span>info@autovend.ge</span>
           </div>
         </li>
       </ul>

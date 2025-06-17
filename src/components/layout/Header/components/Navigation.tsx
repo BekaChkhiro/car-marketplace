@@ -29,7 +29,7 @@ const Navigation: React.FC<NavigationProps> = ({ menuItems }) => {
   };
   return (
     <nav>
-      <ul className="flex items-center space-x-8">
+      <ul className="flex items-center space-x-8 mb-0">
         {menuItems.map((item) => (
           <li key={item.id}>
             {item.component ? (

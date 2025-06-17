@@ -8,12 +8,11 @@ const QuickLinks: React.FC = () => {
       <h3 className="text-xl font-bold mb-6 text-primary">სწრაფი ბმულები</h3>
       <ul className="flex flex-col gap-4">
         {[
-          { to: '/', text: 'მთავარი' },
-          { to: '/transports', text: 'მანქანები' },
-          { to: '/about', text: 'ჩვენს შესახებ' },
-          { to: '/contact', text: 'კონტაქტი' },
+          { to: '/ka', text: 'მთავარი' },
+          { to: '/ka/cars', text: 'მანქანები' },
+          { to: '/ka/about', text: 'ჩვენს შესახებ' },
+          { to: '/ka/contact', text: 'კონტაქტი' },
           { to: '/ka/terms', text: 'წესები და პირობები' },
-          { to: '/privacy', text: 'კონფიდენციალურობა' },
         ].map((link) => (
           <li key={link.to}>
             <Link

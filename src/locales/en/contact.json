@@ -1,0 +1,16 @@
+{
+  "contactUs": "Contact Us",
+  "contactDescription": "Have questions? Please get in touch with us using the contact information below.",
+  "contactInfo": "Contact Information",
+  "workingHours": "Working Hours",
+  "weekdays": "Monday-Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+  "closed": "Closed",
+  "callUs": "Call Us",
+  "callUsDescription": "Have questions? Call us anytime.",
+  "emailUs": "Email Us",
+  "emailUsDescription": "Send us an email and we'll get back to you soon.",
+  "visitUs": "Visit Us",
+  "visitUsDescription": "Come to our office during working hours."
+}
