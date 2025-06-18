@@ -32,5 +32,9 @@
   "totalUsers": "სულ მომხმარებლები",
   "totalCars": "სულ მანქანები",
   "activeListings": "აქტიური განცხადებები",
-  "vipListings": "VIP განცხადებები"
+  "vipListings": "VIP განცხადებები",
+  "allAdvertisements": "ყველა რეკლამა",
+  "slider": "სლაიდერი",
+  "banners": "ბანერები",
+  "sidebar": "გვერდითი პანელი"
 }

@@ -32,5 +32,9 @@
   "totalUsers": "Всего пользователей",
   "totalCars": "Всего автомобилей",
   "activeListings": "Активные объявления",
-  "vipListings": "VIP объявления"
+  "vipListings": "VIP объявления",
+  "allAdvertisements": "Вся реклама",
+  "slider": "Слайдер",
+  "banners": "Баннеры",
+  "sidebar": "Боковая панель"
 }

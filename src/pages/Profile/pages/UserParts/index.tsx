@@ -91,7 +91,7 @@ const UserParts: React.FC = () => {
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">{t('myParts')}</h2>
-        <Link to="/profile/add-part">
+        <Link to="/ka/profile/add-part">
           <Button variant="primary">{t('addNewPart')}</Button>
         </Link>
       </div>
@@ -108,7 +108,7 @@ const UserParts: React.FC = () => {
               <p className="text-gray-500 mt-2 mb-4">
                 {t('noPartsDescription')}
               </p>
-              <Link to="/profile/add-part">
+              <Link to="/ka/profile/add-part">
                 <Button variant="primary">{t('addFirstPart')}</Button>
               </Link>
             </div>

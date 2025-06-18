@@ -32,5 +32,9 @@
   "totalUsers": "Total Users",
   "totalCars": "Total Cars",
   "activeListings": "Active Listings",
-  "vipListings": "VIP Listings"
+  "vipListings": "VIP Listings",
+  "allAdvertisements": "All Advertisements",
+  "slider": "Slider",
+  "banners": "Banners",
+  "sidebar": "Sidebar"
 }

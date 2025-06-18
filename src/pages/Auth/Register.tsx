@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { Check, Mail, Lock, User, Phone, EyeOff, Eye } from 'lucide-react';
 import { validatePassword, validateEmail } from '../../utils/validation';
 
 const Register: React.FC = () => {
   const { register, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { lang } = useParams<{ lang: string }>();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -16,17 +17,20 @@ const Register: React.FC = () => {
     password: '',
     confirmPassword: '',
     age: '',
-    gender: ''
+    gender: '',
+    agreeToTerms: false
   });
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target as HTMLInputElement;
+    const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: newValue
     }));
     
     if (error) setError(null);
@@ -84,6 +88,11 @@ const Register: React.FC = () => {
       setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
       return;
     }
+    
+    if (!formData.agreeToTerms) {
+      setError('გთხოვთ, დაეთანხმოთ წესებს და პირობებს');
+      return;
+    }
 
     if (!validateEmail(formData.email)) {
       setError('გთხოვთ, შეიყვანოთ ელ-ფოსტის სწორი ფორმატი');
@@ -138,46 +147,37 @@ const Register: React.FC = () => {
 
   const renderStep1 = () => (
     <form onSubmit={handleContinue} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
+      <div className="flex gap-4">
+        <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             სახელი
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-              required
-              placeholder="სახელი"
-              disabled={isLoading}
-            />
-          </div>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+            required
+            placeholder="სახელი"
+            disabled={isLoading}
+          />
         </div>
-        <div>
+
+        <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             გვარი
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-              required
-              placeholder="გვარი"
-              disabled={isLoading}
-            />
-          </div>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+            required
+            placeholder="გვარი"
+            disabled={isLoading}
+          />
         </div>
       </div>
 
@@ -207,65 +207,61 @@ const Register: React.FC = () => {
           სქესი
         </label>
         <div className="flex gap-4">
-          <label className="flex items-center">
+          <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
             <input
               type="radio"
               name="gender"
               value="male"
               checked={formData.gender === 'male'}
               onChange={handleInputChange}
-              className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+              className="absolute opacity-0 w-0 h-0"
               required
               disabled={isLoading}
             />
-            <span className="ml-2 text-sm text-gray-700">მამრობითი</span>
+            <div className={`w-full text-center py-3 px-4 rounded-xl border ${
+              formData.gender === 'male' 
+                ? 'border-primary bg-primary/5 text-primary' 
+                : 'border-gray-300 hover:bg-gray-50'
+            }`}>
+              მამრობითი
+            </div>
           </label>
-          <label className="flex items-center">
+          
+          <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
             <input
               type="radio"
               name="gender"
               value="female"
               checked={formData.gender === 'female'}
               onChange={handleInputChange}
-              className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+              className="absolute opacity-0 w-0 h-0"
               disabled={isLoading}
             />
-            <span className="ml-2 text-sm text-gray-700">მდედრობითი</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="gender"
-              value="other"
-              checked={formData.gender === 'other'}
-              onChange={handleInputChange}
-              className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
-              disabled={isLoading}
-            />
-            <span className="ml-2 text-sm text-gray-700">სხვა</span>
+            <div className={`w-full text-center py-3 px-4 rounded-xl border ${
+              formData.gender === 'female' 
+                ? 'border-primary bg-primary/5 text-primary' 
+                : 'border-gray-300 hover:bg-gray-50'
+            }`}>
+              მდედრობითი
+            </div>
           </label>
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          ტელეფონის ნომერი
+          ტელეფონი
         </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Phone className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-            required
-            placeholder="+995"
-            disabled={isLoading}
-          />
-        </div>
+        <input
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          required
+          placeholder="+995"
+          disabled={isLoading}
+        />
       </div>
 
       {error && (
@@ -292,53 +288,32 @@ const Register: React.FC = () => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           ელ-ფოსტა
         </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Mail className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-            required
-            placeholder="შეიყვანეთ ელ-ფოსტა"
-            disabled={isLoading}
-          />
-        </div>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          required
+          placeholder="შეიყვანეთ ელ-ფოსტა"
+          disabled={isLoading}
+        />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           პაროლი
         </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Lock className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            className="w-full pl-10 pr-10 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-            required
-            placeholder="შეიყვანეთ პაროლი"
-            disabled={isLoading}
-          />
-          <button
-            type="button"
-            className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? (
-              <EyeOff className="h-5 w-5 text-gray-400" />
-            ) : (
-              <Eye className="h-5 w-5 text-gray-400" />
-            )}
-          </button>
-        </div>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          required
+          placeholder="შეიყვანეთ პაროლი"
+          disabled={isLoading}
+        />
         {formData.password && (
           <>
             <div className="mt-2 flex items-center gap-2">
@@ -369,21 +344,32 @@ const Register: React.FC = () => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           გაიმეორეთ პაროლი
         </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Lock className="h-5 w-5 text-gray-400" />
-          </div>
+        <input
+          type="password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+          required
+          placeholder="გაიმეორეთ პაროლი"
+          disabled={isLoading}
+        />
+      </div>
+
+      <div className="mt-4">
+        <label className="flex items-center">
           <input
-            type={showPassword ? "text" : "password"}
-            name="confirmPassword"
-            value={formData.confirmPassword}
+            type="checkbox"
+            name="agreeToTerms"
+            checked={formData.agreeToTerms}
             onChange={handleInputChange}
-            className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-            required
-            placeholder="გაიმეორეთ პაროლი"
+            className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
             disabled={isLoading}
           />
-        </div>
+          <span className="ml-2 text-sm text-gray-700">
+            ვეთანხმები <Link to={`/${lang}/terms`} className="text-primary hover:text-secondary font-medium transition-colors">წესებს და პირობებს</Link>
+          </span>
+        </label>
       </div>
 
       {error && (
@@ -392,21 +378,31 @@ const Register: React.FC = () => {
         </div>
       )}
 
-      <div className="flex gap-4">
+      <div className="flex items-center justify-between gap-4">
         <button
           type="button"
-          className="w-1/3 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:bg-gray-200 disabled:cursor-not-allowed"
           onClick={() => setStep(1)}
           disabled={isLoading}
+          className="flex-1 px-4 py-3 border border-primary text-primary hover:bg-primary/5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           უკან
         </button>
         <button
           type="submit"
-          className="w-2/3 px-4 py-3 bg-primary text-white rounded-xl hover:bg-secondary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
           disabled={isLoading}
+          className="flex-1 bg-primary text-white py-3 rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md font-medium text-base disabled:bg-gray-400 disabled:transform-none disabled:shadow-none flex items-center justify-center"
         >
-          {isLoading ? 'მიმდინარეობს...' : 'რეგისტრაცია'}
+          {isLoading ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              გთხოვთ მოიცადოთ...
+            </>
+          ) : (
+            'რეგისტრაცია'
+          )}
         </button>
       </div>
     </form>

@@ -29,8 +29,12 @@ class VipService {
    */
   async getVipPrices(): Promise<VipPrice[]> {
     try {
-      const response = await api.get('/api/vip/pricing');
-      return response.data.data;
+      const response = await api.get('/api/pricing');
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        return response.data.data;
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (error) {
       console.error('Error fetching VIP prices:', error);
       // Fallback to hardcoded prices if API fails

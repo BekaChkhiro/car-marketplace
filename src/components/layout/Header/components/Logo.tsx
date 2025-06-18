@@ -15,7 +15,8 @@ const Logo = ({ text }: LogoProps) => {
         alt="Big Way Logo" 
         className="h-16 mr-2" 
       />
-      {text && <span className="text-2xl font-bold text-primary">{text}</span>}
+      <span className="text-2xl font-bold text-primary">Autovend</span>
+      {text && <span className="text-2xl font-bold text-primary">Autovend</span>}
     </Link>
   );
 };

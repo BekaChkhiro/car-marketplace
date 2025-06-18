@@ -6,11 +6,13 @@ import { motion } from 'framer-motion';
 import advertisementService, { Advertisement } from '../../../api/services/advertisementService';
 import AdvertisementForm from './components/AdvertisementForm';
 import AdvertisementAnalyticsTable from './components/AdvertisementAnalytics';
+import { useTranslation } from 'react-i18next';
 
 const AdvertisementsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
+  const { t } = useTranslation('admin');
 
   // States for managing ads and UI
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
@@ -170,7 +172,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <LayoutGrid className="mr-2 h-4 w-4" />
-              ყველა რეკლამა
+              {t('allAdvertisements')}
             </NavLink>
             <NavLink
               to={routes.adminAdvertisementsSlider}
@@ -180,7 +182,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <SlidersHorizontal className="mr-2 h-4 w-4" />
-              სლაიდერი
+              {t('slider')}
             </NavLink>
             <NavLink
               to={routes.adminAdvertisementsBanners}
@@ -190,7 +192,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <Rows className="mr-2 h-4 w-4" />
-              ბანერები
+              {t('banners')}
             </NavLink>
             {/* Sidebar advertisement navigation removed as requested */}
             <NavLink
@@ -201,7 +203,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <BarChart2 className="mr-2 h-4 w-4" />
-              ანალიტიკა
+              {t('analytics')}
             </NavLink>
           </nav>
         </div>

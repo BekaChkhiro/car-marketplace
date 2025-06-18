@@ -12,6 +12,25 @@ import CarsDropdown from './components/CarsDropdown';
 import { Home, Car, Info, Phone, Heart, Settings, User, ChevronRight, LogOut } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
+// Define interfaces for menu items
+interface BaseMenuItem {
+  id: number;
+  icon?: React.ComponentType<any>;
+  href?: string;
+}
+
+interface TextMenuItem extends BaseMenuItem {
+  text: string;
+  component?: never;
+}
+
+interface ComponentMenuItem extends BaseMenuItem {
+  component: React.ComponentType;
+  text?: never;
+}
+
+type MenuItem = TextMenuItem | ComponentMenuItem;
+
 const Header = () => {
   const { t, i18n } = useTranslation('header');
   const location = useLocation();
@@ -28,13 +47,13 @@ const Header = () => {
 
   // Languages are now managed by the LanguageSelector component internally
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { id: 1, text: t('home'), href: '/', icon: Home },
-    { id: 2, component: CarsDropdown, icon: Car },
-    { id: 3, text: t('parts'), href: '/parts', icon: Car },
-    { id: 4, text: t('aboutUs'), href: '/about', icon: Info },
-    { id: 5, text: t('contact'), href: '/contact', icon: Phone },
-    { id: 6, text: t('advertisingSpaces'), href: '/advertising-spaces', icon: Info },
+    { id: 2, text: t('aboutUs'), href: '/about', icon: Info },
+    { id: 3, text: t('cars'), href: '/cars', icon: Car },
+    { id: 4, text: t('parts'), href: '/parts', icon: Car },
+    { id: 5, text: 'რეკლამა', href: '/advertising-spaces', icon: Info },
+    { id: 6, text: t('contact'), href: '/contact', icon: Phone },
   ];
   
   // Helper function to prefix paths with current language
@@ -110,14 +129,9 @@ const Header = () => {
     <header className="w-full bg-white shadow-sm sticky top-0 z-50 border-b">
       <div className="w-[90%] mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo and Menu Toggle */}
+          {/* Logo */}
           <div className="flex items-center">
             <Logo />
-            
-            {/* Desktop Navigation */}
-            <div className="hidden md:block ml-12">
-              <Navigation menuItems={menuItems} />
-            </div>
           </div>
 
           {/* Mobile Menu Toggle Button */}
@@ -150,6 +164,51 @@ const Header = () => {
             <WishlistButton />
             <AuthButtons />
           </div>
+        </div>
+        
+        {/* Bottom Menu */}
+        <div className="hidden md:flex items-center justify-between border-t mt-4 pt-3">
+          {/* Left Side Menu Items */}
+          <nav className="flex-1">
+            <ul className="flex items-center space-x-10 mb-0">
+              {menuItems.slice(0, 4).map((item) => (
+                <li key={item.id}>
+                  {item.component ? (
+                    <item.component />
+                  ) : (
+                    <Link
+                      to={langPath(item.href || '/')}
+                      className="text-gray-600 hover:text-primary transition-colors font-medium text-sm flex items-center space-x-1"
+                    >
+                      {item.icon && <item.icon size={16} className="mr-1" />}
+                      <span>{item.text}</span>
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+          
+          {/* Right Side Menu Items */}
+          <nav>
+            <ul className="flex items-center space-x-10 mb-0">
+              {menuItems.slice(4, 6).map((item) => (
+                <li key={item.id}>
+                  {item.component ? (
+                    <item.component />
+                  ) : (
+                    <Link
+                      to={langPath(item.href || '/')}
+                      className="text-gray-600 hover:text-primary transition-colors font-medium text-sm flex items-center space-x-1"
+                    >
+                      {item.icon && <item.icon size={16} className="mr-1" />}
+                      <span>{item.text}</span>
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </div>
 

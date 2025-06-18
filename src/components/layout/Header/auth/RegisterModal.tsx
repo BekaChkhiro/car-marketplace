@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getLanguageFromUrl } from '../../../../i18n';
 import Modal from './Modal';
 import { useAuth } from '../../../../context/AuthContext';
 import { Check } from 'lucide-react';
@@ -30,6 +32,8 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => (
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) => {
   const { register, isLoading } = useAuth();
+  const location = useLocation();
+  const [currentLang, setCurrentLang] = useState(getLanguageFromUrl());
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -39,7 +43,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     password: '',
     confirmPassword: '',
     age: '',
-    gender: ''
+    gender: '',
+    agreeToTerms: false
   });
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -70,6 +75,11 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     } else {
       if (!formData.email || !formData.password || !formData.confirmPassword) {
         setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        return;
+      }
+      
+      if (!formData.agreeToTerms) {
+        setError('გთხოვთ, დაეთანხმოთ წესებს და პირობებს');
         return;
       }
 
@@ -109,7 +119,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           password: '',
           confirmPassword: '',
           age: '',
-          gender: ''
+          gender: '',
+          agreeToTerms: false
         });
         setStep(1);
       } catch (err: any) {
@@ -119,11 +130,18 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     }
   };
 
+  // Update language when location changes
+  useEffect(() => {
+    setCurrentLang(getLanguageFromUrl());
+  }, [location.pathname]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target as HTMLInputElement;
+    const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: newValue
     }));
     
     if (error) setError(null);
@@ -341,6 +359,22 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           placeholder="გაიმეორეთ პაროლი"
           disabled={isLoading}
         />
+      </div>
+
+      <div>
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            name="agreeToTerms"
+            checked={formData.agreeToTerms}
+            onChange={handleInputChange}
+            className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+            disabled={isLoading}
+          />
+          <span className="ml-2 text-sm text-gray-700">
+            ვეთანხმები <a href={`/${currentLang}/terms`} target="_blank" className="text-primary hover:text-secondary font-medium transition-colors">წესებს და პირობებს</a>
+          </span>
+        </label>
       </div>
     </>
   );
