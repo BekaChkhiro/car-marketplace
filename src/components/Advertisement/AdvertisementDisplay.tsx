@@ -88,7 +88,26 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
   }
 
   if (!advertisement) {
-    return null; // Don't show anything if no ad is available
+    // Display placeholder with "რეკლამა" text and phone number when no ad is available
+    const placeholderContent = (
+      <div className={`flex flex-col items-center justify-center bg-[#009c6d] ${className} cursor-pointer transition-transform duration-300 hover:scale-[1.02]`} style={{ minHeight: '150px', padding: '20px' }}>
+        <div className="text-white font-medium text-xl">რეკლამა</div>
+        <div className="text-white text-md mt-2">+995 595 03 88 88</div>
+      </div>
+    );
+    
+    // Make the placeholder clickable to navigate to an advertisement page
+    return (
+      <a 
+        href="/advertisements" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="block"
+        onClick={() => console.log('Advertisement placeholder clicked')}
+      >
+        {placeholderContent}
+      </a>
+    );
   }
   
   const content = (
