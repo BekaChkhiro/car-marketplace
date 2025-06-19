@@ -48,6 +48,10 @@ export interface UpdateProfileData {
   username?: string;
   email?: string;
   phone?: string;
+  first_name?: string;
+  last_name?: string;
+  age?: number;
+  gender?: 'male' | 'female' | 'other';
 }
 
 export interface ChangePasswordData {

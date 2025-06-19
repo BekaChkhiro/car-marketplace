@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone } from 'lucide-react';
+import { User, Mail, Phone, UserCircle, Calendar, UserCheck } from 'lucide-react';
 import { useAuth } from '../../../../../context/AuthContext';
 import { useToast } from '../../../../../context/ToastContext';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,11 @@ const ProfileEdit: React.FC = () => {
   const [formData, setFormData] = useState({
     username: user?.username || '',
     email: user?.email || '',
-    phone: user?.phone || ''
+    phone: user?.phone || '',
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
+    age: user?.age || 18,
+    gender: user?.gender || 'other'
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -115,6 +119,90 @@ const ProfileEdit: React.FC = () => {
               inputMode="tel"
             />
             <Phone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="first_name" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+            {t('profileEdit.firstName', 'First Name')}
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              value={formData.first_name}
+              onChange={e => setFormData({ ...formData, first_name: e.target.value })}
+              className="w-full pl-11 pr-4 py-3.5 sm:py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
+              required
+              autoComplete="given-name"
+            />
+            <UserCircle className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="last_name" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+            {t('profileEdit.lastName', 'Last Name')}
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              value={formData.last_name}
+              onChange={e => setFormData({ ...formData, last_name: e.target.value })}
+              className="w-full pl-11 pr-4 py-3.5 sm:py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
+              required
+              autoComplete="family-name"
+            />
+            <UserCircle className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="age" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+            {t('profileEdit.age', 'Age')}
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              id="age"
+              name="age"
+              min="18"
+              max="120"
+              value={formData.age}
+              onChange={e => setFormData({ ...formData, age: parseInt(e.target.value) || 18 })}
+              className="w-full pl-11 pr-4 py-3.5 sm:py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
+              required
+            />
+            <Calendar className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="gender" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+            {t('profileEdit.gender', 'Gender')}
+          </label>
+          <div className="relative">
+            <select
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={e => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' | 'other' })}
+              className="w-full pl-11 pr-4 py-3.5 sm:py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none appearance-none"
+              required
+            >
+              <option value="male">{t('profileEdit.genderMale', 'Male')}</option>
+              <option value="female">{t('profileEdit.genderFemale', 'Female')}</option>
+              <option value="other">{t('profileEdit.genderOther', 'Other')}</option>
+            </select>
+            <UserCheck className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
           </div>
         </div>
 

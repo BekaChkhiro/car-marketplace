@@ -22,7 +22,7 @@ interface AuthContextType {
     phone: string;
   }) => Promise<void>;
   logout: () => void;
-  updateProfile: (data: { username?: string; email?: string; phone?: string }) => Promise<void>;
+  updateProfile: (data: { username?: string; email?: string; phone?: string; first_name?: string; last_name?: string; age?: number; gender?: 'male' | 'female' | 'other' }) => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
@@ -216,11 +216,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Update profile handler
-  const updateProfile = async (data: { username?: string; email?: string; phone?: string }) => {
+  const updateProfile = async (data: { username?: string; email?: string; phone?: string; first_name?: string; last_name?: string; age?: number; gender?: 'male' | 'female' | 'other' }) => {
     showLoading();
     try {
       const updatedUser = await authService.updateProfile(data);
       setUser(updatedUser);
+      storeUserData(updatedUser); // Store updated user data in cache
       showToast('პროფილი წარმატებით განახლდა', 'success');
     } catch (err: any) {
       const message = err.message || 'პროფილის განახლება ვერ მოხერხდა';

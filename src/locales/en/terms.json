@@ -1,0 +1,79 @@
+{
+  "terms_and_conditions": {
+    "title": "Terms and Conditions",
+    "sections": {
+      "posting": {
+        "title": "Posting Announcements",
+        "content": [
+          "To post an announcement, you need to complete a simple registration using your email, Google, or Facebook.",
+          "Registered users can post an unlimited number of announcements. Posting announcements is done using the form available on the platform.",
+          "Announcements that are not relevant to the theme or do not comply with the platform's specifications will be removed by the site administration."
+        ]
+      },
+      "car_pricing": {
+        "title": "Pricing for Posting Announcements about Car Sales",
+        "content": [
+          "Posting regular announcements about car sales on the platform is free.",
+          "Registered users can post the following types of announcements in addition to regular announcements:",
+          "Super VIP - 1 day 7 GEL",
+          "VIP+ - 1 day 5 GEL",
+          "VIP - 1 day 2 GEL",
+          "Color addition - 1 day 0.5 GEL",
+          "Automatic update - 1 day 0.5 GEL"
+        ]
+      },
+      "parts_pricing": {
+        "title": "Pricing for Posting Announcements about Spare Parts Sales",
+        "content": [
+          "Posting regular announcements about spare parts sales on the platform is free.",
+          "Registered users can post the following types of announcements in addition to regular announcements:",
+          "Super VIP - 1 day 6 GEL",
+          "VIP+ - 1 day 3 GEL",
+          "VIP - 1 day 1.5 GEL",
+          "Color addition - 1 day 0.5 GEL",
+          "Automatic update - 1 day 0.5 GEL",
+          "If a user pays for a VIP announcement and posts it, the announcement will be active according to the amount paid. If the payment is not made for the next period, the announcement will become inactive (invisible to platform users and visitors). If the announcement is inactive for 30 days, it will be automatically removed."
+        ]
+      },
+      "refund": {
+        "title": "Refund of User-Paid Amounts",
+        "content": [
+          "Users can request a refund of the paid amount (the amount that was actually paid) within 12 hours of payment. The requested amount will be reduced by 2% for banking services."
+        ]
+      },
+      "admin_responsibility": {
+        "title": "Site Administration's Responsibility",
+        "content": [
+          "The site administration is not responsible for the truthfulness of the information in the announcements posted on the platform. The site administration does not engage in the sale of cars and spare parts, and therefore does not take responsibility for their quality and condition. Communication takes place between the announcement poster and the potential buyer through the contact information provided in the announcement, and the transaction is between these parties."
+        ]
+      },
+      "account_deletion": {
+        "title": "User Account Deletion",
+        "content": [
+          "Registered users have the option to delete their account if they wish. For this, the user must express their wish through the email provided on the site. The site administration will delete the user's account upon receiving the appropriate email."
+        ]
+      },
+      "advertising": {
+        "title": "Advertising Placement",
+        "content": [
+          "Any physical or legal person can place an advertisement on the platform to promote their business or activity. The person wishing to place an advertisement must present a banner to the site administration that complies with the requirements of the Georgian Law on Advertising. The administration reserves the right to refuse to place an advertisement that does not comply with the law. For details, see the information about advertising placement on the platform."
+        ]
+      },
+      "confidentiality": {
+        "title": "Confidentiality",
+        "content": [
+          "The platform legally protects your personal data to prevent it from becoming accessible to third parties. The platform does not take responsibility for protecting your name and contact phone number provided in the announcement posted on the platform."
+        ]
+      },
+      "changes": {
+        "title": "Making Changes",
+        "content": [
+          "The platform has the right to unilaterally make changes to the terms and conditions at any time through publication on the platform, without additional consent from the user. After the changes are implemented, using the platform is considered your consent to the changes."
+        ]
+      },
+      "agreement": {
+        "content": "By agreeing to the terms and conditions, you confirm that you are an active person, a physical person over 18 years old or a legal person established in accordance with Georgian law, and you agree to the terms and conditions stated above."
+      }
+    }
+  }
+}

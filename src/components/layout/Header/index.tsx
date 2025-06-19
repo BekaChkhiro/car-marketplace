@@ -245,7 +245,7 @@ const Header = () => {
         <div className="px-3 py-2">
           {/* Main Navigation */}
           <div className="mb-4">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">მენიუ</h3>
+            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('menu')}</h3>
             <nav className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
               <ul>
                 {menuItems.map((item) => (
@@ -254,19 +254,19 @@ const Header = () => {
                       <div 
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          provideTouchFeedback(item.href || '/cars');
+                          provideTouchFeedback(langPath(item.href || '/cars'));
                         }}
                         className={`py-3 px-3 ${isActive(item.href || '/cars') ? 'bg-gray-50' : ''}`}
                       >
                         <div className="flex items-center space-x-3">
                           {item.icon && <item.icon size={18} className={`${isActive(item.href || '/cars') ? 'text-primary' : 'text-gray-500'}`} />}
-                          <span className="flex-1">მანქანები</span>
+                          <span className="flex-1">{t('cars')}</span>
                           <ChevronRight size={16} className="text-gray-400" />
                         </div>
                       </div>
                     ) : (
                       <Link
-                        to={item.href || '/'}
+                        to={langPath(item.href || '/')}
                         className={`py-3 px-3 flex items-center space-x-3 ${isActive(item.href || '/') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === item.href ? 'animate-quick-pulse' : ''}`}
                         onClick={() => {
                           setMobileMenuOpen(false);
@@ -286,17 +286,17 @@ const Header = () => {
 
           {/* Action Buttons */}
           <div className="mb-4">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">მოქმედებები</h3>
+            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('actions')}</h3>
             <div className="flex space-x-2 px-1">
               <Link 
-                to="/add-car" 
+                to={langPath('/add-car')} 
                 className="flex items-center justify-center py-2.5 px-3 bg-primary text-white rounded-md text-sm font-medium flex-1 shadow-sm hover:bg-primary/90 transition-colors"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   provideTouchFeedback('/add-car');
                 }}
               >
-                <span>+ მანქანის დამატება</span>
+                <span>+ {t('addCar')}</span>
               </Link>
               <Link 
                 to={langPath('/wishlist')} 
@@ -314,7 +314,7 @@ const Header = () => {
 
           {/* Account Section */}
           <div className="mb-4">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">ანგარიში</h3>
+            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('account')}</h3>
             <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
               {isAuthenticated ? (
                 <>
