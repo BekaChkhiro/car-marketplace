@@ -100,7 +100,7 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
     // Make the placeholder clickable to navigate to an advertisement page with language parameter
     return (
       <a 
-        href={`/${currentLang}/advertisements`} 
+        href={`/${currentLang}/advertising-spaces`} 
         target="_blank" 
         rel="noopener noreferrer"
         className="block"

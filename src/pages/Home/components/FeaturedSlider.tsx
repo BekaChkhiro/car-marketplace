@@ -75,7 +75,7 @@ const FeaturedSlider: React.FC = () => {
     // Make the placeholder clickable with language parameter
     return (
       <a 
-        href={`/${currentLang}/advertisements`} 
+        href={`/${currentLang}/advertising-spaces`} 
         target="_blank" 
         rel="noopener noreferrer"
         className="block h-full"
