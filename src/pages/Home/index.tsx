@@ -29,10 +29,6 @@ const Home: React.FC = () => {
   return (
     <HomeContainer>
       <HeroSection />
-      <AdvertisementDisplay 
-        placement="home_banner" 
-        className="w-full sm:w-[90%] md:w-full h-36 sm:h-40 md:h-48 lg:h-64 mx-0 sm:mx-auto my-4 sm:my-6 rounded-none sm:rounded-lg shadow-md" 
-      />
       <VipListings />
       <div className="w-full flex justify-center my-4">
         <AdvertisementDisplay 
