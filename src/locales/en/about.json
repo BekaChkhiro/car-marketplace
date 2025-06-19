@@ -1,3 +1,10 @@
 {
-  "aboutUsDescription": "Information about Big Way LLC. Autovend.ge - platform for car and spare parts listings"
+  "aboutUs": "About Us",
+  "companyName": "Big Way LLC",
+  "address": "Address",
+  "email": "Email",
+  "contactNumber": "Contact Number",
+  "platformDescription": "www.autovend.ge is a platform for posting listings where you can completely free of charge quickly and easily post listings for cars and spare parts for sale.",
+  "vipServices": "Also, if you wish, you will have the opportunity to use the paid VIP listing posting service.",
+  "advertising": "On the platform, you can post advertisements to promote your business or activity."
 }
