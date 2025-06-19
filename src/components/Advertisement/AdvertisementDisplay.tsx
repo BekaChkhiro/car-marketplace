@@ -9,7 +9,8 @@ interface AdvertisementDisplayProps {
 }
 
 const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, className = '' }) => {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
+  const currentLang = i18n.language; // Get current language at top level
   const [advertisement, setAdvertisement] = useState<Advertisement | null>(null);
   const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -96,14 +97,14 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
       </div>
     );
     
-    // Make the placeholder clickable to navigate to an advertisement page
+    // Make the placeholder clickable to navigate to an advertisement page with language parameter
     return (
       <a 
-        href="/advertisements" 
+        href={`/${currentLang}/advertisements`} 
         target="_blank" 
         rel="noopener noreferrer"
         className="block"
-        onClick={() => console.log('Advertisement placeholder clicked')}
+        onClick={() => console.log(`Advertisement placeholder clicked with language: ${currentLang}`)}
       >
         {placeholderContent}
       </a>

@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import advertisementService, { Advertisement } from '../../../api/services/advertisementService';
 
 const FeaturedSlider: React.FC = () => {
-  const { t } = useTranslation('home');
+  const { t, i18n } = useTranslation('home');
+  const currentLang = i18n.language; // Get current language at top level
   const [currentSlide, setCurrentSlide] = useState(0);
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,13 +64,25 @@ const FeaturedSlider: React.FC = () => {
   }
 
   if (advertisements.length === 0) {
-    return (
-      <section className="h-full bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold mb-2">{t('featuredCarsPlaceholder')}</h2>
-          <p className="text-gray-600">{t('comingSoon')}</p>
-        </div>
+    // Display the same advertisement placeholder as in AdvertisementDisplay component
+    const placeholderContent = (
+      <section className="h-full bg-[#009c6d] rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-[1.01]">
+        <div className="text-white font-medium text-3xl">რეკლამა</div>
+        <div className="text-white text-xl mt-3">+995 595 03 88 88</div>
       </section>
+    );
+    
+    // Make the placeholder clickable with language parameter
+    return (
+      <a 
+        href={`/${currentLang}/advertisements`} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="block h-full"
+        onClick={() => console.log(`Main slider advertisement placeholder clicked with language: ${currentLang}`)}
+      >
+        {placeholderContent}
+      </a>
     );
   }
   
