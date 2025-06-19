@@ -7,6 +7,7 @@ import TechnicalSpecs from './components/TechnicalSpecs';
 import Features from './components/Features';
 import Location from './components/Location';
 import Description from './components/Description';
+import VIPStatus from './components/VIPStatus';
 import { useCarForm } from './hooks/useCarForm';
 import { CarFeatures } from './types';
 
@@ -93,6 +94,11 @@ const AddCar: React.FC = () => {
               isUploading={isUploading}
             />
           </div>
+
+          <VIPStatus
+            vipStatus={formData.vip_status}
+            onChange={handleChange}
+          />
 
           <div className="sticky bottom-0 bg-white border py-4 px-6 rounded-b-xl shadow-lg transform translate-y-1">
             <div className="flex justify-end gap-4 max-w-5xl mx-auto">

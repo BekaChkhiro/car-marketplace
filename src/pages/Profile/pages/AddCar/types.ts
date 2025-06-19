@@ -58,6 +58,7 @@ export interface NewCarFormData {
   description_ka: string;
   description_en?: string;
   description_ru?: string;
+  vip_status: 'none' | 'vip' | 'vip_plus' | 'super_vip';
   location: {
     city: string;
     state: string;
@@ -293,6 +294,13 @@ export const LOCATION_TYPE_OPTIONS: Option[] = [
   { value: 'georgia', label: 'საქართველოში' },
   { value: 'transit', label: 'ტრანზიტში' },
   { value: 'international', label: 'საზღვარგარეთ' }
+];
+
+export const VIP_STATUS_OPTIONS: Option[] = [
+  { value: 'none', label: 'სტანდარტული' },
+  { value: 'vip', label: 'VIP' },
+  { value: 'vip_plus', label: 'VIP+' },
+  { value: 'super_vip', label: 'SUPER VIP' }
 ];
 
 // Georgian cities

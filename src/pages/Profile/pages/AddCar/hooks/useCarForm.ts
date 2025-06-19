@@ -40,6 +40,7 @@ export const useCarForm = () => {
       description_ka: '',
       description_en: '',
       description_ru: '',
+      vip_status: 'none', // Default VIP status is none
       location: {
         city: '',
         country: 'საქართველო',
