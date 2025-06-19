@@ -43,8 +43,8 @@ export const theme = {
   },
   typography: {
     fontFamily: {
-      primary: '"Inter", system-ui, -apple-system, sans-serif',
-      heading: '"Inter", system-ui, -apple-system, sans-serif'
+      primary: '"Helvetica", "Helvetica Neue", Arial, sans-serif',
+      heading: '"Helvetica", "Helvetica Neue", Arial, sans-serif'
     },
     lineHeight: {
       tight: '1.25',
