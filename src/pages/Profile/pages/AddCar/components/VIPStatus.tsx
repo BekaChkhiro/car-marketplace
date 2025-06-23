@@ -44,7 +44,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         >
           <div className="flex justify-between items-center mb-2">
             <h4 className="font-medium">VIP</h4>
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">10₾</span>
+            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">1 დღე 2 ლარი</span>
           </div>
           <p className="text-xs text-gray-500">გაზრდილი ხილვადობა</p>
         </div>
@@ -57,7 +57,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         >
           <div className="flex justify-between items-center mb-2">
             <h4 className="font-medium">VIP+</h4>
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">20₾</span>
+            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">1 დღე 5 ლარი</span>
           </div>
           <p className="text-xs text-gray-500">მაღალი ხილვადობა და გამორჩეული ბეჯი</p>
         </div>
@@ -70,7 +70,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         >
           <div className="flex justify-between items-center mb-2">
             <h4 className="font-medium">SUPER VIP</h4>
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">30₾</span>
+            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">1 დღე 7 ლარი</span>
           </div>
           <p className="text-xs text-gray-500">მაქსიმალური ხილვადობა და პრემიუმ ბეჯი</p>
         </div>
