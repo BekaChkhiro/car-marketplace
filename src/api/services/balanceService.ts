@@ -183,7 +183,7 @@ class BalanceService {
         requestData.bank = bank;
       }
       
-      const response = await api.post('/balance/online-payment', requestData, {
+      const response = await api.post('/api/balance/add-online', requestData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -209,7 +209,7 @@ class BalanceService {
         throw new Error('Authentication required');
       }
       
-      const response = await api.get(`/balance/payment-status/${orderId}`, {
+      const response = await api.get(`/api/balance/payment-status/${orderId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
