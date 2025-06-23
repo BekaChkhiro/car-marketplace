@@ -85,8 +85,8 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
         return 'მთავარი გვერდის სლაიდერი';
       case 'home_banner':
         return 'მთავარი გვერდის ბანერი';
-      case 'home_after_vip':
-        return 'მთავარი გვერდის VIP განცხადებების შემდეგ';
+      case 'home_after_vip_plus':
+        return 'მთავარი გვერდის VIP+ განცხადებების შემდეგ';
       case 'car_listing_top':
         return 'მანქანების ყიდვის გვერდი - ზედა';
       case 'car_listing_bottom':
@@ -220,7 +220,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                   <optgroup label="მთავარი გვერდი">
                     <option value="home_slider">სლაიდერი (1200×600px)</option>
                     <option value="home_banner">ზედა ბანერი (1200×300px)</option>
-                    <option value="home_after_vip">VIP განცხადებების შემდეგ (720×140px)</option>
+                    <option value="home_after_vip_plus">VIP+ განცხადებების შემდეგ (720×140px)</option>
                   </optgroup>
                   
                   {/* მანქანების ყიდვის გვერდი */}
@@ -323,13 +323,13 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                             </div>
                           </div>
                           
-                          {/* After VIP Highlight */}
-                          {formData.placement === 'home_after_vip' && (
+                          {/* After VIP+ Highlight */}
+                          {formData.placement === 'home_after_vip_plus' && (
                             <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
                               <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
                                 <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
                                   <div className="flex items-center justify-center">
-                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">თქვენი რეკლამა აქ</span>
+                                    <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">რეკლამა VIP+ განცხადებების შემდეგ</span>
                                   </div>
                                   <span className="text-xs mt-0.5 text-blue-600">720 × 140 px</span>
                                 </div>

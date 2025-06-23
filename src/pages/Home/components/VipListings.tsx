@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import VipCarousel from './VipCarousel';
 import { useTranslation } from 'react-i18next';
+import AdvertisementDisplay from '../../../components/Advertisement/AdvertisementDisplay';
 
 const VipListings: React.FC = () => {
   const { t } = useTranslation('home');
@@ -26,6 +27,14 @@ const VipListings: React.FC = () => {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">{t('vipPlusListings')}</h2>
           <VipCarousel vipType="vip_plus" limit={8} />
+        </div>
+
+        {/* Advertisement after VIP+ listings */}
+        <div className="w-full flex justify-center mb-8">
+          <AdvertisementDisplay 
+            placement="home_after_vip_plus" 
+            className="w-full md:w-[720px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+          />
         </div>
         
         {/* VIP Listings */}
