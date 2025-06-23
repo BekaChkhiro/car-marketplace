@@ -10,8 +10,11 @@ class UserProfileService {
    */
   async getProfileStatus(): Promise<boolean> {
     try {
-      const response = await api.get('/user/profile-status');
-      return response.data.profileCompleted;
+      // Temporarily skip the API call and always return true
+      // const response = await api.get('/user/profile-status');
+      // return response.data.profileCompleted;
+      console.log('Temporarily skipping profile status check');
+      return true;
     } catch (error) {
       console.error('Error checking profile status:', error);
       return true; // Default to true to avoid blocking UI if there's an error
