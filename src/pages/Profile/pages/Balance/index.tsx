@@ -3,11 +3,18 @@ import { TransactionHistory } from './components';
 import balanceService from '../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
 import { Button } from '../../../../components/ui';
-import { PlusCircle, RefreshCw, ChevronDown, ChevronUp, CreditCard } from 'lucide-react';
+import { PlusCircle, RefreshCw, ChevronDown, ChevronUp, CreditCard, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 
+
+// Bank option interface
+interface BankOption {
+  id: string;
+  name: string;
+  logoUrl: string;
+}
 
 const BalancePage: React.FC = () => {
   const { t } = useTranslation(['profile', 'common', 'transaction']);
@@ -20,6 +27,27 @@ const BalancePage: React.FC = () => {
   const [isOnlineLoading, setIsOnlineLoading] = useState<boolean>(false);
   const [showTransactions, setShowTransactions] = useState<boolean>(true);
   const [paymentProcessing, setPaymentProcessing] = useState<boolean>(false);
+  const [showBankOptions, setShowBankOptions] = useState<boolean>(false);
+  const [selectedBank, setSelectedBank] = useState<string>('flitt');
+  
+  // Available bank options
+  const bankOptions: BankOption[] = [
+    { 
+      id: 'flitt', 
+      name: 'Flitt', 
+      logoUrl: 'https://www.fin.ge/uploads/articles/file/Flitt_Logo.webp'
+    },
+    { 
+      id: 'bog', 
+      name: t('profile:balance.bankOfGeorgia', 'Bank of Georgia'), 
+      logoUrl: 'https://bog.ge/img/xlogo.svg.pagespeed.ic.KR-zg_zuDw.webp'
+    },
+    { 
+      id: 'tbc', 
+      name: 'TBC Bank', 
+      logoUrl: 'https://www.tbcbank.ge/web/static/media/tbc.c89cbb5a.svg'
+    }
+  ];
 
   // Check for query parameters on component mount for payment completion
   useEffect(() => {
@@ -27,32 +55,91 @@ const BalancePage: React.FC = () => {
     const paymentStatus = queryParams.get('status');
     const orderId = queryParams.get('orderId');
     const errorParam = queryParams.get('error');
+    const provider = queryParams.get('provider') || 'online';
+    const isBogPayment = provider === 'bog';
 
     if (orderId) {
       if (paymentStatus === 'success') {
-        toast.success(t('profile:balance.onlinePaymentSuccess', 'ონლაინ გადახდა წარმატებით დასრულდა'));
-        // Clear query params
-        navigate('/profile/balance', { replace: true });
+        // Different message for Bank of Georgia payments
+        if (isBogPayment) {
+          toast.success(t('profile:balance.bogPaymentSuccess', 'საქართველოს ბანკის გადახდა წარმატებით დასრულდა'));
+        } else {
+          toast.success(t('profile:balance.onlinePaymentSuccess', 'ონლაინ გადახდა წარმატებით დასრულდა'));
+        }
+        
         // Refresh balance
         fetchBalance();
-      } else if (paymentStatus === 'failed') {
-        toast.error(t('profile:balance.onlinePaymentFailed', 'ონლაინ გადახდა ვერ დასრულდა'));
+        
         // Clear query params
         navigate('/profile/balance', { replace: true });
-      } else {
+      } else if (paymentStatus === 'failed') {
+        if (isBogPayment) {
+          toast.error(t('profile:balance.bogPaymentFailed', 'საქართველოს ბანკის გადახდა ვერ დასრულდა'));
+        } else {
+          toast.error(t('profile:balance.onlinePaymentFailed', 'ონლაინ გადახდა ვერ დასრულდა'));
+        }
+        
+        // Clear query params
+        navigate('/profile/balance', { replace: true });
+      } else if (paymentStatus === 'pending') {
         setPaymentProcessing(true);
         // Show a toast that we're waiting for payment confirmation
-        toast.loading(t('profile:balance.waitingForPayment', 'ველოდებით გადახდის დასტურს...'), {
-          duration: 5000
-        });
+        toast.loading(
+          isBogPayment 
+            ? t('profile:balance.waitingForBogPayment', 'ველოდებით საქართველოს ბანკის გადახდის დასტურს...')
+            : t('profile:balance.waitingForPayment', 'ველოდებით გადახდის დასტურს...'), 
+          { duration: 8000 }
+        );
         
-        // After 5 seconds, check balance and clear processing state
+        // Check for payment completion a few times
+        const checkPaymentStatus = async () => {
+          try {
+            // Check if transaction is completed
+            const isComplete = await balanceService.checkPaymentStatus(orderId);
+            if (isComplete) {
+              toast.success(
+                isBogPayment
+                  ? t('profile:balance.bogPaymentProcessed', 'საქართველოს ბანკის გადახდა დამუშავებულია')
+                  : t('profile:balance.paymentProcessed', 'გადახდა დამუშავებულია')
+              );
+              await fetchBalance();
+              setPaymentProcessing(false);
+              navigate('/profile/balance', { replace: true });
+              return true;
+            }
+            return false;
+          } catch (error) {
+            console.error('Error checking payment status:', error);
+            return false;
+          }
+        };
+        
+        // Try checking a few times with increasing intervals
+        setTimeout(async () => {
+          if (await checkPaymentStatus()) return;
+          
+          setTimeout(async () => {
+            if (await checkPaymentStatus()) return;
+            
+            setTimeout(async () => {
+              await checkPaymentStatus();
+              // Clear processing state even if not successful after final check
+              setPaymentProcessing(false);
+              navigate('/profile/balance', { replace: true });
+            }, 5000); // Third check after 5 more seconds
+          }, 3000); // Second check after 3 seconds
+        }, 2000); // First check after 2 seconds
+      } else {
+        // Unknown payment status
+        setPaymentProcessing(true);
+        toast.loading(t('profile:balance.checkingPayment', 'ვამოწმებთ გადახდის სტატუსს...'), { duration: 3000 });
+        
+        // After a brief delay, refresh and stop processing
         setTimeout(() => {
           fetchBalance();
           setPaymentProcessing(false);
-          // Clear query params
           navigate('/profile/balance', { replace: true });
-        }, 5000);
+        }, 3000);
       }
     }
     
@@ -97,7 +184,7 @@ const BalancePage: React.FC = () => {
     }
   };
   
-  // New method for online payment
+  // New method for online payment with bank selection
   const handleOnlinePayment = async () => {
     if (addAmount <= 0) {
       toast.error(t('profile:balance.invalidAmount', 'გთხოვთ შეიყვანოთ სწორი თანხა'));
@@ -106,11 +193,21 @@ const BalancePage: React.FC = () => {
     
     setIsOnlineLoading(true);
     try {
-      const response = await balanceService.addFundsOnline(addAmount);
+      // Pass the selectedBank to the service
+      const response = await balanceService.addFundsOnline(addAmount, selectedBank);
       
       if (response.success && response.paymentUrl) {
+        // Show which bank is being used
+        const bankName = bankOptions.find(b => b.id === selectedBank)?.name || 'Online';
+        toast.success(
+          t('profile:balance.redirectingToBank', { defaultValue: 'მიმდინარეობს გადამისამართება {{bank}}-ზე...', bank: bankName }),
+          { duration: 2000 }
+        );
+        
         // Redirect to payment page
-        window.location.href = response.paymentUrl;
+        setTimeout(() => {
+          window.location.href = response.paymentUrl;
+        }, 500);
         // Don't reset loading state as we're redirecting away
       } else {
         toast.error(t('profile:balance.paymentInitFailed', 'გადახდის ინიციალიზაცია ვერ მოხერხდა'));
@@ -121,6 +218,17 @@ const BalancePage: React.FC = () => {
       toast.error(t('profile:balance.paymentInitFailed', 'გადახდის ინიციალიზაცია ვერ მოხერხდა'));
       setIsOnlineLoading(false);
     }
+  };
+  
+  // Toggle bank selection options
+  const toggleBankOptions = () => {
+    setShowBankOptions(!showBankOptions);
+  };
+  
+  // Select a bank for payment
+  const selectBank = (bankId: string) => {
+    setSelectedBank(bankId);
+    setShowBankOptions(false);
   };
 
   return (
@@ -160,9 +268,57 @@ const BalancePage: React.FC = () => {
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">GEL</span>
             </div>
             
+            {/* Bank selection */}
+            <div className="relative w-full sm:w-48">
+              <div 
+                onClick={toggleBankOptions} 
+                className="cursor-pointer border border-green-lighter bg-white rounded-md py-3 sm:py-2 px-3 flex justify-between items-center"
+                aria-haspopup="listbox"
+                aria-expanded={showBankOptions}
+              >
+                <div className="flex items-center">
+                  <div className="w-6 h-6 mr-2 flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={bankOptions.find(b => b.id === selectedBank)?.logoUrl || ''}
+                      alt={bankOptions.find(b => b.id === selectedBank)?.name || 'Bank'}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                  <span className="text-sm truncate">
+                    {bankOptions.find(b => b.id === selectedBank)?.name || 'Bank'}
+                  </span>
+                </div>
+                <ChevronDown size={16} className="text-gray-500" />
+              </div>
+              
+              {showBankOptions && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-green-lighter rounded-md shadow-lg py-1">
+                  {bankOptions.map(bank => (
+                    <div
+                      key={bank.id}
+                      onClick={() => selectBank(bank.id)}
+                      className="px-3 py-2 flex items-center hover:bg-green-lightest cursor-pointer"
+                    >
+                      <div className="w-6 h-6 mr-2 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={bank.logoUrl}
+                          alt={bank.name}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <span className="text-sm">{bank.name}</span>
+                      {selectedBank === bank.id && (
+                        <Check size={14} className="ml-auto text-primary" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
             {/* Payment button */}
             <div className="w-full sm:w-auto">
-              {/* Online payment with Flitt */}
+              {/* Online payment with selected bank */}
               <Button
                 onClick={handleOnlinePayment}
                 disabled={isOnlineLoading || paymentProcessing}

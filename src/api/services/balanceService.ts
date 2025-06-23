@@ -84,9 +84,26 @@ export interface PurchaseVipResponse {
  */
 export interface OnlinePaymentResponse {
   success: boolean;
-  orderId: string;
-  paymentUrl: string;
-  message: string;
+  paymentUrl?: string;
+  orderId?: string;
+  message?: string;
+}
+
+/**
+ * Interface for payment status check response
+ */
+export interface PaymentStatusResponse {
+  success: boolean;
+  status: 'pending' | 'completed' | 'failed';
+  message?: string;
+}
+
+/**
+ * Interface for adding funds online with bank selection
+ */
+export interface OnlinePaymentRequest {
+  amount: number;
+  bank?: string;
 }
 
 class BalanceService {
@@ -146,11 +163,12 @@ class BalanceService {
   }
   
   /**
-   * Add funds using online payment (Flitt)
+   * Add funds using online payment with bank selection
    * @param amount Amount to add in GEL
+   * @param bank Optional bank provider to use (flitt, bog, tbc)
    * @returns Payment session information including redirect URL
    */
-  async addFundsOnline(amount: number): Promise<OnlinePaymentResponse> {
+  async addFundsOnline(amount: number, bank?: string): Promise<OnlinePaymentResponse> {
     try {
       const token = getAccessToken();
       
@@ -158,20 +176,51 @@ class BalanceService {
         throw new Error('Authentication required');
       }
       
-      const response = await api.post<OnlinePaymentResponse>(
-        '/api/balance/add-online',
-        { amount },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+      const requestData: OnlinePaymentRequest = { amount };
+      
+      // Add bank selection if provided
+      if (bank) {
+        requestData.bank = bank;
+      }
+      
+      const response = await api.post('/balance/online-payment', requestData, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      );
+      });
       
       return response.data;
     } catch (error) {
-      console.error('Error initializing online payment:', error);
+      console.error('Error initiating online payment:', error);
       throw error;
+    }
+  }
+  
+  /**
+   * Check the status of a payment transaction
+   * @param orderId The order ID or transaction reference to check
+   * @returns Boolean indicating if payment is completed (true) or still pending (false)
+   */
+  async checkPaymentStatus(orderId: string): Promise<boolean> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const response = await api.get(`/balance/payment-status/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Return true if payment is completed
+      return response.data.status === 'completed';
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      // On error, assume payment is not completed
+      return false;
     }
   }
   
