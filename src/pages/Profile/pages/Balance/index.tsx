@@ -41,11 +41,6 @@ const BalancePage: React.FC = () => {
       id: 'bog', 
       name: t('profile:balance.bankOfGeorgia', 'Bank of Georgia'), 
       logoUrl: 'https://bog.ge/img/xlogo.svg.pagespeed.ic.KR-zg_zuDw.webp'
-    },
-    { 
-      id: 'tbc', 
-      name: 'TBC Bank', 
-      logoUrl: 'https://www.tbcbank.ge/web/static/media/tbc.c89cbb5a.svg'
     }
   ];
 
@@ -277,13 +272,6 @@ const BalancePage: React.FC = () => {
                 aria-expanded={showBankOptions}
               >
                 <div className="flex items-center">
-                  <div className="w-6 h-6 mr-2 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={bankOptions.find(b => b.id === selectedBank)?.logoUrl || ''}
-                      alt={bankOptions.find(b => b.id === selectedBank)?.name || 'Bank'}
-                      className="max-w-full max-h-full object-contain"
-                    />
-                  </div>
                   <span className="text-sm truncate">
                     {bankOptions.find(b => b.id === selectedBank)?.name || 'Bank'}
                   </span>
@@ -299,13 +287,6 @@ const BalancePage: React.FC = () => {
                       onClick={() => selectBank(bank.id)}
                       className="px-3 py-2 flex items-center hover:bg-green-lightest cursor-pointer"
                     >
-                      <div className="w-6 h-6 mr-2 flex items-center justify-center overflow-hidden">
-                        <img 
-                          src={bank.logoUrl}
-                          alt={bank.name}
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      </div>
                       <span className="text-sm">{bank.name}</span>
                       {selectedBank === bank.id && (
                         <Check size={14} className="ml-auto text-primary" />
