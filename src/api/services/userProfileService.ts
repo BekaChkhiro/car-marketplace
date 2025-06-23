@@ -10,7 +10,7 @@ class UserProfileService {
    */
   async getProfileStatus(): Promise<boolean> {
     try {
-      const response = await api.get('/api/user/profile-status');
+      const response = await api.get('/user/profile-status');
       return response.data.profileCompleted;
     } catch (error) {
       console.error('Error checking profile status:', error);
