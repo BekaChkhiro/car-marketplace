@@ -1,10 +1,12 @@
 import React from 'react';
 
-// Import the logo files
+// Import images directly
 import visaLogo from '../../../../assets/images/visa-logo.webp';
-import mastercardLogo from '../../../../assets/images/mastercard-logo.svg';
+// Use the simplified SVG for MasterCard to avoid namespace issues
+import mastercardLogo from '../../../../assets/images/simple-mastercard.svg';
 
 const PaymentMethods: React.FC = () => {
+
   return (
     <div className="payment-methods">
       <h3 className="text-lg font-semibold mb-4">გადახდის მეთოდები</h3>
