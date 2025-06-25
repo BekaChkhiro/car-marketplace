@@ -18,7 +18,7 @@ const AboutPage: React.FC = () => {
           
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-100">
             <div className="mb-6">
-              <p className="mb-2 text-gray-700">{t('companyName')} ს/ნ 436063867;</p>
+              <p className="mb-2 text-gray-700">შპს „ბიგ ვეი" ს/ნ 436063867;</p>
               <p className="mb-2 text-gray-700">{t('address')} მცხეთის რაიონი, სოფელი მისაქციელი, 1-ლი ქუჩის VII შესახვევი, N10;</p>
               <p className="mb-2 text-gray-700">{t('email')}: <a href="mailto:info@autovend.ge" className="text-primary hover:underline">info@autovend.ge</a></p>
               <p className="mb-2 text-gray-700">{t('contactNumber')}: <a href="tel:+995595038888" className="text-primary hover:underline">595 03 88 88</a></p>
