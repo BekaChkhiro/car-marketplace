@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Check, AlertCircle } from 'lucide-react';
+import { Star, Check, AlertCircle, Paintbrush, RefreshCw } from 'lucide-react';
 import vipService, { VipStatus } from '../../../../../api/services/vipService';
 import { useToast } from '../../../../../context/ToastContext';
 import balanceService from '../../../../../api/services/balanceService';
@@ -15,6 +15,8 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
   const [userBalance, setUserBalance] = useState<number>(0);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [selectedVipStatus, setSelectedVipStatus] = useState<VipStatus>('none');
+  const [colorHighlighting, setColorHighlighting] = useState<boolean>(false);
+  const [autoRenewal, setAutoRenewal] = useState<boolean>(false);
   
   useEffect(() => {
     fetchUserBalance();
@@ -32,6 +34,16 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
   
   const handleStatusChange = (status: 'none' | 'vip' | 'vip_plus' | 'super_vip') => {
     onChange('vip_status', status);
+  };
+
+  const handleColorHighlightingChange = (enabled: boolean) => {
+    setColorHighlighting(enabled);
+    onChange('color_highlighting', enabled);
+  };
+
+  const handleAutoRenewalChange = (enabled: boolean) => {
+    setAutoRenewal(enabled);
+    onChange('auto_renewal', enabled);
   };  
   
   const getVipPrice = (status: VipStatus): number => {
@@ -47,6 +59,17 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
     }
   };
   
+  const getAdditionalServicesPrice = (): number => {
+    let price = 0;
+    if (colorHighlighting) price += 0.5;
+    if (autoRenewal) price += 0.5;
+    return price;
+  };
+  
+  const getTotalPrice = (status: VipStatus): number => {
+    return getVipPrice(status) + getAdditionalServicesPrice();
+  };
+  
   const handlePurchaseClick = (status: VipStatus) => {
     setSelectedVipStatus(status);
     setShowConfirmModal(true);
@@ -55,9 +78,9 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
   const confirmPurchase = async () => {
     if (selectedVipStatus === 'none') return;
     
-    const price = getVipPrice(selectedVipStatus);
+    const totalPrice = getTotalPrice(selectedVipStatus);
     
-    if (userBalance < price) {
+    if (userBalance < totalPrice) {
       showToast('არასაკმარისი ბალანსი', 'error');
       setShowConfirmModal(false);
       return;
@@ -68,7 +91,20 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
       // The car isn't created yet, so we can't use the purchase API
       // Instead we'll just select the status and it will be applied when the car is created
       handleStatusChange(selectedVipStatus);
-      showToast(`VIP სტატუსი არჩეულია. მანქანის დამატების შემდეგ ${price} ლარი ჩამოგეჭრებათ ბალანსიდან.`, 'success');
+      
+      // Also save the additional options state
+      onChange('color_highlighting', colorHighlighting);
+      onChange('auto_renewal', autoRenewal);
+      
+      let additionalServices = [];
+      if (colorHighlighting) additionalServices.push('ფერის გამოყოფა');
+      if (autoRenewal) additionalServices.push('ავტომატური განახლება');
+      
+      const additionalServicesText = additionalServices.length > 0 
+        ? ` და დამატებითი სერვისები: ${additionalServices.join(', ')}` 
+        : '';
+      
+      showToast(`VIP სტატუსი${additionalServicesText} არჩეულია. მანქანის დამატების შემდეგ ${totalPrice} ლარი ჩამოგეჭრებათ ბალანსიდან.`, 'success');
     } catch (error) {
       console.error('Error setting VIP status:', error);
       showToast('VIP სტატუსის არჩევა ვერ მოხერხდა', 'error');
@@ -83,7 +119,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <Star className="text-yellow-500 mr-2" size={20} />
-          <h3 className="text-lg font-medium">VIP სტატუსი</h3>
+          <h3 className="text-lg font-medium">VIP სტატუსი და დამატებითი სერვისები</h3>
         </div>
         <div className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm">
           ბალანსი: {userBalance} ლარი
@@ -91,17 +127,29 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
       </div>
       
       <p className="text-sm text-gray-500 mb-4">
-        აირჩიეთ VIP სტატუსი თქვენი განცხადებისთვის. VIP სტატუსი გაზრდის თქვენი განცხადების ხილვადობას.
+        აირჩიეთ VIP სტატუსი და დამატებითი სერვისები თქვენი განცხადებისთვის.
       </p>
       
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">VIP სტატუსის შეძენის დადასტურება</h3>
-            <p className="mb-4">
+            <p className="mb-2">
               გსურთ შეიძინოთ {selectedVipStatus === 'vip' ? 'VIP' : selectedVipStatus === 'vip_plus' ? 'VIP+' : 'SUPER VIP'} სტატუსი?
             </p>
-            <p className="mb-6">ფასი: {getVipPrice(selectedVipStatus)} ლარი (1 დღე)</p>
+            
+            {/* Show selected additional services */}
+            {(colorHighlighting || autoRenewal) && (
+              <div className="mb-3 text-sm">
+                <p className="font-medium">დამატებითი სერვისები:</p>
+                <ul className="list-disc list-inside pl-2">
+                  {colorHighlighting && <li>ფერის გამოყოფა (0.5 ლარი/დღე)</li>}
+                  {autoRenewal && <li>ავტომატური განახლება (0.5 ლარი/დღე)</li>}
+                </ul>
+              </div>
+            )}
+            
+            <p className="mb-6 font-medium">საერთო ფასი: {getTotalPrice(selectedVipStatus)} ლარი (1 დღე)</p>
             
             <div className="flex justify-end space-x-4">
               <button
@@ -112,7 +160,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
               </button>
               <button
                 onClick={confirmPurchase}
-                disabled={isPurchasing || userBalance < getVipPrice(selectedVipStatus)}
+                disabled={isPurchasing || userBalance < getTotalPrice(selectedVipStatus)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
               >
                 {isPurchasing ? 'მიმდინარეობს...' : 'დადასტურება'}
@@ -121,6 +169,60 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
           </div>
         </div>
       )}
+      
+      {/* Additional Services - Independent of VIP status */}
+      <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h4 className="font-medium mb-3">დამატებითი სერვისები</h4>
+        <div className="space-y-4">
+          {/* Color Highlighting */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Paintbrush size={16} className="text-blue-500 mr-2" />
+              <div>
+                <p className="text-sm font-medium">ფერის გამოყოფა</p>
+                <p className="text-xs text-gray-500">თქვენი განცხადება გამოირჩევა ფერადი ფონით</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2">1 დღე 0.5 ლარი</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={colorHighlighting}
+                  onChange={(e) => handleColorHighlightingChange(e.target.checked)}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+          </div>
+          
+          {/* Auto Renewal */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <RefreshCw size={16} className="text-green-500 mr-2" />
+              <div>
+                <p className="text-sm font-medium">ავტომატური განახლება</p>
+                <p className="text-xs text-gray-500">განცხადება ავტომატურად განახლდება ყოველდღე</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2">1 დღე 0.5 ლარი</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={autoRenewal}
+                  onChange={(e) => handleAutoRenewalChange(e.target.checked)}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h4 className="font-medium mb-3">VIP სტატუსი</h4>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div 
