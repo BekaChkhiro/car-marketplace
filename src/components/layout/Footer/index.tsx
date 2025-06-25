@@ -3,6 +3,7 @@ import AboutSection from './components/AboutSection';
 import QuickLinks from './components/QuickLinks';
 import ContactInfo from './components/ContactInfo';
 import SocialLinks from './components/SocialLinks';
+import PaymentMethods from './components/PaymentMethods';
 
 const Footer: React.FC = () => {
   return (
@@ -27,11 +28,14 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Copyright section */}
-        <div className="text-center mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t">
-          <p className="text-gray-dark text-sm pb-6">
-            &copy; {new Date().getFullYear()} Autovend.ge ყველა უფლება დაცულია.
-          </p>
+        {/* Payment methods and copyright section */}
+        <div className="mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+            <PaymentMethods />
+            <p className="text-gray-dark text-sm mt-6 sm:mt-0">
+              &copy; {new Date().getFullYear()} Autovend.ge ყველა უფლება დაცულია.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
