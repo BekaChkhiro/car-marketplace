@@ -12,12 +12,7 @@ const TermsAndConditions: React.FC = () => {
         
         <section>
           <h2 className="text-xl font-semibold mb-4 text-gray-900">განცხადებების განთავსება</h2>
-          <div className="space-y-4">
-            <p>
-            განცხადების განსათავსებლად უნდა გაიაროთ მარტივი რეგისტრაცია ელ.ფოსტის, Google-ის ან Facebook-ის მეშვეობით. რეგისტრირებულ მომხმარებელს შესაძლებლობა აქვს განათავსოს შეუზღუდავი რაოდენობის განცხადება. განცხადების შევსება მოხდება პლატფორმაზე არსებული ფორმის დახმარებით.
-საიტზე განთავსებული არათემატური ან/და პლატფორმის სპეციფიკიდან გამომდინარე შეუსაბამო განცხადება წაიშლება საიტის ადმინისტრაციის მიერ.
-            </p>
-          </div>
+          ≈
         </section>
 
         <section>
@@ -37,6 +32,8 @@ const TermsAndConditions: React.FC = () => {
               <li>ავტომატური განახლება - 1 დღე 0,5 ლარი</li>
             </ul>
           </div>
+
+          https://meet.google.com/xjo-nage-aikhttps://meet.google.com/xjo-nage-aik
         </section>
 
         <section>
