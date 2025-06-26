@@ -38,13 +38,23 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
 
   useEffect(() => {
     // Initialize Facebook SDK
+    console.log('Initializing Facebook SDK with App ID:', process.env.REACT_APP_FACEBOOK_APP_ID);
+    
+    if (!process.env.REACT_APP_FACEBOOK_APP_ID) {
+      console.error('REACT_APP_FACEBOOK_APP_ID is not defined in .env file');
+      showToast('Facebook App ID is not configured', 'error');
+      return;
+    }
+    
     window.fbAsyncInit = () => {
+      console.log('Facebook SDK loaded, initializing...');
       window.FB?.init({
         appId: process.env.REACT_APP_FACEBOOK_APP_ID,
         cookie: true,
         xfbml: true,
         version: 'v18.0'
       });
+      console.log('Facebook SDK initialized');
     };
 
     // Load Facebook SDK
@@ -52,25 +62,59 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
     script.src = 'https://connect.facebook.net/en_US/sdk.js';
     script.async = true;
     script.defer = true;
+    script.onload = () => console.log('Facebook SDK script loaded');
+    script.onerror = (e) => console.error('Error loading Facebook SDK:', e);
     document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script);
-      delete window.fbAsyncInit;
+      try {
+        document.body.removeChild(script);
+        delete window.fbAsyncInit;
+      } catch (error) {
+        console.error('Error cleaning up Facebook SDK:', error);
+      }
     };
-  }, []);
+  }, [showToast]);
 
   const handleClick = () => {
-    window.FB?.login((response) => {
-      if (response.authResponse) {
-        window.FB?.api('/me', { fields: 'email' }, (userInfo) => {
-          handleFacebookResponse({
-            email: userInfo.email,
-            accessToken: response.authResponse.accessToken
+    console.log('Facebook login button clicked');
+    
+    if (!window.FB) {
+      console.error('Facebook SDK not loaded or initialized');
+      showToast('Facebook SDK not loaded. Please try again later.', 'error');
+      return;
+    }
+    
+    try {
+      window.FB.login((response) => {
+        console.log('Facebook login response:', response);
+        
+        if (response.authResponse) {
+          console.log('Facebook auth successful, getting user info');
+          
+          window.FB.api('/me', { fields: 'email' }, (userInfo) => {
+            console.log('Facebook user info:', userInfo);
+            
+            if (!userInfo.email) {
+              console.error('Facebook did not return email');
+              showToast('Could not get email from Facebook. Please try another login method.', 'error');
+              return;
+            }
+            
+            handleFacebookResponse({
+              email: userInfo.email,
+              accessToken: response.authResponse.accessToken
+            });
           });
-        });
-      }
-    }, { scope: 'email' });
+        } else {
+          console.log('User cancelled login or did not fully authorize');
+          showToast('Facebook login was cancelled or not authorized', 'info');
+        }
+      }, { scope: 'email' });
+    } catch (error) {
+      console.error('Error during Facebook login:', error);
+      showToast('Error during Facebook login. Please try again.', 'error');
+    }
   };
 
   return (
