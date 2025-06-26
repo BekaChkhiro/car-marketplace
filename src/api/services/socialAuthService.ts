@@ -56,6 +56,21 @@ class SocialAuthService {
     }
   }
 
+  // Handle Facebook OAuth callback
+  async handleFacebookCallback(code: string): Promise<AuthResponse> {
+    try {
+      const response = await api.post<AuthResponse>('/api/auth/facebook/callback', { code });
+      
+      if (response.data.token && response.data.refreshToken) {
+        setStoredToken(response.data.token, response.data.refreshToken);
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Facebook login failed');
+    }
+  }
+
   // Method to link social account to existing account
   async linkSocialAccount(provider: 'google' | 'facebook', accessToken: string): Promise<void> {
     try {
