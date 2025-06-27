@@ -258,6 +258,13 @@ const AdvertisingSpaces: React.FC = () => {
             'Place your advertisement on our platform and get maximum visibility. We offer various advertising spaces at different prices.' : 
             'Разместите свою рекламу на нашей платформе и получите максимальную видимость. Мы предлагаем различные рекламные места по разным ценам.'}
         </p>
+        <p className="text-gray-700 mb-4">
+          {currentLang === 'ka' ? 
+            `„რეკლამის შესახებ“ საქართველოს კანონით გათვალისწინებული შეზღუდვების მხედველობაში მიღებით პლატფორმაზე არ განთავსდება: ალკოჰოლიანი სასმელის; სექსუალური ხასიათის პროდუქციის; თაბაქოს ნაწარმის, თამბაქოს აქსესუარის ან/და თამბაქოს მოხმარებისთვის განკუთვნილი მოწყობილობის; აზარტული თამაშობის, ტოტალიზატორის, ლოტოს, ბინგოს, აზარტული თამაშობის ორგანიზატორის, ტოტალიზატორის ორგანიზატორის და ბინგოს ორგანიზატორის შესახებ; საბრძოლო იარაღის; სპეციალურ კონტროლს დაქვემდებარებული (პირველი ჯგუფისთვის მიკუთვნებული), მეორე ჯგუფისათვის მიკუთვნებული და საქართველოს ბაზარზე დაშვების უფლების არმქონე ფარმაცევტული პროდუქტის; ჩვილ ბავშვთა ხელოვნური კვების პროდუქტის (გარდა დამატებითი საკვებისა), საწოვრიანი ბოთლებისა და სატყუარების ნებისმიერი სახის რეკლამა.` : 
+           currentLang === 'en' ? 
+            `Taking into account the restrictions provided for by the Georgian Law on Advertising, the following will not be placed on the platform: alcoholic beverages; sexually explicit products; tobacco products, tobacco accessories and/or devices intended for tobacco consumption; gambling, totalizator, lotto, bingo, gambling organizer, totalizator organizer and bingo organizer; weapons; pharmaceutical products subject to special control (belonging to the first group), belonging to the second group and not having the right to enter the Georgian market; any type of advertising of artificial infant food products (except for complementary foods), feeding bottles and baits.` : 
+            `Принимая во внимание ограничения, предусмотренные Законом Грузии «О рекламе», на платформе не будут размещаться: алкогольные напитки; продукция откровенно сексуального характера; табачные изделия, табачные принадлежности и/или устройства, предназначенные для потребления табака; азартные игры, тотализатор, лото, бинго, организатор азартных игр, организатор тотализатора и бинго; оружие; фармацевтические товары, подлежащие особому контролю (относящиеся к первой группе), относящиеся ко второй группе и не имеющие права доступа на рынок Грузии; любые виды рекламы искусственных продуктов детского питания (за исключением продуктов прикорма), бутылочек для кормления и приманок.`}
+        </p>
         <p className="text-gray-700">
           {currentLang === 'ka' ? 
             'დაგვიკავშირდით რეკლამის განსათავსებლად ან დამატებითი ინფორმაციისთვის.' : 
