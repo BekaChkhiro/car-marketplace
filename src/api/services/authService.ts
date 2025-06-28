@@ -155,7 +155,7 @@ class AuthService {
   async updateProfile(data: Partial<User>): Promise<User> {
     try {
       const response = await this.fetchWithRetry(() =>
-        api.put<{ user: User, message: string }>('/api/auth/profile', data)
+        api.put<{ user: User, message: string }>('/api/user/update-profile', data)
       );
       return response.data.user;
     } catch (error: any) {
