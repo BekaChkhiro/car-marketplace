@@ -512,17 +512,33 @@ class CarService {
         if (key === 'images') {
           // Add each image file to the form data
           const files = value as File[];
-          files.forEach(file => {
-            formData.append('images', file);
-          });
+          if (files && Array.isArray(files)) {
+            files.forEach(file => {
+              formData.append('images', file);
+            });
+          } else {
+            console.warn('[CarService.createCar] Images is not an array:', value);
+          }
         } else if (key === 'specifications' || key === 'location' || key === 'features') {
           // Convert objects and arrays to JSON strings
-          formData.append(key, JSON.stringify(value));
+          try {
+            // Ensure we have a valid object to stringify
+            const safeValue = value || {};
+            formData.append(key, JSON.stringify(safeValue));
+            console.log(`[CarService.createCar] ${key} data:`, JSON.stringify(safeValue));
+          } catch (jsonError) {
+            console.error(`[CarService.createCar] Error stringifying ${key}:`, jsonError);
+            // Add empty object as fallback
+            formData.append(key, '{}');
+          }
         } else {
           // Add other fields as is
-          formData.append(key, String(value));
+          formData.append(key, value !== undefined && value !== null ? String(value) : '');
         }
       });
+      
+      // Log what's being sent to the server
+      console.log('[CarService.createCar] Sending car data to server');
       
       const response = await api.post('/api/cars', formData, {
         headers: {
@@ -531,9 +547,20 @@ class CarService {
         }
       });
       
+      console.log('[CarService.createCar] Car created successfully:', response.data);
       return response.data;
     } catch (error: any) {
       console.error('[CarService.createCar] Error:', error);
+      
+      // Log more detailed error information
+      if (error.response) {
+        console.error('[CarService.createCar] Server response:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      }
+      
       throw error;
     }
   }

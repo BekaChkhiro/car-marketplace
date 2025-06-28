@@ -222,6 +222,50 @@ export const useCarForm = () => {
   const cleanFormData = (): CreateCarFormData => {
     // Create a deep copy of the form data
     const cleanedData = JSON.parse(JSON.stringify(formData)) as CreateCarFormData;
+
+    // Make sure location object is complete
+    if (!cleanedData.location) {
+      cleanedData.location = {
+        city: '',
+        country: 'საქართველო',
+        location_type: 'georgia',
+        is_transit: false
+      };
+    }
+    
+    // Make sure specifications object is complete
+    if (!cleanedData.specifications) {
+      cleanedData.specifications = {
+        transmission: '',
+        fuel_type: '',
+        body_type: '',
+        drive_type: '',
+        steering_wheel: 'left',
+        mileage: 0,
+        mileage_unit: 'km',
+        color: '',
+        engine_size: 0
+      };
+    }
+    
+    // Convert the features object to a string array as required by the API
+    // The API expects features as a string[] where each string is a feature name
+    const featuresArray: string[] = [];
+    
+    if (cleanedData.features) {
+      // Loop through all feature properties and add enabled ones to the array
+      Object.entries(cleanedData.features).forEach(([key, value]) => {
+        // Convert value to boolean and check if it's true
+        if (Boolean(value) === true) {
+          // Remove the 'has_' prefix if present and add to the array
+          const featureName = key.startsWith('has_') ? key.substring(4) : key;
+          featuresArray.push(featureName);
+        }
+      });
+    }
+    
+    // Replace the features object with the array
+    cleanedData.features = featuresArray;
     
     // Ensure numeric fields are properly formatted
     if (cleanedData.specifications) {
@@ -243,36 +287,51 @@ export const useCarForm = () => {
           console.warn('Invalid engine size value:', cleanedData.specifications.engine_size);
           cleanedData.specifications.engine_size = 0; // Default to 0 if invalid
         }
+      } else {
+        cleanedData.specifications.engine_size = 0; // Default value if undefined
       }
       
       // Ensure other numeric fields are numbers
       if (cleanedData.specifications.mileage !== undefined) {
         const mileage = Number(cleanedData.specifications.mileage);
         cleanedData.specifications.mileage = !isNaN(mileage) ? mileage : 0;
+      } else {
+        cleanedData.specifications.mileage = 0;
       }
       
       if (cleanedData.specifications.cylinders !== undefined) {
         const cylinders = Number(cleanedData.specifications.cylinders);
         cleanedData.specifications.cylinders = !isNaN(cylinders) ? Math.round(cylinders) : 0; // Ensure it's an integer
+      } else {
+        cleanedData.specifications.cylinders = 0;
       }
       
       if (cleanedData.specifications.airbags_count !== undefined) {
         const airbagsCount = Number(cleanedData.specifications.airbags_count);
         cleanedData.specifications.airbags_count = !isNaN(airbagsCount) ? Math.round(airbagsCount) : 0; // Ensure it's an integer
+      } else {
+        cleanedData.specifications.airbags_count = 0;
       }
       
       if (cleanedData.specifications.horsepower !== undefined) {
         const horsepower = Number(cleanedData.specifications.horsepower);
         cleanedData.specifications.horsepower = !isNaN(horsepower) ? Math.round(horsepower) : 0; // Ensure it's an integer
+      } else {
+        cleanedData.specifications.horsepower = 0;
       }
       
-      // Ensure boolean fields are properly formatted
-      if (cleanedData.specifications.has_board_computer !== undefined) {
-        cleanedData.specifications.has_board_computer = Boolean(cleanedData.specifications.has_board_computer);
+      // Ensure string fields are not undefined
+      if (!cleanedData.specifications.body_type) {
+        cleanedData.specifications.body_type = '';
       }
-      
-      if (cleanedData.specifications.has_alarm !== undefined) {
-        cleanedData.specifications.has_alarm = Boolean(cleanedData.specifications.has_alarm);
+      if (!cleanedData.specifications.engine_type) {
+        cleanedData.specifications.engine_type = '';
+      }
+      if (!cleanedData.specifications.interior_color) {
+        cleanedData.specifications.interior_color = '';
+      }
+      if (!cleanedData.specifications.interior_material) {
+        cleanedData.specifications.interior_material = '';
       }
     }
     
