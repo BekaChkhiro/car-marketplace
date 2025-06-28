@@ -255,13 +255,13 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
           </div>
           
           <div>
-            <button
-              onClick={() => setIsEditing(true)}
+            <a
+              href={`/${currentLang}/profile/settings`}
               className="px-6 py-3 bg-primary text-white rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md flex items-center gap-2"
             >
               <User size={18} />
               {t('profile:common.edit')}
-            </button>
+            </a>
           </div>
         </div>
       )}
