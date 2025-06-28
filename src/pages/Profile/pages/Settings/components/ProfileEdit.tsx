@@ -9,14 +9,25 @@ const ProfileEdit: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  // Define the type for the form data
+  type FormDataType = {
+    username: string;
+    email: string;
+    phone: string;
+    first_name: string;
+    last_name: string;
+    age: number;
+    gender: 'male' | 'female';
+  };
+
+  const [formData, setFormData] = useState<FormDataType>({
     username: user?.username || '',
     email: user?.email || '',
     phone: user?.phone || '',
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
     age: user?.age || 18,
-    gender: user?.gender || 'other'
+    gender: (user?.gender === 'other' || !user?.gender) ? 'male' : (user?.gender as 'male' | 'female')
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -194,13 +205,12 @@ const ProfileEdit: React.FC = () => {
               id="gender"
               name="gender"
               value={formData.gender}
-              onChange={e => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' | 'other' })}
+              onChange={e => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
               className="w-full pl-11 pr-4 py-3.5 sm:py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none appearance-none"
               required
             >
               <option value="male">{t('profileEdit.genderMale', 'Male')}</option>
               <option value="female">{t('profileEdit.genderFemale', 'Female')}</option>
-              <option value="other">{t('profileEdit.genderOther', 'Other')}</option>
             </select>
             <UserCheck className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
