@@ -325,7 +325,7 @@ const PartDetails: React.FC = () => {
             {isOwner && (
               <div className="mt-6 flex gap-4">
                 <Link
-                  to={`/${lang}/profile/parts/edit/${part.id}`}
+                  to={`/${lang || 'ka'}/profile/parts/edit/${part.id}`}
                   className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded text-center"
                 >
                   {t('edit')}

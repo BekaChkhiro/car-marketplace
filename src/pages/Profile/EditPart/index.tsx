@@ -245,7 +245,9 @@ const EditPart: React.FC = () => {
       await partService.updatePart(processedFormData, images);
       
       showToast(t('partUpdated'), 'success');
-      navigate('/profile/parts');
+      // Navigate to main parts listing page to see the updated part
+      const currentLang = localStorage.getItem('i18nextLng') || 'ka';
+      navigate(`/${currentLang}/parts`);
     } catch (error) {
       console.error('Error updating part:', error);
       showToast(t('partUpdateError'), 'error');

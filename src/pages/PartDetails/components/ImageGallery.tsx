@@ -57,7 +57,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
         onClick={handleMainImageClick}
       >
         <img
-          src={images[activeIndex]?.large_url || images[activeIndex]?.url}
+          src={images[activeIndex]?.large_url || images[activeIndex]?.medium_url || images[activeIndex]?.url}
           alt="Part"
           className="w-full h-full object-contain"
         />
@@ -112,7 +112,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
 
             {/* Full-size image */}
             <img
-              src={images[activeIndex]?.large_url || images[activeIndex]?.url}
+              src={images[activeIndex]?.large_url || images[activeIndex]?.medium_url || images[activeIndex]?.url}
               alt="Part"
               className="max-h-full max-w-full object-contain"
             />
