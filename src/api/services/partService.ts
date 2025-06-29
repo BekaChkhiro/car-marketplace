@@ -29,6 +29,8 @@ export interface Part {
   brand?: string;
   category?: string;
   model?: string;
+  year?: number;
+  quantity?: number;
 }
 
 export interface PartFilters {
