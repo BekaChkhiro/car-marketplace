@@ -181,9 +181,9 @@ const AddPart: React.FC = () => {
       });
       
       showToast(t('partCreated'), 'success');
-      // Navigate to main parts listing page to see the newly added part
+      // Navigate to profile parts page with language prefix
       const currentLang = localStorage.getItem('i18nextLng') || 'ka';
-      navigate(`/${currentLang}/parts`);
+      navigate(`/${currentLang}/profile/parts`);
     } catch (error) {
       console.error('Error creating part:', error);
       showToast(t('partCreateError'), 'error');
