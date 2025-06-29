@@ -14,7 +14,7 @@ interface User {
   first_name: string;
   last_name: string;
   age: number;
-  gender: 'male' | 'female' | 'other';
+  gender: 'male' | 'female';
   created_at?: string;
 }
 
@@ -238,8 +238,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ user }) => {
                 <h3 className="font-medium">{t('profile:profileInfo.gender', 'სქესი')}</h3>
               </div>
               <p className="text-lg text-gray-900">
-                {user.gender === 'male' ? t('profile:profileInfo.male', 'მამრობითი') : 
-                 user.gender === 'female' ? t('profile:profileInfo.female', 'მდედრობითი') : t('profile:profileInfo.other', 'სხვა')}
+                {user.gender === 'female' ? t('profile:profileInfo.female', 'მდედრობითი') : t('profile:profileInfo.male', 'მამრობითი')}
               </p>
             </div>
 

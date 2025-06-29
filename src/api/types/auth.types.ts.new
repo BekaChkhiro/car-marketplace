@@ -7,7 +7,7 @@ export interface User {
   first_name: string;
   last_name: string;
   age: number;
-  gender: 'male' | 'female' | 'other';
+  gender: 'male' | 'female';
   status?: string;
   created_at?: string;
   updated_at?: string;
@@ -33,7 +33,7 @@ export interface RegisterCredentials {
   first_name: string;
   last_name: string;
   age: number;
-  gender: 'male' | 'female' | 'other';
+  gender: 'male' | 'female';
   phone: string;
 }
 
