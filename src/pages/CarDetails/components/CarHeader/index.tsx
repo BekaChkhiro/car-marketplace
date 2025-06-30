@@ -22,7 +22,7 @@ const CarHeader: React.FC<CarHeaderProps> = ({
   // Get current language from URL params or use default
   const currentLang = lang || 'ka';
   return (
-    <div className="bg-white shadow-md sticky top-0 border-b border-green-100">
+    <div className="bg-white shadow-md border-b border-green-100">
       <Container>
         <div className="py-4 flex justify-between items-center">
           <div className="flex items-center">
