@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, MessageCircle, Calendar, Shield, Gauge, Fuel, User, Award, Check, Heart, Share2, AlertCircle, ChevronDown, ChevronUp, Mail } from 'lucide-react';
+import { MapPin, Phone, Calendar, Shield, Gauge, Fuel, User, Award, Check, Heart, Share2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -14,7 +14,7 @@ interface CarPriceCardProps {
 
 const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
-  const [showContactOptions, setShowContactOptions] = useState(false);
+
   const [showFinanceInfo, setShowFinanceInfo] = useState(false);
   const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
 
@@ -124,68 +124,27 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3 shadow-sm">
               <User className="w-6 h-6 text-primary" />
             </div>
-            <div>
+            <div className="flex-1">
               <div className="font-medium text-gray-800 flex items-center">
                 {car.author_name || 'მანქანის მფლობელი'}
                 <Check className="w-4 h-4 text-primary ml-1" />
               </div>
-              <div className="text-sm text-gray-500 flex items-center">
-                <div className="flex">
-                  {[1, 2, 3, 4].map((i) => (
-                    <Award key={i} className="w-3 h-3 mr-1 text-yellow-500" />
-                  ))}
-                  <Award className="w-3 h-3 mr-1 text-gray-300" />
-                </div>
-                <span className="ml-1">4.5</span>
+              <div className="text-sm text-gray-700 mt-1">
+                <span className="font-medium">{car.author_phone || '+995557409798'}</span>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Primary Contact Button */}
+        {/* Direct Call Button */}
         <div className="p-4">
-          <button 
+          <a 
+            href={`tel:${car.author_phone || '+995557409798'}`} 
             className="w-full bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors shadow-sm flex items-center justify-center gap-2"
-            onClick={() => setShowContactOptions(!showContactOptions)}
-            aria-expanded={showContactOptions}
           >
             <Phone className="w-5 h-5" />
-            <span>{t('carDetails:specs.contact')}</span>
-            {showContactOptions ? (
-              <ChevronUp className="w-5 h-5 ml-1" />
-            ) : (
-              <ChevronDown className="w-5 h-5 ml-1" />
-            )}
-          </button>
-          
-          {/* Contact Options */}
-          {showContactOptions && (
-            <div className="mt-3 grid grid-cols-1 gap-3 animate-fade-in">
-              <a 
-                href={`tel:${car.author_phone || '+995555 55 55 55'}`} 
-                className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
-              >
-                <Phone className="w-5 h-5" />
-                <span>{t('carDetails:specs.call', 'დარეკვა')}: {car.author_phone || '+995557409798'}</span>
-              </a>
-              
-              <a 
-                href={`sms:${car.author_phone || '+995557409798'}`} 
-                className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
-              >
-                <MessageCircle className="w-5 h-5" />
-                <span>{t('carDetails:specs.sendMessage', 'მესიჯის გაგზავნა')}</span>
-              </a>
-              
-              <a 
-                href="mailto:contact@example.com" 
-                className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
-              >
-                <Mail className="w-5 h-5" />
-                <span>{t('carDetails:specs.sendEmail', 'ელ-ფოსტის გაგზავნა')}</span>
-              </a>
-            </div>
-          )}
+            <span>{t('carDetails:specs.call', 'დარეკვა')}</span>
+          </a>
         </div>
         
         {/* Action Buttons */}
