@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MapPin, Phone, Calendar, Shield, Gauge, Fuel, User, Award, Check, Heart, Share2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import React from 'react';
+import { MapPin, Phone, Calendar, Shield, Gauge, Fuel, User, Check, Heart } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -14,15 +14,10 @@ interface CarPriceCardProps {
 
 const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
-
-  const [showFinanceInfo, setShowFinanceInfo] = useState(false);
   const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
 
   // Format price (no discount available in the Car type)
   const price = car.price || 0;
-  
-  // Calculate estimated monthly payment (example calculation)
-  const estimatedMonthlyPayment = (price / 60).toFixed(0); // 5-year loan
 
   return (
     <div className="sticky top-24 space-y-4">
@@ -39,13 +34,6 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 </span>
               </div>
             </div>
-            
-            {car.featured && (
-              <div className="bg-primary text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center shadow-sm">
-                <Award className="w-4 h-4 mr-1.5" />
-                VIP
-              </div>
-            )}
           </div>
         </div>
         
@@ -81,38 +69,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             </div>
           )}
           
-          {/* Finance Info - Collapsible */}
-          <div className="mt-4 border-t border-green-50 pt-3">
-            <button 
-              className="w-full flex justify-between items-center text-left focus:outline-none"
-              onClick={() => setShowFinanceInfo(!showFinanceInfo)}
-              aria-expanded={showFinanceInfo}
-            >
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center mr-2">
-                  <AlertCircle className="w-4 h-4 text-primary" />
-                </div>
-                <span className="font-medium text-gray-800">{t('carDetails:specs.estimatedLoan', 'სავარაუდო განვადება')}</span>
-              </div>
-              {showFinanceInfo ? (
-                <ChevronUp className="w-5 h-5 text-gray-500" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-gray-500" />
-              )}
-            </button>
-            
-            {showFinanceInfo && (
-              <div className="mt-3 p-3 bg-green-50 rounded-lg animate-fade-in">
-                <div className="mb-2">
-                  <div className="text-sm text-gray-600">სავარაუდო თვიური გადახდა</div>
-                  <div className="text-lg font-semibold text-primary">{formatPrice(parseInt(estimatedMonthlyPayment))}/თვე</div>
-                </div>
-                <div className="text-xs text-gray-500">
-                  * ეს არის მხოლოდ სავარაუდო გადახდა. ზუსტი გადახდის პირობებისთვის დაგვიკავშირდით.
-                </div>
-              </div>
-            )}
-          </div>
+
         </div>
       </div>
       
@@ -148,30 +105,16 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
           </a>
         </div>
         
-        {/* Action Buttons */}
-        <div className="p-4 pt-0 grid grid-cols-2 gap-3">
-          <button className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-green-100 hover:bg-green-50 transition-colors">
+        {/* Favorite Button */}
+        <div className="p-4 pt-0">
+          <button className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-green-100 hover:bg-green-50 transition-colors">
             <Heart className="w-5 h-5 text-primary" />
             <span className="text-sm font-medium">{t('carDetails:specs.favorite', 'ფავორიტი')}</span>
-          </button>
-          
-          <button className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-green-100 hover:bg-green-50 transition-colors">
-            <Share2 className="w-5 h-5 text-primary" />
-            <span className="text-sm font-medium">{t('carDetails:specs.shareButton')}</span>
           </button>
         </div>
       </div>
       
-      {/* Safety Tips */}
-      <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100 text-sm">
-        <div className="flex items-start">
-          <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
-          <div>
-            <p className="font-medium text-yellow-800 mb-1">{t('carDetails:specs.safetyTips', 'უსაფრთხოების რჩევები')}</p>
-            <p className="text-yellow-700">{t('carDetails:specs.safetyTipsText', 'მანქანის ყიდვამდე შეამოწმეთ გამყიდველის რეპუტაცია და დოკუმენტაცია.')}</p>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };
