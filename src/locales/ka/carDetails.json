@@ -1,7 +1,7 @@
 {
-  "breadcrumbs": {
+  "breadcrumb": {
     "home": "მთავარი",
-    "cars": "მანქანები",
+    "cars": "ავტომობილები",
     "carDetails": "მანქანის დეტალები"
   },
   "loading": {
@@ -27,17 +27,19 @@
     "inspectBefore": "შეამოწმეთ მანქანა გადახდამდე",
     "verifyDocuments": "გადაამოწმეთ ყველა დოკუმენტი"
   },
-  "carSpecs": {
-    "generalInfo": "ზოგადი ინფორმაცია",
-    "specifications": "სპეციფიკაციები",
-    "description": "აღწერა",
-    "features": "მახასიათებლები",
-    "brand": "მარკა",
-    "model": "მოდელი",
+  "specs": {
+    "price": "ფასი",
     "year": "წელი",
     "mileage": "გარბენი",
-    "engine": "ძრავა",
+    "fuel": "საწვავი",
     "transmission": "ტრანსმისია",
+    "features": "ფუნქციები",
+    "specifications": "სპეციფიკაციები",
+    "generalInfo": "ზოგადი ინფორმაცია",
+    "description": "აღწერა",
+    "brand": "მარკა",
+    "model": "მოდელი",
+    "engine": "ძრავა",
     "fuelType": "საწვავის ტიპი",
     "color": "ფერი",
     "driveType": "წამყვანი თვლები",
