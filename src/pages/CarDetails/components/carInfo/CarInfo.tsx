@@ -166,7 +166,7 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
             <div>
               <span className="text-sm text-gray-500">სახელი</span>
               <p className="text-lg font-medium text-gray-800">
-                {car.author_name || "მანქანის მფლობელი"}
+                {car.author_name}
               </p>
             </div>
           </div>
@@ -175,7 +175,7 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
             <div>
               <span className="text-sm text-gray-500">ტელეფონი</span>
               <p className="text-lg font-medium text-gray-800">
-                {car.author_phone || "+995 123 456 789"}
+                {car.author_phone}
               </p>
             </div>
           </div>

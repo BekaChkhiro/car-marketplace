@@ -260,6 +260,8 @@ class CarService {
           currency: 'GEL',
           status: 'available',
           featured: false,
+          author_name: 'დემო ავტორი',
+          author_phone: '+995 555 123456',
           description_ka: 'ეს არის დემო მანქანა, რომელიც ნაჩვენებია მოთხოვნილი მანქანის ვერ პოვნის გამო. გთხოვთ, სცადოთ სხვა მანქანა.',
           description_en: 'This is a mock car shown because the requested car could not be found. Please try another car.',
           location: { 

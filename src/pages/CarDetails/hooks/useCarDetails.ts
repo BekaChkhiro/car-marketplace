@@ -52,11 +52,9 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
         }
         
         const carData = await carService.getCar(Number(id));
-        console.log('მიღებული მანქანის მონაცემები:', carData);
-        console.log('ავტორის ინფორმაცია:', {
-          author_name: carData.author_name || 'არ არის',
-          author_phone: carData.author_phone || 'არ არის'
-        });
+        console.log("Car details full response:", carData);
+        console.log("Car details data structure:", JSON.stringify(carData, null, 2));
+        console.log("Car author info:", carData.author_name, carData.author_phone);
         if (carData) {
           setCar(carData);
           // Check wishlist status only if user is authenticated
