@@ -129,8 +129,9 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 {car.author_name || 'მანქანის მფლობელი'}
                 <Check className="w-4 h-4 text-primary ml-1" />
               </div>
-              <div className="text-sm text-gray-700 mt-1">
-                <span className="font-medium">{car.author_phone || '+995557409798'}</span>
+              <div className="flex items-center mt-2">
+                <Phone className="w-5 h-5 text-primary mr-2" />
+                <span className="text-lg font-bold text-primary">{car.author_phone || '+995557409798'}</span>
               </div>
             </div>
           </div>
