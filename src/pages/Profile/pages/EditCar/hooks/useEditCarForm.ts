@@ -268,9 +268,17 @@ export const useEditCarForm = (carId: number) => {
       return;
     }
     
+    // დებაგის ლოგები მონაცემთა გაგზავნამდე
+    console.log('გასაგზავნი ფორმის მონაცემები:', formData);
+    console.log('ავტორის ინფორმაცია:', { 
+      author_name: formData.author_name, 
+      author_phone: formData.author_phone 
+    });
+    
     try {
       showLoading();
-      await carService.updateCar(carId, formData);
+      const updatedCar = await carService.updateCar(carId, formData);
+      console.log('მიღებული პასუხი API-დან:', updatedCar);
       hideLoading();
       
       // Show success message

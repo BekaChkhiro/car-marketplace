@@ -565,11 +565,28 @@ class CarService {
       const token = getAccessToken();
       const headers = { Authorization: `Bearer ${token}` };
       
+      console.log('[carService.updateCar] გაგზავნის მონაცემები:', data);
+      console.log('[carService.updateCar] ავტორის ინფორმაცია:', { 
+        author_name: data.author_name, 
+        author_phone: data.author_phone 
+      });
+      
       // Create a FormData object to handle image uploads
       const formData = new FormData();
       
       // Add car ID to the form data
       formData.append('id', String(carId));
+      
+      // ექსპლიციტურად დავამატოთ ავტორის ინფორმაცია
+      if (data.author_name !== undefined) {
+        console.log('[carService.updateCar] ვამატებ author_name ფორმაში:', data.author_name);
+        formData.append('author_name', String(data.author_name));
+      }
+      
+      if (data.author_phone !== undefined) {
+        console.log('[carService.updateCar] ვამატებ author_phone ფორმაში:', data.author_phone);
+        formData.append('author_phone', String(data.author_phone));
+      }
       
       // Add all car data to the form data
       Object.entries(data).forEach(([key, value]) => {
@@ -583,11 +600,18 @@ class CarService {
         } else if (key === 'specifications' || key === 'location' || key === 'features') {
           // Convert objects and arrays to JSON strings
           formData.append(key, JSON.stringify(value));
-        } else if (value !== null && value !== undefined) {
-          // Add other fields as is
+        } else if (value !== null && value !== undefined && key !== 'author_name' && key !== 'author_phone') {
+          // Add other fields as is, except author fields which we handled separately
           formData.append(key, String(value));
         }
       });
+      
+      // დებაგ: შევამოწმოთ რა მონაცემები იგზავნება
+      console.log('[carService.updateCar] FormData შიგნით:');
+      // დავბეჭდოთ formData ობიექტი
+      for (const pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
       
       const response = await api.put(`/api/cars/${carId}`, formData, {
         headers: {
