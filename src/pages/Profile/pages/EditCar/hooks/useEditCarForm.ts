@@ -69,7 +69,16 @@ export const useEditCarForm = (carId: number) => {
         setIsLoading(true);
         const car = await carService.getCar(carId);
         if (car) {
+          // დავლოგოთ მანქანის მონაცემები დებაგისთვის
+          console.log('ჩატვირთული მანქანის მონაცემები:', car);
+          console.log('ავტორის მონაცემები:', { სახელი: car.author_name, ტელეფონი: car.author_phone });
+          
           populateFormData(car);
+          
+          // დავლოგოთ განახლებული ფორმის მონაცემები
+          setTimeout(() => {
+            console.log('ფორმის მონაცემები პოპულაციის შემდეგ:', formData);
+          }, 100);
         } else {
           setError('მანქანა ვერ მოიძებნა');
         }
@@ -108,6 +117,8 @@ export const useEditCarForm = (carId: number) => {
       description_ka: car.description_ka || '',
       description_en: car.description_en || '',
       description_ru: car.description_ru || '',
+      author_name: car.author_name || '',
+      author_phone: car.author_phone || '',
       location: {
         city: car.location?.city || '',
         country: car.location?.country || 'საქართველო',
