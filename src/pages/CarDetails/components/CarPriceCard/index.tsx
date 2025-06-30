@@ -126,7 +126,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             </div>
             <div>
               <div className="font-medium text-gray-800 flex items-center">
-                Car Owner
+                {car.author_name || 'მანქანის მფლობელი'}
                 <Check className="w-4 h-4 text-primary ml-1" />
               </div>
               <div className="text-sm text-gray-500 flex items-center">
@@ -162,15 +162,15 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
           {showContactOptions && (
             <div className="mt-3 grid grid-cols-1 gap-3 animate-fade-in">
               <a 
-                href="tel:+995555123456" 
+                href={`tel:${car.author_phone || '+995555 55 55 55'}`} 
                 className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
               >
                 <Phone className="w-5 h-5" />
-                <span>{t('carDetails:specs.call', 'დარეკვა')}: +995 555 123456</span>
+                <span>{t('carDetails:specs.call', 'დარეკვა')}: {car.author_phone || '+995557409798'}</span>
               </a>
               
               <a 
-                href="sms:+995555123456" 
+                href={`sms:${car.author_phone || '+995557409798'}`} 
                 className="flex items-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-100"
               >
                 <MessageCircle className="w-5 h-5" />
