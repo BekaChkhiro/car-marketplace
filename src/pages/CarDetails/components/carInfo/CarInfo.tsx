@@ -155,34 +155,32 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
       />
 
       {/* Author Information */}
-      {(car.author_name || car.author_phone) && (
-        <div className={`${cardStyle} car-section`}>
-          <h2 className={sectionHeadingStyle}>
-            <User size={18} className="mr-2 text-blue-600" />
-            ავტორის ინფორმაცია
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {car.author_name && (
-              <div className="flex items-center">
-                <User size={18} className="mr-3 text-gray-500" />
-                <div>
-                  <span className="text-sm text-gray-500">სახელი</span>
-                  <p className="text-lg font-medium text-gray-800">{car.author_name}</p>
-                </div>
-              </div>
-            )}
-            {car.author_phone && (
-              <div className="flex items-center">
-                <Phone size={18} className="mr-3 text-gray-500" />
-                <div>
-                  <span className="text-sm text-gray-500">ტელეფონი</span>
-                  <p className="text-lg font-medium text-gray-800">{car.author_phone}</p>
-                </div>
-              </div>
-            )}
+      <div className={`${cardStyle} car-section`}>
+        <h2 className={sectionHeadingStyle}>
+          <User size={18} className="mr-2 text-blue-600" />
+          ავტორის ინფორმაცია
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex items-center">
+            <User size={18} className="mr-3 text-gray-500" />
+            <div>
+              <span className="text-sm text-gray-500">სახელი</span>
+              <p className="text-lg font-medium text-gray-800">
+                {car.author_name || "მანქანის მფლობელი"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <Phone size={18} className="mr-3 text-gray-500" />
+            <div>
+              <span className="text-sm text-gray-500">ტელეფონი</span>
+              <p className="text-lg font-medium text-gray-800">
+                {car.author_phone || "+995 123 456 789"}
+              </p>
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Basic Info */}
       <div className={`${cardStyle} car-section`}>
