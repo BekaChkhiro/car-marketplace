@@ -4,6 +4,8 @@ import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
 import ContactButtons from '../sellerInfo/components/ContactButtons';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 
 interface MobileCarInfoProps {
   car: Car;
@@ -12,6 +14,7 @@ interface MobileCarInfoProps {
 
 const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
 
   return (
     <div className="block md:hidden mt-4 space-y-4">
@@ -44,7 +47,7 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
       {/* Key Specs */}
       <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
         <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
-          ძირითადი მახასიათებლები
+          {t('common:mainSpecifications')}
         </h3>
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {keySpecs.map((spec, index) => (
@@ -64,16 +67,16 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
       {/* Mobile Contact Buttons */}
       <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
         <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
-          დაგვიკავშირდით
+          {t('carDetails:priceCard.contactSeller')}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <a href="tel:+995555123456" className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-green-600 transition-colors">
             <Phone className="w-5 h-5" />
-            <span>დარეკვა</span>
+            <span>{t('carDetails:priceCard.callSeller')}</span>
           </a>
           <a href="sms:+995555123456" className="flex items-center justify-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium border border-primary hover:bg-green-100 transition-colors">
             <MessageCircle className="w-5 h-5" />
-            <span>მესიჯი</span>
+            <span>{t('carDetails:priceCard.messageSeller')}</span>
           </a>
         </div>
       </div>

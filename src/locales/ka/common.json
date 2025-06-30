@@ -15,5 +15,23 @@
   "warning": "გაფრთხილება",
   "info": "ინფორმაცია",
   "perDay": "დღეში",
-  "search": "ძიება"
+  "search": "ძიება",
+  "back": "უკან",
+  "notAvailable": "არ არის",
+  "mainSpecifications": "ძირითადი სპეციფიკაციები",
+  "additionalSpecifications": "დამატებითი სპეციფიკაციები",
+  "horsepower": "ცხენის ძალა",
+  "hp": "ცხ.ძ",
+  "featuresAndEquipment": "ფუნქციები და აღჭურვილობა",
+  "addToFavorites": "რჩეულებში დამატება",
+  "features": {
+    "airConditioning": "კონდიციონერი",
+    "abs": "ABS",
+    "boardComputer": "ბორტკომპიუტერი",
+    "cruiseControl": "კრუიზ-კონტროლი",
+    "seatHeating": "სავარძლების გათბობა",
+    "navigation": "ნავიგაცია",
+    "rearCamera": "უკანა ხედვის კამერა",
+    "parkingControl": "პარკინგის კონტროლი"
+  }
 }

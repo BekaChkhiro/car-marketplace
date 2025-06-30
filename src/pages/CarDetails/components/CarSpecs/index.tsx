@@ -33,21 +33,21 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     { 
       icon: <Gauge className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.mileage'), 
-      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : 'N/A',
+      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
       icon: <Fuel className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.fuel'), 
-      value: car.specifications?.fuel_type || 'N/A',
+      value: car.specifications?.fuel_type || t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
       icon: <Shield className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.transmission'), 
-      value: car.specifications?.transmission || 'N/A',
+      value: car.specifications?.transmission || t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
@@ -58,25 +58,25 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     { 
       icon: <Sliders className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.engine'), 
-      value: car.specifications?.engine_type || 'N/A',
+      value: car.specifications?.engine_type || t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50'
     },
     { 
       icon: <Truck className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.driveType'), 
-      value: car.specifications?.drive_type || 'N/A',
+      value: car.specifications?.drive_type || t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50'
     },
     { 
       icon: <Zap className="w-5 h-5 text-primary" />, 
       label: t('common:horsepower'), 
-      value: car.specifications?.horsepower ? `${car.specifications.horsepower} HP` : 'N/A',
+      value: car.specifications?.horsepower ? `${car.specifications.horsepower} ${t('common:hp', 'ცხძ')}` : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50'
     },
     { 
       icon: <Tag className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.color'), 
-      value: car.specifications?.color || 'N/A',
+      value: car.specifications?.color || t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50'
     },
   ];
@@ -103,7 +103,7 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
         >
           <div className="flex items-center gap-1 sm:gap-2">
             <Settings size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span className="text-sm sm:text-base">{t('carDetails:specs.specs', 'სპეციფიკაციები')}</span>
+            <span className="text-sm sm:text-base">{t('carDetails:specs.specifications', 'სპეციფიკაციები')}</span>
           </div>
         </button>
         <button

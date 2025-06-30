@@ -22,7 +22,7 @@ const CarHeader: React.FC<CarHeaderProps> = ({
   // Get current language from URL params or use default
   const currentLang = lang || 'ka';
   return (
-    <div className="bg-white shadow-md sticky top-0 z-50 border-b border-green-100">
+    <div className="bg-white shadow-md sticky top-0 border-b border-green-100">
       <Container>
         <div className="py-4 flex justify-between items-center">
           <div className="flex items-center">
@@ -48,7 +48,7 @@ const CarHeader: React.FC<CarHeaderProps> = ({
             <button 
               onClick={toggleFavorite}
               className={`p-2.5 ${isFavorite ? 'bg-red-50' : 'bg-green-50'} rounded-full shadow-sm hover:shadow-md transition-all action-button`}
-              aria-label={t('common:addToFavorites', 'Add to favorites')}
+              aria-label={t('common:addToFavorites', 'რჩეულებში დამატება')}
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'text-red-500 fill-current' : 'text-primary'}`} />
             </button>

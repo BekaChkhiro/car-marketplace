@@ -79,7 +79,7 @@ const CarDetails: React.FC = () => {
     { 
       icon: <Gauge className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.mileage'), 
-      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : 'N/A'
+      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : t('common:notAvailable', 'არ არის')
     },
     { 
       icon: <Fuel className="w-5 h-5 text-primary" />, 
