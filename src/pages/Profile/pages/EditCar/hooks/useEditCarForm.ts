@@ -32,6 +32,8 @@ export const useEditCarForm = (carId: number) => {
     description_ka: '',
     description_en: '',
     description_ru: '',
+    author_name: '',
+    author_phone: '',
     location: {
       city: '',
       country: 'საქართველო',

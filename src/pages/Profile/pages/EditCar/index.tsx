@@ -12,6 +12,7 @@ import TechnicalSpecs from '../AddCar/components/TechnicalSpecs';
 import Features from '../AddCar/components/Features';
 import Location from '../AddCar/components/Location';
 import Description from '../AddCar/components/Description';
+import AuthorInfo from '../AddCar/components/AuthorInfo';
 
 const EditCar: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -178,6 +179,14 @@ const EditCar: React.FC = () => {
             description_en={formData.description_en}
             description_ru={formData.description_ru}
             onChange={handleChange}
+            errors={errors}
+          />
+          
+          <AuthorInfo
+            authorName={formData.author_name || ''}
+            authorPhone={formData.author_phone || ''}
+            onAuthorNameChange={(value) => handleChange('author_name', value)}
+            onAuthorPhoneChange={(value) => handleChange('author_phone', value)}
             errors={errors}
           />
 

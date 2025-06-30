@@ -166,6 +166,8 @@ export interface CreateCarFormData {
   specifications: Partial<CarSpecifications>;
   features: string[];
   images: File[];
+  author_name?: string; // ავტორის სახელი
+  author_phone?: string; // ავტორის საკონტაქტო ტელეფონი
   location: {
     city: string;
     country: string;
