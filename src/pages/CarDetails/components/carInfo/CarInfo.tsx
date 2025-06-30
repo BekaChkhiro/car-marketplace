@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Car as LocalCar, Category as LocalCategory } from '../../../../types/car';
 import { Car, Category } from '../../../../api/types/car.types';
-import { Car as CarIcon, Gauge, Palette, Shield, Wrench, MapPin, Check, X, Tag } from 'lucide-react';
+import { Car as CarIcon, Gauge, Palette, Shield, Wrench, MapPin, Check, X, Tag, User, Phone } from 'lucide-react';
 import carService from '../../../../api/services/carService';
 import CarHeader from './components/CarHeader';
 
@@ -153,6 +153,36 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
         price={car.price}
         carId={car.id}
       />
+
+      {/* Author Information */}
+      {(car.author_name || car.author_phone) && (
+        <div className={`${cardStyle} car-section`}>
+          <h2 className={sectionHeadingStyle}>
+            <User size={18} className="mr-2 text-blue-600" />
+            ავტორის ინფორმაცია
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {car.author_name && (
+              <div className="flex items-center">
+                <User size={18} className="mr-3 text-gray-500" />
+                <div>
+                  <span className="text-sm text-gray-500">სახელი</span>
+                  <p className="text-lg font-medium text-gray-800">{car.author_name}</p>
+                </div>
+              </div>
+            )}
+            {car.author_phone && (
+              <div className="flex items-center">
+                <Phone size={18} className="mr-3 text-gray-500" />
+                <div>
+                  <span className="text-sm text-gray-500">ტელეფონი</span>
+                  <p className="text-lg font-medium text-gray-800">{car.author_phone}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Basic Info */}
       <div className={`${cardStyle} car-section`}>

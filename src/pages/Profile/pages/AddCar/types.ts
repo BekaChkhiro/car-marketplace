@@ -59,6 +59,8 @@ export interface NewCarFormData {
   description_en?: string;
   description_ru?: string;
   vip_status: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  author_name: string;  // Author's name for contact
+  author_phone: string;  // Author's phone number for contact
   location: {
     city: string;
     state: string;

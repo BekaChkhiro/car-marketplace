@@ -8,6 +8,7 @@ import Features from './components/Features';
 import Location from './components/Location';
 import Description from './components/Description';
 import VIPStatus from './components/VIPStatus';
+import AuthorInfo from './components/AuthorInfo';
 import { useCarForm } from './hooks/useCarForm';
 import { CarFeatures } from './types';
 
@@ -82,6 +83,13 @@ const AddCar: React.FC = () => {
             errors={errors}
           />
 
+          <AuthorInfo
+            authorName={formData.author_name}
+            authorPhone={formData.author_phone}
+            onAuthorNameChange={(value) => handleChange('author_name', value)}
+            onAuthorPhoneChange={(value) => handleChange('author_phone', value)}
+            errors={errors}
+          />
 
           <div className="bg-white rounded-xl p-6 border">
             <ImageUploadWithFeatured

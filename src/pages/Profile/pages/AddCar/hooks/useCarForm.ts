@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../../../../context/ToastContext';
 import { useLoading } from '../../../../../context/LoadingContext';
@@ -14,6 +15,7 @@ export const useCarForm = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { showLoading, hideLoading } = useLoading();
+  const { user } = useAuth();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [images, setImages] = useState<File[]>([]);
   const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
@@ -41,6 +43,8 @@ export const useCarForm = () => {
       description_en: '',
       description_ru: '',
       vip_status: 'none', // Default VIP status is none
+      author_name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '', // Default to current user name
+      author_phone: user?.phone || '', // Default to current user phone
       location: {
         city: '',
         country: 'საქართველო',
@@ -188,6 +192,8 @@ export const useCarForm = () => {
     if (!formData.year) emptyFields.push('year');
     if (!formData.price) emptyFields.push('price');
     if (!formData.description_ka) emptyFields.push('description_ka');
+    if (!formData.author_name) emptyFields.push('author_name');
+    if (!formData.author_phone) emptyFields.push('author_phone');
     
     // Check location fields
     if (!formData.location?.city) emptyFields.push('location.city');
