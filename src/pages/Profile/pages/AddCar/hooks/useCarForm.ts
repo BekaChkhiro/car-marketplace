@@ -142,9 +142,10 @@ export const useCarForm = () => {
     let processedValue = value;
     
     if (field === 'engine_size') {
-      // Handle engine size - could be in cc or liters
-      processedValue = value ? parseFloat(value) : undefined;
-      console.log(`Processing engine_size: ${value} -> ${processedValue}`);
+      // For engine size, we keep the original string value from the dropdown
+      // This ensures decimal values like '1.0', '2.0', '3.0' work properly
+      processedValue = value;
+      console.log(`Processing engine_size: ${value} -> keeping as is`);
     } 
     else if (field === 'mileage' || field === 'cylinders' || field === 'airbags_count' || field === 'horsepower') {
       // Handle other numeric fields
