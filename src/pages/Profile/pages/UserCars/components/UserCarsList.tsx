@@ -395,7 +395,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                           <Eye size={16} className="text-gray-600 group-hover:text-blue-600" />
                         </button>
                         <button
-                          onClick={() => navigate(`/profile/cars/edit/${car.id}`)}
+                          onClick={() => navigate(`/${currentLang}/profile/edit-car/${car.id}`)}
                           className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
                           title="რედაქტირება"
                         >
@@ -626,7 +626,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     <Eye size={16} className="text-gray-600 hover:text-blue-600" />
                   </button>
                   <button
-                    onClick={() => navigate(`/profile/cars/edit/${car.id}`)}
+                    onClick={() => navigate(`/${currentLang}/profile/edit-car/${car.id}`)}
                     className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
                     title="რედაქტირება"
                   >
