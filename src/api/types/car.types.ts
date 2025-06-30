@@ -17,6 +17,8 @@ export interface Car {
   vip_expiration_date?: string;
   seller_id: number;
   user_id?: number; // The ID of the user who owns this car
+  author_name?: string; // Author's name
+  author_phone?: string; // Author's contact phone
   created_at: string;
   updated_at: string;
   specifications: CarSpecifications;
