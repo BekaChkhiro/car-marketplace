@@ -140,11 +140,11 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
         {/* Direct Call Button */}
         <div className="p-4">
           <a 
-            href={`tel:${car.author_phone || '+995557409798'}`} 
+            href={`tel:${car.author_phone || '+995555 55 55 55'}`} 
             className="w-full bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors shadow-sm flex items-center justify-center gap-2"
           >
             <Phone className="w-5 h-5" />
-            <span>{t('carDetails:specs.call', 'დარეკვა')}</span>
+            <span>{car.author_phone || '+995555 55 55 55'}</span>
           </a>
         </div>
         
