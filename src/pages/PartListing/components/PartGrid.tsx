@@ -15,7 +15,7 @@ const PartGrid: React.FC<PartGridProps> = ({ parts }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
       {parts.map((part) => (
         <Link 
-          to={`/parts/${part.id}`} 
+          to={`/${t('languagePrefix') || 'ka'}/parts/${part.id}`} 
           key={part.id}
           className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
@@ -49,7 +49,8 @@ const PartGrid: React.FC<PartGridProps> = ({ parts }) => {
               <span className="truncate">{part.model}</span>
             </div>
             
-            {part.category && (
+            {/* Only show category if it's a valid part category (not a vehicle type like 'sedan') */}
+            {part.category && !['sedan', 'hatchback', 'suv', 'coupe', 'wagon', 'van', 'convertible', 'pickup'].includes(part.category.toLowerCase()) && (
               <div className="mt-1 text-sm text-gray-600">
                 {part.category}
               </div>

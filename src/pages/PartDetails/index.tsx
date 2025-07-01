@@ -122,7 +122,7 @@ const PartDetails: React.FC = () => {
     
     return (
       <Link 
-        to={`/parts/${relatedPart.id}`} 
+        to={`/${lang || 'ka'}/parts/${relatedPart.id}`} 
         key={relatedPart.id}
         className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
       >
