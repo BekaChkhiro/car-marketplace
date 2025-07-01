@@ -109,9 +109,16 @@ const AddPart: React.FC = () => {
       const e = field;
       const { name, value: eventValue, type } = e.target;
       
+      // Ensure numeric fields are properly converted to numbers
+      let processedValue: string | number = eventValue;
+      if (type === 'number' || name === 'category_id' || name === 'brand_id' || name === 'model_id' || name === 'price') {
+        processedValue = Number(eventValue);
+        console.log(`Converting ${name} to number: ${eventValue} -> ${processedValue}`);
+      }
+      
       setFormData(prev => ({
         ...prev,
-        [name]: type === 'number' ? Number(eventValue) : eventValue
+        [name]: processedValue
       }));
       
       // Clear error when field is changed
@@ -124,9 +131,16 @@ const AddPart: React.FC = () => {
       }
     } else {
       // This is a direct call with field and value
+      // Ensure numeric fields are properly converted to numbers
+      let processedValue = value;
+      if (field === 'category_id' || field === 'brand_id' || field === 'model_id' || field === 'price') {
+        processedValue = Number(value);
+        console.log(`Converting ${field} to number: ${value} -> ${processedValue}`);
+      }
+      
       setFormData(prev => ({
         ...prev,
-        [field]: value
+        [field]: processedValue
       }));
       
       // Clear error when field is changed
@@ -255,6 +269,10 @@ const AddPart: React.FC = () => {
     showLoading();
     setLoading(true);
     try {
+      console.log('Form data before submission:', formData);
+      console.log('Images count:', images.length);
+      console.log('Featured image index:', featuredImageIndex);
+      
       // Ensure numeric fields are converted to numbers
       const processedFormData = {
         ...formData,
@@ -264,9 +282,19 @@ const AddPart: React.FC = () => {
         price: Number(formData.price)
       };
       
+      console.log('Processed form data:', processedFormData);
+      
+      // Verify we have images before submitting
+      if (images.length === 0) {
+        showToast(t('imageRequired'), 'error');
+        hideLoading();
+        setLoading(false);
+        return;
+      }
+      
       // Create part data object with form data and images
       // Pass the featured image index to the API
-      await partService.createPart({
+      const result = await partService.createPart({
         ...processedFormData,
         images,
         featuredImageIndex,
@@ -274,6 +302,8 @@ const AddPart: React.FC = () => {
         color_highlighting: formData.color_highlighting,
         auto_renewal: formData.auto_renewal
       });
+      
+      console.log('Part created successfully:', result);
       
       showToast(t('partCreated'), 'success');
       // Navigate to profile parts page with language prefix

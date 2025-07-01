@@ -1,16 +1,38 @@
+import i18n from 'i18next';
+
+/**
+ * Get the appropriate locale based on the current language
+ * @returns Locale string for date formatting
+ */
+const getLocaleFromLanguage = (locale?: string): string => {
+  if (locale) return locale;
+  
+  const currentLang = i18n.language || localStorage.getItem('i18nextLng') || 'ka';
+  
+  switch (currentLang) {
+    case 'ka':
+      return 'ka-GE';
+    case 'ru':
+      return 'ru-RU';
+    default:
+      return 'en-US';
+  }
+};
+
 /**
  * Format a date string into a localized date format
  * @param dateString - ISO date string
- * @param locale - Locale for formatting (default: 'en-US')
+ * @param locale - Locale for formatting (optional, will use current language if not provided)
  * @returns Formatted date string
  */
-export const formatDate = (dateString: string, locale: string = 'en-US'): string => {
+export const formatDate = (dateString: string, locale?: string): string => {
   if (!dateString) return '';
   
   try {
     const date = new Date(dateString);
+    const formattingLocale = getLocaleFromLanguage(locale);
     
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(formattingLocale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -24,15 +46,16 @@ export const formatDate = (dateString: string, locale: string = 'en-US'): string
 /**
  * Format a date string into a relative time format (e.g., "2 days ago")
  * @param dateString - ISO date string
- * @param locale - Locale for formatting (default: 'en-US')
+ * @param locale - Locale for formatting (optional, will use current language if not provided)
  * @returns Relative time string
  */
-export const formatRelativeTime = (dateString: string, locale: string = 'en-US'): string => {
+export const formatRelativeTime = (dateString: string, locale?: string): string => {
   if (!dateString) return '';
   
   try {
     const date = new Date(dateString);
     const now = new Date();
+    const formattingLocale = getLocaleFromLanguage(locale);
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
     // Less than a minute
@@ -76,16 +99,17 @@ export const formatRelativeTime = (dateString: string, locale: string = 'en-US')
 /**
  * Format a date string into a short date format (e.g., "Jan 1, 2023")
  * @param dateString - ISO date string
- * @param locale - Locale for formatting (default: 'en-US')
+ * @param locale - Locale for formatting (optional, will use current language if not provided)
  * @returns Short formatted date string
  */
-export const formatShortDate = (dateString: string, locale: string = 'en-US'): string => {
+export const formatShortDate = (dateString: string, locale?: string): string => {
   if (!dateString) return '';
   
   try {
     const date = new Date(dateString);
+    const formattingLocale = getLocaleFromLanguage(locale);
     
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(formattingLocale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

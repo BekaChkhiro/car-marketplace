@@ -133,7 +133,8 @@ class PartService {
         currency: partData.currency || 'GEL'
       };
 
-      console.log('[PartService.createPart] Processed data:', processedPartData);
+      console.log('[PartService.createPart] Original data:', JSON.stringify(partData));
+      console.log('[PartService.createPart] Processed data:', JSON.stringify(processedPartData));
       
       // Check data validity before sending
       if (!processedPartData.title || processedPartData.title.trim() === '') {
@@ -168,7 +169,9 @@ class PartService {
       console.log('[PartService.createPart] Featured image index:', partData.featuredImageIndex);
 
       if (partData.images && partData.images.length > 0) {
-        partData.images.forEach(image => {
+        console.log(`[PartService.createPart] Processing ${partData.images.length} images:`);
+        partData.images.forEach((image, index) => {
+          console.log(`Image ${index}: ${image.name}, type: ${image.type}, size: ${image.size} bytes`);
           formData.append('images', image);
         });
         console.log(`[PartService.createPart] Added ${partData.images.length} images to form data`);
@@ -184,6 +187,7 @@ class PartService {
         }
       });
 
+      console.log('[PartService.createPart] Server response:', response.data);
       return response.data.part;
     } catch (error) {
       console.error('[PartService.createPart] Error creating part:', error);
