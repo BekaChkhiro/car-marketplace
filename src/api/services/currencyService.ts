@@ -106,27 +106,40 @@ class CurrencyService {
   public convert(amount: number, fromCurrency: string, toCurrency: string): number {
     if (fromCurrency === toCurrency) return amount;
     
+    console.log(`Converting ${amount} from ${fromCurrency} to ${toCurrency}`);
+    console.log(`Current rates: ${fromCurrency}=${this.getRate(fromCurrency)}, ${toCurrency}=${this.getRate(toCurrency)}`);
+    
+    let result = 0;
+    
     // If converting from GEL to another currency
     if (fromCurrency === 'GEL') {
       const toRate = this.getRate(toCurrency);
       // For GEL to USD, we divide by the rate (e.g., 46000 / 2.72 = 16911)
-      return amount / toRate;
+      result = amount / toRate;
+      console.log(`GEL to other: ${amount} / ${toRate} = ${result}`);
     }
     
     // If converting from another currency to GEL
-    if (toCurrency === 'GEL') {
+    else if (toCurrency === 'GEL') {
       const fromRate = this.getRate(fromCurrency);
       // For USD to GEL, we multiply by the rate (e.g., 16911 * 2.72 = 46000)
-      return amount * fromRate;
+      result = amount * fromRate;
+      console.log(`Other to GEL: ${amount} * ${fromRate} = ${result}`);
     }
     
     // If converting between two non-GEL currencies
-    const fromRate = this.getRate(fromCurrency);
-    const toRate = this.getRate(toCurrency);
+    else {
+      const fromRate = this.getRate(fromCurrency);
+      const toRate = this.getRate(toCurrency);
+      
+      // Convert to GEL first, then to target currency
+      const amountInGEL = amount * fromRate;
+      result = amountInGEL / toRate;
+      console.log(`Other to other: ${amount} * ${fromRate} = ${amountInGEL}, then ${amountInGEL} / ${toRate} = ${result}`);
+    }
     
-    // Convert to GEL first, then to target currency
-    const amountInGEL = amount * fromRate;
-    return amountInGEL / toRate;
+    console.log(`Final result: ${result}`);
+    return result;
   }
 
   public formatPrice(amount: number, currency: string): string {
