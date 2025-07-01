@@ -109,13 +109,15 @@ class CurrencyService {
     // If converting from GEL to another currency
     if (fromCurrency === 'GEL') {
       const toRate = this.getRate(toCurrency);
-      return amount * toRate;
+      // For GEL to USD, we divide by the rate (e.g., 46000 / 2.72 = 16911)
+      return amount / toRate;
     }
     
     // If converting from another currency to GEL
     if (toCurrency === 'GEL') {
       const fromRate = this.getRate(fromCurrency);
-      return amount / fromRate;
+      // For USD to GEL, we multiply by the rate (e.g., 16911 * 2.72 = 46000)
+      return amount * fromRate;
     }
     
     // If converting between two non-GEL currencies
@@ -123,8 +125,8 @@ class CurrencyService {
     const toRate = this.getRate(toCurrency);
     
     // Convert to GEL first, then to target currency
-    const amountInGEL = amount / fromRate;
-    return amountInGEL * toRate;
+    const amountInGEL = amount * fromRate;
+    return amountInGEL / toRate;
   }
 
   public formatPrice(amount: number, currency: string): string {
