@@ -91,21 +91,38 @@ class CurrencyService {
   }
 
   public getRate(currencyCode: string): number {
+    // GEL is our base currency with rate 1
+    if (currencyCode === 'GEL') return 1;
+    
     const currency = this.rates.get(currencyCode);
     if (!currency) {
       console.warn(`Rate for ${currencyCode} not found, using 1:1 rate`);
       return 1;
     }
+    // NBG API returns how many GEL is 1 unit of foreign currency
     return currency.rate / currency.quantity;
   }
 
   public convert(amount: number, fromCurrency: string, toCurrency: string): number {
     if (fromCurrency === toCurrency) return amount;
     
+    // If converting from GEL to another currency
+    if (fromCurrency === 'GEL') {
+      const toRate = this.getRate(toCurrency);
+      return amount * toRate;
+    }
+    
+    // If converting from another currency to GEL
+    if (toCurrency === 'GEL') {
+      const fromRate = this.getRate(fromCurrency);
+      return amount / fromRate;
+    }
+    
+    // If converting between two non-GEL currencies
     const fromRate = this.getRate(fromCurrency);
     const toRate = this.getRate(toCurrency);
     
-    // Convert to GEL first (as base currency), then to target currency
+    // Convert to GEL first, then to target currency
     const amountInGEL = amount / fromRate;
     return amountInGEL * toRate;
   }
