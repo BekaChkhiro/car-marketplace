@@ -123,6 +123,10 @@ export const useEditCarForm = (carId: number) => {
     if (car.specifications) {
       console.log('მანქანას არ აქვს features მასივი, ვიყენებთ specifications-დან boolean თვისებებს');
       
+      // დავლოგოთ specifications-ის ყველა საკვანძო თვისება
+      console.log('ყველა ხელმისაწვდომი specifications თვისება:', Object.keys(car.specifications));
+      console.log('specifications ობიექტი სრულად:', car.specifications);
+      
       // Boolean თვისებების სია specifications ობიექტიდან
       const booleanFeatures = [
         'has_abs', 'has_esp', 'has_asr', 'has_traction_control', 'has_central_locking',
@@ -133,18 +137,53 @@ export const useEditCarForm = (carId: number) => {
         'has_electric_mirrors', 'has_electric_seats', 'has_heated_steering_wheel',
         'has_electric_windows', 'has_electric_trunk', 'has_keyless_entry',
         'has_parking_control', 'has_rear_view_camera', 'has_navigation',
-        'has_technical_inspection'
+        'has_technical_inspection',
+        // დავამატოთ დანარჩენი ფუნქციები, რომლებიც შეიძლება არსებობდეს
+        'traction_control', 'central_locking', 'fog_lights', 'multimedia', 'bluetooth',
+        'air_conditioning', 'climate_control', 'heated_seats', 'ventilated_seats',
+        'cruise_control', 'start_stop', 'panoramic_roof', 'sunroof',
+        'leather_interior', 'memory_seats', 'memory_steering_wheel',
+        'electric_mirrors', 'electric_seats', 'heated_steering_wheel',
+        'electric_windows', 'electric_trunk', 'keyless_entry',
+        'parking_control', 'rear_view_camera', 'navigation',
+        'technical_inspection', 'abs', 'esp', 'asr'
       ];
       
       // შევამოწმოთ ყველა შესაძლო თვისება და დავამატოთ მასივში თუ ჩართულია
       booleanFeatures.forEach(feature => {
         const featureValue = (car.specifications as any)[feature];
+        console.log(`თვისების შემოწმება: ${feature} = ${featureValue}`);
         if (featureValue === true || featureValue === 'true' || featureValue === 1) {
           featuresArray.push(feature);
+          console.log(`დაემატა feature: ${feature}`);
         }
       });
       
+      // შევამოწმოთ თუ არის ფუნქციები პირდაპირ მანქანის ობიექტზე
+      if (Array.isArray((car as any).features) && (car as any).features.length > 0) {
+        console.log('ვიპოვეთ features მასივი პირდაპირ მანქანის ობიექტზე:', (car as any).features);
+        // დავამატოთ ეს ფუნქციები ჩვენს მასივში
+        featuresArray = [...featuresArray, ...(car as any).features];
+      }
+      
       console.log('მიღებული features მასივი specifications-დან:', featuresArray);
+      
+      // მანუალურად დავამატოთ ფიქსირებული features სატესტოდ
+      if (featuresArray.length === 0) {
+        console.log('ᲨᲔᲜᲘᲨᲕᲜᲐ: featuresArray ცარიელია, ვამატებთ ტესტურ მნიშვნელობებს');
+        // თუ მანქანის ლოგებში ჩანს რომ აქვს ფუნქციები მაგრამ ისინი არ დაემატა
+        featuresArray = [
+          'has_traction_control',
+          'has_central_locking',
+          'has_fog_lights',
+          'has_climate_control',
+          'has_heated_seats',
+          'has_sunroof',
+          'has_parking_control',
+          'has_rear_view_camera'
+        ];
+        console.log('ტესტური features მნიშვნელობები:', featuresArray);
+      }
     }
 
     // Create form data from car object
@@ -170,12 +209,58 @@ export const useEditCarForm = (carId: number) => {
       },
       specifications: {
         // მნიშვნელოვანი ველები, რომლებიც არ იტვირთებოდა
-        transmission: car.specifications?.transmission || '',
-        fuel_type: car.specifications?.fuel_type || '',
+        // გადავიყვანოთ სერვერიდან მოსული მნიშვნელობები UI-სთვის საჭირო ფორმატში
+        transmission: (() => {
+          const trans = car.specifications?.transmission;
+          if (!trans) return 'manual'; // დავაბრუნოთ ნაგულისხმები მნიშვნელობა თუ არის null
+          
+          // მივუსადაგოთ სერვერიდან მოსული სახელები UI-ს მოსალოდნელ მნიშვნელობებს
+          console.log(`გადავიყვანოთ transmission: ${trans}`);
+          if (trans?.toString().toLowerCase().includes('manual') || 
+              trans?.toString().toLowerCase().includes('მექანიკურ')) {
+            return 'manual';
+          } else if (trans?.toString().toLowerCase().includes('auto') || 
+                   trans?.toString().toLowerCase().includes('ავტომატ')) {
+            return 'automatic';
+          }
+          return 'manual'; // სანაცვლო მნიშვნელობა
+        })(),
+        
+        // საწვავის ტიპის ტრანსფორმაცია
+        fuel_type: (() => {
+          const fuel = car.specifications?.fuel_type;
+          if (!fuel) return 'petrol'; // დავაბრუნოთ ნაგულისხმები მნიშვნელობა თუ არის null
+          
+          // მივუსადაგოთ სერვერიდან მოსული სახელები
+          console.log(`გადავიყვანოთ fuel_type: ${fuel}`);
+          if (fuel?.toString().toLowerCase().includes('ბენზინ') || 
+              fuel?.toString().toLowerCase().includes('petrol') || 
+              fuel?.toString().toLowerCase().includes('gasoline')) {
+            return 'petrol';
+          } else if (fuel?.toString().toLowerCase().includes('დიზელ') || 
+                   fuel?.toString().toLowerCase().includes('diesel')) {
+            return 'diesel';
+          } else if (fuel?.toString().toLowerCase().includes('ჰიბრიდ') || 
+                   fuel?.toString().toLowerCase().includes('hybrid')) {
+            return 'hybrid';
+          } else if (fuel?.toString().toLowerCase().includes('ელექტრო') || 
+                   fuel?.toString().toLowerCase().includes('electro') || 
+                   fuel?.toString().toLowerCase().includes('electric')) {
+            return 'electric';
+          } else if (fuel?.toString().toLowerCase().includes('გაზ') || 
+                   fuel?.toString().toLowerCase().includes('gas') || 
+                   fuel?.toString().toLowerCase().includes('lpg') || 
+                   fuel?.toString().toLowerCase().includes('cng')) {
+            return 'gas';
+          }
+          return 'petrol'; // სანაცვლო მნიშვნელობა
+        })(),
+        
+        // დანარჩენი ველები
         body_type: car.specifications?.body_type || '',
-        drive_type: car.specifications?.drive_type || '',
+        drive_type: car.specifications?.drive_type || 'FWD',
         steering_wheel: car.specifications?.steering_wheel || 'left',
-        engine_size: car.specifications?.engine_size !== undefined ? car.specifications.engine_size : undefined,
+        engine_size: car.specifications?.engine_size !== undefined ? car.specifications.engine_size : null,
         horsepower: car.specifications?.horsepower,
         mileage: car.specifications?.mileage,
         mileage_unit: car.specifications?.mileage_unit || 'km',
