@@ -31,8 +31,7 @@ export const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, s
 // Base currencies we support
 const currencies = [
   { id: 'GEL', symbol: '₾', name: 'ლარი' },
-  { id: 'USD', symbol: '$', name: 'დოლარი' },
-  { id: 'EUR', symbol: '€', name: 'ევრო' }
+  { id: 'USD', symbol: '$', name: 'დოლარი' }
 ];
 
 const CurrencySelector = () => {
