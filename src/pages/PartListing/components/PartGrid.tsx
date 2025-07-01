@@ -49,9 +49,11 @@ const PartGrid: React.FC<PartGridProps> = ({ parts }) => {
               <span className="truncate">{part.model}</span>
             </div>
             
-            <div className="mt-1 text-sm text-gray-600">
-              {part.category}
-            </div>
+            {part.category && (
+              <div className="mt-1 text-sm text-gray-600">
+                {part.category}
+              </div>
+            )}
             
             <div className="mt-3 flex items-center justify-between">
               <span className="text-lg font-bold text-primary">
