@@ -1,5 +1,6 @@
 import api from '../config/api';
 import { getAccessToken } from '../utils/tokenStorage';
+import currencyService from './currencyService';
 
 // Types for car parts - these would typically be in a separate types file
 export interface PartImage {
@@ -20,6 +21,7 @@ export interface Part {
   model_id: number;
   condition: string;
   price: number;
+  currency?: string; // Currency code (GEL, USD, etc.)
   description?: string;
   description_en?: string;
   description_ka?: string;
@@ -53,6 +55,7 @@ export interface CreatePartFormData {
   model_id: number;
   condition: string;
   price: number;
+  currency?: string; // Currency code (GEL, USD, etc.)
   description?: string;
   description_en?: string;
   description_ka?: string;
@@ -73,8 +76,14 @@ class PartService {
       
       console.log('[PartService.getParts] Response from API:', response.data);
       
+      // Ensure all parts have a currency property (default to GEL if not specified)
+      const parts = (response.data.parts || []).map((part: Part) => ({
+        ...part,
+        currency: part.currency || 'GEL'
+      }));
+      
       return {
-        parts: response.data.parts || [],
+        parts,
         totalCount: response.data.totalCount || 0,
         totalPages: response.data.totalPages || 0,
         currentPage: response.data.currentPage || 1
@@ -88,7 +97,12 @@ class PartService {
   async getPartById(id: number | string): Promise<Part> {
     try {
       const response = await api.get(`/api/parts/${id}`);
-      return response.data.part;
+      // Ensure part has a currency property (default to GEL if not specified)
+      const part = {
+        ...response.data.part,
+        currency: response.data.part.currency || 'GEL'
+      };
+      return part;
     } catch (error) {
       console.error('[PartService.getPartById] Error fetching part details:', error);
       throw error;
@@ -108,7 +122,9 @@ class PartService {
         category_id: Number(partData.category_id),
         brand_id: Number(partData.brand_id),
         model_id: Number(partData.model_id),
-        price: Number(partData.price)
+        price: Number(partData.price),
+        // Set default currency to GEL if not specified
+        currency: partData.currency || 'GEL'
       };
 
       console.log('[PartService.createPart] Processed data:', processedPartData);
@@ -300,8 +316,14 @@ class PartService {
         params: { page, limit }
       });
       
+      // Ensure all parts have a currency property (default to GEL if not specified)
+      const parts = (response.data.parts || []).map((part: Part) => ({
+        ...part,
+        currency: part.currency || 'GEL'
+      }));
+      
       return {
-        parts: response.data.parts || [],
+        parts,
         totalCount: response.data.totalCount || 0,
         totalPages: response.data.totalPages || 0,
         currentPage: response.data.currentPage || 1
@@ -311,6 +333,36 @@ class PartService {
       throw error;
     }
   }
+  
+  // Currency conversion utilities
+  
+  /**
+   * Convert price from one currency to another using current exchange rates
+   * @param price - The price to convert
+   * @param fromCurrency - Source currency code (default: GEL)
+   * @param toCurrency - Target currency code (default: GEL)
+   * @returns The converted price
+   */
+  convertPrice(price: number, fromCurrency: string = 'GEL', toCurrency: string = 'GEL'): number {
+    if (!price || fromCurrency === toCurrency) return price;
+    return currencyService.convert(price, fromCurrency, toCurrency);
+  }
+  
+  /**
+   * Format price with currency symbol
+   * @param price - The price to format
+   * @param currency - Currency code (default: GEL)
+   * @returns Formatted price string with currency symbol
+   */
+  formatPrice(price: number, currency: string = 'GEL'): string {
+    return currencyService.formatPrice(price, currency);
+  }
+  
+  /**
+   * Get condition text in Georgian
+   * @param condition - Condition code
+   * @returns Georgian text for condition
+   */
 }
 
 // Create an instance of PartService and export it as default

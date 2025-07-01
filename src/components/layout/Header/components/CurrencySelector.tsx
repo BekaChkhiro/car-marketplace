@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCurrency } from '../../../../context/CurrencyContext';
+import currencyService from '../../../../api/services/currencyService';
 
 interface CustomSwitchProps {
   checked: boolean;
@@ -27,16 +28,34 @@ export const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, s
   );
 };
 
+// Base currencies we support
 const currencies = [
   { id: 'GEL', symbol: '₾', name: 'ლარი' },
-  { id: 'USD', symbol: '$', name: 'დოლარი' }
+  { id: 'USD', symbol: '$', name: 'დოლარი' },
+  { id: 'EUR', symbol: '€', name: 'ევრო' }
 ];
 
 const CurrencySelector = () => {
-  const { currency, setCurrency } = useCurrency();
+  const { currency, setCurrency, lastUpdated, exchangeRates } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
+  const [rates, setRates] = useState<{[key: string]: number}>({});
 
+  // Get the current currency info
   const currentCurrency = currencies.find(c => c.id === currency) || currencies[0];
+  
+  // Update rates when exchange rates change
+  useEffect(() => {
+    const ratesObj: {[key: string]: number} = {};
+    exchangeRates.forEach((rate, code) => {
+      if (currencies.some(c => c.id === code)) {
+        // Access rate and quantity safely with type checking
+        const rateValue = typeof rate.rate === 'number' ? rate.rate : 1;
+        const quantity = typeof rate.quantity === 'number' ? rate.quantity : 1;
+        ratesObj[code] = rateValue / quantity;
+      }
+    });
+    setRates(ratesObj);
+  }, [exchangeRates]);
 
   const handleCurrencyChange = (currencyId: string) => {
     setCurrency(currencyId);
@@ -81,7 +100,14 @@ const CurrencySelector = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 py-2 w-36 bg-white rounded-xl shadow-lg border border-gray-100">
+        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="px-4 py-1 text-xs text-gray-500 border-b border-gray-100">
+            {lastUpdated ? (
+              <span>განახლდა: {new Date(lastUpdated).toLocaleString('ka-GE')}</span>
+            ) : (
+              <span>მიმდინარეობს განახლება...</span>
+            )}
+          </div>
           {currencies.map((curr) => (
             <button
               key={curr.id}
@@ -90,9 +116,16 @@ const CurrencySelector = () => {
                 currency === curr.id ? 'text-primary font-medium' : 'text-gray-700'
               }`}
             >
-              <span className="flex items-center space-x-2">
-                <span>{curr.symbol}</span>
-                <span>{curr.name}</span>
+              <span className="flex items-center justify-between">
+                <span className="flex items-center space-x-2">
+                  <span>{curr.symbol}</span>
+                  <span>{curr.name}</span>
+                </span>
+                {curr.id !== 'GEL' && rates['GEL'] && rates[curr.id] && (
+                  <span className="text-xs text-gray-500">
+                    1 {curr.id} = {(rates['GEL'] / rates[curr.id]).toFixed(4)} ₾
+                  </span>
+                )}
               </span>
             </button>
           ))}
