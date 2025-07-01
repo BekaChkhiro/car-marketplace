@@ -277,57 +277,8 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         </div>
       </div>
       
-      {/* VIP Status Benefits */}
-      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-        <h4 className="font-medium mb-3">VIP სტატუსის უპირატესობები</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {getVipStatusFeatures(vipStatus).map((feature, index) => (
-            <div key={index} className="flex items-start">
-              <Check size={16} className="text-green-500 mr-2 mt-0.5" />
-              <p className="text-sm">{feature}</p>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
-};
-
-// ფუნქცია VIP სტატუსის მახასიათებლების მისაღებად
-const getVipStatusFeatures = (status: VipStatus): string[] => {
-  const baseFeatures = [
-    'განცხადების განთავსება',
-    'ძებნის შედეგებში ჩვენება',
-    'მყიდველებთან დაკავშირება'
-  ];
-  
-  if (status === 'none') return baseFeatures;
-  
-  const vipFeatures = [
-    ...baseFeatures,
-    'სიის თავში გამოჩენა',
-    'მეტი დათვალიერება',
-    'გამოჩენა VIP ნაწილების სექციაში'
-  ];
-  
-  if (status === 'vip') return vipFeatures;
-  
-  const vipPlusFeatures = [
-    ...vipFeatures,
-    'პრიორიტეტული პოზიცია VIP სექციაში',
-    'გამოჩენა მთავარ გვერდზე',
-    'გაზრდილი ინტერესი მყიდველებისგან'
-  ];
-  
-  if (status === 'vip_plus') return vipPlusFeatures;
-  
-  // Super VIP features
-  return [
-    ...vipPlusFeatures,
-    'მაქსიმალური გამოჩენა ყველა სექციაში',
-    'პრიორიტეტული პოზიცია მთავარ გვერდზე',
-    'მაქსიმალური ყურადღება მყიდველებისგან'
-  ];
 };
 
 export default VIPStatus;
