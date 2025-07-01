@@ -10,6 +10,7 @@ import PartGrid from './components/PartGrid';
 import PartFilters from './components/PartFilters';
 import SortingHeader from './components/SortingHeader';
 import { useToast } from '../../context/ToastContext';
+import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 
 const PartListing: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -142,8 +143,15 @@ const PartListing: React.FC = () => {
 
   return (
     <Container>
-      <div ref={listingTopRef} />
-      <h1 className="text-3xl font-bold mb-6">Car Parts</h1>
+      <div ref={listingTopRef} className="scroll-mt-16" />
+      
+      {/* Top Advertisement - responsive */}
+      <div className="w-full flex justify-center my-4">
+        <AdvertisementDisplay 
+          placement="part_listing_top" 
+          className="w-full md:w-[728px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+        />
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Filters sidebar */}
@@ -195,6 +203,14 @@ const PartListing: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+      
+      {/* Bottom Advertisement */}
+      <div className="w-full flex justify-center my-8">
+        <AdvertisementDisplay 
+          placement="part_listing_bottom" 
+          className="w-full md:w-[720px] h-[90px] md:h-[140px] rounded-lg shadow-md max-w-full overflow-hidden transition-all duration-300" 
+        />
       </div>
     </Container>
   );
