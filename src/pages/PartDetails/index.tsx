@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { Container, Loading, Button } from '../../components/ui';
@@ -122,7 +123,7 @@ const PartDetails: React.FC = () => {
     
     return (
       <Link 
-        to={`/${lang || 'ka'}/parts/${relatedPart.id}`} 
+        to={`/${i18n.language || 'ka'}/parts/${relatedPart.id}`} 
         key={relatedPart.id}
         className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
       >

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import { Part } from '../../../api/services/partService';
 import { formatCurrency } from '../../../utils/formatters';
 import { namespaces } from '../../../i18n';
@@ -15,7 +16,7 @@ const PartGrid: React.FC<PartGridProps> = ({ parts }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
       {parts.map((part) => (
         <Link 
-          to={`/${t('languagePrefix') || 'ka'}/parts/${part.id}`} 
+          to={`/${i18n.language || 'ka'}/parts/${part.id}`} 
           key={part.id}
           className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
