@@ -96,12 +96,55 @@ export const useEditCarForm = (carId: number) => {
 
   // Convert car data to form data
   const populateFormData = (car: Car) => {
+    // დავლოგოთ მიღებული მანქანის მონაცემები დეტალურად
+    console.log('მიღებული მანქანის დეტალები:', car);
+    console.log('მანქანის სპეციფიკაციები:', car.specifications);
+    console.log('ძრავის მოცულობა:', car.specifications?.engine_size);
+    console.log('გადაცემათა კოლოფი:', car.specifications?.transmission);
+    console.log('საწვავის ტიპი:', car.specifications?.fuel_type);
+    console.log('ფერი:', car.specifications?.color);
+    console.log('სალონის მასალა:', car.specifications?.interior_material);
+    console.log('აღჭურვილობა და ფუნქციები: დაგენერირდება specifications-დან');
+    
     // Process existing images
     if (car.images && car.images.length > 0) {
       setExistingImages(car.images);
       // Find primary image index
       const primaryIndex = car.images.findIndex(img => img.is_primary);
       setFeaturedImageIndex(primaryIndex >= 0 ? primaryIndex : 0);
+    }
+
+    // მოვამზადოთ features მასივი ავტომობილის მონაცემებიდან
+    // სერვერიდან მოწოდებულ Car ობიექტში არ არის features მასივი,
+    // ამიტომ ეს მასივი უნდა შევქმნათ specifications-ის boolean ველებიდან
+    let featuresArray: string[] = [];
+    
+    // შევამოწმოთ თუ გვაქვს specifications ობიექტი boolean თვისებებით
+    if (car.specifications) {
+      console.log('მანქანას არ აქვს features მასივი, ვიყენებთ specifications-დან boolean თვისებებს');
+      
+      // Boolean თვისებების სია specifications ობიექტიდან
+      const booleanFeatures = [
+        'has_abs', 'has_esp', 'has_asr', 'has_traction_control', 'has_central_locking',
+        'has_alarm', 'has_fog_lights', 'has_board_computer', 'has_multimedia', 'has_bluetooth',
+        'has_air_conditioning', 'has_climate_control', 'has_heated_seats', 'has_ventilated_seats',
+        'has_cruise_control', 'has_start_stop', 'has_panoramic_roof', 'has_sunroof',
+        'has_leather_interior', 'has_memory_seats', 'has_memory_steering_wheel',
+        'has_electric_mirrors', 'has_electric_seats', 'has_heated_steering_wheel',
+        'has_electric_windows', 'has_electric_trunk', 'has_keyless_entry',
+        'has_parking_control', 'has_rear_view_camera', 'has_navigation',
+        'has_technical_inspection'
+      ];
+      
+      // შევამოწმოთ ყველა შესაძლო თვისება და დავამატოთ მასივში თუ ჩართულია
+      booleanFeatures.forEach(feature => {
+        const featureValue = (car.specifications as any)[feature];
+        if (featureValue === true || featureValue === 'true' || featureValue === 1) {
+          featuresArray.push(feature);
+        }
+      });
+      
+      console.log('მიღებული features მასივი specifications-დან:', featuresArray);
     }
 
     // Create form data from car object
@@ -126,12 +169,13 @@ export const useEditCarForm = (carId: number) => {
         is_transit: car.location?.is_transit || false
       },
       specifications: {
+        // მნიშვნელოვანი ველები, რომლებიც არ იტვირთებოდა
         transmission: car.specifications?.transmission || '',
         fuel_type: car.specifications?.fuel_type || '',
         body_type: car.specifications?.body_type || '',
         drive_type: car.specifications?.drive_type || '',
         steering_wheel: car.specifications?.steering_wheel || 'left',
-        engine_size: car.specifications?.engine_size,
+        engine_size: car.specifications?.engine_size !== undefined ? car.specifications.engine_size : undefined,
         horsepower: car.specifications?.horsepower,
         mileage: car.specifications?.mileage,
         mileage_unit: car.specifications?.mileage_unit || 'km',
@@ -142,40 +186,20 @@ export const useEditCarForm = (carId: number) => {
         airbags_count: car.specifications?.airbags_count,
         engine_type: car.specifications?.engine_type || ''
       },
-      // Convert the features to string[] format for API compatibility
-      features: [
-        car.specifications?.has_abs ? 'has_abs' : '',
-        car.specifications?.has_esp ? 'has_esp' : '',
-        car.specifications?.has_asr ? 'has_asr' : '',
-        car.specifications?.has_traction_control ? 'has_traction_control' : '',
-        car.specifications?.has_central_locking ? 'has_central_locking' : '',
-        car.specifications?.has_alarm ? 'has_alarm' : '',
-        car.specifications?.has_fog_lights ? 'has_fog_lights' : '',
-        car.specifications?.has_board_computer ? 'has_board_computer' : '',
-        car.specifications?.has_multimedia ? 'has_multimedia' : '',
-        car.specifications?.has_bluetooth ? 'has_bluetooth' : '',
-        car.specifications?.has_air_conditioning ? 'has_air_conditioning' : '',
-        car.specifications?.has_climate_control ? 'has_climate_control' : '',
-        car.specifications?.has_heated_seats ? 'has_heated_seats' : '',
-        car.specifications?.has_ventilated_seats ? 'has_ventilated_seats' : '',
-        car.specifications?.has_cruise_control ? 'has_cruise_control' : '',
-        car.specifications?.has_start_stop ? 'has_start_stop' : '',
-        car.specifications?.has_panoramic_roof ? 'has_panoramic_roof' : '',
-        car.specifications?.has_sunroof ? 'has_sunroof' : '',
-        car.specifications?.has_leather_interior ? 'has_leather_interior' : '',
-        car.specifications?.has_memory_seats ? 'has_memory_seats' : '',
-        car.specifications?.has_memory_steering_wheel ? 'has_memory_steering_wheel' : '',
-        car.specifications?.has_electric_mirrors ? 'has_electric_mirrors' : '',
-        car.specifications?.has_electric_seats ? 'has_electric_seats' : '',
-        car.specifications?.has_heated_steering_wheel ? 'has_heated_steering_wheel' : '',
-        car.specifications?.has_electric_windows ? 'has_electric_windows' : '',
-        car.specifications?.has_electric_trunk ? 'has_electric_trunk' : '',
-        car.specifications?.has_keyless_entry ? 'has_keyless_entry' : '',
-        car.specifications?.has_parking_control ? 'has_parking_control' : '',
-        car.specifications?.has_rear_view_camera ? 'has_rear_view_camera' : '',
-        car.specifications?.has_navigation ? 'has_navigation' : '',
-        car.specifications?.has_technical_inspection ? 'has_technical_inspection' : ''
-      ].filter(Boolean)
+      // ვიყენებთ დამუშავებულ features მასივს
+      features: featuresArray
+    });
+    
+    // დავლოგოთ ფორმის მონაცემები შევსების შემდეგ
+    console.log('ფორმის მონაცემები პოპულაციის შემდეგ:', {
+      specifications: {
+        transmission: formData.specifications?.transmission,
+        fuel_type: formData.specifications?.fuel_type,
+        color: formData.specifications?.color,
+        engine_size: formData.specifications?.engine_size,
+        interior_material: formData.specifications?.interior_material
+      },
+      features: formData.features
     });
   };
 
