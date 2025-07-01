@@ -96,15 +96,13 @@ export const useEditCarForm = (carId: number) => {
 
   // Convert car data to form data
   const populateFormData = (car: Car) => {
-    // დავლოგოთ მიღებული მანქანის მონაცემები დეტალურად
-    console.log('მიღებული მანქანის დეტალები:', car);
-    console.log('მანქანის სპეციფიკაციები:', car.specifications);
-    console.log('ძრავის მოცულობა:', car.specifications?.engine_size);
-    console.log('გადაცემათა კოლოფი:', car.specifications?.transmission);
-    console.log('საწვავის ტიპი:', car.specifications?.fuel_type);
-    console.log('ფერი:', car.specifications?.color);
-    console.log('სალონის მასალა:', car.specifications?.interior_material);
-    console.log('აღჭურვილობა და ფუნქციები: დაგენერირდება specifications-დან');
+    console.log('============= მანქანის მონაცემები ჩატვირთვისთვის =============');
+    console.log('მანქანის ID:', car.id);
+    console.log('მანქანის მოდელი:', car.model);
+    console.log('მანქანის მონაცემები სრულად:', car);
+    
+    // შევქმნათ features მასივი
+    let featuresArray: string[] = [];
     
     // Process existing images
     if (car.images && car.images.length > 0) {
@@ -113,19 +111,21 @@ export const useEditCarForm = (carId: number) => {
       const primaryIndex = car.images.findIndex(img => img.is_primary);
       setFeaturedImageIndex(primaryIndex >= 0 ? primaryIndex : 0);
     }
-
-    // მოვამზადოთ features მასივი ავტომობილის მონაცემებიდან
-    // სერვერიდან მოწოდებულ Car ობიექტში არ არის features მასივი,
-    // ამიტომ ეს მასივი უნდა შევქმნათ specifications-ის boolean ველებიდან
-    let featuresArray: string[] = [];
     
     // შევამოწმოთ თუ გვაქვს specifications ობიექტი boolean თვისებებით
     if (car.specifications) {
-      console.log('მანქანას არ აქვს features მასივი, ვიყენებთ specifications-დან boolean თვისებებს');
+      console.log('============= სპეციფიკაციების ანალიზი =============');
       
       // დავლოგოთ specifications-ის ყველა საკვანძო თვისება
       console.log('ყველა ხელმისაწვდომი specifications თვისება:', Object.keys(car.specifications));
       console.log('specifications ობიექტი სრულად:', car.specifications);
+      
+      // დეტალურად დავლოგოთ მნიშვნელოვანი ველები
+      console.log('ძრავის მოცულობა:', car.specifications.engine_size, 'ტიპი:', typeof car.specifications.engine_size);
+      console.log('გადაცემათა კოლოფი:', car.specifications.transmission, 'ტიპი:', typeof car.specifications.transmission);
+      console.log('საწვავის ტიპი:', car.specifications.fuel_type, 'ტიპი:', typeof car.specifications.fuel_type);
+      console.log('ფერი:', car.specifications.color, 'ტიპი:', typeof car.specifications.color);
+      console.log('სალონის მასალა:', car.specifications.interior_material, 'ტიპი:', typeof car.specifications.interior_material);
       
       // Boolean თვისებების სია specifications ობიექტიდან
       const booleanFeatures = [

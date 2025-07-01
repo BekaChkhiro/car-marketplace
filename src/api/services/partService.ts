@@ -57,6 +57,7 @@ export interface CreatePartFormData {
   description_en?: string;
   description_ka?: string;
   images?: File[];
+  featuredImageIndex?: number;
 }
 
 export interface UpdatePartFormData extends Partial<CreatePartFormData> {
@@ -134,7 +135,15 @@ class PartService {
       }
 
       const formData = new FormData();
-      formData.append('partData', JSON.stringify(processedPartData));
+      
+      // Add featured image index to the processed data if provided
+      const dataToSend = {
+        ...processedPartData,
+        featuredImageIndex: partData.featuredImageIndex !== undefined ? partData.featuredImageIndex : 0
+      };
+      
+      formData.append('partData', JSON.stringify(dataToSend));
+      console.log('[PartService.createPart] Featured image index:', partData.featuredImageIndex);
 
       if (partData.images && partData.images.length > 0) {
         partData.images.forEach(image => {

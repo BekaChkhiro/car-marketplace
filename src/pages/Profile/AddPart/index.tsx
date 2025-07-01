@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
+import { useLoading } from '../../../context/LoadingContext';
 import { Container, Button, Loading } from '../../../components/ui';
 import partService from '../../../api/services/partService';
-import ImageUploader from './components/ImageUploader';
+import ImageUploadWithFeatured from '../../../components/ImageUploadWithFeatured';
 import MultiLanguageDescription from './components/MultiLanguageDescription';
 import { namespaces } from '../../../i18n';
 
@@ -26,6 +27,7 @@ const AddPart: React.FC = () => {
   const { t } = useTranslation(namespaces.parts);
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { showLoading, hideLoading } = useLoading();
   
   const [formData, setFormData] = useState<FormData>({
     title: '',
@@ -40,6 +42,8 @@ const AddPart: React.FC = () => {
   });
   
   const [images, setImages] = useState<File[]>([]);
+  const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [brands, setBrands] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [models, setModels] = useState<any[]>([]);
@@ -108,8 +112,65 @@ const AddPart: React.FC = () => {
     }
   };
   
-  const handleImageChange = (files: File[]) => {
-    setImages(files);
+  const handleImageUpload = async (files: File[]) => {
+    try {
+      setIsUploading(true);
+      
+      // First validate all files
+      const validFiles = files.filter(file => {
+        // Basic validation for image files
+        if (!file.type.startsWith('image/')) {
+          showToast('სურათის ფორმატი არასწორია. დაშვებულია მხოლოდ JPEG/PNG ფორმატი, მაქსიმუმ 5MB', 'error');
+          return false;
+        }
+        
+        // Size validation (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('სურათის ზომა არ უნდა აღემატებოდეს 5MB-ს', 'error');
+          return false;
+        }
+        
+        return true;
+      });
+
+      if (validFiles.length > 15) {
+        showToast('მაქსიმუმ 15 სურათის ატვირთვაა შესაძლებელი', 'error');
+        setIsUploading(false);
+        return;
+      }
+
+      // Simulate a small delay to show the upload progress
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Directly set the images state to the valid files
+      setImages(validFiles);
+      
+      // Set a timeout to turn off the uploading state
+      setTimeout(() => {
+        setIsUploading(false);
+      }, 500);
+      
+      // Clear image error if present
+      if (errors['images']) {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors['images'];
+          return newErrors;
+        });
+      }
+    } catch (error: any) {
+      setIsUploading(false);
+      showToast(error.message || 'სურათის ატვირთვისას მოხდა შეცდომა', 'error');
+    }
+  };
+  
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    if (featuredImageIndex === index) {
+      setFeaturedImageIndex(0);
+    } else if (featuredImageIndex > index) {
+      setFeaturedImageIndex(prev => prev - 1);
+    }
     
     // Clear image error if present
     if (errors['images']) {
@@ -163,7 +224,7 @@ const AddPart: React.FC = () => {
       return;
     }
     
-    setLoading(true);
+    showLoading();
     try {
       // Ensure numeric fields are converted to numbers
       const processedFormData = {
@@ -175,9 +236,11 @@ const AddPart: React.FC = () => {
       };
       
       // Create part data object with form data and images
+      // Pass the featured image index to the API
       await partService.createPart({
         ...processedFormData,
-        images
+        images,
+        featuredImageIndex
       });
       
       showToast(t('partCreated'), 'success');
@@ -188,7 +251,7 @@ const AddPart: React.FC = () => {
       console.error('Error creating part:', error);
       showToast(t('partCreateError'), 'error');
     } finally {
-      setLoading(false);
+      hideLoading();
     }
   };
   
@@ -352,15 +415,17 @@ const AddPart: React.FC = () => {
           
           {/* Image Upload */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('partImages')} <span className="text-red-500">*</span>
-            </label>
-            <ImageUploader 
-              images={images} 
-              onChange={handleImageChange} 
-              error={errors.images}
-            />
-            {errors.images && <p className="mt-1 text-sm text-red-500">{errors.images}</p>}
+            <div className="bg-white rounded-xl p-6 border">
+              <ImageUploadWithFeatured
+                files={images}
+                onFilesChange={handleImageUpload}
+                onFileRemove={removeImage}
+                featuredIndex={featuredImageIndex}
+                onFeaturedIndexChange={setFeaturedImageIndex}
+                error={errors.images}
+                isUploading={isUploading}
+              />
+            </div>
           </div>
           
           {/* Form Actions */}
