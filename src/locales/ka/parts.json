@@ -107,5 +107,22 @@
   "loadPartError": "ნაწილის მონაცემების ჩატვირთვა ვერ მოხერხდა",
   "noPermissionToEdit": "თქვენ არ გაქვთ ამ ნაწილის რედაქტირების უფლება",
   "editPartComingSoon": "ნაწილის რედაქტირების ფუნქციონალი მალე დაემატება",
-  "backToMyParts": "ჩემს ნაწილებში დაბრუნება"
+  "backToMyParts": "ჩემს ნაწილებში დაბრუნება",
+  "backToParts": "ნაწილებში დაბრუნება",
+  "partNotFound": "ნაწილი ვერ მოიძებნა",
+  "partNotFoundDescription": "მოთხოვნილი ნაწილი ვერ მოიძებნა ან წაშლილია",
+  "browseAllParts": "ყველა ნაწილის დათვალიერება",
+  "listedOn": "განთავსების თარიღი",
+  "noDescriptionProvided": "აღწერა არ არის მითითებული",
+  "sellerInformation": "გამყიდველის ინფორმაცია",
+  "memberSince": "წევრია",
+  "sellerInfoUnavailable": "გამყიდველის ინფორმაცია მიუწვდომელია",
+  "relatedParts": "მსგავსი ნაწილები",
+  "noRelatedPartsFound": "მსგავსი ნაწილები ვერ მოიძებნა",
+  "failedToLoadPartDetails": "ნაწილის დეტალების ჩატვირთვა ვერ მოხერხდა",
+  "partSuccessfullyDeleted": "ნაწილი წარმატებით წაიშალა",
+  "failedToDeletePart": "ნაწილის წაშლა ვერ მოხერხდა",
+  "deletePartConfirmation": "დარწმუნებული ხართ, რომ გსურთ ამ ნაწილის წაშლა?",
+  "year": "წელი",
+  "quantity": "რაოდენობა"
 }
