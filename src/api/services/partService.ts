@@ -33,6 +33,9 @@ export interface Part {
   model?: string;
   year?: number;
   quantity?: number;
+  vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  color_highlighting?: boolean;
+  auto_renewal?: boolean;
 }
 
 export interface PartFilters {
@@ -61,6 +64,9 @@ export interface CreatePartFormData {
   description_ka?: string;
   images?: File[];
   featuredImageIndex?: number;
+  vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  color_highlighting?: boolean;
+  auto_renewal?: boolean;
 }
 
 export interface UpdatePartFormData extends Partial<CreatePartFormData> {
