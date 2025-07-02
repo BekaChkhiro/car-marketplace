@@ -1,14 +1,15 @@
 import { useCurrency } from './CurrencyContext';
 
-const USD_RATE = 0.38; // 1 GEL = 0.38 USD
-
 export const usePrice = () => {
-  const { currency } = useCurrency();
+  const { currency, convertPrice, formatPrice: formatCurrencyPrice } = useCurrency();
 
   const formatPrice = (priceInGEL: number) => {
-    const price = currency === 'USD' ? priceInGEL * USD_RATE : priceInGEL;
-    return `${price.toLocaleString(undefined, { maximumFractionDigits: 0 })} ${currency === 'USD' ? '$' : '₾'}`;
+    // Convert price from GEL to the selected currency using API rates
+    const convertedPrice = convertPrice(priceInGEL, 'GEL');
+    
+    // Format the price with the appropriate currency symbol
+    return formatCurrencyPrice(convertedPrice);
   };
 
-  return { formatPrice };
+  return { formatPrice, currency };
 };
