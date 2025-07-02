@@ -32,6 +32,14 @@ const PartDetails: React.FC = () => {
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [showContactInfo, setShowContactInfo] = useState(false);
 
+  // Force re-render of related parts when currency changes
+  useEffect(() => {
+    // This will trigger a re-render of all components using the currency context
+    if (relatedParts.length > 0) {
+      setRelatedParts([...relatedParts]);
+    }
+  }, [currency, relatedParts.length]);
+
   useEffect(() => {
     const loadPartDetails = async () => {
       if (!id) return;
