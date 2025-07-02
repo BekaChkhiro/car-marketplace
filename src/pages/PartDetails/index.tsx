@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useCurrency } from '../../context/CurrencyContext';
 import { Container, Loading, Button } from '../../components/ui';
 import partService, { Part } from '../../api/services/partService';
 import userService from '../../api/services/userService';
@@ -11,7 +12,7 @@ import { formatCurrency } from '../../utils/formatters';
 import { formatDate } from '../../utils/dateUtils';
 import ImageGallery from './components/ImageGallery';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
-import { Phone, Mail, MapPin, Calendar, Tag, Info, User } from 'lucide-react';
+import { Phone, Mail, MapPin, Calendar, Tag, Info, User, DollarSign } from 'lucide-react';
 import { namespaces } from '../../i18n';
 
 const PartDetails: React.FC = () => {
@@ -19,6 +20,7 @@ const PartDetails: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { currency, setCurrency, convertPrice, formatPrice } = useCurrency();
   const { t } = useTranslation([namespaces.parts, namespaces.common]);
   const { lang } = useParams<{ lang: string }>();
   
@@ -128,7 +130,7 @@ const PartDetails: React.FC = () => {
         <div className="p-3">
           <h3 className="font-medium text-gray-800 line-clamp-2">{relatedPart.title}</h3>
           <div className="mt-2 flex justify-between items-center">
-            <span className="font-bold text-primary">{formatCurrency(relatedPart.price)}</span>
+            <span className="font-bold text-primary">{formatPrice(convertPrice(relatedPart.price))}</span>
             <span className={`px-2 py-0.5 text-xs rounded-full ${getConditionBadgeClass(relatedPart.condition)}`}>
               {getConditionLabel(relatedPart.condition)}
             </span>
@@ -196,8 +198,18 @@ const PartDetails: React.FC = () => {
               </span>
             </div>
 
-            <div className="mt-4 text-2xl font-bold text-primary">
-              {formatCurrency(part.price)}
+            <div className="mt-4 text-2xl font-bold text-primary flex items-center gap-2">
+              {formatPrice(convertPrice(part.price))} 
+              <button 
+                className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                onClick={() => {
+                  const nextCurrency = currency === 'GEL' ? 'USD' : currency === 'USD' ? 'EUR' : 'GEL';
+                  setCurrency(nextCurrency);
+                }}
+                title={t('changeCurrency')}
+              >
+                <DollarSign size={16} />
+              </button>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-4">
