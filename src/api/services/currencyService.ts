@@ -105,9 +105,20 @@ class CurrencyService {
     const fromRate = this.getRate(fromCurrency);
     const toRate = this.getRate(toCurrency);
     
-    // Convert to GEL first (as base currency), then to target currency
-    const amountInGEL = amount / fromRate;
-    return amountInGEL * toRate;
+    // NBG rates are 1 foreign currency = X GEL
+    // So when converting from GEL to foreign currency, we need to divide by the rate
+    // And when converting from foreign currency to GEL, we multiply by the rate
+    if (fromCurrency === 'GEL') {
+      // GEL to foreign currency (divide)
+      return amount / toRate;
+    } else if (toCurrency === 'GEL') {
+      // Foreign currency to GEL (multiply)
+      return amount * fromRate;
+    } else {
+      // Foreign to foreign (convert to GEL first, then to target)
+      const amountInGEL = amount * fromRate; // First to GEL
+      return amountInGEL / toRate; // Then GEL to target
+    }
   }
 
   public formatPrice(amount: number, currency: string): string {

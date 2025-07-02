@@ -130,7 +130,7 @@ const PartDetails: React.FC = () => {
         <div className="p-3">
           <h3 className="font-medium text-gray-800 line-clamp-2">{relatedPart.title}</h3>
           <div className="mt-2 flex justify-between items-center">
-            <span className="font-bold text-primary">{formatPrice(relatedPart.price)}</span>
+            <span className="font-bold text-primary">{formatPrice(convertPrice(relatedPart.price, 'GEL'))}</span>
             <span className={`px-2 py-0.5 text-xs rounded-full ${getConditionBadgeClass(relatedPart.condition)}`}>
               {getConditionLabel(relatedPart.condition)}
             </span>
@@ -199,8 +199,8 @@ const PartDetails: React.FC = () => {
             </div>
 
             <div className="mt-4 text-2xl font-bold text-primary flex items-center gap-2">
-              {/* Original prices are in GEL, so using formatPrice directly without conversion */}
-              {formatPrice(part.price)} 
+              {/* Original prices are in GEL, need to convert and then format */}
+              {formatPrice(convertPrice(part.price, 'GEL'))} 
               <button 
                 className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                 onClick={() => {
