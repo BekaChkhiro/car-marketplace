@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { Part } from '../../../api/services/partService';
-import { formatCurrency } from '../../../utils/formatters';
+import { useCurrency } from '../../../context/CurrencyContext';
 import { namespaces } from '../../../i18n';
 
 interface PartGridProps {
@@ -12,6 +12,7 @@ interface PartGridProps {
 
 const PartGrid: React.FC<PartGridProps> = ({ parts }) => {
   const { t } = useTranslation(namespaces.parts);
+  const { convertPrice, formatPrice } = useCurrency();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
       {parts.map((part) => (
@@ -59,7 +60,7 @@ const PartGrid: React.FC<PartGridProps> = ({ parts }) => {
             
             <div className="mt-3 flex items-center justify-between">
               <span className="text-lg font-bold text-primary">
-                {formatCurrency(part.price)}
+                {formatPrice(convertPrice(part.price, 'GEL'))}
               </span>
               <span className="text-xs text-gray-500">
                 {new Date(part.created_at).toLocaleDateString()}
