@@ -187,7 +187,7 @@ const UserParts: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
                             <Link 
-                              to={`/profile/parts/edit/${part.id}`}
+                              to={`/${localStorage.getItem('i18nextLng') || 'ka'}/profile/parts/edit/${part.id}`}
                               className="text-indigo-600 hover:text-indigo-900"
                             >
                               {t('edit')}

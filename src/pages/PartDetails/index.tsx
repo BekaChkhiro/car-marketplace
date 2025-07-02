@@ -26,8 +26,6 @@ const PartDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [sellerInfo, setSellerInfo] = useState<any>(null);
-  const [sellerLoading, setSellerLoading] = useState(false);
   const [relatedParts, setRelatedParts] = useState<Part[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [showContactInfo, setShowContactInfo] = useState(false);
@@ -40,19 +38,6 @@ const PartDetails: React.FC = () => {
       try {
         const partData = await partService.getPartById(id);
         setPart(partData);
-        
-        // Load seller info
-        if (partData.seller_id) {
-          setSellerLoading(true);
-          try {
-            const seller = await userService.getSellerInfo(partData.seller_id);
-            setSellerInfo(seller);
-          } catch (error) {
-            console.error('[PartDetails] Error loading seller info:', error);
-          } finally {
-            setSellerLoading(false);
-          }
-        }
         
         // Load related parts (same category or brand)
         setRelatedLoading(true);
@@ -261,47 +246,29 @@ const PartDetails: React.FC = () => {
             <div className="mt-8 border-t pt-6">
               <h3 className="font-semibold text-lg mb-4">{t('sellerInformation')}</h3>
               
-              {sellerLoading ? (
-                <div className="flex justify-center py-4">
-                  <Loading size="small" />
-                </div>
-              ) : sellerInfo ? (
+              {part ? (
                 <div>
                   <div className="flex items-center mb-4">
-                    {sellerInfo.profile_image ? (
-                      <img 
-                        src={sellerInfo.profile_image} 
-                        alt={sellerInfo.username} 
-                        className="w-12 h-12 rounded-full mr-3 object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-                        <span className="text-gray-500 font-medium text-lg">
-                          {sellerInfo.username?.charAt(0).toUpperCase() || 'U'}
-                        </span>
-                      </div>
-                    )}
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                      <span className="text-gray-500 font-medium text-lg">
+                        {part.first_name ? part.first_name.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    </div>
                     <div>
-                      <h4 className="font-medium">{sellerInfo.username}</h4>
-                      <p className="text-sm text-gray-500">{t('memberSince')} {formatDate(sellerInfo.created_at || '')}</p>
+                      <h4 className="font-medium">
+                        {part.first_name && part.last_name ? `${part.first_name} ${part.last_name}` : t('unknownUser')}
+                      </h4>
+                      <p className="text-sm text-gray-500">{t('memberSince')} {formatDate(part.created_at || '')}</p>
                     </div>
                   </div>
                   
                   {showContactInfo ? (
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      {sellerInfo.phone && (
+                      {part.phone && (
                         <div className="flex items-center mb-2">
                           <Phone size={16} className="text-gray-500 mr-2" />
-                          <a href={`tel:${sellerInfo.phone}`} className="text-primary hover:underline">
-                            {sellerInfo.phone}
-                          </a>
-                        </div>
-                      )}
-                      {sellerInfo.email && (
-                        <div className="flex items-center">
-                          <Mail size={16} className="text-gray-500 mr-2" />
-                          <a href={`mailto:${sellerInfo.email}`} className="text-primary hover:underline">
-                            {sellerInfo.email}
+                          <a href={`tel:${part.phone}`} className="text-primary hover:underline">
+                            {part.phone}
                           </a>
                         </div>
                       )}

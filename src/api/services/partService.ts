@@ -36,6 +36,10 @@ export interface Part {
   vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
   color_highlighting?: boolean;
   auto_renewal?: boolean;
+  // Seller information
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
 }
 
 export interface PartFilters {
