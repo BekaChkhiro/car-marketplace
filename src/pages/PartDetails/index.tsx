@@ -11,7 +11,7 @@ import { formatCurrency } from '../../utils/formatters';
 import { formatDate } from '../../utils/dateUtils';
 import ImageGallery from './components/ImageGallery';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
-import { Phone, Mail, MapPin, Calendar, Tag, Info } from 'lucide-react';
+import { Phone, Mail, MapPin, Calendar, Tag, Info, User } from 'lucide-react';
 import { namespaces } from '../../i18n';
 
 const PartDetails: React.FC = () => {
@@ -288,6 +288,31 @@ const PartDetails: React.FC = () => {
                 <p className="text-gray-500">{t('sellerInfoUnavailable')}</p>
               )}
             </div>
+            
+            {/* Author info */}
+            {part && (part.author_name || part.author_phone) && (
+              <div className="mt-8 border-t pt-6">
+                <h3 className="font-semibold text-lg mb-4">{t('authorInformation') || 'Author Information'}</h3>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  {part.author_name && (
+                    <div className="flex items-center mb-2">
+                      <User size={16} className="text-gray-500 mr-2" />
+                      <span className="text-gray-800">{part.author_name}</span>
+                    </div>
+                  )}
+                  
+                  {part.author_phone && (
+                    <div className="flex items-center">
+                      <Phone size={16} className="text-gray-500 mr-2" />
+                      <a href={`tel:${part.author_phone}`} className="text-primary hover:underline">
+                        {part.author_phone}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Owner actions */}
             {isOwner && (

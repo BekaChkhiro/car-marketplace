@@ -40,6 +40,9 @@ export interface Part {
   first_name?: string;
   last_name?: string;
   phone?: string;
+  // Author information for forms
+  author_name?: string;
+  author_phone?: string;
 }
 
 export interface PartFilters {

@@ -7,6 +7,7 @@ import { Container, Button, Loading } from '../../../components/ui';
 import partService from '../../../api/services/partService';
 import ImageUploader from '../AddPart/components/ImageUploader';
 import MultiLanguageDescription from '../AddPart/components/MultiLanguageDescription';
+import AuthorInfo from '../AddPart/components/AuthorInfo';
 import { namespaces } from '../../../i18n';
 import { Part, PartImage } from '../../../api/services/partService';
 
@@ -20,6 +21,8 @@ interface FormData {
   description: string;
   description_en: string;
   description_ka: string;
+  author_name: string;
+  author_phone: string;
 }
 
 const EditPart: React.FC = () => {
@@ -42,7 +45,9 @@ const EditPart: React.FC = () => {
     price: 0,
     description: '',
     description_en: '',
-    description_ka: ''
+    description_ka: '',
+    author_name: user ? `${user.first_name} ${user.last_name}` : '',
+    author_phone: user?.phone || ''
   });
   
   const [images, setImages] = useState<File[]>([]);
@@ -91,7 +96,9 @@ const EditPart: React.FC = () => {
           price: partData.price || 0,
           description: partData.description || '',
           description_en: partData.description_en || '',
-          description_ka: partData.description_ka || ''
+          description_ka: partData.description_ka || '',
+          author_name: partData.author_name || user ? `${user.first_name} ${user.last_name}` : '',
+          author_phone: partData.author_phone || user?.phone || ''
         });
         
         // Set existing images
@@ -512,6 +519,17 @@ const EditPart: React.FC = () => {
               error={errors.images}
             />
             {errors.images && <p className="mt-1 text-sm text-red-500">{errors.images}</p>}
+          </div>
+          
+          {/* Author Information */}
+          <div className="mb-6">
+            <AuthorInfo
+              authorName={formData.author_name}
+              authorPhone={formData.author_phone}
+              onAuthorNameChange={(value) => setFormData(prev => ({ ...prev, author_name: value }))}
+              onAuthorPhoneChange={(value) => setFormData(prev => ({ ...prev, author_phone: value }))}
+              errors={errors}
+            />
           </div>
           
           {/* Form Actions */}

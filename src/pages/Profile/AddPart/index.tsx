@@ -9,6 +9,7 @@ import partService from '../../../api/services/partService';
 import ImageUploadWithFeatured from '../../../components/ImageUploadWithFeatured';
 import MultiLanguageDescription from './components/MultiLanguageDescription';
 import VIPStatus from './components/VIPStatus';
+import AuthorInfo from './components/AuthorInfo';
 import { namespaces } from '../../../i18n';
 
 interface FormData {
@@ -25,6 +26,8 @@ interface FormData {
   color_highlighting?: boolean;
   auto_renewal?: boolean;
   currency?: string; // Currency code (GEL, USD, etc.)
+  author_name: string;
+  author_phone: string;
 }
 
 const AddPart: React.FC = () => {
@@ -46,7 +49,9 @@ const AddPart: React.FC = () => {
     description_ka: '',
     vip_status: 'none',
     color_highlighting: false,
-    auto_renewal: false
+    auto_renewal: false,
+    author_name: user ? `${user.first_name} ${user.last_name}` : '',
+    author_phone: user?.phone || ''
   });
   
   const [images, setImages] = useState<File[]>([]);
@@ -489,6 +494,17 @@ const AddPart: React.FC = () => {
                 isUploading={isUploading}
               />
             </div>
+          </div>
+          
+          {/* Author Information */}
+          <div className="mb-6">
+            <AuthorInfo
+              authorName={formData.author_name}
+              authorPhone={formData.author_phone}
+              onAuthorNameChange={(value) => handleChange('author_name', value)}
+              onAuthorPhoneChange={(value) => handleChange('author_phone', value)}
+              errors={errors}
+            />
           </div>
           
           {/* VIP Status */}
