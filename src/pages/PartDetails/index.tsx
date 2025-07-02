@@ -303,29 +303,29 @@ const PartDetails: React.FC = () => {
             </div>
             
             {/* Author info */}
-            {part && (part.author_name || part.author_phone) && (
-              <div className="mt-8 border-t pt-6">
-                <h3 className="font-semibold text-lg mb-4">{t('authorInformation') || 'Author Information'}</h3>
+            <div className="mt-8 border-t pt-6">
+              <h3 className="font-semibold text-lg mb-4">{t('authorInformation') || 'Author Information'}</h3>
+              
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center mb-2">
+                  <User size={16} className="text-gray-500 mr-2" />
+                  <span className="text-gray-800">
+                    {part.author_name || t('unknownUser')}
+                  </span>
+                </div>
                 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  {part.author_name && (
-                    <div className="flex items-center mb-2">
-                      <User size={16} className="text-gray-500 mr-2" />
-                      <span className="text-gray-800">{part.author_name}</span>
-                    </div>
-                  )}
-                  
-                  {part.author_phone && (
-                    <div className="flex items-center">
-                      <Phone size={16} className="text-gray-500 mr-2" />
-                      <a href={`tel:${part.author_phone}`} className="text-primary hover:underline">
-                        {part.author_phone}
-                      </a>
-                    </div>
+                <div className="flex items-center">
+                  <Phone size={16} className="text-gray-500 mr-2" />
+                  {part.author_phone ? (
+                    <a href={`tel:${part.author_phone}`} className="text-primary hover:underline">
+                      {part.author_phone}
+                    </a>
+                  ) : (
+                    <span className="text-gray-500">{t('phoneNumberUnavailable') || 'Phone number unavailable'}</span>
                   )}
                 </div>
               </div>
-            )}
+            </div>
 
             {/* Owner actions */}
             {isOwner && (
