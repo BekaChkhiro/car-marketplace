@@ -22,7 +22,7 @@ interface AuthContextType {
     phone: string;
   }) => Promise<void>;
   logout: () => void;
-  updateProfile: (data: { username?: string; email?: string; phone?: string; first_name?: string; last_name?: string; age?: number; gender?: 'male' | 'female' | 'other' }) => Promise<void>;
+  updateProfile: (data: { username?: string; email?: string; phone?: string; first_name?: string; last_name?: string; age?: number; gender?: 'male' | 'female' | 'other' }) => Promise<User>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
@@ -219,10 +219,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProfile = async (data: { username?: string; email?: string; phone?: string; first_name?: string; last_name?: string; age?: number; gender?: 'male' | 'female' | 'other' }) => {
     showLoading();
     try {
+      console.log('AuthContext: Updating profile with data:', data);
       const updatedUser = await authService.updateProfile(data);
-      setUser(updatedUser);
-      storeUserData(updatedUser); // Store updated user data in cache
+      console.log('AuthContext: Received updated user from service:', updatedUser);
+      
+      // Make sure we have a valid user object
+      if (updatedUser) {
+        // Ensure gender is properly set in the user object
+        if (data.gender && (!updatedUser.gender || updatedUser.gender !== data.gender)) {
+          updatedUser.gender = data.gender;
+        }
+        
+        setUser(updatedUser);
+        storeUserData(updatedUser); // Store updated user data in cache
+      }
+      
       showToast('პროფილი წარმატებით განახლდა', 'success');
+      return updatedUser; // Return the updated user data
     } catch (err: any) {
       const message = err.message || 'პროფილის განახლება ვერ მოხერხდა';
       showToast(message, 'error');

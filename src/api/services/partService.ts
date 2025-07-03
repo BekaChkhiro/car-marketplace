@@ -40,6 +40,8 @@ export interface Part {
   first_name?: string;
   last_name?: string;
   phone?: string;
+  username?: string;
+  user_created_at?: string;
   // Author information for forms
   author_name?: string;
   author_phone?: string;

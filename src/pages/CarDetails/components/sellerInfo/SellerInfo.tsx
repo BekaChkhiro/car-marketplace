@@ -12,9 +12,10 @@ interface SellerInfoProps {
   };
   price: number;
   carId: string;
+  carName?: string;
 }
 
-const SellerInfo = ({ seller, price, carId }: SellerInfoProps) => {
+const SellerInfo = ({ seller, price, carId, carName }: SellerInfoProps) => {
   // If no seller data is provided, show a message
   if (!seller) {
     return (
@@ -37,7 +38,7 @@ const SellerInfo = ({ seller, price, carId }: SellerInfoProps) => {
         <div className="h-px bg-gray-100" />
         <SellerProfile seller={seller} />
         <div className="h-px bg-gray-100" />
-        <ContactButtons phone={seller.phone} />
+        <ContactButtons phone={seller.phone} carName={carName} />
       </div>
     </div>
   );

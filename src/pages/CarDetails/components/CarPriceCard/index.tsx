@@ -75,27 +75,29 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
       
       {/* Seller Info & Contact */}
       <div className="bg-white rounded-xl shadow-md border border-green-100 car-detail-card overflow-hidden">
-        {/* Seller Header */}
+        {/* Contact Header */}
         <div className="p-4 border-b border-green-100">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3 shadow-sm">
-              <User className="w-6 h-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="font-medium text-gray-800 flex items-center">
-                {car.author_name || 'მანქანის მფლობელი'}
-                <Check className="w-4 h-4 text-primary ml-1" />
-              </div>
-              <div className="flex items-center mt-2">
-                <Phone className="w-5 h-5 text-primary mr-2" />
-                <span className="text-lg font-bold text-primary">{car.author_phone || '+995557409798'}</span>
-              </div>
-            </div>
-          </div>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800">გამყიდველთან დაკავშირება</h3>
         </div>
         
-        {/* Direct Call Button */}
         <div className="p-4">
+          {/* Author Name */}
+          <div className="mb-3">
+            <h4 className="text-sm text-gray-600 mb-1">ავტორი:</h4>
+            <p className="text-base font-medium text-gray-800">
+              {car.author_name || 'მანქანის მფლობელი'}
+            </p>
+          </div>
+          
+          {/* Seller Phone */}
+          <div className="mb-4">
+            <h4 className="text-sm text-gray-600 mb-1">ტელეფონი:</h4>
+            <p className="text-base font-medium text-primary">
+              {car.author_phone || '+995557409798'}
+            </p>
+          </div>
+          
+          {/* Call Button */}
           <a 
             href={`tel:${car.author_phone || '+995555 55 55 55'}`} 
             className="w-full bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors shadow-sm flex items-center justify-center gap-2"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, Shield, Star } from 'lucide-react';
+import { useAuth } from '../../../../../context/AuthContext';
 
 interface SellerProfileProps {
   seller: {
@@ -10,7 +11,15 @@ interface SellerProfileProps {
 }
 
 const SellerProfile = ({ seller }: SellerProfileProps) => {
+  const { user } = useAuth();
   const { name = 'Anonymous', verified = false, rating } = seller || {};
+  
+  // Use real user data if available
+  const displayName = user ? 
+    (user.first_name && user.last_name ? 
+      `${user.first_name} ${user.last_name}` : 
+      user.username) : 
+    name;
 
   return (
     <div className="p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
@@ -21,7 +30,7 @@ const SellerProfile = ({ seller }: SellerProfileProps) => {
         
         <div className="flex-1 min-w-0">
           <h3 className="text-lg sm:text-xl font-bold text-gray-dark truncate hover:text-primary transition-colors duration-200">
-            {name}
+            {displayName}
           </h3>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
             {verified && (

@@ -69,16 +69,31 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
         <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
           {t('carDetails:priceCard.contactSeller')}
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <a href="tel:+995555123456" className="flex items-center justify-center gap-2 bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-green-600 transition-colors">
-            <Phone className="w-5 h-5" />
-            <span>{t('carDetails:priceCard.callSeller')}</span>
-          </a>
-          <a href="sms:+995555123456" className="flex items-center justify-center gap-2 bg-green-50 text-primary py-3 px-4 rounded-lg font-medium border border-primary hover:bg-green-100 transition-colors">
-            <MessageCircle className="w-5 h-5" />
-            <span>{t('carDetails:priceCard.messageSeller')}</span>
-          </a>
+        
+        {/* Author Name */}
+        <div className="mb-3">
+          <h4 className="text-sm text-gray-600 mb-1">ავტორი:</h4>
+          <p className="text-base font-medium text-gray-800">
+            {car.author_name || 'მანქანის მფლობელი'}
+          </p>
         </div>
+        
+        {/* Seller Phone */}
+        <div className="mb-4">
+          <h4 className="text-sm text-gray-600 mb-1">ტელეფონი:</h4>
+          <p className="text-base font-medium text-primary">
+            {car.author_phone || '+995555123456'}
+          </p>
+        </div>
+        
+        {/* Call Button */}
+        <a 
+          href={`tel:${car.author_phone || '+995555123456'}`}
+          className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+        >
+          <Phone className="w-5 h-5" />
+          <span>{car.author_phone || '+995555123456'}</span>
+        </a>
       </div>
     </div>
   );

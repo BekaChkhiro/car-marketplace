@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, UserCircle, Calendar, UserCheck } from 'lucide-react';
 import { useAuth } from '../../../../../context/AuthContext';
 import { useToast } from '../../../../../context/ToastContext';
@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 const ProfileEdit: React.FC = () => {
   const { t } = useTranslation(['profile']);
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, refreshUserData } = useAuth();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   // Define the type for the form data
@@ -20,6 +20,9 @@ const ProfileEdit: React.FC = () => {
     gender: 'male' | 'female';
   };
 
+  // Store the selected gender separately to ensure it persists
+  const [selectedGender, setSelectedGender] = useState<'male' | 'female'>(user?.gender === 'female' ? 'female' : 'male');
+  
   const [formData, setFormData] = useState<FormDataType>({
     username: user?.username || '',
     email: user?.email || '',
@@ -27,10 +30,37 @@ const ProfileEdit: React.FC = () => {
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
     age: user?.age || 18,
-    gender: (user?.gender === 'other' || !user?.gender) ? 'male' : (user?.gender as 'male' | 'female')
+    gender: selectedGender // Use the separately stored gender value
   });
+
+  // Update form data when user data changes, but preserve the selected gender
+  useEffect(() => {
+    console.log('User gender from server:', user?.gender);
+    if (user) {
+      setFormData(prevData => ({
+        ...prevData,
+        username: user.username || prevData.username,
+        phone: user.phone || prevData.phone,
+        first_name: user.first_name || prevData.first_name,
+        last_name: user.last_name || prevData.last_name,
+        age: user.age || prevData.age,
+        // Keep using the selected gender rather than the one from the server
+        gender: selectedGender
+      }));
+    }
+  }, [user, selectedGender]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Initialize from localStorage if available
+  useEffect(() => {
+    const savedGender = localStorage.getItem('selected_gender') as 'male' | 'female' | null;
+    if (savedGender) {
+      console.log('Found saved gender in localStorage:', savedGender);
+      setSelectedGender(savedGender);
+      setFormData(prev => ({ ...prev, gender: savedGender }));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +70,22 @@ const ProfileEdit: React.FC = () => {
     try {
       // Create a new object without the email field
       const { email, ...updateData } = formData;
-      await updateProfile(updateData);
+      
+      // Ensure we're using the selected gender value
+      updateData.gender = selectedGender;
+      
+      console.log('Submitting gender value:', updateData.gender);
+      
+      // Update the profile
+      const updatedUser = await updateProfile(updateData);
+      console.log('Updated user from server:', updatedUser);
+      
+      // Force refresh user data to ensure we have the latest values
+      await refreshUserData();
+      
+      // Store the selection in localStorage as a backup
+      localStorage.setItem('selected_gender', selectedGender);
+      
       const successMsg = t('profileEdit.success');
       setSuccess(successMsg);
       showToast(successMsg, 'success');
@@ -204,8 +249,17 @@ const ProfileEdit: React.FC = () => {
             <select
               id="gender"
               name="gender"
-              value={formData.gender}
-              onChange={e => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+              value={selectedGender}
+              onChange={e => {
+                const newGender = e.target.value as 'male' | 'female';
+                console.log('Gender changed to:', newGender);
+                // Update both the selected gender and the form data
+                setSelectedGender(newGender);
+                setFormData({ ...formData, gender: newGender });
+                
+                // Store the selection in localStorage as a backup
+                localStorage.setItem('selected_gender', newGender);
+              }}
               className="w-full pl-11 pr-4 py-3.5 sm:py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none appearance-none"
               required
             >

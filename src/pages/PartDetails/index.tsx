@@ -18,7 +18,7 @@ import { namespaces } from '../../i18n';
 const PartDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { showToast } = useToast();
   const { currency, setCurrency, convertPrice, formatPrice } = useCurrency();
   const { t } = useTranslation([namespaces.parts, namespaces.common]);
@@ -268,72 +268,59 @@ const PartDetails: React.FC = () => {
               <h3 className="font-semibold text-lg mb-4">{t('sellerInformation')}</h3>
               
               {part ? (
-                <div>
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-                      <span className="text-gray-500 font-medium text-lg">
-                        {part.first_name ? part.first_name.charAt(0).toUpperCase() : 'U'}
-                      </span>
-                    </div>
-                    <div>
-                      <h4 className="font-medium">
-                        {part.first_name && part.last_name ? `${part.first_name} ${part.last_name}` : t('unknownUser')}
-                      </h4>
-                      <p className="text-sm text-gray-500">{t('memberSince')} {formatDate(part.created_at || '')}</p>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="p-5 bg-gradient-to-r from-primary/10 to-transparent">
+                    <div className="flex items-center">
+                      <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mr-4 border-2 border-white shadow-sm">
+                        <span className="text-primary font-semibold text-xl">
+                          {part.first_name ? part.first_name.charAt(0).toUpperCase() : part.username ? part.username.charAt(0).toUpperCase() : 'U'}
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-lg text-gray-800">
+                          {part.first_name && part.last_name ? `${part.first_name} ${part.last_name}` : part.username || (user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : user?.username || t('unknownUser'))}
+                        </h4>
+                        <a href={`tel:${part.phone || part.author_phone || user?.phone}`} className="text-primary flex items-center hover:text-primary/80 transition-colors">
+                          <Phone size={14} className="mr-1" />
+                          {part.phone || part.author_phone || user?.phone || t('phoneNumberUnavailable')}
+                        </a>
+                      </div>
                     </div>
                   </div>
                   
-                  {showContactInfo ? (
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      {part.phone && (
-                        <div className="flex items-center mb-2">
-                          <Phone size={16} className="text-gray-500 mr-2" />
-                          <a href={`tel:${part.phone}`} className="text-primary hover:underline">
-                            {part.phone}
+                  <div className="px-5 py-4 border-t border-gray-100">
+                    {showContactInfo ? (
+                      <div className="flex flex-col gap-3">
+                        {part.phone && (
+                          <a href={`tel:${part.phone}`} className="flex items-center text-gray-700 hover:text-primary transition-colors">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                              <Phone size={18} className="text-primary" />
+                            </div>
+                            <span className="font-medium">{part.phone}</span>
                           </a>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="w-full"
-                      onClick={handleContactSellerClick}
-                    >
-                      {t('contactSeller')}
-                    </Button>
-                  )}
+                        )}
+                      </div>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        className="w-full flex items-center justify-center gap-2 py-3"
+                        onClick={handleContactSellerClick}
+                      >
+                        <Phone size={18} />
+                        <span className="font-medium">{part.phone || part.author_phone || user?.phone || t('contactSeller')}</span>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ) : (
-                <p className="text-gray-500">{t('sellerInfoUnavailable')}</p>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                  <p className="text-gray-500 text-center">{t('sellerInfoUnavailable')}</p>
+                </div>
               )}
             </div>
             
-            {/* Author info */}
-            <div className="mt-8 border-t pt-6">
-              <h3 className="font-semibold text-lg mb-4">{t('authorInformation') || 'Author Information'}</h3>
-              
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-center mb-2">
-                  <User size={16} className="text-gray-500 mr-2" />
-                  <span className="text-gray-800">
-                    {part.author_name || t('unknownUser')}
-                  </span>
-                </div>
-                
-                <div className="flex items-center">
-                  <Phone size={16} className="text-gray-500 mr-2" />
-                  {part.author_phone ? (
-                    <a href={`tel:${part.author_phone}`} className="text-primary hover:underline">
-                      {part.author_phone}
-                    </a>
-                  ) : (
-                    <span className="text-gray-500">{t('phoneNumberUnavailable') || 'Phone number unavailable'}</span>
-                  )}
-                </div>
-              </div>
-            </div>
+            {/* Author info section removed */}
 
             {/* Owner actions */}
             {isOwner && (
