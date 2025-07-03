@@ -55,37 +55,140 @@ interface CarInfoProps {
 const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
   const [category, setCategory] = useState<LocalCategory | null>(null);
 
+  // დებაგ ლოგები - მანქანის ობიექტის სრული სტრუქტურა
+  console.log('CarInfo - Full car object:', JSON.stringify(car, null, 2));
+  console.log('CarInfo - category_id:', car.category_id, 'type:', typeof car.category_id);
+  console.log('CarInfo - category_name:', car.category_name, 'type:', typeof car.category_name);
+  
+  // თუ არსებობს category_name, პირდაპირ გამოვიყენოთ ის
+  useEffect(() => {
+    if (car.category_name) {
+      setCategory({
+        id: String(car.category_id),
+        name: car.category_name
+      });
+      console.log('Using direct category_name:', car.category_name);
+    }
+  }, [car.category_name, car.category_id]);
+
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        console.log('Fetching category for category_id:', car.category_id);
+        console.log('[CarInfo] Fetching category for category_id:', car.category_id, 'Type:', typeof car.category_id);
+        
+        // If we already have a category name directly from the car object, use it
+        if (car.category_name) {
+          console.log('[CarInfo] Using direct category_name from car object:', car.category_name);
+          setCategory({
+            id: String(car.category_id),
+            name: car.category_name
+          });
+          return; // Exit early if we have the category name
+        }
+        
+        // მოკ კატეგორიები - ეს არის იგივე რაც carService.ts-ში
+        const mockCategories = [
+          { id: 1, name: 'სედანი' },
+          { id: 2, name: 'ჯიპი' },
+          { id: 3, name: 'კუპე' },
+          { id: 4, name: 'კაბრიოლეტი' },
+          { id: 5, name: 'უნივერსალი' },
+          { id: 6, name: 'ჰეჩბეგი' },
+          { id: 7, name: 'პიკაპი' },
+          { id: 8, name: 'მინივენი' },
+          { id: 9, name: 'მიკროავტობუსი' },
+          { id: 10, name: 'სპორტული' }
+        ];
+        
         if (car.category_id) {
-          const categories = await carService.getCategories();
-          console.log('Available categories:', categories);
-          // Compare as strings to handle type differences (number vs string)
-          const foundCategory = categories.find(cat => String(cat.id) === String(car.category_id));
-          console.log('Found category:', foundCategory);
-          if (foundCategory) {
-            // Convert API Category type to local Category type
+          // ჯერ ვცადოთ API-დან კატეგორიების მიღება
+          try {
+            console.log('[CarInfo] Fetching categories from API');
+            const categories = await carService.getCategories();
+            console.log('[CarInfo] API categories received:', categories.length);
+            
+            // Convert category_id to both string and number for comparison
+            const categoryIdString = String(car.category_id);
+            const categoryIdNumber = parseInt(categoryIdString, 10);
+            
+            console.log('[CarInfo] Looking for category with ID:', categoryIdString, 'or', categoryIdNumber);
+            
+            // Try multiple comparison methods to ensure we find the category
+            let foundCategory = categories.find(cat => {
+              const catIdString = String(cat.id);
+              const catIdNumber = parseInt(catIdString, 10);
+              
+              const matchesString = catIdString === categoryIdString;
+              const matchesNumber = catIdNumber === categoryIdNumber;
+              
+              if (matchesString || matchesNumber) {
+                console.log(`[CarInfo] Found matching category: ${cat.name} (ID: ${cat.id})`);
+                return true;
+              }
+              return false;
+            });
+            
+            if (foundCategory) {
+              // Convert API Category type to local Category type
+              const localCategory = {
+                id: String(foundCategory.id),
+                name: foundCategory.name
+              };
+              console.log('[CarInfo] Setting category from API:', localCategory);
+              setCategory(localCategory);
+              return; // API-დან კატეგორია ნაპოვნია, გამოვდივართ ფუნქციიდან
+            } else {
+              console.log('[CarInfo] No matching category found in API results');
+            }
+          } catch (apiError) {
+            console.error('[CarInfo] Error fetching categories from API:', apiError);
+            // API შეცდომის შემთხვევაში გადავდივართ მოკ კატეგორიებზე
+          }
+          
+          // თუ API-დან ვერ მივიღეთ კატეგორია, ვიყენებთ მოკ კატეგორიებს
+          console.log('[CarInfo] Falling back to mock categories');
+          
+          // ვეძებთ კატეგორიას მოკ მონაცემებში - ვცდით ორივე ტიპის შედარებას
+          const categoryIdString = String(car.category_id);
+          const categoryIdNumber = parseInt(categoryIdString, 10);
+          
+          const foundMockCategory = mockCategories.find(cat => {
+            const catIdString = String(cat.id);
+            const catIdNumber = parseInt(catIdString, 10);
+            return catIdString === categoryIdString || catIdNumber === categoryIdNumber;
+          });
+          
+          if (foundMockCategory) {
+            console.log('[CarInfo] Found matching mock category:', foundMockCategory);
             const localCategory = {
-              id: String(foundCategory.id), // Convert number to string
-              name: foundCategory.name
+              id: String(foundMockCategory.id),
+              name: foundMockCategory.name
             };
-            console.log('Setting category to:', localCategory);
             setCategory(localCategory);
           } else {
-            console.log('Category not found for ID:', car.category_id);
+            console.log('[CarInfo] Category not found in mock data for ID:', car.category_id);
+            
+            // Fallback: If we can't find the category, create a placeholder with the ID
+            setCategory({
+              id: String(car.category_id),
+              name: `კატეგორია ${car.category_id}`
+            });
           }
         } else {
-          console.log('No category_id provided in car object');
+          console.log('[CarInfo] No category_id provided in car object');
         }
       } catch (error) {
-        console.error('Error fetching category:', error);
+        console.error('[CarInfo] Error in fetchCategory:', error);
+        // Final fallback - create a generic category
+        setCategory({
+          id: car.category_id ? String(car.category_id) : '0',
+          name: 'უცნობი კატეგორია'
+        });
       }
     };
 
     fetchCategory();
-  }, [car.category_id]);
+  }, [car.category_id, car.category_name]);
   
   // Add animation styles
   useEffect(() => {

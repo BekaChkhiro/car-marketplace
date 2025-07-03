@@ -21,6 +21,7 @@ export interface Car {
   author_phone?: string; // Author's contact phone
   created_at: string;
   updated_at: string;
+  category_name?: string; // დავამატეთ კატეგორიის სახელი
   specifications: CarSpecifications;
   location: CarLocation;
   images: CarImage[];

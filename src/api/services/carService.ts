@@ -18,6 +18,9 @@ class CarService {
         if (filters.sortBy) serverFilters.sort = filters.sortBy;
         if (filters.order) serverFilters.order = filters.order;
         
+        // Exclude specific car ID
+        if (filters.excludeId) serverFilters.exclude_id = filters.excludeId;
+        
         // Brand and category IDs
         if (filters.brand_id) serverFilters.brand_id = filters.brand_id;
         if (filters.category) serverFilters.category_id = filters.category;
@@ -229,8 +232,45 @@ class CarService {
       console.log('[CarService.getCar] Fetching car with ID:', id);
       const response = await api.get(`/api/cars/${id}`);
       console.log('[CarService.getCar] Successfully retrieved car data from API');
-      console.log('[CarService.getCar] API response data:', JSON.stringify(response.data));
-      return response.data;
+      
+      // Get the car data from the response
+      const carData = response.data;
+      
+      // If we have a category_id but no category_name, try to fetch the category name
+      if (carData.category_id && !carData.category_name) {
+        console.log('[CarService.getCar] Car has category_id but no category_name, fetching category info');
+        try {
+          // Fetch categories
+          const categories = await this.getCategories();
+          
+          // Find the matching category
+          const categoryIdString = String(carData.category_id);
+          const categoryIdNumber = parseInt(categoryIdString, 10);
+          
+          const matchingCategory = categories.find(cat => {
+            const catIdString = String(cat.id);
+            const catIdNumber = parseInt(catIdString, 10);
+            return catIdString === categoryIdString || catIdNumber === categoryIdNumber;
+          });
+          
+          if (matchingCategory) {
+            console.log(`[CarService.getCar] Found matching category: ${matchingCategory.name}`);
+            carData.category_name = matchingCategory.name;
+          } else {
+            console.log('[CarService.getCar] No matching category found for ID:', carData.category_id);
+          }
+        } catch (categoryError) {
+          console.error('[CarService.getCar] Error fetching category info:', categoryError);
+        }
+      }
+      
+      console.log('[CarService.getCar] Final car data with category:', JSON.stringify({
+        id: carData.id,
+        category_id: carData.category_id,
+        category_name: carData.category_name
+      }));
+      
+      return carData;
     } catch (error: any) {
       console.error('[CarService.getCar] Error details:', error);
       
@@ -405,10 +445,27 @@ class CarService {
 
   async getCategories(): Promise<Category[]> {
     try {
+      console.log('[CarService.getCategories] Fetching categories from API');
       const response = await api.get('/api/cars/categories');
-      return response.data;
-    } catch (error) {
-      console.error('[CarService.getCategories] Error:', error);
+      
+      if (response.data && Array.isArray(response.data)) {
+        console.log(`[CarService.getCategories] Successfully loaded ${response.data.length} categories`);
+        return response.data;
+      } else {
+        console.warn('[CarService.getCategories] API returned unexpected data format:', response.data);
+        throw new Error('Unexpected data format from API');
+      }
+    } catch (error: any) {
+      console.error('[CarService.getCategories] Error details:', error);
+      
+      // Show detailed error information for debugging
+      if (error?.response?.data) {
+        console.log('[CarService.getCategories] Server error response:', error.response.data);
+      } else if (error?.message) {
+        console.log('[CarService.getCategories] Error message:', error.message);
+      }
+      
+      console.log('[CarService.getCategories] Using fallback mock categories');
       
       // Fallback categories
       const mockCategories: Category[] = [

@@ -22,19 +22,62 @@ const SimilarCars: React.FC<SimilarCarsProps> = ({ carId, category }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [carsResponse, categoriesResponse] = await Promise.all([
-          carService.getCars({
-            category,
-            limit: 8, // Increased limit for more carousel items
-            excludeId: carId
-          }),
-          carService.getCategories()
-        ]);
-        setCars(carsResponse.cars);
+        // Log the category ID we're using
+        console.log('[SimilarCars] Fetching similar cars with category ID:', category);
+        console.log('[SimilarCars] Current car ID to exclude:', carId);
+        
+        // First fetch categories to ensure they're loaded
+        const categoriesResponse = await carService.getCategories();
         setCategories(categoriesResponse);
+        
+        // Get the current car ID in both string and number format for reliable comparison
+        const currentCarIdStr = carId?.toString() || '';
+        const currentCarIdNum = parseInt(currentCarIdStr, 10);
+        
+        console.log('[SimilarCars] Current car ID (string):', currentCarIdStr);
+        console.log('[SimilarCars] Current car ID (number):', currentCarIdNum);
+        
+        // Fetch more cars than needed to ensure we have enough after filtering
+        const filters: any = {
+          limit: 20
+          // Not using excludeId in API call since it doesn't seem to work properly
+        };
+        
+        // Only add category filter if it's a valid non-empty string
+        if (category && category.trim() !== '') {
+          filters.category = category;
+        }
+        
+        const carsResponse = await carService.getCars(filters);
+        console.log('[SimilarCars] Total cars fetched before filtering:', carsResponse.cars.length);
+        
+        // Manual filtering to remove the current car
+        // This is a belt-and-suspenders approach that checks multiple ID formats
+        const filteredCars = carsResponse.cars.filter(car => {
+          // Get car ID in multiple formats for comparison
+          const carIdStr = car.id?.toString() || '';
+          const carIdNum = car.id ? Number(car.id) : 0;
+          
+          // Log any potential matches for debugging
+          if (carIdStr === currentCarIdStr || carIdNum === currentCarIdNum) {
+            console.log('[SimilarCars] Found current car in results, removing:', car);
+            return false;
+          }
+          
+          return true;
+        });
+        
+        console.log('[SimilarCars] Cars after filtering:', filteredCars.length);
+        
+        // Limit to 8 cars for display
+        const limitedCars = filteredCars.slice(0, 8);
+        setCars(limitedCars);
       } catch (error) {
         console.error('Error fetching data:', error);
         showToast('Failed to load similar cars', 'error');
+        // Set empty arrays to prevent undefined errors
+        setCars([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }

@@ -63,7 +63,11 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
               </div>
               <div>
                 <span className="text-xs text-gray-500 block">{t('carDetails:specs.category', 'კატეგორია')}</span>
-                <span className="font-semibold text-gray-900">{(car as any).category || car.specifications?.body_type || '-'}</span>
+                <span className="font-semibold text-gray-900">
+                  {car.category_name || 
+                   (car.category_id ? `კატეგორია ${car.category_id}` : 
+                   car.specifications?.body_type || '-')}
+                </span>
               </div>
             </div>
             

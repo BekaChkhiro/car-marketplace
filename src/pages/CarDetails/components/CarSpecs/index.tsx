@@ -3,7 +3,8 @@ import { Car } from '../../../../api/types/car.types';
 import { 
   Calendar, Gauge, Fuel, Shield, 
   Zap, Truck, Sliders, Tag, CheckCircle, XCircle,
-  Settings, List, Grid
+  Settings, List, Grid, Droplet, Layers, Compass, Palette, 
+  Sofa, Circle, HeartPulse
 } from 'lucide-react';
 import { KeySpec } from '../../hooks/useCarDetails';
 import { useTranslation } from 'react-i18next';
@@ -23,13 +24,6 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   
   // Get key specifications with enhanced styling
   const keySpecs: KeySpec[] = [
-    { 
-      icon: <Calendar className="w-5 h-5 text-primary" />, 
-      label: t('carDetails:specs.year'), 
-      value: year,
-      color: 'bg-green-50',
-      textColor: 'text-primary'
-    },
     { 
       icon: <Gauge className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.mileage'), 
@@ -51,47 +45,114 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
+    { 
+      icon: <Tag className="w-5 h-5 text-primary" />, 
+      label: t('carDetails:specs.category', 'კატეგორია'), 
+      value: car.category_name || (car.category_id ? `კატეგორია ${car.category_id}` : t('common:notAvailable', 'არ არის')),
+      color: 'bg-green-50',
+      textColor: 'text-primary'
+    },
   ];
   
   // Additional specifications
   const additionalSpecs: KeySpec[] = [
     { 
-      icon: <Sliders className="w-5 h-5 text-primary" />, 
-      label: t('carDetails:specs.engine'), 
-      value: car.specifications?.engine_type || t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50'
+      icon: <Droplet className="w-5 h-5 text-primary" />, 
+      label: 'ძრავის მოცულობა', 
+      value: car.specifications?.engine_size ? `${car.specifications.engine_size} ლ` : t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <Layers className="w-5 h-5 text-primary" />, 
+      label: 'ცილინდრების რაოდენობა', 
+      value: car.specifications?.cylinders ? car.specifications.cylinders.toString() : t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <Gauge className="w-5 h-5 text-primary" />, 
+      label: 'გარბენი', 
+      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <Shield className="w-5 h-5 text-primary" />, 
+      label: 'გადაცემათა კოლოფი', 
+      value: car.specifications?.transmission || t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <Fuel className="w-5 h-5 text-primary" />, 
+      label: 'საწვავის ტიპი', 
+      value: car.specifications?.fuel_type || t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
     },
     { 
       icon: <Truck className="w-5 h-5 text-primary" />, 
-      label: t('carDetails:specs.driveType'), 
+      label: 'წამყვანი თვლები', 
       value: car.specifications?.drive_type || t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50'
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
     },
     { 
-      icon: <Zap className="w-5 h-5 text-primary" />, 
-      label: t('common:horsepower'), 
-      value: car.specifications?.horsepower ? `${car.specifications.horsepower} ${t('common:hp', 'ცხძ')}` : t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50'
+      icon: <Compass className="w-5 h-5 text-primary" />, 
+      label: 'საჭე', 
+      value: car.specifications?.steering_wheel || t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
     },
     { 
-      icon: <Tag className="w-5 h-5 text-primary" />, 
-      label: t('carDetails:specs.color'), 
+      icon: <Palette className="w-5 h-5 text-primary" />, 
+      label: 'ფერი', 
       value: car.specifications?.color || t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50'
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <Sofa className="w-5 h-5 text-primary" />, 
+      label: 'სალონის მასალა', 
+      value: car.specifications?.interior_material || t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <Circle className="w-5 h-5 text-primary" />, 
+      label: 'სალონის ფერი', 
+      value: car.specifications?.interior_color || t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
+    { 
+      icon: <HeartPulse className="w-5 h-5 text-primary" />, 
+      label: 'უსაფრთხოების ბალიშების რაოდენობა', 
+      value: car.specifications?.airbags_count ? car.specifications.airbags_count.toString() : t('common:notAvailable', 'არ არის'),
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
     },
   ];
   
-  // Features list
+  // Features list with explicit fallback values
   const carFeatures = [
-    { name: t('common:features.airConditioning'), value: car.specifications?.has_air_conditioning },
-    { name: t('common:features.abs'), value: car.specifications?.has_abs },
-    { name: t('common:features.boardComputer'), value: car.specifications?.has_board_computer },
-    { name: t('common:features.cruiseControl'), value: car.specifications?.has_cruise_control },
-    { name: t('common:features.seatHeating'), value: car.specifications?.has_seat_heating },
-    { name: t('common:features.navigation'), value: car.specifications?.has_navigation },
-    { name: t('common:features.rearCamera'), value: car.specifications?.has_rear_view_camera },
-    { name: t('common:features.parkingControl'), value: car.specifications?.has_parking_control },
-  ].filter(feature => feature.value !== undefined);
+    { name: t('common:features.airConditioning', 'კონდიციონერი'), value: car.specifications?.has_air_conditioning ?? false },
+    { name: t('common:features.abs', 'ABS'), value: car.specifications?.has_abs ?? false },
+    { name: t('common:features.boardComputer', 'ბორტკომპიუტერი'), value: car.specifications?.has_board_computer ?? false },
+    { name: t('common:features.cruiseControl', 'კრუიზ კონტროლი'), value: car.specifications?.has_cruise_control ?? false },
+    { name: t('common:features.seatHeating', 'სავარძლების გათბობა'), value: car.specifications?.has_seat_heating ?? false },
+    { name: t('common:features.navigation', 'ნავიგაცია'), value: car.specifications?.has_navigation ?? false },
+    { name: t('common:features.rearCamera', 'უკანა ხედის კამერა'), value: car.specifications?.has_rear_view_camera ?? false },
+    { name: t('common:features.parkingControl', 'პარკირების კონტროლი'), value: car.specifications?.has_parking_control ?? false },
+    // Adding more common car features that might be useful
+    { name: t('common:features.bluetooth', 'Bluetooth'), value: car.specifications?.has_bluetooth ?? false },
+    { name: t('common:features.sunroof', 'სახურავის ლუკი'), value: car.specifications?.has_sunroof ?? false },
+    { name: t('common:features.leatherSeats', 'ტყავის სალონი'), value: car.specifications?.has_leather_interior ?? false },
+    { name: t('common:features.electricWindows', 'ელ. შუშები'), value: car.specifications?.has_electric_windows ?? false },
+    { name: t('common:features.multifunctionSteeringWheel', 'მულტიფუნქციური საჭე'), value: car.specifications?.has_multifunction_steering_wheel ?? false },
+    { name: t('common:features.startStopSystem', 'Start-Stop სისტემა'), value: car.specifications?.has_start_stop ?? false },
+  ];
 
   return (
     <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow-md p-4 sm:p-6 border border-green-100 car-detail-card">
@@ -119,35 +180,37 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       
       {activeTab === 'specs' && (
         <div className="animate-fade-in">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">{t('common:mainSpecifications')}</h3>
           
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 sm:mb-8">
             {keySpecs.map((spec, index) => (
               <div 
                 key={index} 
-                className={`p-3 sm:p-4 rounded-lg ${spec.color || 'bg-green-50'} flex flex-col spec-item`}
+                className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100"
               >
-                <div className="flex items-center mb-1 sm:mb-2">
+                <div className="bg-primary/10 p-2 rounded-lg mr-3">
                   {spec.icon}
-                  <span className="text-xs sm:text-sm ml-2 text-gray-700">{spec.label}</span>
                 </div>
-                <span className={`font-medium text-base sm:text-lg ${spec.textColor || 'text-primary'}`}>{spec.value}</span>
+                <div>
+                  <span className="text-xs text-gray-500 block">{spec.label}</span>
+                  <span className="font-semibold text-gray-900">{spec.value}</span>
+                </div>
               </div>
             ))}
           </div>
           
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">{t('common:additionalSpecifications')}</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {additionalSpecs.map((spec, index) => (
               <div 
                 key={index} 
-                className={`p-3 sm:p-4 rounded-lg ${spec.color || 'bg-green-50'} flex flex-col spec-item`}
+                className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100"
               >
-                <div className="flex items-center mb-1 sm:mb-2">
+                <div className="bg-primary/10 p-2 rounded-lg mr-3">
                   {spec.icon}
-                  <span className="text-xs sm:text-sm ml-2 text-gray-700">{spec.label}</span>
                 </div>
-                <span className="font-medium text-base sm:text-lg text-primary">{spec.value}</span>
+                <div>
+                  <span className="text-xs text-gray-500 block">{spec.label}</span>
+                  <span className="font-semibold text-gray-900">{spec.value}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -156,19 +219,18 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       
       {activeTab === 'features' && carFeatures.length > 0 && (
         <div className="animate-fade-in">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">{t('common:featuresAndEquipment')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {carFeatures.map((feature, index) => (
               <div 
                 key={index} 
-                className={`flex items-center p-3 sm:p-4 rounded-lg ${feature.value ? 'bg-green-50' : 'bg-gray-50'} feature-badge ${feature.value ? 'active' : ''}`}
+                className={`flex items-center p-3 sm:p-4 rounded-lg ${feature.value ? 'bg-green-50 border border-green-100' : 'bg-gray-50'} feature-badge ${feature.value ? 'active' : ''}`}
               >
                 {feature.value ? (
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 ) : (
                   <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 )}
-                <span className="text-xs sm:text-sm font-medium ml-2">{feature.name}</span>
+                <span className={`text-xs sm:text-sm font-medium ml-2 ${feature.value ? 'text-gray-800' : 'text-gray-500'}`}>{feature.name}</span>
               </div>
             ))}
           </div>
