@@ -9,7 +9,6 @@ import CarGallery from './components/CarGallery';
 import MobileCarInfo from './components/MobileCarInfo';
 import CarSpecs from './components/CarSpecs';
 import CarPriceCard from './components/CarPriceCard';
-import VipStatusPurchase from './components/VipStatusPurchase';
 import SimilarCarsSection from './components/SimilarCarsSection';
 import AdvertisementDisplay from '../../components/Advertisement/AdvertisementDisplay';
 import { useAuth } from '../../context/AuthContext';
@@ -147,12 +146,6 @@ const CarDetails: React.FC = () => {
           <div className="hidden md:block md:col-span-5 lg:col-span-4">
             <div className="sticky top-24">
               {/* Only show VIP purchase if user is the owner of the car */}
-              {isAuthenticated && user && car && car.seller_id === user.id && (
-                <VipStatusPurchase 
-                  car={car} 
-                  onSuccess={() => setRefreshCarData(prev => !prev)} 
-                />
-              )}
               <CarPriceCard car={car} keySpecs={keySpecs} />
             </div>
           </div>

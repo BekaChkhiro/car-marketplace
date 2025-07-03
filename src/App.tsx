@@ -10,6 +10,8 @@ import { ToastProvider } from './context/ToastContext';
 import { LoadingProvider } from './context/LoadingContext';
 import { WishlistProvider } from './context/WishlistContext';
 import ProfileCompletionModalProvider from './components/auth/ProfileCompletionModalProvider';
+// Import custom CSS to hide VIP elements
+import './styles/hide-vip.css';
 
 const App = () => {
   return (

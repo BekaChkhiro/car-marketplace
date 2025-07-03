@@ -1,0 +1,73 @@
+/* CSS to hide VIP-related elements on car pages */
+
+/* Hide VIP badge in car info */
+.bg-gradient-to-r.from-yellow-400.to-yellow-600.text-white.rounded-full.inline-flex.items-center,
+div:has(> span.text-blue-600:contains("VIP")),
+div:has(> span.text-primary:contains("VIP")) {
+  display: none !important;
+}
+
+/* Hide VIP status purchase component */
+div:has(> .VipStatusPurchase),
+.VipStatusPurchase {
+  display: none !important;
+}
+
+/* Hide any VIP-related sections with star icons */
+div.bg-green-50.p-4.border-b.border-green-100,
+div:has(> svg.lucide-star) {
+  display: none !important;
+}
+
+/* Hide VIP package selection section */
+div:has(> h3:contains("აირჩიეთ VIP პაკეტი")),
+div:has(> h3.text-md.font-medium.mb-2:contains("აირჩიეთ VIP პაკეტი")),
+div.grid.grid-cols-1.md\:grid-cols-3.gap-3 {
+  display: none !important;
+}
+
+/* Hide VIP balance section */
+div:has(> p:contains("თქვენი ბალანსი")),
+div.mb-4:has(> p.text-gray-600.mb-2:contains("თქვენი ბალანსი")) {
+  display: none !important;
+}
+
+/* Hide VIP days selection */
+div:has(> h3:contains("აირჩიეთ დღეების რაოდენობა")),
+div:has(button:contains("3 დღე")),
+div:has(button:contains("7 დღე")),
+div:has(button:contains("14 დღე")),
+div:has(button:contains("30 დღე")) {
+  display: none !important;
+}
+
+/* Hide specific VIP package cards */
+div:has(> div.font-bold.mb-1.flex.items-center.text-blue-600),
+div:has(> div.font-bold.mb-1.flex.items-center.text-purple-600),
+div:has(> div.font-bold.mb-1.flex.items-center.text-yellow-600) {
+  display: none !important;
+}
+
+/* Hide VIP status button at the bottom */
+div.bg-gray-100.rounded-lg.p-4.flex.items-center.justify-center.text-gray-500.hover\:bg-gray-200.transition-all.duration-300,
+div:has(> svg.lucide-star + span:contains("VIP")),
+a:has(> span:contains("VIP")),
+div:has(> a:contains("VIP სტატუსის შეძენა")),
+div.p-4:has(h3:contains("აირჩიეთ VIP პაკეტი")),
+div.p-4:has(div:contains("აირჩიეთ დღეების რაოდენობა")) {
+  display: none !important;
+}
+
+/* Hide the entire VIP section container */
+div.p-4,
+div.p-4:has(> div.mb-4 > p.text-gray-600.mb-2:contains("თქვენი ბალანსი")),
+div.p-4:has(> div.mb-4 > h3:contains("აირჩიეთ VIP პაკეტი")),
+div.p-4:has(> h3:contains("აირჩიეთ VIP პაკეტი:")),
+div:has(> h3:contains("აირჩიეთ დღეების რაოდენობა:")),
+div:has(> button:contains("3 დღე")),
+div:has(> button:contains("7 დღე")),
+div:has(> button:contains("14 დღე")),
+div:has(> button:contains("30 დღე")),
+div:has(> a:contains("VIP სტატუსის შეძენა")) {
+  display: none !important;
+}

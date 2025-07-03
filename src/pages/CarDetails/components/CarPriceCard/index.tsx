@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, Calendar, Shield, Gauge, Fuel, User, Check, Heart } from 'lucide-react';
+import { MapPin, Phone, Calendar, Tag, Car as CarIcon, Folder, Heart } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -23,30 +23,92 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
     <div className="sticky top-24 space-y-4">
       {/* Car Price Card */}
       <div className="bg-white rounded-xl shadow-md border border-green-100 car-detail-card overflow-hidden">
-        {/* Price Header */}
-        <div className="bg-green-50 p-4 border-b border-green-100">
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800">{t('carDetails:specs.price')}</h2>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-primary">
+        {/* Car Title */}
+        <div className="p-4 border-b border-green-100">
+          <h1 className="text-xl font-bold text-gray-800">
+            {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
+          </h1>
+        </div>
+        
+        {/* Car Info */}
+        <div className="p-4 space-y-4">
+          {/* Main Car Details */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Brand */}
+            <div className="spec-item flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+              <div className="spec-item-icon mr-3 text-primary">
+                <CarIcon className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">{t('carDetails:specs.brand', 'მარკა')}</span>
+                <span className="font-medium text-primary">{car.brand || '-'}</span>
+              </div>
+            </div>
+            
+            {/* Model */}
+            <div className="spec-item flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+              <div className="spec-item-icon mr-3 text-primary">
+                <Tag className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">{t('carDetails:specs.model', 'მოდელი')}</span>
+                <span className="font-medium text-primary">{car.model || '-'}</span>
+              </div>
+            </div>
+            
+            {/* Category */}
+            <div className="spec-item flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+              <div className="spec-item-icon mr-3 text-primary">
+                <Folder className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">{t('carDetails:specs.category', 'კატეგორია')}</span>
+                <span className="font-medium text-primary">{car.category_id || '-'}</span>
+              </div>
+            </div>
+            
+            {/* Year */}
+            <div className="spec-item flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+              <div className="spec-item-icon mr-3 text-primary">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">{t('carDetails:specs.year', 'წელი')}</span>
+                <span className="font-medium text-primary">{car.year || '-'}</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Price with special design */}
+          <div className="price-container bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 shadow-md">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-white">{t('carDetails:specs.price', 'ფასი')}</h2>
+              <div className="price-badge bg-white px-4 py-2 rounded-full shadow-sm">
+                <span className="text-2xl font-bold text-green-600">
                   {formatPrice(price)}
                 </span>
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Car Info */}
-        <div className="p-4">
-          <h1 className="text-xl font-bold text-gray-800 mb-3">
-            {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
-          </h1>
           
-          {/* Key Specs */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          {/* Location if available */}
+          {car.location && (
+            <div className="flex items-center py-3 px-4 bg-gray-50 rounded-lg text-gray-700">
+              <MapPin className="w-5 h-5 mr-3 text-primary" />
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">{t('carDetails:specs.location', 'მდებარეობა')}</span>
+                <span className="font-medium text-gray-800">
+                  {car.location.city || ''}
+                  {car.location.country && `, ${car.location.country}`}
+                </span>
+              </div>
+            </div>
+          )}
+          
+          {/* Additional Key Specs */}
+          <div className="grid grid-cols-2 gap-4 mt-2">
             {keySpecs.map((spec, index) => (
-              <div key={index} className="spec-item flex items-center p-2 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+              <div key={index} className="spec-item flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
                 <div className="spec-item-icon mr-3 text-primary">
                   {spec.icon}
                 </div>
@@ -57,19 +119,6 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
               </div>
             ))}
           </div>
-          
-          {/* Location if available */}
-          {car.location && (
-            <div className="flex items-center py-2 text-gray-700">
-              <MapPin className="w-5 h-5 mr-2 text-primary" />
-              <span className="font-medium">
-                {car.location.city || ''}
-                {car.location.country && `, ${car.location.country}`}
-              </span>
-            </div>
-          )}
-          
-
         </div>
       </div>
       
@@ -115,8 +164,6 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
           </button>
         </div>
       </div>
-      
-
     </div>
   );
 };

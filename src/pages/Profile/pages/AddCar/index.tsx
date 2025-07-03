@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import BasicInfo from './components/BasicInfo';
 import TechnicalSpecs from './components/TechnicalSpecs';
@@ -9,11 +9,14 @@ import Location from './components/Location';
 import Description from './components/Description';
 import VIPStatus from './components/VIPStatus';
 import AuthorInfo from './components/AuthorInfo';
+import CarDetailPreview from './components/CarDetailPreview';
 import { useCarForm } from './hooks/useCarForm';
 import { CarFeatures } from './types';
 
 const AddCar: React.FC = () => {
   const navigate = useNavigate();
+  const [showPreview, setShowPreview] = useState(true);
+  
   const {
     formData,
     errors,
@@ -46,6 +49,23 @@ const AddCar: React.FC = () => {
               <p className="text-sm text-gray-500">შეავსეთ ყველა საჭირო ინფორმაცია</p>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setShowPreview(!showPreview)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+          >
+            {showPreview ? (
+              <>
+                <EyeOff size={16} />
+                <span>დამალე პრევიუ</span>
+              </>
+            ) : (
+              <>
+                <Eye size={16} />
+                <span>აჩვენე პრევიუ</span>
+              </>
+            )}
+          </button>
         </div>
 
         <div className="space-y-6">
