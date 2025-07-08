@@ -38,10 +38,12 @@ const AdvertisingSpaces: React.FC = () => {
       case 'car_listing_top':
       case 'car_details_top':
       case 'car_details_bottom':
+      case 'parts_top':
         return '728 × 140 px';
       case 'home_after_vip':
       case 'car_listing_bottom':
       case 'car_details_after_similar':
+      case 'parts_bottom':
         return '720 × 140 px';
       default:
         return '720 × 140 px';
@@ -132,6 +134,34 @@ const AdvertisingSpaces: React.FC = () => {
     
     // Car listing page previews
     else if (placement.startsWith('car_listing_')) {
+      return (
+        <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
+            <div className={`${previewDevice === 'mobile' ? 'h-8' : 'h-12'} w-full flex flex-col items-center justify-center`}>
+              {adExamples[placement] ? (
+                <img 
+                  src={adExamples[placement]?.image_url} 
+                  alt={`${placement} example`} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center">
+                  <span className="text-blue-700 font-medium px-3 py-1 rounded bg-white/80 shadow-sm text-xs">
+                    {currentLang === 'ka' ? 'თქვენი რეკლამა აქ' : 
+                     currentLang === 'en' ? 'Your Ad Here' : 
+                     'Ваша реклама здесь'}
+                  </span>
+                  <span className="text-xs mt-0.5 text-blue-600">{getDimensions(placement)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Parts page previews
+    else if (placement.startsWith('parts_')) {
       return (
         <div className="w-full bg-blue-100 border-2 border-blue-500 rounded mb-2 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 w-full flex items-center justify-center">
@@ -319,6 +349,12 @@ const AdvertisingSpaces: React.FC = () => {
                 case 'category_banner':
                   return currentLang === 'ka' ? 'კატეგორიის ბანერი' : 
                          currentLang === 'en' ? 'Category Banner' : 'Баннер категории';
+                case 'parts_top':
+                  return currentLang === 'ka' ? 'ნაწილების გვერდი - ზედა' : 
+                         currentLang === 'en' ? 'Parts Page - Top' : 'Страница запчастей - верх';
+                case 'parts_bottom':
+                  return currentLang === 'ka' ? 'ნაწილების გვერდი - ქვედა' : 
+                         currentLang === 'en' ? 'Parts Page - Bottom' : 'Страница запчастей - низ';
                 default:
                   return placement.replace('_', ' ');
               }

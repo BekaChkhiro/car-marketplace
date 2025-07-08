@@ -71,6 +71,26 @@ export const ADVERTISING_PRICES: AdvertisingPrices = {
     }
   },
   
+  // ნაწილების გვერდი (Parts Page)
+  'parts_top': {
+    price: 400,
+    duration: 30,
+    description: {
+      ka: 'ნაწილების გვერდი - ზედა ბანერი (728×140px)',
+      en: 'Parts Page - Top Banner (728×140px)',
+      ru: 'Страница запчастей - верхний баннер (728×140px)'
+    }
+  },
+  'parts_bottom': {
+    price: 400,
+    duration: 30,
+    description: {
+      ka: 'ნაწილების გვერდი - ქვედა ბანერი (720×140px)',
+      en: 'Parts Page - Bottom Banner (720×140px)',
+      ru: 'Страница запчастей - нижний баннер (720×140px)'
+    }
+  },
+  
   // მანქანის დეტალების გვერდი (Car Details Page)
   'car_details_top': {
     price: 400,
