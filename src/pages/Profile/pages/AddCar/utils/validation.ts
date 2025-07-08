@@ -19,6 +19,46 @@ export const validateImage = (file: File): boolean => {
   return true;
 };
 
+// VIN validation function
+export const validateVIN = (vin: string): boolean => {
+  if (!vin) return true; // VIN is optional
+  
+  // Remove spaces and convert to uppercase
+  const cleanVIN = vin.replace(/\s/g, '').toUpperCase();
+  
+  // Check if VIN is exactly 17 characters
+  if (cleanVIN.length !== 17) {
+    return false;
+  }
+  
+  // Check if VIN contains only valid characters (no I, O, Q)
+  const vinPattern = /^[ABCDEFGHJKLMNPRSTUVWXYZ0-9]{17}$/;
+  if (!vinPattern.test(cleanVIN)) {
+    return false;
+  }
+  
+  // Simple check digit validation for position 9
+  const weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
+  const values: { [key: string]: number } = {
+    'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8,
+    'J': 1, 'K': 2, 'L': 3, 'M': 4, 'N': 5, 'P': 7, 'R': 9,
+    'S': 2, 'T': 3, 'U': 4, 'V': 5, 'W': 6, 'X': 7, 'Y': 8, 'Z': 9,
+    '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9
+  };
+  
+  let sum = 0;
+  for (let i = 0; i < 17; i++) {
+    if (i !== 8) { // Skip check digit position
+      sum += (values[cleanVIN[i]] || 0) * weights[i];
+    }
+  }
+  
+  const checkDigit = sum % 11;
+  const expectedChar = checkDigit === 10 ? 'X' : checkDigit.toString();
+  
+  return cleanVIN[8] === expectedChar;
+};
+
 export const validateCarForm = (formData: NewCarFormData, images: File[]): ValidationErrors => {
   const errors: ValidationErrors = {};
   console.log('Validating form data:', formData);
@@ -144,6 +184,13 @@ export const validateCarForm = (formData: NewCarFormData, images: File[]): Valid
       errors.airbags_count = 'გთხოვთ მიუთითოთ სწორი ეარბეგების რაოდენობა';
     } else if (airbagsCount > 12) { // Most cars don't have more than 12 airbags
       errors.airbags_count = 'ეარბეგების რაოდენობა ძალიან დიდია';
+    }
+  }
+
+  // Validate VIN code if provided
+  if (formData.vin_code && formData.vin_code.trim()) {
+    if (!validateVIN(formData.vin_code)) {
+      errors.vin_code = 'VIN კოდი არასწორია. უნდა იყოს 17 სიმბოლოსგან შემდგარი';
     }
   }
 

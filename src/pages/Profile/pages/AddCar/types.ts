@@ -58,6 +58,7 @@ export interface NewCarFormData {
   description_ka: string;
   description_en?: string;
   description_ru?: string;
+  vin_code?: string;  // Vehicle Identification Number
   vip_status: 'none' | 'vip' | 'vip_plus' | 'super_vip';
   author_name: string;  // Author's name for contact
   author_phone: string;  // Author's phone number for contact

@@ -19,6 +19,7 @@ export interface Car {
   user_id?: number; // The ID of the user who owns this car
   author_name?: string; // Author's name
   author_phone?: string; // Author's contact phone
+  vin_code?: string; // Vehicle Identification Number
   created_at: string;
   updated_at: string;
   category_name?: string; // დავამატეთ კატეგორიის სახელი

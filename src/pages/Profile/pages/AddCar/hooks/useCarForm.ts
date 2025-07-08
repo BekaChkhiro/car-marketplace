@@ -42,6 +42,7 @@ export const useCarForm = () => {
       description_ka: '',
       description_en: '',
       description_ru: '',
+      vin_code: '', // VIN code field
       vip_status: 'none', // Default VIP status is none
       author_name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '', // Default to current user name
       author_phone: user?.phone || '', // Default to current user phone

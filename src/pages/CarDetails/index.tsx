@@ -58,6 +58,10 @@ const CarDetails: React.FC = () => {
   if (!car) {
     return <NotFoundState />;
   }
+  
+  // Debug car object to check VIN code
+  console.log('Car object in CarDetails component:', car);
+  console.log('Car has VIN code?', car?.vin_code ? 'YES: ' + car.vin_code : 'NO');
 
   // Extract image URLs from car images array
   const imageUrls = car.images?.map(image => image.large_url || image.url) || [];

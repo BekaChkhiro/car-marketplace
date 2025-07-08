@@ -55,6 +55,14 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
         console.log("Car details full response:", carData);
         console.log("Car details data structure:", JSON.stringify(carData, null, 2));
         console.log("Car author info:", carData.author_name, carData.author_phone);
+        console.log("VIN Code in API response:", carData.vin_code);
+        
+        // Check if the car object has vin_code property
+        if (Object.prototype.hasOwnProperty.call(carData, 'vin_code')) {
+          console.log("VIN code property exists in response");
+        } else {
+          console.log("VIN code property DOES NOT exist in response");
+        }
         if (carData) {
           setCar(carData);
           // Check wishlist status only if user is authenticated

@@ -54,8 +54,20 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     },
   ];
   
+  // Debug VIN code (remove in production)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Car VIN code:', car.vin_code);
+  }
+  
   // Additional specifications
   const additionalSpecs: KeySpec[] = [
+    { 
+      icon: <Tag className="w-5 h-5 text-primary" />, 
+      label: 'VIN კოდი', 
+      value: (car.vin_code && car.vin_code.trim()) ? car.vin_code : 'არ არის მითითებული',
+      color: 'bg-green-50/50',
+      textColor: 'text-gray-900'
+    },
     { 
       icon: <Droplet className="w-5 h-5 text-primary" />, 
       label: 'ძრავის მოცულობა', 
