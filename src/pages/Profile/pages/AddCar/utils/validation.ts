@@ -19,9 +19,9 @@ export const validateImage = (file: File): boolean => {
   return true;
 };
 
-// VIN validation function
+// VIN validation function - VIN is completely optional
 export const validateVIN = (vin: string): boolean => {
-  if (!vin) return true; // VIN is optional
+  if (!vin) return true; // Empty VIN is valid - field is optional
   
   // Remove spaces and convert to uppercase
   const cleanVIN = vin.replace(/\s/g, '').toUpperCase();
