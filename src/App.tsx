@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
+import { useEffect } from 'react';
 import AppRoutes from './routes';
 import Layout from './components/layout/Layout';
 import { GlobalStyles } from './styles/globalStyles';
@@ -10,14 +11,22 @@ import { ToastProvider } from './context/ToastContext';
 import { LoadingProvider } from './context/LoadingContext';
 import { WishlistProvider } from './context/WishlistContext';
 import ProfileCompletionModalProvider from './components/auth/ProfileCompletionModalProvider';
+import { initGA } from './utils/analytics';
+import PageTracker from './components/analytics/PageTracker';
 // Import custom CSS to hide VIP elements
 import './styles/hide-vip.css';
 
 const App = () => {
+  useEffect(() => {
+    // Initialize Google Analytics
+    initGA();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles theme={theme} />
       <BrowserRouter>
+        <PageTracker />
         <LoadingProvider>
           <ToastProvider>
             <AuthProvider>
