@@ -328,6 +328,7 @@ const AdvertisingSpaces: React.FC = () => {
                 case 'home_after_vip':
                 case 'car_listing_bottom':
                 case 'car_details_after_similar':
+                case 'parts_bottom':
                   return '720 × 140 px';
                 default:
                   return '720 × 140 px';
@@ -340,15 +341,27 @@ const AdvertisingSpaces: React.FC = () => {
                 case 'home_slider':
                   return currentLang === 'ka' ? 'მთავარი გვერდის სლაიდერი' : 
                          currentLang === 'en' ? 'Home Page Slider' : 'Слайдер на главной странице';
-                case 'home_featured':
-                  return currentLang === 'ka' ? 'მთავარი გვერდის რჩეული განცხადებები' : 
-                         currentLang === 'en' ? 'Home Page Featured Listings' : 'Рекомендуемые объявления';
-                case 'sidebar_banner':
-                  return currentLang === 'ka' ? 'გვერდითი ბანერი' : 
-                         currentLang === 'en' ? 'Sidebar Banner' : 'Боковой баннер';
-                case 'category_banner':
-                  return currentLang === 'ka' ? 'კატეგორიის ბანერი' : 
-                         currentLang === 'en' ? 'Category Banner' : 'Баннер категории';
+                case 'home_banner':
+                  return currentLang === 'ka' ? 'მთავარი გვერდი - ზედა ბანერი' : 
+                         currentLang === 'en' ? 'Home Page - Top Banner' : 'Главная страница - верхний баннер';
+                case 'home_after_vip':
+                  return currentLang === 'ka' ? 'მთავარი გვერდი - VIP განცხადებების შემდეგ' : 
+                         currentLang === 'en' ? 'Home Page - After VIP Listings' : 'Главная страница - После VIP объявлений';
+                case 'car_listing_top':
+                  return currentLang === 'ka' ? 'მანქანების ყიდვის გვერდი - ზედა ბანერი' : 
+                         currentLang === 'en' ? 'Car Listing Page - Top Banner' : 'Страница покупки авто - верхний баннер';
+                case 'car_listing_bottom':
+                  return currentLang === 'ka' ? 'მანქანების ყიდვის გვერდი - ქვედა ბანერი' : 
+                         currentLang === 'en' ? 'Car Listing Page - Bottom Banner' : 'Страница покупки авто - нижний баннер';
+                case 'car_details_top':
+                  return currentLang === 'ka' ? 'მანქანის დეტალების გვერდი - ზედა ბანერი' : 
+                         currentLang === 'en' ? 'Car Details Page - Top Banner' : 'Страница деталей авто - верхний баннер';
+                case 'car_details_bottom':
+                  return currentLang === 'ka' ? 'მანქანის დეტალების გვერდი - შუა ბანერი' : 
+                         currentLang === 'en' ? 'Car Details Page - Middle Banner' : 'Страница деталей авто - средний баннер';
+                case 'car_details_after_similar':
+                  return currentLang === 'ka' ? 'მანქანის დეტალების გვერდი - მსგავსი მანქანების შემდეგ' : 
+                         currentLang === 'en' ? 'Car Details Page - After Similar Cars' : 'Страница деталей авто - после похожих авто';
                 case 'parts_top':
                   return currentLang === 'ka' ? 'ნაწილების გვერდი - ზედა' : 
                          currentLang === 'en' ? 'Parts Page - Top' : 'Страница запчастей - верх';
