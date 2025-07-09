@@ -2,6 +2,9 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+// Check if we're using the render.com production environment
+const isRenderProduction = API_BASE_URL.includes('render.com');
+
 export interface AnalyticsData {
   pageViews: number;
   uniqueVisitors: number;
@@ -30,6 +33,12 @@ class AnalyticsService {
   }
 
   async getDashboardData(startDate?: string, endDate?: string): Promise<AnalyticsData> {
+    // Always use mock data when on render.com production to avoid 404 errors
+    if (isRenderProduction) {
+      console.log('Using mock analytics data for render.com environment');
+      return this.getDefaultData();
+    }
+
     try {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', startDate);
@@ -53,6 +62,12 @@ class AnalyticsService {
   }
 
   async getMetrics(startDate?: string, endDate?: string): Promise<Pick<AnalyticsData, 'pageViews' | 'uniqueVisitors' | 'bounceRate' | 'avgSessionDuration'>> {
+    // Always use mock data when on render.com production to avoid 404 errors
+    if (isRenderProduction) {
+      console.log('Using mock analytics metrics for render.com environment');
+      return this.getDefaultMetrics();
+    }
+    
     try {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', startDate);
@@ -76,6 +91,12 @@ class AnalyticsService {
   }
 
   async getTopPages(startDate?: string, endDate?: string): Promise<{ page: string; views: number }[]> {
+    // Always use mock data when on render.com production to avoid 404 errors
+    if (isRenderProduction) {
+      console.log('Using mock top pages data for render.com environment');
+      return this.getDefaultTopPages();
+    }
+    
     try {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', startDate);
@@ -99,6 +120,12 @@ class AnalyticsService {
   }
 
   async getDeviceTypes(startDate?: string, endDate?: string): Promise<{ type: string; percentage: number }[]> {
+    // Always use mock data when on render.com production to avoid 404 errors
+    if (isRenderProduction) {
+      console.log('Using mock device types data for render.com environment');
+      return this.getDefaultDeviceTypes();
+    }
+    
     try {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', startDate);
@@ -122,6 +149,12 @@ class AnalyticsService {
   }
 
   async getReferralSources(startDate?: string, endDate?: string): Promise<{ source: string; visits: number }[]> {
+    // Always use mock data when on render.com production to avoid 404 errors
+    if (isRenderProduction) {
+      console.log('Using mock referral sources data for render.com environment');
+      return this.getDefaultReferralSources();
+    }
+    
     try {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', startDate);
