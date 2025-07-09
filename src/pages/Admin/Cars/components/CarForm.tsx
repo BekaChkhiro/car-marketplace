@@ -42,7 +42,8 @@ const CarForm: React.FC<CarFormProps> = ({
       mileage: 0,
       mileage_unit: 'km',
       steering_wheel: 'left',
-      drive_type: 'FWD'
+      drive_type: 'FWD',
+      color: ''
     },
     location: initialData?.location ? {
       city: initialData.location.city || 'თბილისი',
@@ -473,6 +474,22 @@ const CarForm: React.FC<CarFormProps> = ({
                   <option value="RWD">უკანა</option>
                   <option value="AWD">4x4</option>
                 </select>
+              </div>
+              
+              {/* Color */}
+              <div>
+                <label htmlFor="specifications.color" className="block text-sm font-medium text-gray-700 mb-1">
+                  ფერი
+                </label>
+                <input
+                  type="text"
+                  id="specifications.color"
+                  name="specifications.color"
+                  value={formData.specifications?.color || ''}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="მაგ: შავი, თეთრი, ვერცხლისფერი"
+                />
               </div>
             </div>
           </div>

@@ -106,21 +106,77 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     { 
       icon: <Truck className="w-5 h-5 text-primary" />, 
       label: 'წამყვანი თვლები', 
-      value: car.specifications?.drive_type || t('common:notAvailable', 'არ არის'),
+      value: (() => {
+        const driveType = car.specifications?.drive_type;
+        if (!driveType) return t('common:notAvailable', 'არ არის');
+        
+        // Drive type translations
+        const driveTypeMap: {[key: string]: string} = {
+          'fwd': 'წინა',
+          'rwd': 'უკანა',
+          'awd': '4x4',
+          '4wd': '4x4',
+          'front': 'წინა',
+          'rear': 'უკანა',
+          'all': '4x4'
+        };
+        
+        return driveTypeMap[driveType.toLowerCase()] || driveType;
+      })(),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
       icon: <Compass className="w-5 h-5 text-primary" />, 
       label: 'საჭე', 
-      value: car.specifications?.steering_wheel || t('common:notAvailable', 'არ არის'),
+      value: (() => {
+        const steering = car.specifications?.steering_wheel;
+        if (!steering) return t('common:notAvailable', 'არ არის');
+        
+        // Steering wheel translations
+        const steeringMap: {[key: string]: string} = {
+          'left': 'მარცხენა',
+          'right': 'მარჯვენა'
+        };
+        
+        return steeringMap[steering.toLowerCase()] || steering;
+      })(),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
       icon: <Palette className="w-5 h-5 text-primary" />, 
       label: 'ფერი', 
-      value: car.specifications?.color || t('common:notAvailable', 'არ არის'),
+      value: (() => {
+        const color = car.specifications?.color;
+        if (!color) return t('common:notAvailable', 'არ არის');
+        
+        // Car color translations
+        const colorMap: {[key: string]: string} = {
+          'black': 'შავი',
+          'white': 'თეთრი',
+          'silver': 'ვერცხლისფერი',
+          'gray': 'ნაცრისფერი',
+          'grey': 'ნაცრისფერი',
+          'red': 'წითელი',
+          'blue': 'ლურჯი',
+          'green': 'მწვანე',
+          'yellow': 'ყვითელი',
+          'gold': 'ოქროსფერი',
+          'bronze': 'ბრინჯაოსფერი',
+          'brown': 'ყავისფერი',
+          'orange': 'ნარინჯისფერი',
+          'purple': 'იისფერი',
+          'burgundy': 'ბორდოსფერი',
+          'maroon': 'მუქი წითელი',
+          'navy': 'მუქი ლურჯი',
+          'beige': 'კრემისფერი',
+          'champagne': 'შამპანისფერი',
+          'pearl': 'მარგალიტისფერი'
+        };
+        
+        return colorMap[color.toLowerCase()] || color;
+      })(),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
@@ -134,7 +190,28 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     { 
       icon: <Circle className="w-5 h-5 text-primary" />, 
       label: 'სალონის ფერი', 
-      value: car.specifications?.interior_color || t('common:notAvailable', 'არ არის'),
+      value: (() => {
+        const color = car.specifications?.interior_color;
+        if (!color) return t('common:notAvailable', 'არ არის');
+        
+        // Interior color translations
+        const interiorColorMap: {[key: string]: string} = {
+          'black': 'შავი',
+          'white': 'თეთრი', 
+          'gray': 'ნაცრისფერი',
+          'grey': 'ნაცრისფერი',
+          'beige': 'კრემისფერი',
+          'brown': 'ყავისფერი',
+          'red': 'წითელი',
+          'blue': 'ლურჯი',
+          'tan': 'ღია ყავისფერი',
+          'cream': 'კრემისფერი',
+          'burgundy': 'ბორდოსფერი',
+          'maroon': 'მუქი წითელი'
+        };
+        
+        return interiorColorMap[color.toLowerCase()] || color;
+      })(),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },

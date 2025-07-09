@@ -379,6 +379,16 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
                 <div className={specValueStyle}>{translateDriveType(car.specifications?.drive_type)}</div>
               </div>
             )}
+            {shouldDisplaySpec(car.specifications?.steering_wheel) && (
+              <div className={specItemStyle}>
+                <div className={specLabelStyle}>საჭე</div>
+                <div className={specValueStyle}>
+                  {car.specifications?.steering_wheel === 'left' ? 'მარცხენა' : 
+                   car.specifications?.steering_wheel === 'right' ? 'მარჯვენა' : 
+                   car.specifications?.steering_wheel}
+                </div>
+              </div>
+            )}
           </div>
           <div className={specGroupStyle}>
             <h3 className="text-lg font-semibold text-gray-700 mb-3 flex items-center">

@@ -277,69 +277,103 @@ export const useCarForm = () => {
     
     // Ensure numeric fields are properly formatted
     if (cleanedData.specifications) {
-      // Handle engine size - ensure it's in the correct format for the API
+      // Handle engine size - keep the original value from dropdown
       if (cleanedData.specifications.engine_size !== undefined) {
-        const engineSize = Number(cleanedData.specifications.engine_size);
-        if (!isNaN(engineSize)) {
-          // If engine size is likely in cc (over 100), convert to liters
-          if (engineSize > 100) {
-            const liters = engineSize / 1000;
-            cleanedData.specifications.engine_size = parseFloat(liters.toFixed(1)); // Round to 1 decimal place
-            console.log(`Converted engine size from ${engineSize}cc to ${cleanedData.specifications.engine_size}L`);
+        // Convert to string first to check if it's empty
+        const engineSizeStr = String(cleanedData.specifications.engine_size);
+        if (engineSizeStr !== '' && engineSizeStr !== '0') {
+          // The engine size from dropdown is already in the correct format (e.g., "0.5", "1.0", "2.5")
+          const engineSize = parseFloat(engineSizeStr);
+          if (!isNaN(engineSize) && engineSize > 0) {
+            cleanedData.specifications.engine_size = engineSize;
+            console.log(`Engine size: ${cleanedData.specifications.engine_size}L`);
           } else {
-            // Already in liters, just ensure it's a number with 1 decimal place precision
-            cleanedData.specifications.engine_size = parseFloat(engineSize.toFixed(1));
-            console.log(`Engine size already in liters: ${cleanedData.specifications.engine_size}L`);
+            console.warn('Invalid engine size value:', cleanedData.specifications.engine_size);
+            delete cleanedData.specifications.engine_size; // Remove instead of setting to 0
           }
         } else {
-          console.warn('Invalid engine size value:', cleanedData.specifications.engine_size);
-          cleanedData.specifications.engine_size = 0; // Default to 0 if invalid
+          delete cleanedData.specifications.engine_size; // Remove instead of setting to 0
         }
-      } else {
-        cleanedData.specifications.engine_size = 0; // Default value if undefined
       }
       
       // Ensure other numeric fields are numbers
       if (cleanedData.specifications.mileage !== undefined) {
-        const mileage = Number(cleanedData.specifications.mileage);
-        cleanedData.specifications.mileage = !isNaN(mileage) ? mileage : 0;
-      } else {
-        cleanedData.specifications.mileage = 0;
+        const mileageStr = String(cleanedData.specifications.mileage);
+        if (mileageStr !== '' && mileageStr !== '0') {
+          const mileage = Number(mileageStr);
+          if (!isNaN(mileage) && mileage >= 0) {
+            cleanedData.specifications.mileage = mileage;
+          } else {
+            delete cleanedData.specifications.mileage;
+          }
+        } else {
+          delete cleanedData.specifications.mileage;
+        }
       }
       
       if (cleanedData.specifications.cylinders !== undefined) {
-        const cylinders = Number(cleanedData.specifications.cylinders);
-        cleanedData.specifications.cylinders = !isNaN(cylinders) ? Math.round(cylinders) : 0; // Ensure it's an integer
-      } else {
-        cleanedData.specifications.cylinders = 0;
+        const cylindersStr = String(cleanedData.specifications.cylinders);
+        if (cylindersStr !== '' && cylindersStr !== '0') {
+          const cylinders = Number(cylindersStr);
+          if (!isNaN(cylinders) && cylinders > 0) {
+            cleanedData.specifications.cylinders = Math.round(cylinders);
+          } else {
+            delete cleanedData.specifications.cylinders;
+          }
+        } else {
+          delete cleanedData.specifications.cylinders;
+        }
       }
       
       if (cleanedData.specifications.airbags_count !== undefined) {
-        const airbagsCount = Number(cleanedData.specifications.airbags_count);
-        cleanedData.specifications.airbags_count = !isNaN(airbagsCount) ? Math.round(airbagsCount) : 0; // Ensure it's an integer
-      } else {
-        cleanedData.specifications.airbags_count = 0;
+        const airbagsStr = String(cleanedData.specifications.airbags_count);
+        if (airbagsStr !== '') {
+          const airbagsCount = Number(airbagsStr);
+          if (!isNaN(airbagsCount) && airbagsCount >= 0) {
+            cleanedData.specifications.airbags_count = Math.round(airbagsCount);
+          } else {
+            delete cleanedData.specifications.airbags_count;
+          }
+        } else {
+          delete cleanedData.specifications.airbags_count;
+        }
       }
       
       if (cleanedData.specifications.horsepower !== undefined) {
-        const horsepower = Number(cleanedData.specifications.horsepower);
-        cleanedData.specifications.horsepower = !isNaN(horsepower) ? Math.round(horsepower) : 0; // Ensure it's an integer
-      } else {
-        cleanedData.specifications.horsepower = 0;
+        const horsepowerStr = String(cleanedData.specifications.horsepower);
+        if (horsepowerStr !== '' && horsepowerStr !== '0') {
+          const horsepower = Number(horsepowerStr);
+          if (!isNaN(horsepower) && horsepower > 0) {
+            cleanedData.specifications.horsepower = Math.round(horsepower);
+          } else {
+            delete cleanedData.specifications.horsepower;
+          }
+        } else {
+          delete cleanedData.specifications.horsepower;
+        }
       }
       
-      // Ensure string fields are not undefined
+      // Remove empty string fields instead of sending them
       if (!cleanedData.specifications.body_type) {
-        cleanedData.specifications.body_type = '';
+        delete cleanedData.specifications.body_type;
       }
       if (!cleanedData.specifications.engine_type) {
-        cleanedData.specifications.engine_type = '';
+        delete cleanedData.specifications.engine_type;
       }
       if (!cleanedData.specifications.interior_color) {
-        cleanedData.specifications.interior_color = '';
+        delete cleanedData.specifications.interior_color;
       }
       if (!cleanedData.specifications.interior_material) {
-        cleanedData.specifications.interior_material = '';
+        delete cleanedData.specifications.interior_material;
+      }
+      if (!cleanedData.specifications.color) {
+        delete cleanedData.specifications.color;
+      }
+      if (!cleanedData.specifications.steering_wheel) {
+        delete cleanedData.specifications.steering_wheel;
+      }
+      if (!cleanedData.specifications.drive_type) {
+        delete cleanedData.specifications.drive_type;
       }
     }
     
