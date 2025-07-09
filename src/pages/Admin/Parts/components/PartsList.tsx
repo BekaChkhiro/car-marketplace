@@ -17,6 +17,8 @@ const PartsList: React.FC<PartsListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredParts, setFilteredParts] = useState<Part[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [partToDelete, setPartToDelete] = useState<Part | null>(null);
   const navigate = useNavigate();
   const { lang } = useParams<{ lang: string }>();
   
@@ -66,6 +68,24 @@ const PartsList: React.FC<PartsListProps> = ({
       </div>
     );
   }
+
+  const handleDeleteClick = (part: Part) => {
+    setPartToDelete(part);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (partToDelete) {
+      onDeletePart(partToDelete.id.toString());
+      setShowDeleteConfirm(false);
+      setPartToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setPartToDelete(null);
+  };
   
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -150,7 +170,7 @@ const PartsList: React.FC<PartsListProps> = ({
                         <Eye size={16} className="mr-1.5" /> ნახვა
                       </button>
                       <button 
-                        onClick={() => onDeletePart(part.id.toString())}
+                        onClick={() => handleDeleteClick(part)}
                         className="px-3 py-1.5 text-red-700 bg-red-50 hover:bg-red-100 rounded flex items-center transition-colors"
                       >
                         <Trash2 size={16} className="mr-1.5" /> წაშლა
@@ -238,7 +258,7 @@ const PartsList: React.FC<PartsListProps> = ({
                         <Eye size={16} className="mr-1" /> 
                       </button>
                       <button 
-                        onClick={() => onDeletePart(part.id.toString())}
+                        onClick={() => handleDeleteClick(part)}
                         className="p-2 text-red-700 bg-red-50 rounded-lg flex items-center"
                       >
                         <Trash2 size={16} className="mr-1" /> 
@@ -286,6 +306,34 @@ const PartsList: React.FC<PartsListProps> = ({
           <RefreshCw size={14} /> განახლება
         </button>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              დაადასტურეთ წაშლა
+            </h3>
+            <p className="text-gray-600 mb-6">
+              დარწმუნებული ხართ, რომ გსურთ წაშლა "{partToDelete?.title}"?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleDeleteCancel}
+                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                გაუქმება
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+              >
+                წაშლა
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

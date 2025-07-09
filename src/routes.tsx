@@ -12,7 +12,7 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import UsersPage from './pages/Admin/Users';
 import CarsPage from './pages/Admin/Cars';
 import AdminEditCar from './pages/Admin/Cars/pages/EditCar';
-import AdminParts from './pages/Admin/Parts/index';
+import AdminParts from './pages/Admin/Parts';
 import AdvertisingSpaces from './pages/AdvertisingSpaces';
 // იმპორტი ცალკე ფაილიდან, რომელიც ექსპორტირებას აკეთებს index.tsx-იდან
 import AdvertisementsPage from './pages/Admin/Advertisements/AdvertisementsPage';

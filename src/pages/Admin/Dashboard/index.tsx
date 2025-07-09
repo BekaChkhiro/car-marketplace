@@ -11,57 +11,16 @@ import {
   BarChart, 
   ChevronRight,
   Eye,
-  AlertTriangle
+  AlertTriangle,
+  Package
 } from 'lucide-react';
 import authService from '../../../api/services/authService';
 import carService from '../../../api/services/carService';
+import partService, { Part } from '../../../api/services/partService';
 import { User } from '../../../api/types/auth.types';
 import { Car as CarType } from '../../../api/types/car.types';
 import { Link } from 'react-router-dom';
-
-// Recent users component
-const RecentUsers = ({ users }: { users: User[] }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-5 ">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 ">
-        <h3 className="text-lg font-semibold text-gray-800">ბოლოს დარეგისტრირებული</h3>
-        <Link to="/admin/users" className="text-primary text-sm flex items-center hover:underline">
-          ყველა მომხმარებელი <ChevronRight size={16} />
-        </Link>
-      </div>
-      
-      {users.length === 0 ? (
-        <div className="text-center py-6">
-          <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-3">
-            <AlertTriangle size={20} className="text-gray-400" />
-          </div>
-          <p className="text-gray-500">მომხმარებლები ვერ მოიძებნა</p>
-        </div>
-      ) : (
-        <div className="space-y-4 py-6 sm:py-0">
-          {users.slice(0, 5).map(user => (
-            <div key={user.id} className=" flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-3 ">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                  <Users size={16} className="text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800">{user.username || `${user.first_name} ${user.last_name}`}</p>
-                  <p className="text-sm text-gray-500">{user.email}</p>
-                </div>
-              </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {user.status === 'active' ? 'აქტიური' : 'დაბლოკილი'}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
+import RecentParts from './components/RecentParts';
 
 // Recent cars component
 const RecentCars = ({ cars }: { cars: CarType[] }) => {
@@ -126,6 +85,7 @@ const AdminDashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [cars, setCars] = useState<CarType[]>([]);
+  const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -133,15 +93,18 @@ const AdminDashboard: React.FC = () => {
       try {
         setLoading(true);
         
-        // Fetch users and cars in parallel
-        const [usersData, carsData] = await Promise.all([
+        // Fetch users, cars, and parts in parallel
+        const [usersData, carsData, partsData] = await Promise.all([
           authService.getAllUsers(),
-          carService.getCars()
+          carService.getCars(),
+          partService.getParts({ limit: 10 })
         ]);
         
         setUsers(usersData);
         // Extract the cars array from the carsData object
         setCars(carsData.cars || []);
+        // Extract the parts array from the partsData object
+        setParts(partsData.parts || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -163,6 +126,10 @@ const AdminDashboard: React.FC = () => {
   const availableCars = cars.filter(c => c.status === 'available').length;
   const soldCars = cars.filter(c => c.status === 'sold').length;
   const featuredCars = cars.filter(c => c.featured).length;
+  
+  const newParts = parts.filter(p => p.condition === 'new').length;
+  const usedParts = parts.filter(p => p.condition === 'used').length;
+  const vipParts = parts.filter(p => p.vip_status && p.vip_status !== 'none').length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -182,7 +149,7 @@ const AdminDashboard: React.FC = () => {
         ) : (
           <>
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center gap-4 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -226,6 +193,26 @@ const AdminDashboard: React.FC = () => {
               <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center gap-4 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Package size={24} className="text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-700">ნაწილები</h3>
+                </div>
+                <p className="text-3xl font-bold text-primary">{parts.length}</p>
+                <div className="flex gap-3 mt-3">
+                  <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                    ახალი: {newParts}
+                  </span>
+                  {usedParts > 0 && (
+                    <span className="text-sm text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
+                      მეორადი: {usedParts}
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <TrendingUp size={24} className="text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-700">VIP განცხადებები</h3>
@@ -241,8 +228,8 @@ const AdminDashboard: React.FC = () => {
             
             {/* Activity and Recent Items Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RecentUsers users={users} />
               <RecentCars cars={cars} />
+              <RecentParts parts={parts} />
             </div>
           </>
         )}
