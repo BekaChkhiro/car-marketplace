@@ -76,7 +76,18 @@ const TechnicalSpecifications: React.FC<TechnicalSpecificationsProps> = ({ speci
           {shouldDisplaySpec(specifications?.transmission) && (
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Transmission</div>
-              <div className="text-gray-600">{specifications.transmission}</div>
+              <div className="text-gray-600">{(() => {
+                const transmission = specifications.transmission;
+                if (!transmission) return 'N/A';
+                
+                // Transmission translations
+                const transmissionMap: {[key: string]: string} = {
+                  'manual': 'მექანიკური',
+                  'automatic': 'ავტომატური'
+                };
+                
+                return transmissionMap[transmission.toLowerCase()] || transmission;
+              })()}</div>
             </div>
           )}
           {shouldDisplaySpec(specifications?.drive_type) && (

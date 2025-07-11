@@ -30,7 +30,7 @@ const publicGetEndpoints = [
 ];
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5001',
   withCredentials: true,
   maxContentLength: 100 * 1024 * 1024, // 100MB max
   maxBodyLength: 100 * 1024 * 1024, // 100MB max

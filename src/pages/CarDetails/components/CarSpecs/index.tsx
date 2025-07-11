@@ -19,6 +19,7 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   const [activeTab, setActiveTab] = useState<'specs'|'features'>('specs');
   const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
   
+  
   // Format year
   const year = car.year ? car.year.toString() : '';
   
@@ -40,8 +41,19 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     },
     { 
       icon: <Shield className="w-5 h-5 text-primary" />, 
-      label: t('carDetails:specs.transmission'), 
-      value: car.specifications?.transmission || t('common:notAvailable', 'არ არის'),
+      label: 'გადაცემათა კოლოფი', 
+      value: (() => {
+        const transmission = car.specifications?.transmission;
+        if (!transmission) return t('common:notAvailable', 'არ არის');
+        
+        // Transmission translations
+        const transmissionMap: {[key: string]: string} = {
+          'manual': 'მექანიკური',
+          'automatic': 'ავტომატური'
+        };
+        
+        return transmissionMap[transmission.toLowerCase()] || transmission;
+      })(),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
@@ -79,27 +91,6 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       icon: <Layers className="w-5 h-5 text-primary" />, 
       label: 'ცილინდრების რაოდენობა', 
       value: car.specifications?.cylinders ? car.specifications.cylinders.toString() : t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50/50',
-      textColor: 'text-gray-900'
-    },
-    { 
-      icon: <Gauge className="w-5 h-5 text-primary" />, 
-      label: 'გარბენი', 
-      value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} კმ` : t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50/50',
-      textColor: 'text-gray-900'
-    },
-    { 
-      icon: <Shield className="w-5 h-5 text-primary" />, 
-      label: 'გადაცემათა კოლოფი', 
-      value: car.specifications?.transmission || t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50/50',
-      textColor: 'text-gray-900'
-    },
-    { 
-      icon: <Fuel className="w-5 h-5 text-primary" />, 
-      label: 'საწვავის ტიპი', 
-      value: car.specifications?.fuel_type || t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
