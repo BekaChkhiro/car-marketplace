@@ -1,5 +1,5 @@
 {
-  "breadcrumb": {
+  "breadcrumbs": {
     "home": "მთავარი",
     "cars": "ავტომობილები",
     "carDetails": "მანქანის დეტალები"
@@ -11,12 +11,6 @@
     "carNotFound": "მანქანა ვერ მოიძებნა",
     "homePage": "მთავარი გვერდი"
   },
-  "header": {
-    "backToCars": "მანქანებზე დაბრუნება",
-    "addToWishlist": "რჩეულებში დამატება",
-    "removeFromWishlist": "რჩეულებიდან ამოშლა",
-    "share": "გაზიარება"
-  },
   "priceCard": {
     "price": "ფასი",
     "contactSeller": "გამყიდველთან დაკავშირება",
@@ -25,28 +19,181 @@
     "safetyTips": "უსაფრთხოების რჩევები",
     "meetInPublic": "შეხვდით საჯარო ადგილას",
     "inspectBefore": "შეამოწმეთ მანქანა გადახდამდე",
-    "verifyDocuments": "გადაამოწმეთ ყველა დოკუმენტი"
+    "verifyDocuments": "გადაამოწმეთ ყველა დოკუმენტი",
+    "carOwner": "მანქანის მფლობელი"
+  },
+  "header": {
+    "title": "მანქანის დეტალები",
+    "shareButton": "მანქანის გაზიარება",
+    "backToCars": "მანქანებზე დაბრუნება",
+    "addToWishlist": "რჩეულებში დამატება",
+    "removeFromWishlist": "რჩეულებიდან ამოშლა",
+    "viewAll": "ყველა სურათის ნახვა",
+    "share": "გაზიარება"
   },
   "specs": {
-    "price": "ფასი",
-    "year": "წელი",
-    "mileage": "გარბენი",
-    "fuel": "საწვავი",
-    "transmission": "ტრანსმისია",
-    "features": "ფუნქციები",
-    "specifications": "სპეციფიკაციები",
     "generalInfo": "ზოგადი ინფორმაცია",
+    "specifications": "სპეციფიკაციები",
     "description": "აღწერა",
+    "features": "ფუნქციები",
     "brand": "მარკა",
     "model": "მოდელი",
-    "engine": "ძრავა",
-    "fuelType": "საწვავის ტიპი",
+    "year": "წელი",
+    "price": "ფასი",
+    "category": "კატეგორია",
+    "mileage": "გარბენი",
+    "engine": "ძრავი",
+    "engineSize": "ძრავის მოცულობა",
+    "engineType": "ძრავის ტიპი",
+    "transmission": "ტრანსმისია",
+    "fuel": "საწვავის ტიპი",
     "color": "ფერი",
     "driveType": "წამყვანი თვლები",
+    "steeringWheel": "საჭე",
     "interiorColor": "სალონის ფერი",
     "additionalFeatures": "დამატებითი მახასიათებლები",
+    "technicalSpecs": "ტექნიკური მახასიათებლები",
     "navigation": "ნავიგაცია",
     "parkingControl": "პარკინგის კონტროლი",
-    "bluetooth": "ბლუთუზი"
+    "bluetooth": "ბლუთუზი",
+    "authorInfo": "ავტორის ინფორმაცია",
+    "name": "სახელი",
+    "phone": "ტელეფონი",
+    "location": "ადგილმდებარეობა",
+    "city": "ქალაქი",
+    "country": "ქვეყანა",
+    "yes": "დიახ",
+    "no": "არა",
+    "left": "მარცხენა",
+    "right": "მარჯვენა",
+    "front": "წინა",
+    "rear": "უკანა",
+    "km": "კმ",
+    "vinCode": "VIN კოდი",
+    "notSpecified": "არ არის მითითებული",
+    "cylinders": "ცილინდრების რაოდენობა",
+    "interiorMaterial": "სალონის მასალა",
+    "airbagsCount": "უსაფრთხოების ბალიშების რაოდენობა"
+  },
+  "colors": {
+    "black": "შავი",
+    "white": "თეთრი",
+    "silver": "ვერცხლისფერი",
+    "gray": "ნაცრისფერი",
+    "grey": "ნაცრისფერი",
+    "red": "წითელი",
+    "blue": "ლურჯი",
+    "green": "მწვანე",
+    "yellow": "ყვითელი",
+    "gold": "ოქროსფერი",
+    "bronze": "ბრინჯაოსფერი",
+    "brown": "ყავისფერი",
+    "orange": "ნარინჯისფერი",
+    "purple": "იისფერი",
+    "burgundy": "ბორდოსფერი",
+    "maroon": "მუქი წითელი",
+    "navy": "მუქი ლურჯი",
+    "beige": "კრემისფერი",
+    "champagne": "შამპანისფერი",
+    "pearl": "მარგალიტისფერი",
+    "tan": "ღია ყავისფერი",
+    "cream": "კრემისფერი"
+  },
+  "transmission": {
+    "manual": "მექანიკური",
+    "automatic": "ავტომატური"
+  },
+  "driveType": {
+    "fwd": "წინა",
+    "rwd": "უკანა",
+    "awd": "4x4",
+    "4wd": "4x4",
+    "front": "წინა",
+    "rear": "უკანა",
+    "all": "4x4"
+  },
+  "steering": {
+    "left": "მარცხენა",
+    "right": "მარჯვენა"
+  },
+  "features": {
+    "airConditioning": "კონდიციონერი",
+    "abs": "ABS",
+    "boardComputer": "ბორტკომპიუტერი",
+    "cruiseControl": "კრუიზ კონტროლი",
+    "seatHeating": "სავარძლების გათბობა",
+    "navigation": "ნავიგაცია",
+    "rearCamera": "უკანა ხედის კამერა",
+    "parkingControl": "პარკირების კონტროლი",
+    "bluetooth": "Bluetooth",
+    "sunroof": "სახურავის ლუკი",
+    "leatherSeats": "ტყავის სალონი",
+    "electricWindows": "ელ. შუშები",
+    "multifunctionSteeringWheel": "მულტიფუნქციური საჭე",
+    "startStopSystem": "Start-Stop სისტემა"
+  },
+  "similarCars": {
+    "title": "მსგავსი მანქანები",
+    "viewAll": "ყველა"
+  },
+  "gallery": {
+    "noImages": "სურათები არ არის ხელმისაწვდომი",
+    "noImagesDescription": "ამ მანქანისთვის სურათები არ არის ატვირთული"
+  },
+  "fuelType": {
+    "petrol": "ბენზინი",
+    "diesel": "დიზელი",
+    "hybrid": "ჰიბრიდი",
+    "electric": "ელექტრო",
+    "lpg": "LPG",
+    "cng": "CNG"
+  },
+  "interiorMaterial": {
+    "leather": "ტყავი",
+    "fabric": "ქსოვილი",
+    "velour": "ველური",
+    "alcantara": "ალკანტარა",
+    "vinyl": "ვინილი",
+    "plastic": "პლასტმასი",
+    "cloth": "ქსოვილი",
+    "suede": "ზამში"
+  },
+  "categories": {
+    "sedan": "სედანი",
+    "suv": "ჯიპი",
+    "coupe": "კუპე",
+    "hatchback": "ჰეტჩბექი",
+    "wagon": "უნივერსალი",
+    "convertible": "კაბრიოლეტი",
+    "pickup": "პიკაპი",
+    "minivan": "მინივენი",
+    "limousine": "ლიმუზინი",
+    "crossover": "კროსოვერი"
+  },
+  "locations": {
+    "tbilisi": "თბილისი",
+    "batumi": "ბათუმი",
+    "kutaisi": "ქუთაისი",
+    "rustavi": "რუსთავი",
+    "gori": "გორი",
+    "zugdidi": "ზუგდიდი",
+    "poti": "ფოთი",
+    "khashuri": "ხაშური",
+    "samtredia": "სამტრედია",
+    "senaki": "სენაკი",
+    "georgia": "საქართველო",
+    "germany": "გერმანია",
+    "usa": "აშშ",
+    "japan": "იაპონია",
+    "uk": "დიდი ბრიტანეთი",
+    "france": "საფრანგეთი",
+    "italy": "იტალია",
+    "spain": "ესპანეთი",
+    "netherlands": "ნიდერლანდები",
+    "china": "ჩინეთი",
+    "canada": "კანადა",
+    "turkey": "თურქეთი",
+    "poland": "პოლონეთი",
+    "armenia": "სომხეთი"
   }
 }

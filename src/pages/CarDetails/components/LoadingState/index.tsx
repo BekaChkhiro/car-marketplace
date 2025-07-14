@@ -14,7 +14,7 @@ const LoadingState: React.FC = () => {
             <div className="w-16 h-16 border-4 border-green-200 border-t-primary rounded-full animate-spin"></div>
             <CarIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6" />
           </div>
-          <p className="mt-6 text-gray-700 font-medium text-lg">{t('carDetails:specs.loading')}</p>
+          <p className="mt-6 text-gray-700 font-medium text-lg">{t('common:loading')}</p>
           <div className="mt-4 w-64 h-2 bg-green-100 rounded-full overflow-hidden shadow-inner">
             <div className="h-full bg-primary rounded-full animate-pulse" style={{ width: '60%' }}></div>
           </div>

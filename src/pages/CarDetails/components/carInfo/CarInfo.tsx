@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Car as LocalCar, Category as LocalCategory } from '../../../../types/car';
 import { Car, Category } from '../../../../api/types/car.types';
 import { Car as CarIcon, Gauge, Palette, Shield, Wrench, MapPin, Check, X, Tag, User, Phone } from 'lucide-react';
 import carService from '../../../../api/services/carService';
 import CarHeader from './components/CarHeader';
+import { namespaces } from '../../../../i18n';
 
 // CSS animations and styles
 const fadeInAnimation = `
@@ -53,6 +55,7 @@ interface CarInfoProps {
 }
 
 const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
+  const { t } = useTranslation([namespaces.common, namespaces.carDetails]);
   const [category, setCategory] = useState<LocalCategory | null>(null);
 
   // დებაგ ლოგები - მანქანის ობიექტის სრული სტრუქტურა
@@ -222,27 +225,41 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
   const formatBoolean = (value: boolean | undefined) => {
     if (value === undefined) return null;
     return value ? 
-      <span className="flex items-center text-green-600"><Check size={16} className="mr-1" /> დიახ</span> : 
-      <span className="flex items-center text-red-500"><X size={16} className="mr-1" /> არა</span>;
+      <span className="flex items-center text-green-600"><Check size={16} className="mr-1" /> {t('carDetails:specs.yes')}</span> : 
+      <span className="flex items-center text-red-500"><X size={16} className="mr-1" /> {t('carDetails:specs.no')}</span>;
   };
 
-  // Helper function to translate drive type from English to Georgian if needed
+  // Helper function to translate drive type
   const translateDriveType = (driveType: string | undefined) => {
     if (!driveType) return '';
     
     switch(driveType.toLowerCase()) {
       case 'front':
       case 'fwd':
-        return 'წინა';
+        return t('carDetails:specs.front');
       case 'rear':
       case 'rwd':
-        return 'უკანა';
+        return t('carDetails:specs.rear');
       case '4x4':
       case 'awd':
       case 'all wheel drive':
         return '4x4';
       default:
         return driveType;
+    }
+  };
+
+  // Helper function to translate steering wheel position
+  const translateSteeringWheel = (steeringWheel: string | undefined) => {
+    if (!steeringWheel) return '';
+    
+    switch(steeringWheel.toLowerCase()) {
+      case 'left':
+        return t('carDetails:specs.left');
+      case 'right':
+        return t('carDetails:specs.right');
+      default:
+        return steeringWheel;
     }
   };
 
@@ -261,13 +278,13 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
       <div className={`${cardStyle} car-section`}>
         <h2 className={sectionHeadingStyle}>
           <User size={18} className="mr-2 text-blue-600" />
-          ავტორის ინფორმაცია
+          {t('carDetails:specs.authorInfo')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex items-center">
             <User size={18} className="mr-3 text-gray-500" />
             <div>
-              <span className="text-sm text-gray-500">სახელი</span>
+              <span className="text-sm text-gray-500">{t('carDetails:specs.name')}</span>
               <p className="text-lg font-medium text-gray-800">
                 {car.author_name}
               </p>
@@ -276,7 +293,7 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
           <div className="flex items-center">
             <Phone size={18} className="mr-3 text-gray-500" />
             <div>
-              <span className="text-sm text-gray-500">ტელეფონი</span>
+              <span className="text-sm text-gray-500">{t('carDetails:specs.phone')}</span>
               <p className="text-lg font-medium text-gray-800">
                 {car.author_phone}
               </p>
@@ -290,33 +307,33 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
         <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-r from-blue-50 to-green-50 rounded-full -mr-12 -mt-12 sm:-mr-16 sm:-mt-16 opacity-30 z-0"></div>
         <h2 className={sectionHeadingStyle}>
           <CarIcon size={18} className="mr-2 text-blue-600" />
-          ძირითადი ინფორმაცია
+          {t('carDetails:specs.generalInfo')}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-6">
           <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-col">
-              <span className="text-xs sm:text-sm text-gray-500">მარკა</span>
+              <span className="text-xs sm:text-sm text-gray-500">{t('carDetails:specs.brand')}</span>
               <span className="text-base sm:text-xl font-bold text-gray-800">{car.brand}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs sm:text-sm text-gray-500">მოდელი</span>
+              <span className="text-xs sm:text-sm text-gray-500">{t('carDetails:specs.model')}</span>
               <span className="text-base sm:text-xl font-bold text-gray-800">{car.model}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs sm:text-sm text-gray-500">წელი</span>
+              <span className="text-xs sm:text-sm text-gray-500">{t('carDetails:specs.year')}</span>
               <span className="text-base sm:text-xl font-bold text-gray-800">{car.year}</span>
             </div>
           </div>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-col">
-              <span className="text-xs sm:text-sm text-gray-500">ფასი</span>
+              <span className="text-xs sm:text-sm text-gray-500">{t('carDetails:specs.price')}</span>
               <span className="text-base sm:text-xl font-bold text-blue-600">
                 {new Intl.NumberFormat('ka-GE', { style: 'currency', currency: car.currency || 'GEL' }).format(car.price)}
               </span>
             </div>
             {category && (
               <div className="flex flex-col">
-                <span className="text-xs sm:text-sm text-gray-500">კატეგორია</span>
+                <span className="text-xs sm:text-sm text-gray-500">{t('carDetails:specs.category')}</span>
                 <span className="text-base sm:text-xl font-bold text-gray-800">{category.name}</span>
               </div>
             )}
@@ -335,69 +352,65 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-r from-green-50 to-blue-50 rounded-full -mr-16 -mt-16 opacity-30 z-0"></div>
         <h2 className={sectionHeadingStyle}>
           <Wrench size={20} className="mr-2 text-green-600" />
-          სპეციფიკაციები
+          {t('carDetails:specs.specifications')}
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className={specGroupStyle}>
             <h3 className="text-lg font-semibold text-gray-700 mb-3 flex items-center">
               <Gauge size={18} className="mr-2 text-blue-500" />
-              ტექნიკური მახასიათებლები
+              {t('carDetails:specs.technicalSpecs')}
             </h3>
             {shouldDisplaySpec(car.specifications?.fuel_type) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>საწვავის ტიპი</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.fuel')}</div>
                 <div className={specValueStyle}>{car.specifications?.fuel_type}</div>
               </div>
             )}
             {shouldDisplaySpec(car.specifications?.transmission) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>ტრანსმისია</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.transmission')}</div>
                 <div className={specValueStyle}>{car.specifications?.transmission}</div>
               </div>
             )}
             {shouldDisplaySpec(car.specifications?.mileage) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>გარბენი</div>
-                <div className={specValueStyle}>{car.specifications?.mileage?.toLocaleString() || '0'} კმ</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.mileage')}</div>
+                <div className={specValueStyle}>{car.specifications?.mileage?.toLocaleString() || '0'} {t('carDetails:specs.km')}</div>
               </div>
             )}
             {shouldDisplaySpec(car.specifications?.engine_size) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>ძრავი</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.engineSize')}</div>
                 <div className={specValueStyle}>{car.specifications?.engine_size}L</div>
               </div>
             )}
             {shouldDisplaySpec(car.specifications?.engine_type) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>ძრავის ტიპი</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.engineType')}</div>
                 <div className={specValueStyle}>{car.specifications?.engine_type}</div>
               </div>
             )}
             {shouldDisplaySpec(car.specifications?.drive_type) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>წამყვანი თვლები</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.driveType')}</div>
                 <div className={specValueStyle}>{translateDriveType(car.specifications?.drive_type)}</div>
               </div>
             )}
             {shouldDisplaySpec(car.specifications?.steering_wheel) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>საჭე</div>
-                <div className={specValueStyle}>
-                  {car.specifications?.steering_wheel === 'left' ? 'მარცხენა' : 
-                   car.specifications?.steering_wheel === 'right' ? 'მარჯვენა' : 
-                   car.specifications?.steering_wheel}
-                </div>
+                <div className={specLabelStyle}>{t('carDetails:specs.steeringWheel')}</div>
+                <div className={specValueStyle}>{translateSteeringWheel(car.specifications?.steering_wheel)}</div>
               </div>
             )}
           </div>
           <div className={specGroupStyle}>
             <h3 className="text-lg font-semibold text-gray-700 mb-3 flex items-center">
               <Palette size={18} className="mr-2 text-purple-500" />
-              დამატებითი მახასიათებლები
+              {t('carDetails:specs.additionalFeatures')}
             </h3>
             {shouldDisplaySpec(car.specifications?.color) && (
               <div className={specItemStyle}>
-                <div className={specLabelStyle}>ფერი</div>
+                <div className={specLabelStyle}>{t('carDetails:specs.color')}</div>
                 <div className={specValueStyle}>{car.specifications?.color}</div>
               </div>
             )}
@@ -411,18 +424,18 @@ const CarInfo: React.FC<CarInfoProps> = ({ car }) => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-r from-red-50 to-orange-50 rounded-full -mr-16 -mt-16 opacity-30 z-0"></div>
           <h2 className={sectionHeadingStyle}>
             <MapPin size={20} className="mr-2 text-red-600" />
-            ადგილმდებარეობა
+            {t('carDetails:specs.location')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {car.location.city && (
               <div className="p-3 rounded-lg bg-gradient-to-br from-white to-gray-50 hover:from-red-50 hover:to-orange-50 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md border border-transparent hover:border-red-200">
-                <p className="text-gray-500 text-sm mb-1">ქალაქი</p>
+                <p className="text-gray-500 text-sm mb-1">{t('carDetails:specs.city')}</p>
                 <p className="font-semibold text-lg text-gray-800">{car.location.city}</p>
               </div>
             )}
             {car.location.country && (
               <div className="p-3 rounded-lg bg-gradient-to-br from-white to-gray-50 hover:from-red-50 hover:to-orange-50 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md border border-transparent hover:border-red-200">
-                <p className="text-gray-500 text-sm mb-1">ქვეყანა</p>
+                <p className="text-gray-500 text-sm mb-1">{t('carDetails:specs.country')}</p>
                 <p className="font-semibold text-lg text-gray-800">{car.location.country}</p>
               </div>
             )}

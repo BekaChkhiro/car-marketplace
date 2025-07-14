@@ -28,12 +28,12 @@ const CarHeader: React.FC<CarHeaderProps> = ({
           <div className="flex items-center">
             <Link to={`/${currentLang}/cars`} className="flex items-center text-gray-700 hover:text-primary transition-colors mr-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              <span className="text-sm font-medium">{t('common:back')}</span>
+              <span className="text-sm font-medium">{t('carDetails:header.backToCars')}</span>
             </Link>
             
             <div className="hidden md:flex items-center text-primary">
               <CarIcon className="w-5 h-5 mr-2" />
-              <span className="text-sm font-medium">{t('carDetails:specs.title', 'მანქანის დეტალები')}</span>
+              <span className="text-sm font-medium">{t('carDetails:header.title')}</span>
             </div>
           </div>
           
@@ -41,14 +41,14 @@ const CarHeader: React.FC<CarHeaderProps> = ({
             <button 
               onClick={handleShare}
               className="p-2.5 bg-green-50 rounded-full shadow-sm hover:shadow-md transition-all action-button"
-              aria-label={t('carDetails:specs.shareButton')}
+              aria-label={t('carDetails:header.shareButton')}
             >
               <Share2 className="w-4 h-4 text-primary" />
             </button>
             <button 
               onClick={toggleFavorite}
               className={`p-2.5 ${isFavorite ? 'bg-red-50' : 'bg-green-50'} rounded-full shadow-sm hover:shadow-md transition-all action-button`}
-              aria-label={t('common:addToFavorites', 'რჩეულებში დამატება')}
+              aria-label={isFavorite ? t('carDetails:header.removeFromWishlist') : t('carDetails:header.addToWishlist')}
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'text-red-500 fill-current' : 'text-primary'}`} />
             </button>

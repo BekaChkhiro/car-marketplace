@@ -15,5 +15,6 @@
   "warning": "Warning",
   "info": "Information",
   "perDay": "per day",
-  "search": "Search"
+  "search": "Search",
+  "notAvailable": "Not available"
 }

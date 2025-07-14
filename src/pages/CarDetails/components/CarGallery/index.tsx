@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Eye, ChevronLeft, ChevronRight, Camera, Maximize, ZoomIn } from 'lucide-react';
 import ImageGallery from '../imageGallery/ImageGallery';
 import './styles.css';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 
 interface CarGalleryProps {
   imageUrls: string[];
@@ -9,6 +11,7 @@ interface CarGalleryProps {
 }
 
 const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => {
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [touchStart, setTouchStart] = useState(0);
@@ -132,8 +135,8 @@ const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => 
               <div className="mx-auto h-16 w-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
                 <Camera className="h-8 w-8 text-primary" />
               </div>
-              <p className="text-lg font-medium text-gray-700 mb-2">სურათები არ არის ხელმისაწვდომი</p>
-              <p className="text-sm text-gray-500">ამ მანქანისთვის სურათები არ არის ატვირთული</p>
+              <p className="text-lg font-medium text-gray-700 mb-2">{t('carDetails:gallery.noImages')}</p>
+              <p className="text-sm text-gray-500">{t('carDetails:gallery.noImagesDescription')}</p>
             </div>
           </div>
         )}
@@ -175,7 +178,7 @@ const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => 
             aria-label="View all images"
           >
             <Eye className="w-4 h-4" />
-            <span>ყველა სურათის ნახვა</span>
+            <span>{t('carDetails:header.viewAll')}</span>
           </button>
         </div>
       )}

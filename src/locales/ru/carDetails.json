@@ -11,12 +11,6 @@
     "carNotFound": "Автомобиль не найден",
     "homePage": "Главная страница"
   },
-  "header": {
-    "backToCars": "Вернуться к автомобилям",
-    "addToWishlist": "Добавить в избранное",
-    "removeFromWishlist": "Удалить из избранного",
-    "share": "Поделиться"
-  },
   "priceCard": {
     "price": "Цена",
     "contactSeller": "Связаться с продавцом",
@@ -25,9 +19,19 @@
     "safetyTips": "Советы по безопасности",
     "meetInPublic": "Встречайтесь в общественном месте",
     "inspectBefore": "Осмотрите автомобиль перед оплатой",
-    "verifyDocuments": "Проверьте все документы"
+    "verifyDocuments": "Проверьте все документы",
+    "carOwner": "Владелец автомобиля"
   },
-  "carSpecs": {
+  "header": {
+    "title": "Детали автомобиля",
+    "shareButton": "Поделиться автомобилем",
+    "backToCars": "Вернуться к автомобилям",
+    "addToWishlist": "Добавить в избранное",
+    "removeFromWishlist": "Удалить из избранного",
+    "viewAll": "Посмотреть все изображения",
+    "share": "Поделиться"
+  },
+  "specs": {
     "generalInfo": "Общая информация",
     "specifications": "Характеристики",
     "description": "Описание",
@@ -35,16 +39,161 @@
     "brand": "Марка",
     "model": "Модель",
     "year": "Год",
+    "price": "Цена",
+    "category": "Категория",
     "mileage": "Пробег",
     "engine": "Двигатель",
+    "engineSize": "Объем двигателя",
+    "engineType": "Тип двигателя",
     "transmission": "Трансмиссия",
-    "fuelType": "Тип топлива",
+    "fuel": "Тип топлива",
     "color": "Цвет",
     "driveType": "Привод",
+    "steeringWheel": "Руль",
     "interiorColor": "Цвет салона",
     "additionalFeatures": "Дополнительные функции",
+    "technicalSpecs": "Технические характеристики",
     "navigation": "Навигация",
     "parkingControl": "Парктроник",
-    "bluetooth": "Блютуз"
+    "bluetooth": "Блютуз",
+    "authorInfo": "Информация об авторе",
+    "name": "Имя",
+    "phone": "Телефон",
+    "city": "Город",
+    "country": "Страна",
+    "yes": "Да",
+    "no": "Нет",
+    "left": "Левый",
+    "right": "Правый",
+    "front": "Передний",
+    "rear": "Задний",
+    "km": "км",
+    "vinCode": "VIN код",
+    "notSpecified": "Не указано",
+    "cylinders": "Количество цилиндров",
+    "interiorMaterial": "Материал салона",
+    "airbagsCount": "Количество подушек безопасности",
+    "location": "Местоположение"
+  },
+  "colors": {
+    "black": "Черный",
+    "white": "Белый",
+    "silver": "Серебристый",
+    "gray": "Серый",
+    "grey": "Серый",
+    "red": "Красный",
+    "blue": "Синий",
+    "green": "Зеленый",
+    "yellow": "Желтый",
+    "gold": "Золотой",
+    "bronze": "Бронзовый",
+    "brown": "Коричневый",
+    "orange": "Оранжевый",
+    "purple": "Фиолетовый",
+    "burgundy": "Бордовый",
+    "maroon": "Темно-красный",
+    "navy": "Темно-синий",
+    "beige": "Бежевый",
+    "champagne": "Шампань",
+    "pearl": "Перламутровый",
+    "tan": "Светло-коричневый",
+    "cream": "Кремовый"
+  },
+  "transmission": {
+    "manual": "Механическая",
+    "automatic": "Автоматическая"
+  },
+  "driveType": {
+    "fwd": "Передний",
+    "rwd": "Задний",
+    "awd": "4x4",
+    "4wd": "4x4",
+    "front": "Передний",
+    "rear": "Задний",
+    "all": "4x4"
+  },
+  "steering": {
+    "left": "Левый",
+    "right": "Правый"
+  },
+  "features": {
+    "airConditioning": "Кондиционер",
+    "abs": "ABS",
+    "boardComputer": "Бортовой компьютер",
+    "cruiseControl": "Круиз-контроль",
+    "seatHeating": "Подогрев сидений",
+    "navigation": "Навигация",
+    "rearCamera": "Камера заднего вида",
+    "parkingControl": "Парктроник",
+    "bluetooth": "Bluetooth",
+    "sunroof": "Люк",
+    "leatherSeats": "Кожаный салон",
+    "electricWindows": "Эл. стеклоподъемники",
+    "multifunctionSteeringWheel": "Мультифункциональный руль",
+    "startStopSystem": "Система Start-Stop"
+  },
+  "similarCars": {
+    "title": "Похожие автомобили",
+    "viewAll": "Посмотреть все"
+  },
+  "gallery": {
+    "noImages": "Изображения недоступны",
+    "noImagesDescription": "Для этого автомобиля не загружены изображения"
+  },
+  "fuelType": {
+    "petrol": "Бензин",
+    "diesel": "Дизель",
+    "hybrid": "Гибрид",
+    "electric": "Электро",
+    "lpg": "LPG",
+    "cng": "CNG"
+  },
+  "interiorMaterial": {
+    "leather": "Кожа",
+    "fabric": "Ткань",
+    "velour": "Велюр",
+    "alcantara": "Алькантара",
+    "vinyl": "Винил",
+    "plastic": "Пластик",
+    "cloth": "Ткань",
+    "suede": "Замша"
+  },
+  "categories": {
+    "sedan": "Седан",
+    "suv": "Внедорожник",
+    "coupe": "Купе",
+    "hatchback": "Хэтчбек",
+    "wagon": "Универсал",
+    "convertible": "Кабриолет",
+    "pickup": "Пикап",
+    "minivan": "Минивэн",
+    "limousine": "Лимузин",
+    "crossover": "Кроссовер"
+  },
+  "locations": {
+    "tbilisi": "Тбилиси",
+    "batumi": "Батуми",
+    "kutaisi": "Кутаиси",
+    "rustavi": "Рустави",
+    "gori": "Гори",
+    "zugdidi": "Зугдиди",
+    "poti": "Поти",
+    "khashuri": "Хашури",
+    "samtredia": "Самтредиа",
+    "senaki": "Сенаки",
+    "georgia": "Грузия",
+    "germany": "Германия",
+    "usa": "США",
+    "japan": "Япония",
+    "uk": "Великобритания",
+    "france": "Франция",
+    "italy": "Италия",
+    "spain": "Испания",
+    "netherlands": "Нидерланды",
+    "china": "Китай",
+    "canada": "Канада",
+    "turkey": "Турция",
+    "poland": "Польша",
+    "armenia": "Армения"
   }
 }
