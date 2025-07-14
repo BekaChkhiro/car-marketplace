@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 
 // Import translations
 // English translations
+import enCommon from './locales/en/common.json';
 import enProfile from './locales/en/profile.json';
 import enCarDetails from './locales/en/carDetails.json';
 import enTransaction from './locales/en/transaction.json';
@@ -16,6 +17,7 @@ import enParts from './locales/en/parts.json';
 import enContact from './locales/en/contact.json';
 
 // Georgian translations
+import kaCommon from './locales/ka/common.json';
 import kaProfile from './locales/ka/profile.json';
 import kaCarDetails from './locales/ka/carDetails.json';
 import kaTransaction from './locales/ka/transaction.json';
@@ -29,6 +31,7 @@ import kaParts from './locales/ka/parts.json';
 import kaContact from './locales/ka/contact.json';
 
 // Russian translations
+import ruCommon from './locales/ru/common.json';
 import ruProfile from './locales/ru/profile.json';
 import ruCarDetails from './locales/ru/carDetails.json';
 import ruTransaction from './locales/ru/transaction.json';
@@ -63,6 +66,7 @@ export const namespaces = {
 // Translation resources
 const resources = {
   en: {
+    common: enCommon,
     profile: enProfile,
     carDetails: enCarDetails,
     transaction: enTransaction,
@@ -77,6 +81,7 @@ const resources = {
     // Other namespaces will be added here as needed
   },
   ka: {
+    common: kaCommon,
     profile: kaProfile,
     carDetails: kaCarDetails,
     transaction: kaTransaction,
@@ -91,6 +96,7 @@ const resources = {
     // Other namespaces will be added here as needed
   },
   ru: {
+    common: ruCommon,
     profile: ruProfile,
     carDetails: ruCarDetails,
     transaction: ruTransaction,

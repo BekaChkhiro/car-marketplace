@@ -19,6 +19,98 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
   // Format price (no discount available in the Car type)
   const price = car.price || 0;
 
+  // Category mapping for translation
+  const categoryMapping: { [key: string]: string } = {
+    'სედანი': 'sedan',
+    'ჯიპი': 'suv',
+    'კუპე': 'coupe',
+    'ჰეტჩბექი': 'hatchback',
+    'უნივერსალი': 'wagon',
+    'კაბრიოლეტი': 'convertible',
+    'პიკაპი': 'pickup',
+    'მინივენი': 'minivan',
+    'ლიმუზინი': 'limousine',
+    'კროსოვერი': 'crossover',
+    // English mappings
+    'sedan': 'sedan',
+    'suv': 'suv',
+    'coupe': 'coupe',
+    'hatchback': 'hatchback',
+    'wagon': 'wagon',
+    'convertible': 'convertible',
+    'pickup': 'pickup',
+    'minivan': 'minivan',
+    'limousine': 'limousine',
+    'crossover': 'crossover'
+  };
+
+  const getCategoryTranslation = (category: string | undefined): string => {
+    if (!category) return t('common:notAvailable');
+    const mappedCategory = categoryMapping[category.toLowerCase()] || categoryMapping[category];
+    return mappedCategory ? t(`carDetails:categories.${mappedCategory}`, category) : category;
+  };
+
+  // Location mapping for translation
+  const locationMapping: { [key: string]: string } = {
+    // Georgian cities
+    'თბილისი': 'tbilisi',
+    'ბათუმი': 'batumi',
+    'ქუთაისი': 'kutaisi',
+    'რუსთავი': 'rustavi',
+    'გორი': 'gori',
+    'ზუგდიდი': 'zugdidi',
+    'ფოთი': 'poti',
+    'ხაშური': 'khashuri',
+    'სამტრედია': 'samtredia',
+    'სენაკი': 'senaki',
+    // Georgian countries
+    'საქართველო': 'georgia',
+    'გერმანია': 'germany',
+    'აშშ': 'usa',
+    'იაპონია': 'japan',
+    'დიდი ბრიტანეთი': 'uk',
+    'საფრანგეთი': 'france',
+    'იტალია': 'italy',
+    'ესპანეთი': 'spain',
+    'ნიდერლანდები': 'netherlands',
+    'ჩინეთი': 'china',
+    'კანადა': 'canada',
+    'თურქეთი': 'turkey',
+    'პოლონეთი': 'poland',
+    'სომხეთი': 'armenia',
+    // English mappings
+    'tbilisi': 'tbilisi',
+    'batumi': 'batumi',
+    'kutaisi': 'kutaisi',
+    'rustavi': 'rustavi',
+    'gori': 'gori',
+    'zugdidi': 'zugdidi',
+    'poti': 'poti',
+    'khashuri': 'khashuri',
+    'samtredia': 'samtredia',
+    'senaki': 'senaki',
+    'georgia': 'georgia',
+    'germany': 'germany',
+    'usa': 'usa',
+    'japan': 'japan',
+    'uk': 'uk',
+    'france': 'france',
+    'italy': 'italy',
+    'spain': 'spain',
+    'netherlands': 'netherlands',
+    'china': 'china',
+    'canada': 'canada',
+    'turkey': 'turkey',
+    'poland': 'poland',
+    'armenia': 'armenia'
+  };
+
+  const getLocationTranslation = (location: string | undefined): string => {
+    if (!location) return '';
+    const mappedLocation = locationMapping[location.toLowerCase()] || locationMapping[location];
+    return mappedLocation ? t(`carDetails:locations.${mappedLocation}`, location) : location;
+  };
+
   return (
     <div className="sticky top-24 space-y-4">
       {/* Car Price Card */}
@@ -29,7 +121,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
           </h1>
         </div>
-        
+
         {/* Car Details */}
         <div className="p-5 space-y-6">
           {/* Main Specs Grid */}
@@ -40,52 +132,50 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
                 <CarIcon className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <span className="text-xs text-gray-500 block">{t('carDetails:specs.brand', 'მარკა')}</span>
+                <span className="text-xs text-gray-500 block">{t('carDetails:specs.brand')}</span>
                 <span className="font-semibold text-gray-900">{car.brand || '-'}</span>
               </div>
             </div>
-            
+
             {/* Model */}
             <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
               <div className="bg-primary/10 p-2 rounded-lg mr-3">
                 <Tag className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <span className="text-xs text-gray-500 block">{t('carDetails:specs.model', 'მოდელი')}</span>
+                <span className="text-xs text-gray-500 block">{t('carDetails:specs.model')}</span>
                 <span className="font-semibold text-gray-900">{car.model || '-'}</span>
               </div>
             </div>
-            
+
             {/* Category */}
             <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
               <div className="bg-primary/10 p-2 rounded-lg mr-3">
                 <Package className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <span className="text-xs text-gray-500 block">{t('carDetails:specs.category', 'კატეგორია')}</span>
+                <span className="text-xs text-gray-500 block">{t('carDetails:specs.category')}</span>
                 <span className="font-semibold text-gray-900">
-                  {car.category_name || 
-                   (car.category_id ? `კატეგორია ${car.category_id}` : 
-                   car.specifications?.body_type || '-')}
+                  {getCategoryTranslation(car.category_name) || getCategoryTranslation(car.specifications?.body_type)}
                 </span>
               </div>
             </div>
-            
+
             {/* Year */}
             <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
               <div className="bg-primary/10 p-2 rounded-lg mr-3">
                 <Calendar className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <span className="text-xs text-gray-500 block">{t('carDetails:specs.year', 'გამოშვების წელი')}</span>
+                <span className="text-xs text-gray-500 block">{t('carDetails:specs.year')}</span>
                 <span className="font-semibold text-gray-900">{car.year || '-'}</span>
               </div>
             </div>
           </div>
-          
+
           {/* Price with enhanced design */}
           <div className="mt-4">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">{t('carDetails:specs.price', 'ფასი')}</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">{t('carDetails:priceCard.price')}</h2>
             <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-xl border border-green-200 shadow-md">
               <div className="flex justify-center items-center">
                 <span className="text-4xl font-bold text-primary">
@@ -94,19 +184,19 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Location with enhanced design */}
           <div className="flex items-center p-3 bg-green-50/50 rounded-xl border border-green-100 mt-2">
             <div className="bg-primary/10 p-2 rounded-lg mr-3">
               <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <span className="text-xs text-gray-500 block">{t('carDetails:specs.location', 'მდებარეობა')}</span>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.location')}</span>
               <span className="font-semibold text-gray-900">
                 {car.location ? (
                   <>
-                    {car.location.city || ''}
-                    {car.location.country && `, ${car.location.country}`}
+                    {getLocationTranslation(car.location.city)}
+                    {car.location.country && `, ${getLocationTranslation(car.location.country)}`}
                   </>
                 ) : '-'}
               </span>
@@ -114,14 +204,14 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Seller Info & Contact */}
       <div className="bg-white rounded-xl shadow-md border border-green-100 car-detail-card overflow-hidden">
         {/* Contact Header */}
         <div className="p-4 border-b border-green-100">
-          <h3 className="text-lg font-semibold text-gray-800">გამყიდველთან დაკავშირება</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('carDetails:priceCard.contactSeller')}</h3>
         </div>
-        
+
         <div className="p-5 space-y-4">
           {/* Author Name */}
           <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
@@ -129,45 +219,45 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <span className="text-xs text-gray-500 block">ავტორი</span>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.name')}</span>
               <span className="font-semibold text-gray-900">
-                {car.author_name || 'მანქანის მფლობელი'}
+                {car.author_name || t('carDetails:priceCard.carOwner', 'Car Owner')}
               </span>
             </div>
           </div>
-          
+
           {/* Seller Phone */}
           <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
             <div className="bg-primary/10 p-2 rounded-lg mr-3">
               <Phone className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <span className="text-xs text-gray-500 block">ტელეფონი</span>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.phone')}</span>
               <span className="font-semibold text-primary">
                 {car.author_phone || '+995557409798'}
               </span>
             </div>
           </div>
-          
+
           {/* Call Button */}
-          <a 
-            href={`tel:${car.author_phone || '+995555 55 55 55'}`} 
+          <a
+            href={`tel:${car.author_phone || '+995555 55 55 55'}`}
             className="w-full bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-md flex items-center justify-center gap-2 mt-2"
           >
             <Phone className="w-5 h-5" />
             <span>{car.author_phone || '+995555 55 55 55'}</span>
           </a>
-          
+
           {/* Favorite Button */}
           <button className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-green-200 hover:bg-green-50 transition-colors mt-2">
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-primary" />
-              <span className="font-medium">{t('carDetails:specs.favorite', 'ფავორიტი')}</span>
+              <span className="font-medium">{t('carDetails:header.addToWishlist')}</span>
             </div>
           </button>
         </div>
       </div>
-      
+
 
     </div>
   );

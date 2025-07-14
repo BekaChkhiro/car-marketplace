@@ -11,12 +11,6 @@
     "carNotFound": "Car not found",
     "homePage": "Home Page"
   },
-  "header": {
-    "backToCars": "Back to cars",
-    "addToWishlist": "Add to Wishlist",
-    "removeFromWishlist": "Remove from Wishlist",
-    "share": "Share"
-  },
   "priceCard": {
     "price": "Price",
     "contactSeller": "Contact Seller",
@@ -25,9 +19,19 @@
     "safetyTips": "Safety Tips",
     "meetInPublic": "Meet in a public place",
     "inspectBefore": "Inspect the car before paying",
-    "verifyDocuments": "Verify all documents"
+    "verifyDocuments": "Verify all documents",
+    "carOwner": "Car Owner"
   },
-  "carSpecs": {
+  "header": {
+    "title": "Car Details",
+    "shareButton": "Share this car",
+    "backToCars": "Back to cars",
+    "addToWishlist": "Add to wishlist",
+    "removeFromWishlist": "Remove from wishlist",
+    "share": "Share",
+    "viewAll": "View All Images"
+  },
+  "specs": {
     "generalInfo": "General Info",
     "specifications": "Specifications",
     "description": "Description",
@@ -35,16 +39,161 @@
     "brand": "Brand",
     "model": "Model",
     "year": "Year",
+    "price": "Price",
+    "category": "Category",
     "mileage": "Mileage",
     "engine": "Engine",
+    "engineSize": "Engine Size",
+    "engineType": "Engine Type",
     "transmission": "Transmission",
-    "fuelType": "Fuel Type",
+    "fuel": "Fuel Type",
     "color": "Color",
     "driveType": "Drive Type",
+    "steeringWheel": "Steering Wheel",
     "interiorColor": "Interior Color",
     "additionalFeatures": "Additional Features",
+    "technicalSpecs": "Technical Specifications",
     "navigation": "Navigation",
     "parkingControl": "Parking Control",
-    "bluetooth": "Bluetooth"
+    "bluetooth": "Bluetooth",
+    "authorInfo": "Author Information",
+    "name": "Name",
+    "phone": "Phone",
+    "city": "City",
+    "country": "Country",
+    "yes": "Yes",
+    "no": "No",
+    "left": "Left",
+    "right": "Right",
+    "front": "Front",
+    "rear": "Rear",
+    "km": "km",
+    "vinCode": "VIN Code",
+    "notSpecified": "Not specified",
+    "cylinders": "Cylinders",
+    "interiorMaterial": "Interior Material",
+    "airbagsCount": "Number of Airbags",
+    "location": "Location"
+  },
+  "colors": {
+    "black": "Black",
+    "white": "White",
+    "silver": "Silver",
+    "gray": "Gray",
+    "grey": "Gray",
+    "red": "Red",
+    "blue": "Blue",
+    "green": "Green",
+    "yellow": "Yellow",
+    "gold": "Gold",
+    "bronze": "Bronze",
+    "brown": "Brown",
+    "orange": "Orange",
+    "purple": "Purple",
+    "burgundy": "Burgundy",
+    "maroon": "Dark Red",
+    "navy": "Navy Blue",
+    "beige": "Beige",
+    "champagne": "Champagne",
+    "pearl": "Pearl",
+    "tan": "Tan",
+    "cream": "Cream"
+  },
+  "transmission": {
+    "manual": "Manual",
+    "automatic": "Automatic"
+  },
+  "driveType": {
+    "fwd": "Front",
+    "rwd": "Rear",
+    "awd": "4x4",
+    "4wd": "4x4",
+    "front": "Front",
+    "rear": "Rear",
+    "all": "4x4"
+  },
+  "steering": {
+    "left": "Left",
+    "right": "Right"
+  },
+  "features": {
+    "airConditioning": "Air Conditioning",
+    "abs": "ABS",
+    "boardComputer": "Board Computer",
+    "cruiseControl": "Cruise Control",
+    "seatHeating": "Seat Heating",
+    "navigation": "Navigation",
+    "rearCamera": "Rear View Camera",
+    "parkingControl": "Parking Control",
+    "bluetooth": "Bluetooth",
+    "sunroof": "Sunroof",
+    "leatherSeats": "Leather Interior",
+    "electricWindows": "Electric Windows",
+    "multifunctionSteeringWheel": "Multifunction Steering Wheel",
+    "startStopSystem": "Start-Stop System"
+  },
+  "similarCars": {
+    "title": "Similar Cars",
+    "viewAll": "View All"
+  },
+  "gallery": {
+    "noImages": "Images not available",
+    "noImagesDescription": "No images have been uploaded for this car"
+  },
+  "fuelType": {
+    "petrol": "Petrol",
+    "diesel": "Diesel",
+    "hybrid": "Hybrid",
+    "electric": "Electric",
+    "lpg": "LPG",
+    "cng": "CNG"
+  },
+  "interiorMaterial": {
+    "leather": "Leather",
+    "fabric": "Fabric",
+    "velour": "Velour",
+    "alcantara": "Alcantara",
+    "vinyl": "Vinyl",
+    "plastic": "Plastic",
+    "cloth": "Cloth",
+    "suede": "Suede"
+  },
+  "categories": {
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "coupe": "Coupe",
+    "hatchback": "Hatchback",
+    "wagon": "Wagon",
+    "convertible": "Convertible",
+    "pickup": "Pickup",
+    "minivan": "Minivan",
+    "limousine": "Limousine",
+    "crossover": "Crossover"
+  },
+  "locations": {
+    "tbilisi": "Tbilisi",
+    "batumi": "Batumi",
+    "kutaisi": "Kutaisi",
+    "rustavi": "Rustavi",
+    "gori": "Gori",
+    "zugdidi": "Zugdidi",
+    "poti": "Poti",
+    "khashuri": "Khashuri",
+    "samtredia": "Samtredia",
+    "senaki": "Senaki",
+    "georgia": "Georgia",
+    "germany": "Germany",
+    "usa": "USA",
+    "japan": "Japan",
+    "uk": "United Kingdom",
+    "france": "France",
+    "italy": "Italy",
+    "spain": "Spain",
+    "netherlands": "Netherlands",
+    "china": "China",
+    "canada": "Canada",
+    "turkey": "Turkey",
+    "poland": "Poland",
+    "armenia": "Armenia"
   }
 }

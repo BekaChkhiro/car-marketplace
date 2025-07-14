@@ -123,9 +123,9 @@ const CarDetails: React.FC = () => {
       <Container className="px-3 sm:px-4 md:px-6 lg:px-8 pb-16">
         {/* Breadcrumb navigation */}
         <nav className="py-3 mb-2 flex items-center text-sm text-gray-500 breadcrumb-nav">
-          <Link to={`/${currentLang}`} className="hover:text-primary transition-colors">{t('carDetails:breadcrumb.home')}</Link>
+          <Link to={`/${currentLang}`} className="hover:text-primary transition-colors">{t('carDetails:breadcrumbs.home')}</Link>
           <span className="mx-2">/</span>
-          <Link to={`/${currentLang}/cars`} className="hover:text-primary transition-colors">{t('carDetails:breadcrumb.cars')}</Link>
+          <Link to={`/${currentLang}/cars`} className="hover:text-primary transition-colors">{t('carDetails:breadcrumbs.cars')}</Link>
           <span className="mx-2">/</span>
           <span className="text-primary font-medium truncate max-w-[150px] sm:max-w-xs">
             {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
