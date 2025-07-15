@@ -378,7 +378,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Transmission */}
               <div>
                 <label htmlFor="specifications.transmission" className="block text-sm font-medium text-gray-700 mb-1">
-                  ტრანსმისია
+                  გადაცემათა კოლოფი
                 </label>
                 <select
                   id="specifications.transmission"
