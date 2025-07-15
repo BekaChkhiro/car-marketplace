@@ -160,7 +160,7 @@ const CarsList: React.FC<CarsListProps> = ({
                         <span className="text-sm font-medium text-gray-800">{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
                       </div>
                       <div className="flex flex-col items-center justify-center p-2 text-center">
-                        <span className="text-xs text-gray-500">ტრანსმისია</span>
+                        <span className="text-xs text-gray-500">გადაცემათა კოლოფი</span>
                         <span className="text-sm font-medium text-gray-800">
                           {car.specifications.transmission === 'automatic' ? 'ავტომატიკა' : 'მექანიკა'}
                         </span>
