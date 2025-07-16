@@ -294,22 +294,39 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     },
   ];
   
-  // Features list with explicit fallback values
+  // Features list with explicit fallback values - all required features from Georgian list
   const carFeatures = [
-    { name: t('carDetails:features.airConditioning'), value: car.specifications?.has_air_conditioning ?? false },
-    { name: t('carDetails:features.abs'), value: car.specifications?.has_abs ?? false },
-    { name: t('carDetails:features.boardComputer'), value: car.specifications?.has_board_computer ?? false },
-    { name: t('carDetails:features.cruiseControl'), value: car.specifications?.has_cruise_control ?? false },
-    { name: t('carDetails:features.seatHeating'), value: car.specifications?.has_seat_heating ?? false },
-    { name: t('carDetails:features.navigation'), value: car.specifications?.has_navigation ?? false },
-    { name: t('carDetails:features.rearCamera'), value: car.specifications?.has_rear_view_camera ?? false },
-    { name: t('carDetails:features.parkingControl'), value: car.specifications?.has_parking_control ?? false },
-    { name: t('carDetails:features.bluetooth'), value: car.specifications?.has_bluetooth ?? false },
-    { name: t('carDetails:features.sunroof'), value: car.specifications?.has_sunroof ?? false },
-    { name: t('carDetails:features.leatherSeats'), value: car.specifications?.has_leather_interior ?? false },
-    { name: t('carDetails:features.electricWindows'), value: car.specifications?.has_electric_windows ?? false },
-    { name: t('carDetails:features.multifunctionSteeringWheel'), value: car.specifications?.has_multifunction_steering_wheel ?? false },
-    { name: t('carDetails:features.startStopSystem'), value: car.specifications?.has_start_stop ?? false },
+    // უსაფრთხოება
+    { name: 'ABS', value: car.specifications?.has_abs ?? false },
+    { name: 'მოცურების საწინააღმდეგო სისტემა', value: car.specifications?.has_traction_control ?? false },
+    { name: 'ცენტრალური საკეტი', value: car.specifications?.has_central_locking ?? false },
+    { name: 'სიგნალიზაცია', value: car.specifications?.has_alarm ?? false },
+    { name: 'სანისლე ფარები', value: car.specifications?.has_fog_lights ?? false },
+    
+    // კომფორტი
+    { name: 'კონდიციონერი', value: car.specifications?.has_air_conditioning ?? false },
+    { name: 'კლიმატკონტროლი', value: car.specifications?.has_climate_control ?? false },
+    { name: 'სავარძლის გათბობა', value: car.specifications?.has_heated_seats ?? car.specifications?.has_heated_seats ?? false },
+    { name: 'სავარძლის მეხსიერება', value: car.specifications?.has_seat_memory ?? car.specifications?. has_heated_seats ?? false },
+    { name: 'კრუიზ-კონტროლი', value: car.specifications?.has_cruise_control ?? false },
+    { name: 'Start/Stop სისტემა', value: car.specifications?.has_start_stop ?? false },
+    { name: 'ლუქი', value: car.specifications?.has_sunroof ?? false },
+    { name: 'ელექტრო შუშები', value: car.specifications?.has_electric_windows ?? false },
+    
+    // ელექტრონიკა
+    { name: 'ბორტკომპიუტერი', value: car.specifications?.has_board_computer ?? false },
+    { name: 'მონიტორი (ნავიგაცია)', value: car.specifications?.has_navigation ?? false },
+    { name: 'პარკინგკონტროლი', value: car.specifications?.has_parking_control ?? false },
+    { name: 'უკანა ხედვის კამერა', value: car.specifications?.has_rear_view_camera ?? false },
+    { name: 'AUX', value: car.specifications?.has_aux ?? false },
+    { name: 'Bluetooth', value: car.specifications?.has_bluetooth ?? false },
+    { name: 'მულტი საჭე', value: car.specifications?.has_multifunction_steering_wheel ?? false },
+    
+    // დამატებითი აღჭურვილობა
+    { name: 'ჰიდრავლიკა', value: car.specifications?.has_hydraulics ?? false },
+    { name: 'დისკები', value: car.specifications?.has_alloy_wheels ?? false },
+    { name: 'სათადარიგო საბურავი', value: car.specifications?.has_spare_tire ?? false },
+    { name: 'სსმპ ადაპტირებული', value: car.specifications?.is_disability_adapted ?? false },
   ];
 
   return (

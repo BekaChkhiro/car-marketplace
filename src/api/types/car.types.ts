@@ -59,7 +59,6 @@ export interface CarSpecifications {
   has_cruise_control?: boolean;
   has_start_stop?: boolean;
   has_sunroof?: boolean;
-  has_seat_heating?: boolean;
   has_seat_memory?: boolean;
   has_abs?: boolean;
   has_traction_control?: boolean;
@@ -75,6 +74,7 @@ export interface CarSpecifications {
   is_disability_adapted?: boolean;
   is_cleared?: boolean;
   has_technical_inspection?: boolean;
+  has_disability_adapted?: boolean;
   clearance_status?: 'cleared' | 'not_cleared' | 'in_progress';
   
   // Legacy fields that might still be used in the frontend
@@ -85,7 +85,6 @@ export interface CarSpecifications {
   has_ventilated_seats?: boolean;
   has_panoramic_roof?: boolean;
   has_leather_interior?: boolean;
-  has_memory_seats?: boolean;
   has_memory_steering_wheel?: boolean;
   has_electric_mirrors?: boolean;
   has_electric_seats?: boolean;

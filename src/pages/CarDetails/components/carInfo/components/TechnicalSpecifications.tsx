@@ -195,16 +195,16 @@ const TechnicalSpecifications: React.FC<TechnicalSpecificationsProps> = ({ speci
               <div className="text-gray-600">{formatBoolean(specifications.has_leather_interior)}</div>
             </div>
           )}
-          {(shouldDisplaySpec(specifications?.has_seat_heating) || shouldDisplaySpec(specifications?.has_heated_seats)) && (
+          {(shouldDisplaySpec(specifications?.has_heated_seats)) && (
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Seat Heating</div>
-              <div className="text-gray-600">{formatBoolean(specifications.has_seat_heating || specifications.has_heated_seats)}</div>
+              <div className="text-gray-600">{formatBoolean(specifications.has_heated_seats)}</div>
             </div>
           )}
-          {(shouldDisplaySpec(specifications?.has_seat_memory) || shouldDisplaySpec(specifications?.has_memory_seats)) && (
+          {(shouldDisplaySpec(specifications?.has_seat_memory)) && (
             <div className="flex justify-between py-2 hover:bg-green-light rounded-lg px-3 transition-colors">
               <div className="font-medium text-gray-800">Seat Memory</div>
-              <div className="text-gray-600">{formatBoolean(specifications.has_seat_memory || specifications.has_memory_seats)}</div>
+              <div className="text-gray-600">{formatBoolean(specifications.has_seat_memory)}</div>
             </div>
           )}
           {shouldDisplaySpec(specifications?.has_ventilated_seats) && (

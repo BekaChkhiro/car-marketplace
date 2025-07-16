@@ -20,7 +20,7 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
       { key: 'has_air_conditioning', label: 'კონდიციონერი' },
       { key: 'has_climate_control', label: 'კლიმატკონტროლი' },
       { key: 'has_heated_seats', label: 'სავარძლის გათბობა' },
-      { key: 'has_memory_seats', label: 'სავარძლის მეხსიერება' },
+      { key: 'has_seat_memory', label: 'სავარძლის მეხსიერება' },
       { key: 'has_cruise_control', label: 'კრუიზ-კონტროლი' },
       { key: 'has_start_stop', label: 'Start/Stop სისტემა' },
       { key: 'has_sunroof', label: 'ლუქი' },
@@ -34,6 +34,12 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
       { key: 'has_aux', label: 'AUX' },
       { key: 'has_bluetooth', label: 'Bluetooth' },
       { key: 'has_multifunction_steering_wheel', label: 'მულტი საჭე' },
+    ],
+    'დამატებითი აღჭურვილობა': [
+      { key: 'has_hydraulics', label: 'ჰიდრავლიკა' },
+      { key: 'has_alloy_wheels', label: 'დისკები' },
+      { key: 'has_spare_tire', label: 'სათადარიგო საბურავი' },
+      { key: 'is_disability_adapted', label: 'სსმპ ადაპტირებული' },
     ]
   } as const;
 
