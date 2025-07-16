@@ -102,9 +102,6 @@ export const validateCarForm = (formData: NewCarFormData, images: File[]): Valid
     if (!formData.location.country) {
       errors.country = 'გთხოვთ მიუთითოთ ქვეყანა';
     }
-    if (!formData.location.state) {
-      errors.state = 'გთხოვთ მიუთითოთ შტატი/რეგიონი';
-    }
   }
 
   // Technical specifications validation

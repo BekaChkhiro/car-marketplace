@@ -92,7 +92,7 @@ class CarService {
             fuel_type: "Diesel",
             mileage: 45000,
             mileage_unit: "km",
-            engine_size: 3.0,
+            engine_size: 3,
             color: "Black",
             steering_wheel: "left",
             drive_type: "AWD",
@@ -108,7 +108,7 @@ class CarService {
             city: "Tbilisi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -142,7 +142,7 @@ class CarService {
             fuel_type: "Gasoline",
             mileage: 25000,
             mileage_unit: "km",
-            engine_size: 2.0,
+            engine_size: 2,
             color: "White",
             steering_wheel: "left",
             drive_type: "RWD",
@@ -158,7 +158,7 @@ class CarService {
             city: "Batumi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {

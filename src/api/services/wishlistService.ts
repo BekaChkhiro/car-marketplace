@@ -43,7 +43,7 @@ const mockWishlist: Car[] = [
       city: 'tbilisi',
       country: 'georgia',
       location_type: 'georgia',
-      is_transit: false
+      is_in_transit: false
     },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
@@ -88,7 +88,7 @@ const mockWishlist: Car[] = [
       city: 'batumi',
       country: 'georgia',
       location_type: 'georgia',
-      is_transit: false
+      is_in_transit: false
     },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
@@ -139,7 +139,7 @@ class WishlistService {
             city: '',
             country: '',
             location_type: 'georgia',
-            is_transit: false
+            is_in_transit: false
           },
           images: car.images || []
         };

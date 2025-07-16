@@ -108,7 +108,7 @@ class CarService {
             city: "Tbilisi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -158,7 +158,7 @@ class CarService {
             city: "Batumi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -208,7 +208,7 @@ class CarService {
             city: "Tbilisi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -318,7 +318,7 @@ async getCar(id: string | number): Promise<Car> {
           city: "Tbilisi",
           country: "Georgia",
           location_type: "georgia",
-          is_transit: false
+          is_in_transit: false
         },
         images: [
           {
@@ -631,7 +631,7 @@ async getCar(id: string | number): Promise<Car> {
           city: data.location?.city || 'თბილისი',
           country: data.location?.country || 'საქართველო',
           location_type: data.location?.location_type || 'georgia',
-          is_transit: Boolean(data.location?.is_transit)
+          is_in_transit: Boolean(data.location?.is_in_transit)
         }
       };
       
@@ -994,7 +994,7 @@ async getCar(id: string | number): Promise<Car> {
             city: "Tbilisi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -1044,7 +1044,7 @@ async getCar(id: string | number): Promise<Car> {
             city: "Batumi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -1276,7 +1276,7 @@ async getCar(id: string | number): Promise<Car> {
             city: "Tbilisi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -1326,7 +1326,7 @@ async getCar(id: string | number): Promise<Car> {
             city: "Batumi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {

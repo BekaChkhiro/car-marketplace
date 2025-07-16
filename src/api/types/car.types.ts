@@ -48,6 +48,7 @@ export interface CarSpecifications {
   interior_material?: string;
   interior_color?: string;
   doors?: string;
+  manufacture_month?: number | null;
   has_hydraulics?: boolean;
   has_board_computer?: boolean;
   has_air_conditioning?: boolean;
@@ -98,7 +99,7 @@ export interface CarLocation {
   city: string;
   country: string;
   location_type: 'georgia' | 'transit' | 'international';
-  is_transit: boolean;
+  is_in_transit: boolean;
 }
 
 export interface CarImage {
@@ -174,7 +175,7 @@ export interface CreateCarFormData {
     city: string;
     country: string;
     location_type?: string;
-    is_transit?: boolean;
+    is_in_transit?: boolean;
   };
 }
 

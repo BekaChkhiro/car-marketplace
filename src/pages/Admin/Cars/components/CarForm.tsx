@@ -49,12 +49,12 @@ const CarForm: React.FC<CarFormProps> = ({
       city: initialData.location.city || 'თბილისი',
       country: initialData.location.country || 'საქართველო',
       location_type: initialData.location.location_type || 'georgia',
-      is_transit: initialData.location.is_transit || false
+      is_in_transit: initialData.location.is_in_transit || false
     } : {
       city: 'თბილისი',
       country: 'საქართველო',
       location_type: 'georgia',
-      is_transit: false
+      is_in_transit: false
     }
   });
   
@@ -561,13 +561,13 @@ const CarForm: React.FC<CarFormProps> = ({
               <div className="flex items-center mt-2">
                 <input
                   type="checkbox"
-                  id="location.is_transit"
-                  name="location.is_transit"
-                  checked={formData.location?.is_transit || false}
+                  id="location.is_in_transit"
+                  name="location.is_in_transit"
+                  checked={formData.location?.is_in_transit || false}
                   onChange={handleCheckboxChange}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <label htmlFor="location.is_transit" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="location.is_in_transit" className="ml-2 block text-sm text-gray-700">
                   ტრანზიტში
                 </label>
               </div>

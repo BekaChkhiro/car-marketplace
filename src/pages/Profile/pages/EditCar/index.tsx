@@ -4,15 +4,15 @@ import { ArrowLeft, Star, X } from 'lucide-react';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import { Loading } from '../../../../components/ui';
 import { useEditCarForm } from './hooks/useEditCarForm';
-import { CarFeatures } from '../AddCar/types';
+import { CarFeatures } from './types';
 
-// Import the same components as AddCar
-import BasicInfo from '../AddCar/components/BasicInfo';
-import TechnicalSpecs from '../AddCar/components/TechnicalSpecs';
-import Features from '../AddCar/components/Features';
-import Location from '../AddCar/components/Location';
-import Description from '../AddCar/components/Description';
-import AuthorInfo from '../AddCar/components/AuthorInfo';
+// Import the local components
+import BasicInfo from './components/BasicInfo';
+import TechnicalSpecs from './components/TechnicalSpecs';
+import Features from './components/Features';
+import Location from './components/Location';
+import Description from './components/Description';
+import AuthorInfo from './components/AuthorInfo';
 
 const EditCar: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -100,7 +100,7 @@ const EditCar: React.FC = () => {
                 state: '',  // Explicitly adding state property to satisfy type requirements
                 country: formData.location?.country || 'საქართველო',
                 location_type: formData.location?.location_type || 'georgia',
-                is_transit: formData.location?.is_transit || false
+                is_in_transit: formData.location?.is_in_transit || false
               },
               specifications: formData.specifications || {},
               features: formData.features || [],
@@ -129,7 +129,11 @@ const EditCar: React.FC = () => {
                 ? formData.specifications.steering_wheel 
                 : 'left',
               // ციფრობრივი ველები პირდაპირ გადავცეთ
-              engine_size: formData.specifications?.engine_size,
+              engine_size: formData.specifications.engine_size !== undefined
+              ? (typeof formData.specifications.engine_size === 'number'
+                ? (Number.isInteger(formData.specifications.engine_size) ? formData.specifications.engine_size + '.0' : formData.specifications.engine_size.toString())
+                : String(formData.specifications.engine_size))
+              : '',
               mileage: formData.specifications?.mileage,
               mileage_unit: formData.specifications?.mileage_unit !== undefined 
                 ? formData.specifications.mileage_unit 
@@ -192,7 +196,13 @@ const EditCar: React.FC = () => {
               has_multifunction_steering_wheel: Array.isArray(formData.features) && formData.features.includes('has_multifunction_steering_wheel'),
               has_alloy_wheels: Array.isArray(formData.features) && formData.features.includes('has_alloy_wheels'),
               has_spare_tire: Array.isArray(formData.features) && formData.features.includes('has_spare_tire'),
-              has_disability_adapted: Array.isArray(formData.features) && formData.features.includes('has_disability_adapted')
+              has_disability_adapted: Array.isArray(formData.features) && formData.features.includes('has_disability_adapted'),
+              has_hydraulics: Array.isArray(formData.features) && formData.features.includes('has_hydraulics'),
+              has_aux: Array.isArray(formData.features) && formData.features.includes('has_aux'),
+              // New features to fix database mismatch
+              has_catalyst: Array.isArray(formData.features) && formData.features.includes('has_catalyst'),
+              has_technical_inspection: Array.isArray(formData.features) && formData.features.includes('has_technical_inspection'),
+              is_cleared: Array.isArray(formData.features) && formData.features.includes('is_cleared')
             } as Partial<CarFeatures>}
             onChange={handleFeaturesChange}
           />
