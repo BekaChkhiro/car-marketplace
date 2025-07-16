@@ -49,7 +49,7 @@ const AddCar: React.FC = () => {
         </div>
 
         <div className="space-y-6">
-         @ <BasicInfo
+          <BasicInfo
             formData={formData}
             onChange={handleChange}
             onSpecificationsChange={handleSpecificationsChange}
