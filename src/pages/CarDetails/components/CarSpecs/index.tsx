@@ -233,7 +233,13 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     { 
       icon: <Droplet className="w-5 h-5 text-primary" />, 
       label: t('carDetails:specs.engineSize'), 
-      value: car.specifications?.engine_size ? `${car.specifications.engine_size} L` : t('common:notAvailable', 'არ არის'),
+      value: car.specifications?.engine_size ? `${car.specifications.engine_size !== undefined
+        ? (typeof car.specifications.engine_size === 'number' 
+           ? (Number.isInteger(car.specifications.engine_size) 
+              ? car.specifications.engine_size + '.0' 
+              : car.specifications.engine_size)
+           : car.specifications.engine_size)
+        : undefined} L` : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },

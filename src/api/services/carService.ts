@@ -149,7 +149,7 @@ class CarService {
             city: "Tbilisi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -199,7 +199,7 @@ class CarService {
             city: "Batumi",
             country: "Georgia",
             location_type: "georgia",
-            is_transit: false
+            is_in_transit: false
           },
           images: [
             {
@@ -309,7 +309,7 @@ class CarService {
             city: 'Tbilisi', 
             country: 'Georgia',
             location_type: 'georgia',
-            is_transit: false
+            is_in_transit: false
           },
           specifications: { 
             id: 1,

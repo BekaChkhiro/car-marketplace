@@ -38,7 +38,7 @@ export const useEditCarForm = (carId: number) => {
       city: '',
       country: 'საქართველო',
       location_type: 'georgia',
-      is_transit: false
+      is_in_transit: false
     },
     specifications: {
       transmission: '',
@@ -121,7 +121,7 @@ export const useEditCarForm = (carId: number) => {
       console.log('specifications ობიექტი სრულად:', car.specifications);
       
       // დეტალურად დავლოგოთ მნიშვნელოვანი ველები
-      console.log('ძრავის მოცულობა:', car.specifications.engine_size, 'ტიპი:', typeof car.specifications.engine_size);
+      console.log('ძრავის მოცულობა:', car.specifications.engine_size.toString().substring(0, 3), 'ტიპი:', typeof car.specifications.engine_size);
       console.log('გადაცემათა კოლოფი:', car.specifications.transmission, 'ტიპი:', typeof car.specifications.transmission);
       console.log('საწვავის ტიპი:', car.specifications.fuel_type, 'ტიპი:', typeof car.specifications.fuel_type);
       console.log('ფერი:', car.specifications.color, 'ტიპი:', typeof car.specifications.color);
@@ -167,23 +167,6 @@ export const useEditCarForm = (carId: number) => {
       }
       
       console.log('მიღებული features მასივი specifications-დან:', featuresArray);
-      
-      // მანუალურად დავამატოთ ფიქსირებული features სატესტოდ
-      if (featuresArray.length === 0) {
-        console.log('ᲨᲔᲜᲘᲨᲕᲜᲐ: featuresArray ცარიელია, ვამატებთ ტესტურ მნიშვნელობებს');
-        // თუ მანქანის ლოგებში ჩანს რომ აქვს ფუნქციები მაგრამ ისინი არ დაემატა
-        featuresArray = [
-          'has_traction_control',
-          'has_central_locking',
-          'has_fog_lights',
-          'has_climate_control',
-          'has_heated_seats',
-          'has_sunroof',
-          'has_parking_control',
-          'has_rear_view_camera'
-        ];
-        console.log('ტესტური features მნიშვნელობები:', featuresArray);
-      }
     }
 
     // Create form data from car object
@@ -205,7 +188,7 @@ export const useEditCarForm = (carId: number) => {
         city: car.location?.city || '',
         country: car.location?.country || 'საქართველო',
         location_type: car.location?.location_type || 'georgia',
-        is_transit: car.location?.is_transit || false
+        is_in_transit: car.location?.is_in_transit || false
       },
       specifications: {
         // მნიშვნელოვანი ველები, რომლებიც არ იტვირთებოდა
@@ -219,8 +202,8 @@ export const useEditCarForm = (carId: number) => {
           if (trans?.toString().toLowerCase().includes('manual') || 
               trans?.toString().toLowerCase().includes('მექანიკურ')) {
             return 'manual';
-          } else if (trans?.toString().toLowerCase().includes('auto') || 
-                   trans?.toString().toLowerCase().includes('ავტომატ')) {
+          } else if (trans?.toString().toLowerCase().includes('automatic') || 
+                   trans?.toString().toLowerCase().includes('ავტომატიკა')) {
             return 'automatic';
           }
           return 'manual'; // სანაცვლო მნიშვნელობა
@@ -296,7 +279,7 @@ export const useEditCarForm = (carId: number) => {
         location: {
           ...prev.location || {},
           [field]: typeof value === 'object' ? value.value : value,
-          is_transit: field === 'location_type' ? value === 'transit' : prev.location?.is_transit || false,
+          is_in_transit: field === 'location_type' ? value === 'transit' : prev.location?.is_in_transit || false,
           city: prev.location?.city || '',
           country: prev.location?.country || 'საქართველო',
           location_type: field === 'location_type' ? (typeof value === 'object' ? value.value : value) : (prev.location?.location_type || 'georgia')
@@ -377,8 +360,72 @@ export const useEditCarForm = (carId: number) => {
       return;
     }
     
+    // Prepare specifications data to match backend expectations
+    const preparedSpecifications = {
+      // Basic specifications
+      engine_type: formData.specifications?.engine_type || null,
+      transmission: formData.specifications?.transmission || 'manual',
+      fuel_type: formData.specifications?.fuel_type || 'petrol',
+      mileage: formData.specifications?.mileage || null,
+      mileage_unit: formData.specifications?.mileage_unit || 'km',
+      engine_size: formData.specifications?.engine_size || null,
+      cylinders: formData.specifications?.cylinders || null,
+      color: formData.specifications?.color || null,
+      steering_wheel: formData.specifications?.steering_wheel || 'left',
+      drive_type: formData.specifications?.drive_type || 'FWD',
+      clearance_status: formData.specifications?.clearance_status || null,
+      airbags_count: formData.specifications?.airbags_count || null,
+      interior_material: formData.specifications?.interior_material || null,
+      interior_color: formData.specifications?.interior_color || null,
+      horsepower: formData.specifications?.horsepower || null,
+      body_type: formData.specifications?.body_type || null,
+      
+      // Convert features array to individual boolean fields
+      has_board_computer: Array.isArray(formData.features) && formData.features.includes('has_board_computer'),
+      has_air_conditioning: Array.isArray(formData.features) && formData.features.includes('has_air_conditioning'),
+      has_parking_control: Array.isArray(formData.features) && formData.features.includes('has_parking_control'),
+      has_rear_view_camera: Array.isArray(formData.features) && formData.features.includes('has_rear_view_camera'),
+      has_electric_windows: Array.isArray(formData.features) && formData.features.includes('has_electric_windows'),
+      has_climate_control: Array.isArray(formData.features) && formData.features.includes('has_climate_control'),
+      has_cruise_control: Array.isArray(formData.features) && formData.features.includes('has_cruise_control'),
+      has_start_stop: Array.isArray(formData.features) && formData.features.includes('has_start_stop'),
+      has_sunroof: Array.isArray(formData.features) && formData.features.includes('has_sunroof'),
+      has_seat_heating: Array.isArray(formData.features) && formData.features.includes('has_heated_seats'),
+      has_abs: Array.isArray(formData.features) && formData.features.includes('has_abs'),
+      has_traction_control: Array.isArray(formData.features) && formData.features.includes('has_traction_control'),
+      has_central_locking: Array.isArray(formData.features) && formData.features.includes('has_central_locking'),
+      has_alarm: Array.isArray(formData.features) && formData.features.includes('has_alarm'),
+      has_fog_lights: Array.isArray(formData.features) && formData.features.includes('has_fog_lights'),
+      has_navigation: Array.isArray(formData.features) && formData.features.includes('has_navigation'),
+      has_bluetooth: Array.isArray(formData.features) && formData.features.includes('has_bluetooth'),
+      has_technical_inspection: Array.isArray(formData.features) && formData.features.includes('has_technical_inspection'),
+      
+      // Additional features from database schema
+      has_catalyst: Array.isArray(formData.features) && formData.features.includes('has_catalyst'),
+      has_hydraulics: Array.isArray(formData.features) && formData.features.includes('has_hydraulics'),
+      has_seat_memory: Array.isArray(formData.features) && formData.features.includes('has_memory_seats'),
+      has_aux: Array.isArray(formData.features) && formData.features.includes('has_aux'),
+      has_multifunction_steering_wheel: Array.isArray(formData.features) && formData.features.includes('has_multifunction_steering_wheel'),
+      has_alloy_wheels: Array.isArray(formData.features) && formData.features.includes('has_alloy_wheels'),
+      has_spare_tire: Array.isArray(formData.features) && formData.features.includes('has_spare_tire'),
+      is_disability_adapted: Array.isArray(formData.features) && formData.features.includes('has_disability_adapted'),
+      is_cleared: Array.isArray(formData.features) && formData.features.includes('is_cleared'),
+      
+      // Additional fields that might be in the database
+      is_turbo: formData.specifications?.is_turbo || false,
+      manufacture_month: formData.specifications?.manufacture_month || null,
+      doors: formData.specifications?.doors || null
+    };
+    
+    // Prepare the data for submission
+    const submitData = {
+      ...formData,
+      specifications: preparedSpecifications
+    };
+    
     // დებაგის ლოგები მონაცემთა გაგზავნამდე
-    console.log('გასაგზავნი ფორმის მონაცემები:', formData);
+    console.log('გასაგზავნი ფორმის მონაცემები:', submitData);
+    console.log('მომზადებული specifications:', preparedSpecifications);
     console.log('ავტორის ინფორმაცია:', { 
       author_name: formData.author_name, 
       author_phone: formData.author_phone 
@@ -386,7 +433,7 @@ export const useEditCarForm = (carId: number) => {
     
     try {
       showLoading();
-      const updatedCar = await carService.updateCar(carId, formData);
+      const updatedCar = await carService.updateCar(carId, submitData);
       console.log('მიღებული პასუხი API-დან:', updatedCar);
       hideLoading();
       

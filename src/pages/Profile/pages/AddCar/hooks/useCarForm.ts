@@ -50,7 +50,7 @@ export const useCarForm = () => {
         city: '',
         country: 'საქართველო',
         location_type: 'georgia',
-        is_transit: false
+        is_in_transit: false
       },
       specifications: {
         transmission: '',
@@ -124,7 +124,7 @@ export const useCarForm = () => {
         location: {
           ...prev.location,
           [field]: typeof value === 'object' ? value.value : value,
-          is_transit: field === 'location_type' ? value === 'transit' : prev.location?.is_transit || false
+          is_in_transit: field === 'location_type' ? value === 'transit' : prev.location?.is_in_transit || false
         }
       }));
       return;
@@ -145,8 +145,8 @@ export const useCarForm = () => {
     if (field === 'engine_size') {
       // For engine size, we keep the original string value from the dropdown
       // This ensures decimal values like '1.0', '2.0', '3.0' work properly
-      processedValue = value;
-      console.log(`Processing engine_size: ${value} -> keeping as is`);
+      processedValue = value ? parseFloat(value) : undefined;
+      console.log(`Processing engine_size: ${value} -> ${processedValue}`);
     } 
     else if (field === 'mileage' || field === 'cylinders' || field === 'airbags_count' || field === 'horsepower') {
       // Handle other numeric fields
@@ -237,7 +237,7 @@ export const useCarForm = () => {
         city: '',
         country: 'საქართველო',
         location_type: 'georgia',
-        is_transit: false
+        is_in_transit: false
       };
     }
     
@@ -252,7 +252,7 @@ export const useCarForm = () => {
         mileage: 0,
         mileage_unit: 'km',
         color: '',
-        engine_size: 0
+        engine_size: undefined
       };
     }
     
