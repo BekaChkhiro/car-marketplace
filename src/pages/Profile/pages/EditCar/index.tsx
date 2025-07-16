@@ -131,8 +131,8 @@ const EditCar: React.FC = () => {
               // ციფრობრივი ველები პირდაპირ გადავცეთ
               engine_size: formData.specifications.engine_size !== undefined
               ? (typeof formData.specifications.engine_size === 'number'
-                ? (Number.isInteger(formData.specifications.engine_size) ? formData.specifications.engine_size + '.0' : formData.specifications.engine_size.toString())
-                : String(formData.specifications.engine_size))
+                ? (Number.isInteger(formData.specifications.engine_size) ? formData.specifications.engine_size + '.0' : parseFloat(formData.specifications.engine_size.toString()).toString())
+                : parseFloat(String(formData.specifications.engine_size)).toString())
               : '',
               mileage: formData.specifications?.mileage,
               mileage_unit: formData.specifications?.mileage_unit !== undefined 

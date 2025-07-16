@@ -93,14 +93,14 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           <CustomSelect
             value={specifications.engine_size !== undefined
               ? (typeof specifications.engine_size === 'number'
-                ? (Number.isInteger(specifications.engine_size) ? specifications.engine_size + '.0' : specifications.engine_size.toString())
+                ? (Number.isInteger(specifications.engine_size) ? specifications.engine_size + '.0' : parseFloat(specifications.engine_size.toString()).toString())
                 : String(specifications.engine_size))
               : ''}
             onChange={(value) => onChange('engine_size', value)}
             options={ENGINE_SIZE_OPTIONS}
             placeholder={specifications.engine_size !== undefined
               ? (typeof specifications.engine_size === 'number'
-                ? (Number.isInteger(specifications.engine_size) ? specifications.engine_size + '.0' : specifications.engine_size.toString())
+                ? (Number.isInteger(specifications.engine_size) ? specifications.engine_size + '.0' : parseFloat(specifications.engine_size.toString()).toString())
                 : String(specifications.engine_size))
               : ''}
             error={errors?.engine_size}

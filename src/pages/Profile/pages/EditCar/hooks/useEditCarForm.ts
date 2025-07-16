@@ -243,7 +243,14 @@ export const useEditCarForm = (carId: number) => {
         body_type: car.specifications?.body_type || '',
         drive_type: car.specifications?.drive_type || 'FWD',
         steering_wheel: car.specifications?.steering_wheel || 'left',
-        engine_size: car.specifications?.engine_size !== undefined ? car.specifications.engine_size : null,
+        engine_size: car.specifications?.engine_size !== undefined ? 
+          (typeof car.specifications.engine_size === 'number' ? 
+            (Number.isInteger(car.specifications.engine_size) ? 
+              car.specifications.engine_size : 
+              parseFloat(car.specifications.engine_size.toString())
+            ) : 
+            parseFloat(String(car.specifications.engine_size))
+          ) : null,
         horsepower: car.specifications?.horsepower,
         mileage: car.specifications?.mileage,
         mileage_unit: car.specifications?.mileage_unit || 'km',
