@@ -32,7 +32,6 @@ export interface CarFeatures {
   has_start_stop?: boolean; // Start/Stop სისტემა
   has_sunroof?: boolean; // ლუქი
   has_heated_seats?: boolean; // სავარძლის გათბობა
-  has_memory_seats?: boolean; // სავარძლის მეხსიერება
   has_abs?: boolean; // ABS
   has_traction_control?: boolean; // მოცურების საწინააღმდეგო სისტემა
   has_central_locking?: boolean; // ცენტრალური საკეტი
@@ -44,12 +43,11 @@ export interface CarFeatures {
   has_multifunction_steering_wheel?: boolean; // მულტი საჭე
   has_alloy_wheels?: boolean; // დისკები
   has_spare_tire?: boolean; // სათადარიგო საბურავი
-  has_disability_adapted?: boolean; // სსმპ ადაპტირებული
+  is_disability_adapted?: boolean; // სსმპ ადაპტირებული
   // Additional features from database schema
   has_catalyst?: boolean; // კატალიზატორი
   has_technical_inspection?: boolean; // ტექნიკური ინსპექცია
-  has_seat_heating?: boolean; // სავარძლის გათბობა (alias for has_heated_seats)
-  has_seat_memory?: boolean; // სავარძლის მეხსიერება (alias for has_memory_seats)
+  has_seat_memory?: boolean; // სავარძლის მეხსიერება
   is_cleared?: boolean; // გაწმენდილი
 }
 

@@ -613,7 +613,7 @@ async getCar(id: string | number): Promise<Car> {
           has_cruise_control: Boolean(data.specifications?.has_cruise_control),
           has_start_stop: Boolean(data.specifications?.has_start_stop),
           has_sunroof: Boolean(data.specifications?.has_sunroof),
-          has_seat_heating: Boolean(data.specifications?.has_seat_heating),
+          has_heated_seats: Boolean(data.specifications?.has_heated_seats),
           has_abs: Boolean(data.specifications?.has_abs),
           has_traction_control: Boolean(data.specifications?.has_traction_control),
           has_central_locking: Boolean(data.specifications?.has_central_locking),

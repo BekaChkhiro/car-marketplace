@@ -111,50 +111,56 @@ const EditCar: React.FC = () => {
             errors={errors}
           />
 
-          <TechnicalSpecs 
+          <TechnicalSpecs
             specifications={{
               // უზრუნველვყოთ რომ მნიშვნელობების გადაფარვა არ მოხდეს
               // მხოლოდ იმ შემთხვევაში გამოვიყენოთ ნაგულისხმები მნიშვნელობები
               // როდესაც მონაცემი აბსოლუტურად არ არსებობს
-              transmission: formData.specifications?.transmission !== undefined && formData.specifications?.transmission !== '' 
-                ? formData.specifications.transmission 
+              transmission: formData.specifications?.transmission !== undefined && formData.specifications?.transmission !== ''
+                ? formData.specifications.transmission
                 : 'manual',
-              fuel_type: formData.specifications?.fuel_type !== undefined && formData.specifications?.fuel_type !== '' 
-                ? formData.specifications.fuel_type 
+              fuel_type: formData.specifications?.fuel_type !== undefined && formData.specifications?.fuel_type !== ''
+                ? formData.specifications.fuel_type
                 : 'petrol',
-              drive_type: formData.specifications?.drive_type !== undefined && formData.specifications?.drive_type !== '' 
-                ? formData.specifications.drive_type 
+              drive_type: formData.specifications?.drive_type !== undefined && formData.specifications?.drive_type !== ''
+                ? formData.specifications.drive_type
                 : 'FWD',
-              steering_wheel: formData.specifications?.steering_wheel !== undefined && formData.specifications?.steering_wheel !== '' 
-                ? formData.specifications.steering_wheel 
+              steering_wheel: formData.specifications?.steering_wheel !== undefined && formData.specifications?.steering_wheel !== ''
+                ? formData.specifications.steering_wheel
                 : 'left',
               // ციფრობრივი ველები პირდაპირ გადავცეთ
               engine_size: formData.specifications.engine_size !== undefined
-              ? (typeof formData.specifications.engine_size === 'number'
-                ? (Number.isInteger(formData.specifications.engine_size) ? formData.specifications.engine_size + '.0' : parseFloat(formData.specifications.engine_size.toString()).toString())
-                : parseFloat(String(formData.specifications.engine_size)).toString())
-              : '',
+                ? (typeof formData.specifications.engine_size === 'number'
+                  ? (Number.isInteger(formData.specifications.engine_size) ? formData.specifications.engine_size + '.0' : formData.specifications.engine_size.toString())
+                  : String(formData.specifications.engine_size))
+                : '',
               mileage: formData.specifications?.mileage,
-              mileage_unit: formData.specifications?.mileage_unit !== undefined 
-                ? formData.specifications.mileage_unit 
+              mileage_unit: formData.specifications?.mileage_unit !== undefined
+                ? formData.specifications.mileage_unit
                 : 'km',
               // სტრიქონული ველები მხოლოდ მაშინ გადავფაროთ როცა აბსოლუტურად ცარიელია
-              color: formData.specifications?.color !== undefined && formData.specifications?.color !== '' 
-                ? formData.specifications.color 
+              color: formData.specifications?.color !== undefined && formData.specifications?.color !== ''
+                ? formData.specifications.color
                 : '',
               cylinders: formData.specifications?.cylinders,
-              interior_material: formData.specifications?.interior_material !== undefined && formData.specifications?.interior_material !== '' 
-                ? formData.specifications.interior_material 
+              interior_material: formData.specifications?.interior_material !== undefined && formData.specifications?.interior_material !== ''
+                ? formData.specifications.interior_material
                 : '',
-              interior_color: formData.specifications?.interior_color !== undefined && formData.specifications?.interior_color !== '' 
-                ? formData.specifications.interior_color 
+              interior_color: formData.specifications?.interior_color !== undefined && formData.specifications?.interior_color !== ''
+                ? formData.specifications.interior_color
                 : '',
               airbags_count: formData.specifications?.airbags_count,
-              engine_type: formData.specifications?.engine_type !== undefined && formData.specifications?.engine_type !== '' 
-                ? formData.specifications.engine_type 
+              engine_type: formData.specifications?.engine_type !== undefined && formData.specifications?.engine_type !== ''
+                ? formData.specifications.engine_type
                 : '',
-              body_type: formData.specifications?.body_type !== undefined && formData.specifications?.body_type !== '' 
-                ? formData.specifications.body_type 
+              body_type: formData.specifications?.body_type !== undefined && formData.specifications?.body_type !== ''
+                ? formData.specifications.body_type
+                : '',
+              has_heated_seats: formData.specifications?.has_heated_seats !== undefined && formData.specifications?.has_heated_seats !== false
+                ? formData.specifications.has_heated_seats
+                : '',
+              has_seat_memory: formData.specifications?.has_seat_memory !== undefined && formData.specifications?.has_seat_memory !== false
+                ? formData.specifications.has_seat_memory
                 : '',
               horsepower: formData.specifications?.horsepower,
               has_board_computer: formData.specifications?.has_board_computer,
@@ -190,23 +196,30 @@ const EditCar: React.FC = () => {
               has_start_stop: Array.isArray(formData.features) && formData.features.includes('has_start_stop'),
               has_sunroof: Array.isArray(formData.features) && formData.features.includes('has_sunroof'),
               has_heated_seats: Array.isArray(formData.features) && formData.features.includes('has_heated_seats'),
-              has_memory_seats: Array.isArray(formData.features) && formData.features.includes('has_memory_seats'),
+              has_seat_memory: Array.isArray(formData.features) && formData.features.includes('has_seat_memory'),
               has_bluetooth: Array.isArray(formData.features) && formData.features.includes('has_bluetooth'),
               has_navigation: Array.isArray(formData.features) && formData.features.includes('has_navigation'),
               has_multifunction_steering_wheel: Array.isArray(formData.features) && formData.features.includes('has_multifunction_steering_wheel'),
               has_alloy_wheels: Array.isArray(formData.features) && formData.features.includes('has_alloy_wheels'),
               has_spare_tire: Array.isArray(formData.features) && formData.features.includes('has_spare_tire'),
-              has_disability_adapted: Array.isArray(formData.features) && formData.features.includes('has_disability_adapted'),
+              is_disability_adapted: Array.isArray(formData.features) && (formData.features.includes('has_disability_adapted') || formData.features.includes('is_disability_adapted')),
               has_hydraulics: Array.isArray(formData.features) && formData.features.includes('has_hydraulics'),
               has_aux: Array.isArray(formData.features) && formData.features.includes('has_aux'),
               // New features to fix database mismatch
               has_catalyst: Array.isArray(formData.features) && formData.features.includes('has_catalyst'),
               has_technical_inspection: Array.isArray(formData.features) && formData.features.includes('has_technical_inspection'),
-              is_cleared: Array.isArray(formData.features) && formData.features.includes('is_cleared')
+              is_cleared: Array.isArray(formData.features) && formData.features.includes('is_cleared'),
             } as Partial<CarFeatures>}
-            onChange={handleFeaturesChange}
+            onChange={(field, value) => {
+              // Handle type conversion for disability adapted field
+              if (field === 'is_disability_adapted') {
+                handleFeaturesChange('has_disability_adapted' as any, value);
+              } else {
+                handleFeaturesChange(field as any, value);
+              }
+            }}
           />
-          
+
           <Location
             city={formData.location?.city || ''}
             country={formData.location?.country || ''}
@@ -222,7 +235,7 @@ const EditCar: React.FC = () => {
             onChange={handleChange}
             errors={errors}
           />
-          
+
           <AuthorInfo
             authorName={formData.author_name || ''}
             authorPhone={formData.author_phone || ''}

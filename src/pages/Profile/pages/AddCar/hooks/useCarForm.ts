@@ -89,7 +89,6 @@ export const useCarForm = () => {
         has_panoramic_roof: false,
         has_sunroof: false,
         has_leather_interior: false,
-        has_memory_seats: false,
         has_memory_steering_wheel: false,
         has_electric_mirrors: false,
         has_electric_seats: false,

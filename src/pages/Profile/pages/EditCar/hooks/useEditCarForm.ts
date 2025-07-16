@@ -133,11 +133,14 @@ export const useEditCarForm = (carId: number) => {
         'has_alarm', 'has_fog_lights', 'has_board_computer', 'has_multimedia', 'has_bluetooth',
         'has_air_conditioning', 'has_climate_control', 'has_heated_seats', 'has_ventilated_seats',
         'has_cruise_control', 'has_start_stop', 'has_panoramic_roof', 'has_sunroof',
-        'has_leather_interior', 'has_memory_seats', 'has_memory_steering_wheel',
+        'has_leather_interior', 'has_seat_memory', 'has_memory_steering_wheel',
         'has_electric_mirrors', 'has_electric_seats', 'has_heated_steering_wheel',
         'has_electric_windows', 'has_electric_trunk', 'has_keyless_entry',
         'has_parking_control', 'has_rear_view_camera', 'has_navigation',
         'has_technical_inspection',
+        // ახალი ფუნქციები რომლებიც დავამატეთ
+        'has_aux', 'has_multifunction_steering_wheel',
+        'has_hydraulics', 'has_alloy_wheels', 'has_spare_tire', 'has_disability_adapted', 'is_disability_adapted',
         // დავამატოთ დანარჩენი ფუნქციები, რომლებიც შეიძლება არსებობდეს
         'traction_control', 'central_locking', 'fog_lights', 'multimedia', 'bluetooth',
         'air_conditioning', 'climate_control', 'heated_seats', 'ventilated_seats',
@@ -146,7 +149,10 @@ export const useEditCarForm = (carId: number) => {
         'electric_mirrors', 'electric_seats', 'heated_steering_wheel',
         'electric_windows', 'electric_trunk', 'keyless_entry',
         'parking_control', 'rear_view_camera', 'navigation',
-        'technical_inspection', 'abs', 'esp', 'asr'
+        'technical_inspection', 'abs', 'esp', 'asr',
+        // Additional variations for the new features
+        'aux', 'multifunction_steering_wheel',
+        'hydraulics', 'alloy_wheels', 'spare_tire', 'disability_adapted',
       ];
       
       // შევამოწმოთ ყველა შესაძლო თვისება და დავამატოთ მასივში თუ ჩართულია
@@ -154,7 +160,10 @@ export const useEditCarForm = (carId: number) => {
         const featureValue = (car.specifications as any)[feature];
         console.log(`თვისების შემოწმება: ${feature} = ${featureValue}`);
         if (featureValue === true || featureValue === 'true' || featureValue === 1) {
-          featuresArray.push(feature);
+          // Handle special cases for renamed features
+          
+            featuresArray.push(feature);
+          
           console.log(`დაემატა feature: ${feature}`);
         }
       });
@@ -192,7 +201,7 @@ export const useEditCarForm = (carId: number) => {
       },
       specifications: {
         // მნიშვნელოვანი ველები, რომლებიც არ იტვირთებოდა
-        // გადავიყვანოთ სერვერიდან მოსული მნიშვნელობები UI-სთვის საჭირო ფორმატში
+        // გადავიყვანოთ სერვერიდან მოსული მნიშვნელოვანი ველები UI-სთვის საჭირო ფორმატში
         transmission: (() => {
           const trans = car.specifications?.transmission;
           if (!trans) return 'manual'; // დავაბრუნოთ ნაგულისხმები მნიშვნელობა თუ არის null
@@ -332,14 +341,38 @@ export const useEditCarForm = (carId: number) => {
       // Create a new features array with the updated value
       let featuresArray = [...(prev.features || [])] as string[];
       
+      // Map feature keys for consistent naming
+      let featureKey = field as string;
+      let aliasKey: string | null = null;
+      
+      // Handle special cases for feature naming
+      if (field === 'has_heated_seats') {
+        aliasKey = 'has_heated_seats';
+      } else if (field === 'has_seat_memory') {
+        aliasKey = 'has_seat_memory';
+      } else if (field === 'has_disability_adapted') {
+        aliasKey = 'is_disability_adapted';
+      } else if (featureKey === 'is_disability_adapted') {
+        // Using featureKey instead of field to avoid TypeScript errors
+        aliasKey = 'has_disability_adapted';
+      }
+      
       if (value) {
         // If the feature is enabled, add it to the array if not already present
-        if (!featuresArray.includes(field as string)) {
-          featuresArray.push(field as string);
+        if (!featuresArray.includes(featureKey)) {
+          featuresArray.push(featureKey);
+        }
+        
+        // Also add the alias if it exists
+        if (aliasKey && !featuresArray.includes(aliasKey)) {
+          featuresArray.push(aliasKey);
         }
       } else {
-        // If the feature is disabled, remove it from the array
-        featuresArray = featuresArray.filter(f => f !== field);
+        // If the feature is disabled, remove both the main key and its alias
+        featuresArray = featuresArray.filter(f => f !== featureKey);
+        if (aliasKey) {
+          featuresArray = featuresArray.filter(f => f !== aliasKey);
+        }
       }
       
       return {
@@ -397,7 +430,7 @@ export const useEditCarForm = (carId: number) => {
       has_cruise_control: Array.isArray(formData.features) && formData.features.includes('has_cruise_control'),
       has_start_stop: Array.isArray(formData.features) && formData.features.includes('has_start_stop'),
       has_sunroof: Array.isArray(formData.features) && formData.features.includes('has_sunroof'),
-      has_seat_heating: Array.isArray(formData.features) && formData.features.includes('has_heated_seats'),
+      has_heated_seats: Array.isArray(formData.features) && formData.features.includes('has_heated_seats'),
       has_abs: Array.isArray(formData.features) && formData.features.includes('has_abs'),
       has_traction_control: Array.isArray(formData.features) && formData.features.includes('has_traction_control'),
       has_central_locking: Array.isArray(formData.features) && formData.features.includes('has_central_locking'),
@@ -410,12 +443,12 @@ export const useEditCarForm = (carId: number) => {
       // Additional features from database schema
       has_catalyst: Array.isArray(formData.features) && formData.features.includes('has_catalyst'),
       has_hydraulics: Array.isArray(formData.features) && formData.features.includes('has_hydraulics'),
-      has_seat_memory: Array.isArray(formData.features) && formData.features.includes('has_memory_seats'),
+      has_seat_memory: Array.isArray(formData.features) && formData.features.includes('has_seat_memory'),
       has_aux: Array.isArray(formData.features) && formData.features.includes('has_aux'),
       has_multifunction_steering_wheel: Array.isArray(formData.features) && formData.features.includes('has_multifunction_steering_wheel'),
       has_alloy_wheels: Array.isArray(formData.features) && formData.features.includes('has_alloy_wheels'),
       has_spare_tire: Array.isArray(formData.features) && formData.features.includes('has_spare_tire'),
-      is_disability_adapted: Array.isArray(formData.features) && formData.features.includes('has_disability_adapted'),
+      is_disability_adapted: Array.isArray(formData.features) && (formData.features.includes('has_disability_adapted') || formData.features.includes('is_disability_adapted')),
       is_cleared: Array.isArray(formData.features) && formData.features.includes('is_cleared'),
       
       // Additional fields that might be in the database
