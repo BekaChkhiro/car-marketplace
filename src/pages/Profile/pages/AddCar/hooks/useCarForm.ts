@@ -99,7 +99,13 @@ export const useCarForm = () => {
         has_parking_control: false,
         has_rear_view_camera: false,
         has_navigation: false,
-        has_technical_inspection: false
+        has_technical_inspection: false,
+        has_hydraulics: false,
+        has_alloy_wheels: false,
+        has_spare_tire: false,
+        is_disability_adapted: false,
+        has_aux: false,
+        has_multifunction_steering_wheel: false
       }
     };
   });
