@@ -1,27 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Loading } from '../../../components/ui';
 import { useToast } from '../../../context/ToastContext';
-import autosalonService from '../../../api/services/autosalonService';
-import { Autosalon } from '../../../api/types/autosalon.types';
+import dealerService from '../../../api/services/dealerService';
+import { Dealer } from '../../../api/types/dealer.types';
 import { Building, Plus, Edit, Trash2, Search, Calendar, Phone, Globe, MapPin } from 'lucide-react';
-import AutosalonForm from './components/AutosalonForm';
+import DealerForm from './components/DealerForm';
 import Pagination from '../../../components/ui/Pagination';
 
-const AutosalonsAdmin: React.FC = () => {
-  const [autosalons, setAutosalons] = useState<Autosalon[]>([]);
+const DealersAdmin: React.FC = () => {
+  const [dealers, setDealers] = useState<Dealer[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingAutosalon, setEditingAutosalon] = useState<Autosalon | null>(null);
+  const [editingDealer, setEditingDealer] = useState<Dealer | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const { showToast } = useToast();
 
-  const fetchAutosalons = async () => {
+  const fetchDealers = async () => {
     try {
       setLoading(true);
-      const response = await autosalonService.getAllAutosalons({
+      console.log('Fetching dealers with params:', {
+        page: currentPage,
+        limit: 10,
+        search: searchTerm,
+        sortBy: 'created_at',
+        sortOrder: 'DESC'
+      });
+      
+      const response = await dealerService.getAllDealers({
         page: currentPage,
         limit: 10,
         search: searchTerm,
@@ -29,60 +37,69 @@ const AutosalonsAdmin: React.FC = () => {
         sortOrder: 'DESC'
       });
 
+      console.log('Dealers API response:', response);
+      console.log('Type of response.data:', typeof response.data);
+      console.log('Is response.data an array?', Array.isArray(response.data));
+
       if (response.success) {
-        setAutosalons(response.data);
-        setTotalPages(response.meta.totalPages);
-        setTotalCount(response.meta.total);
+        console.log('Setting dealers:', response.data);
+        console.log('Is dealers array?', Array.isArray(response.data));
+        setDealers(Array.isArray(response.data) ? response.data : []);
+        setTotalPages(response.meta?.totalPages || 1);
+        setTotalCount(response.meta?.total || 0);
+      } else {
+        console.log('API call failed:', response);
+        showToast('დილერების ჩამოტვირთვა ვერ მოხერხდა', 'error');
       }
     } catch (error) {
-      console.error('Error fetching autosalons:', error);
-      showToast('ავტოსალონების ჩამოტვირთვა ვერ მოხერხდა', 'error');
+      console.error('Error fetching dealers:', error);
+      showToast('დილერების ჩამოტვირთვა ვერ მოხერხდა', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAutosalons();
+    fetchDealers();
   }, [currentPage, searchTerm]);
 
-  const handleCreateAutosalon = () => {
-    setEditingAutosalon(null);
+  const handleCreateDealer = () => {
+    setEditingDealer(null);
     setShowForm(true);
   };
 
-  const handleEditAutosalon = (autosalon: Autosalon) => {
-    setEditingAutosalon(autosalon);
+  const handleEditDealer = (dealer: Dealer) => {
+    setEditingDealer(dealer);
     setShowForm(true);
   };
 
-  const handleDeleteAutosalon = async (id: number) => {
-    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ ამ ავტოსალონის წაშლა?')) {
+  const handleDeleteDealer = async (id: number) => {
+    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ ამ დილერის წაშლა?')) {
       return;
     }
 
     try {
-      await autosalonService.deleteAutosalon(id);
-      showToast('ავტოსალონი წარმატებით წაიშალა', 'success');
-      fetchAutosalons();
+      await dealerService.deleteDealer(id);
+      showToast('დილერი წარმატებით წაიშალა', 'success');
+      fetchDealers();
     } catch (error) {
-      console.error('Error deleting autosalon:', error);
-      showToast('ავტოსალონის წაშლა ვერ მოხერხდა', 'error');
+      console.error('Error deleting dealer:', error);
+      showToast('დილერის წაშლა ვერ მოხერხდა', 'error');
     }
   };
 
   const handleFormSubmit = async (success: boolean) => {
     if (success) {
       setShowForm(false);
-      setEditingAutosalon(null);
-      fetchAutosalons();
+      setEditingDealer(null);
+      fetchDealers();
     }
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchAutosalons();
+    fetchDealers();
   };
 
   if (loading) {
@@ -93,13 +110,13 @@ const AutosalonsAdmin: React.FC = () => {
     <Container>
       <div className="py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">ავტოსალონების მართვა</h1>
+          <h1 className="text-3xl font-bold text-gray-900">დილერების მართვა</h1>
           <button
-            onClick={handleCreateAutosalon}
+            onClick={handleCreateDealer}
             className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors flex items-center gap-2"
           >
             <Plus size={20} />
-            ახალი ავტოსალონი
+            ახალი დილერი
           </button>
         </div>
 
@@ -127,16 +144,16 @@ const AutosalonsAdmin: React.FC = () => {
 
         {/* Results count */}
         <div className="mb-4 text-sm text-gray-600">
-          სულ მოიძებნა: {totalCount} ავტოსალონი
+          სულ მოიძებნა: {totalCount} დილერი
         </div>
 
-        {/* Autosalons List */}
+        {/* Dealers List */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {autosalons.length === 0 ? (
+          {dealers.length === 0 ? (
             <div className="text-center py-12">
               <Building className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">ავტოსალონები არ მოიძებნა</h3>
-              <p className="text-gray-500">დაამატეთ ახალი ავტოსალონი სისტემაში</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">დილერები არ მოიძებნა</h3>
+              <p className="text-gray-500">დაამატეთ ახალი დილერი სისტემაში</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -144,7 +161,7 @@ const AutosalonsAdmin: React.FC = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ავტოსალონი
+                      დილერი
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       მომხმარებელი
@@ -161,16 +178,16 @@ const AutosalonsAdmin: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {autosalons.map((autosalon) => (
-                    <tr key={autosalon.id} className="hover:bg-gray-50">
+                  {Array.isArray(dealers) ? dealers.map((dealer) => (
+                    <tr key={dealer.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
-                            {autosalon.logo_url ? (
+                            {dealer.logo_url ? (
                               <img
                                 className="h-10 w-10 rounded-lg object-contain"
-                                src={autosalon.logo_url}
-                                alt={autosalon.company_name}
+                                src={dealer.logo_url}
+                                alt={dealer.company_name}
                               />
                             ) : (
                               <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
@@ -180,13 +197,13 @@ const AutosalonsAdmin: React.FC = () => {
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">
-                              {autosalon.company_name}
+                              {dealer.company_name}
                             </div>
                             <div className="text-sm text-gray-500 flex items-center gap-1">
-                              {autosalon.established_year && (
+                              {dealer.established_year && (
                                 <>
                                   <Calendar size={12} />
-                                  <span>{autosalon.established_year} წლიდან</span>
+                                  <span>{dealer.established_year} წლიდან</span>
                                 </>
                               )}
                             </div>
@@ -195,59 +212,59 @@ const AutosalonsAdmin: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {autosalon.user?.first_name} {autosalon.user?.last_name}
+                          {dealer.user?.first_name} {dealer.user?.last_name}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {autosalon.user?.email}
+                          {dealer.user?.email}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="space-y-1">
-                          {autosalon.phone && (
+                          {dealer.user?.phone && (
                             <div className="flex items-center gap-1">
                               <Phone size={12} />
-                              <span>{autosalon.phone}</span>
+                              <span>{dealer.user.phone}</span>
                             </div>
                           )}
-                          {autosalon.website_url && (
+                          {dealer.website_url && (
                             <div className="flex items-center gap-1">
                               <Globe size={12} />
                               <a
-                                href={autosalon.website_url}
+                                href={dealer.website_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-primary hover:text-secondary"
                               >
-                                {autosalon.website_url}
+                                ვებ გვერდი
                               </a>
                             </div>
                           )}
-                          {autosalon.address && (
+                          {dealer.address && (
                             <div className="flex items-center gap-1">
                               <MapPin size={12} />
-                              <span className="truncate max-w-xs">{autosalon.address}</span>
+                              <span className="truncate max-w-xs">{dealer.address}</span>
                             </div>
                           )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="text-sm text-gray-900">
-                          {autosalon.car_count || 0} მანქანა
+                          {dealer.car_count || 0} მანქანა
                         </div>
                         <div className="text-sm text-gray-500">
-                          {new Date(autosalon.created_at).toLocaleDateString('ka-GE')}
+                          {new Date(dealer.created_at).toLocaleDateString('ka-GE')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => handleEditAutosalon(autosalon)}
+                            onClick={() => handleEditDealer(dealer)}
                             className="text-blue-600 hover:text-blue-900"
                           >
                             <Edit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeleteAutosalon(autosalon.id)}
+                            onClick={() => handleDeleteDealer(dealer.id)}
                             className="text-red-600 hover:text-red-900"
                           >
                             <Trash2 size={16} />
@@ -255,7 +272,7 @@ const AutosalonsAdmin: React.FC = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  )) : <tr><td colSpan={5} className="text-center py-4">მონაცემები არ არის მასივი</td></tr>}
                 </tbody>
               </table>
             </div>
@@ -275,11 +292,11 @@ const AutosalonsAdmin: React.FC = () => {
 
         {/* Form Modal */}
         {showForm && (
-          <AutosalonForm
-            autosalon={editingAutosalon}
+          <DealerForm
+            dealer={editingDealer}
             onClose={() => {
               setShowForm(false);
-              setEditingAutosalon(null);
+              setEditingDealer(null);
             }}
             onSubmit={handleFormSubmit}
           />
@@ -289,4 +306,4 @@ const AutosalonsAdmin: React.FC = () => {
   );
 };
 
-export default AutosalonsAdmin;
+export default DealersAdmin;

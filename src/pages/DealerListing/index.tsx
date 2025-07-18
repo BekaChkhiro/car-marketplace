@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { dealerService } from '../../api/services/dealerService';
+import dealerService from '../../api/services/dealerService';
 import { Dealer, DealerFilters } from '../../api/types/dealer.types';
 import DealerGrid from './components/DealerGrid';
 import DealerSortingHeader from './components/DealerSortingHeader';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { log } from 'console';
 
 const DealerListing: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -61,12 +62,44 @@ const DealerListing: React.FC = () => {
       setError(null);
       
       const response = await dealerService.getDealers(filters);
-      setDealers(response.dealers);
-      setTotalDealers(response.total);
-      setTotalPages(response.totalPages);
+      console.log('Dealers response:', response);
+      
+      // Extract dealers from the correct location in the response
+      let dealersData: Dealer[] = [];
+      
+      // Handle the new response structure where dealers is an object with data and meta properties
+      if (response && typeof response === 'object') {
+        // New structure: response.dealers.data is the array of dealers
+        if (response.dealers && typeof response.dealers === 'object' && 'data' in response.dealers && Array.isArray(response.dealers.data)) {
+          dealersData = response.dealers.data as Dealer[];
+          
+          // Use meta for pagination if available
+          if ('meta' in response.dealers && response.dealers.meta && typeof response.dealers.meta === 'object') {
+            const meta = response.dealers.meta as { total: number, totalPages: number };
+            setTotalDealers(meta.total || 0);
+            setTotalPages(meta.totalPages || 1);
+          }
+        }
+        // Old structure: response.dealers is the array directly
+        else if (Array.isArray(response.dealers)) {
+          dealersData = response.dealers;
+          setTotalDealers(response.total || 0);
+          setTotalPages(response.totalPages || 1);
+        }
+        // If response itself is an array
+        else if (Array.isArray(response)) {
+          dealersData = response as Dealer[];
+        }
+      }
+      
+      console.log('Extracted dealers array:', dealersData);
+      console.log('Array length:', dealersData.length);
+      
+      setDealers(dealersData);
     } catch (err: any) {
       setError('დილერების ჩატვირთვა ვერ მოხერხდა');
       console.error('Error fetching dealers:', err);
+      setDealers([]); // Reset to empty array on error
     } finally {
       setLoading(false);
     }

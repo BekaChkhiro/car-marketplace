@@ -8,6 +8,7 @@ export const routes = {
   adminUsers: '/admin/users',
   adminCars: '/admin/cars',
   adminEditCar: '/admin/cars/edit/:id',
+  adminDealers: '/admin/dealers',
   adminTransactions: '/admin/transactions',
   adminVipListings: '/admin/vip-listings',
   adminAdvertisements: '/admin/advertisements',

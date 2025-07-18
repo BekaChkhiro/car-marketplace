@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User as UserIcon, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { User as UserIcon, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import authService from '../../../api/services/authService';
 import { useToast } from '../../../context/ToastContext';
 import { User } from '../../../api/types/auth.types';
@@ -9,12 +9,6 @@ interface UserWithStatus extends User {
   status?: string;
   created_at?: string;
   updated_at?: string;
-}
-
-// Delete confirmation dialog state
-interface DeleteConfirmationState {
-  show: boolean;
-  userId: number | null;
 }
 
 const UsersPage = () => {
@@ -28,10 +22,6 @@ const UsersPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(10);
   const [totalUsers, setTotalUsers] = useState<number>(0);
-  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmationState>({
-    show: false,
-    userId: null
-  });
   
   useEffect(() => {
     fetchUsers();
@@ -149,43 +139,6 @@ const UsersPage = () => {
     }
   };
 
-  // Handle delete user
-  const handleDeleteUser = async (userId: number) => {
-    try {
-      setLoading(true);
-      console.log('Deleting user with ID:', userId);
-      
-      const success = await authService.deleteUser(userId);
-      
-      if (success) {
-        // Remove user from local state
-        setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
-        
-        // Update total users count
-        setTotalUsers(prev => prev - 1);
-        
-        // Show success message
-        showToast('მომხმარებელი წარმატებით წაიშალა', 'success');
-        
-        // Check if we need to adjust pagination
-        const filteredUsers = getFilteredUsers();
-        const newTotalPages = Math.ceil((filteredUsers.length - 1) / itemsPerPage);
-        if (currentPage > newTotalPages && newTotalPages > 0) {
-          setCurrentPage(newTotalPages);
-        }
-      } else {
-        throw new Error('Failed to delete user');
-      }
-    } catch (err: any) {
-      console.error('Error deleting user:', err);
-      showToast('მომხმარებლის წაშლა ვერ მოხერხდა', 'error');
-    } finally {
-      setLoading(false);
-      // Close confirmation dialog
-      setDeleteConfirmation({ show: false, userId: null });
-    }
-  };
-
   return (
     <div className="p-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -210,7 +163,7 @@ const UsersPage = () => {
         </div>
       </div>
 
-      {loading && !deleteConfirmation.show ? (
+      {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -250,7 +203,7 @@ const UsersPage = () => {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ელ. ფოსტა</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">სტატუსი</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">რეგისტრაციის თარიღი</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">მოქმედებები</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -291,20 +244,20 @@ const UsersPage = () => {
                       }
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <div className="flex justify-end gap-2">
-                        <button 
-                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
-                          title="რედაქტირება"
-                        >
-                          <Edit size={18} />
+                      <div className="relative group">
+                        <button className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
+                          <MoreVertical size={16} className="text-gray-500" />
                         </button>
-                        <button 
-                          className="p-2 rounded-lg hover:bg-gray-100 text-red-500"
-                          title="წაშლა"
-                          onClick={() => setDeleteConfirmation({ show: true, userId: user.id })}
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        <div className="hidden group-hover:block absolute right-0 top-10 z-10 w-48 bg-white rounded-lg shadow-lg py-1 border border-gray-200">
+                          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                            <Edit size={16} />
+                            რედაქტირება
+                          </button>
+                          <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2">
+                            <Trash2 size={16} />
+                            წაშლა
+                          </button>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -333,20 +286,20 @@ const UsersPage = () => {
                     </div>
                     <span className="text-sm font-medium text-gray-900">{user.username}</span>
                   </div>
-                  <div className="flex gap-2">
-                    <button 
-                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
-                      title="რედაქტირება"
-                    >
-                      <Edit size={18} />
+                  <div className="relative group">
+                    <button className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
+                      <MoreVertical size={16} className="text-gray-500" />
                     </button>
-                    <button 
-                      className="p-2 rounded-lg hover:bg-gray-100 text-red-500"
-                      title="წაშლა"
-                      onClick={() => setDeleteConfirmation({ show: true, userId: user.id })}
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <div className="hidden group-hover:block absolute right-0 top-10 z-10 w-48 bg-white rounded-lg shadow-lg py-1 border border-gray-200">
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        <Edit size={16} />
+                        რედაქტირება
+                      </button>
+                      <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2">
+                        <Trash2 size={16} />
+                        წაშლა
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div className="ml-13 pl-3">
@@ -467,35 +420,6 @@ const UsersPage = () => {
                   შემდეგი
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Dialog */}
-      {deleteConfirmation.show && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex items-center mb-4 text-amber-600">
-              <AlertCircle className="mr-2" size={24} />
-              <h3 className="text-lg font-medium">მომხმარებლის წაშლა</h3>
-            </div>
-            <p className="mb-6 text-gray-700">დარწმუნებული ხართ, რომ გსურთ წაშალოთ ეს მომხმარებელი?</p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setDeleteConfirmation({show: false, userId: null})}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
-                disabled={loading}
-              >
-                გაუქმება
-              </button>
-              <button
-                onClick={() => deleteConfirmation.userId && handleDeleteUser(deleteConfirmation.userId)}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
-                disabled={loading}
-              >
-                {loading ? 'იტვირთება...' : 'წაშლა'}
-              </button>
             </div>
           </div>
         </div>

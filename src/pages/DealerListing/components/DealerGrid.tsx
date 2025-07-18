@@ -48,9 +48,13 @@ const DealerGrid: React.FC<DealerGridProps> = ({ dealers, loading }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {dealers.map((dealer) => (
+      {Array.isArray(dealers) ? dealers.map((dealer) => (
         <DealerCard key={dealer.id} dealer={dealer} />
-      ))}
+      )) : (
+        <div className="col-span-2 text-center py-8 text-gray-500">
+          დილერების მონაცემები არ არის ხელმისაწვდომი
+        </div>
+      )}
     </div>
   );
 };
