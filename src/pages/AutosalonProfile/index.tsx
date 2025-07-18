@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { dealerService } from '../../api/services/dealerService';
+import autosalonService from '../../api/services/autosalonService';
 import carService from '../../api/services/carService';
-import { Dealer } from '../../api/types/dealer.types';
+import { Autosalon } from '../../api/types/autosalon.types';
 import { Car, CarFilters } from '../../api/types/car.types';
 import { Container, Loading } from '../../components/ui';
 import Pagination from '../../components/ui/Pagination';
@@ -10,23 +10,21 @@ import CarGrid from '../CarListing/components/CarGrid';
 import SortingHeader from '../CarListing/components/SortingHeader';
 import Filters from '../CarListing/components/Filters';
 import { useToast } from '../../context/ToastContext';
-import { MapPin, Phone, Globe, Calendar, Car as CarIcon, Building } from 'lucide-react';
+import { MapPin, Phone, Globe, Calendar, Building } from 'lucide-react';
 
-// No conversion needed - using main cars API directly
-
-const DealerProfile: React.FC = () => {
-  const { dealerId } = useParams<{ dealerId: string }>();
-  const [dealer, setDealer] = useState<Dealer | null>(null);
+const AutosalonProfile: React.FC = () => {
+  const { autosalonId } = useParams<{ autosalonId: string }>();
+  const [autosalon, setAutosalon] = useState<Autosalon | null>(null);
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCars, setTotalCars] = useState(0);
   const [categories, setCategories] = useState<any[]>([]);
   const { showToast } = useToast();
   
-  console.log('DealerProfile - dealerId:', dealerId);
-  console.log('DealerProfile - dealer:', dealer);
-  console.log('DealerProfile - cars:', cars);
-  console.log('DealerProfile - loading:', loading);
+  console.log('AutosalonProfile - autosalonId:', autosalonId);
+  console.log('AutosalonProfile - autosalon:', autosalon);
+  console.log('AutosalonProfile - cars:', cars);
+  console.log('AutosalonProfile - loading:', loading);
   
   const [filters, setFilters] = useState<CarFilters>({
     page: 1,
@@ -34,34 +32,28 @@ const DealerProfile: React.FC = () => {
     sortBy: 'newest',
     order: 'desc'
   });
-  
-  // Update filters when dealerId changes
-  useEffect(() => {
-    if (dealerId) {
-      setFilters(prev => ({
-        ...prev,
-        seller_id: parseInt(dealerId),
-        page: 1 // Reset to first page when dealer changes
-      }));
-    }
-  }, [dealerId]);
 
-  // Fetch dealer profile and cars separately
+  // Fetch autosalon profile data
   useEffect(() => {
-    const fetchDealerData = async () => {
-      if (!dealerId) {
-        console.log('No dealerId provided');
+    const fetchAutosalonProfile = async () => {
+      if (!autosalonId) {
+        console.log('No autosalonId provided');
         return;
       }
       
       try {
-        console.log('Fetching dealer with ID:', dealerId);
+        console.log('Fetching autosalon with ID:', autosalonId);
         setLoading(true);
         
-        // Fetch dealer profile
-        const dealerData = await dealerService.getDealerById(parseInt(dealerId));
-        console.log('Dealer data received:', dealerData);
-        setDealer(dealerData);
+        // Fetch autosalon profile
+        const autosalonData = await autosalonService.getAutosalonProfile(parseInt(autosalonId));
+        console.log('Autosalon response:', autosalonData);
+        
+        if (autosalonData) {
+          setAutosalon(autosalonData);
+        } else {
+          throw new Error('Autosalon not found');
+        }
         
         // Fetch categories for filters
         try {
@@ -70,50 +62,51 @@ const DealerProfile: React.FC = () => {
         } catch (categoriesError) {
           console.error('Error fetching categories:', categoriesError);
         }
-        
-        // Fetch dealer cars using main cars API with filters
-        try {
-          const carsResponse = await carService.getCars(filters);
-          console.log('Cars response:', carsResponse);
-          
-          if (carsResponse && carsResponse.cars) {
-            console.log('Cars found:', carsResponse.cars);
-            
-            // Filter cars to only show ones from this dealer (workaround for backend issue)
-            const dealerCars = carsResponse.cars.filter(car => car.seller_id === parseInt(dealerId));
-            console.log('Filtered dealer cars:', dealerCars);
-            
-            setCars(dealerCars);
-            setTotalCars(dealerCars.length);
-          }
-        } catch (carError) {
-          console.error('Error fetching dealer cars:', carError);
-          // Don't show error toast for cars - just show empty state
-          setCars([]);
-          setTotalCars(0);
-        }
       } catch (error) {
-        console.error('Error fetching dealer:', error);
-        showToast('დილერის მონაცემების ჩატვირთვა ვერ მოხერხდა', 'error');
+        console.error('Error fetching autosalon:', error);
+        showToast('ავტოსალონის მონაცემების ჩატვირთვა ვერ მოხერხდა', 'error');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDealerData();
-  }, [dealerId, filters, showToast]);
+    fetchAutosalonProfile();
+  }, [autosalonId, showToast]);
+
+  // Fetch autosalon cars when filters change
+  useEffect(() => {
+    const fetchAutosalonCars = async () => {
+      if (!autosalonId) return;
+      
+      try {
+        const carsResponse = await autosalonService.getAutosalonCars(parseInt(autosalonId), {
+          page: filters.page || 1,
+          limit: filters.limit || 12
+        });
+        console.log('Autosalon cars response:', carsResponse);
+        
+        if (carsResponse && carsResponse.cars) {
+          console.log('Autosalon cars found:', carsResponse.cars);
+          setCars(carsResponse.cars);
+          setTotalCars(carsResponse.total);
+        }
+      } catch (carError) {
+        console.error('Error fetching autosalon cars:', carError);
+        // Don't show error toast for cars - just show empty state
+        setCars([]);
+        setTotalCars(0);
+      }
+    };
+
+    fetchAutosalonCars();
+  }, [autosalonId, filters.page, filters.limit]);
 
   // Handle filter changes
   const handleFilterChange = (newFilters: Partial<CarFilters>) => {
     if (Object.keys(newFilters).some(key => key !== 'page' && key !== 'limit')) {
       newFilters.page = 1;
     }
-    // Always ensure seller_id is included in filters
-    const updatedFilters = { 
-      ...newFilters, 
-      seller_id: dealerId ? parseInt(dealerId) : undefined 
-    };
-    setFilters(prev => ({ ...prev, ...updatedFilters }));
+    setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
   // Handle page change
@@ -147,24 +140,24 @@ const DealerProfile: React.FC = () => {
   const totalPages = Math.ceil(totalCars / (filters.limit || 12));
 
   // Add a debug return to check if component is rendering
-  console.log('DealerProfile render - about to check loading state');
+  console.log('AutosalonProfile render - about to check loading state');
   
   if (loading) {
     console.log('Showing loading state');
     return <Loading />;
   }
 
-  if (!dealer) {
-    console.log('No dealer found - showing not found message');
+  if (!autosalon) {
+    console.log('No autosalon found - showing not found message');
     return (
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🏪</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">დილერი ვერ მოიძებნა</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">ავტოსალონი ვერ მოიძებნა</h3>
           <p className="text-gray-600 text-center max-w-md">
-            მოთხოვნილი დილერი ვერ მოიძებნა.
+            მოთხოვნილი ავტოსალონი ვერ მოიძებნა.
           </p>
-          <p className="text-sm text-gray-500 mt-4">Debug: dealerId = {dealerId}</p>
+          <p className="text-sm text-gray-500 mt-4">Debug: autosalonId = {autosalonId}</p>
         </div>
       </Container>
     );
@@ -173,15 +166,15 @@ const DealerProfile: React.FC = () => {
   return (
     <Container>
       <div className="py-8">
-        {/* Dealer Header - More compact and integrated */}
+        {/* Autosalon Header - More compact and integrated */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Dealer Logo */}
+            {/* Autosalon Logo */}
             <div className="w-full md:w-32 h-32 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 self-center">
-              {dealer.logo_url ? (
+              {autosalon.logo_url ? (
                 <img 
-                  src={dealer.logo_url} 
-                  alt={`${dealer.company_name} logo`}
+                  src={autosalon.logo_url} 
+                  alt={`${autosalon.company_name} logo`}
                   className="w-full h-full object-cover rounded-xl"
                 />
               ) : (
@@ -191,39 +184,39 @@ const DealerProfile: React.FC = () => {
               )}
             </div>
 
-            {/* Dealer Info */}
+            {/* Autosalon Info */}
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-gray-900 mb-3">
-                {dealer.company_name}
+                {autosalon.company_name}
               </h1>
               
               <div className="grid grid-cols-2 grid-rows-2 gap-4 mb-4">
-                {dealer.established_year && (
+                {autosalon.established_year && (
                   <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100 gap-2 text-gray-600 text-sm">
                     <Calendar className="w-4 h-4" />
-                    <span>დაარსდა {dealer.established_year} წელს</span>
+                    <span>დაარსდა {autosalon.established_year} წელს</span>
                   </div>
                 )}
                 
-                {dealer.user?.phone && (
+                {(autosalon.user?.phone || (autosalon as any).phone) && (
                   <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100 gap-2 text-gray-600 text-sm">
                     <Phone className="w-4 h-4" />
-                    <span>{dealer.user.phone}</span>
+                    <span>{autosalon.user?.phone || (autosalon as any).phone}</span>
                   </div>
                 )}
                 
-                {dealer.address && (
+                {autosalon.address && (
                   <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100 gap-2 text-gray-600 text-sm">
                     <MapPin className="w-4 h-4" />
-                    <span>{dealer.address}</span>
+                    <span>{autosalon.address}</span>
                   </div>
                 )}
                 
-                {dealer.website_url && (
+                {autosalon.website_url && (
                   <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100 gap-2 text-gray-600 text-sm">
                     <Globe className="w-4 h-4" />
                     <a 
-                      href={dealer.website_url} 
+                      href={autosalon.website_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-primary hover:text-secondary transition-colors"
@@ -250,7 +243,7 @@ const DealerProfile: React.FC = () => {
           
           {/* Main Content */}
           <div className="flex-1 space-y-6">
-            {/* Sorting header with dealer context */}
+            {/* Sorting header with autosalon context */}
             <SortingHeader 
               total={totalCars} 
               sortBy={filters.sortBy === 'created_at' && filters.order === 'desc' ? 'newest' : 
@@ -263,10 +256,10 @@ const DealerProfile: React.FC = () => {
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-gray-400 text-6xl mb-4">🚗</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {dealer.company_name}-ს მანქანები ვერ მოიძებნა
+                  {autosalon.company_name}-ს მანქანები ვერ მოიძებნა
                 </h3>
                 <p className="text-gray-600 text-center max-w-md">
-                  ამ დილერს ამჟამად არ აქვს მანქანები გამოსატანი ან არ აკმაყოფილებს თქვენს ფილტრებს.
+                  ამ ავტოსალონს ამჟამად არ აქვს მანქანები გამოსატანი ან არ აკმაყოფილებს თქვენს ფილტრებს.
                 </p>
               </div>
             ) : (
@@ -291,4 +284,4 @@ const DealerProfile: React.FC = () => {
   );
 };
 
-export default DealerProfile;
+export default AutosalonProfile;

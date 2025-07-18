@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import { DealerFilters } from '../../../api/types/dealer.types';
 
-interface DealerSortingHeaderProps {
-  totalDealers: number;
-  filters: DealerFilters;
-  onFiltersChange: (filters: DealerFilters) => void;
+interface AutosalonFilters {
+  page?: number;
+  limit?: number;
+  search?: string;
+  established_year_min?: number;
+  established_year_max?: number;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
 }
 
-const DealerSortingHeader: React.FC<DealerSortingHeaderProps> = ({
-  totalDealers,
+interface AutosalonSortingHeaderProps {
+  totalAutosalons: number;
+  filters: AutosalonFilters;
+  onFiltersChange: (filters: AutosalonFilters) => void;
+}
+
+const AutosalonSortingHeader: React.FC<AutosalonSortingHeaderProps> = ({
+  totalAutosalons,
   filters,
   onFiltersChange,
 }) => {
@@ -37,7 +46,7 @@ const DealerSortingHeader: React.FC<DealerSortingHeaderProps> = ({
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            დილერები ({totalDealers})
+            ავტოსალონები ({totalAutosalons})
           </h2>
         </div>
 
@@ -50,7 +59,7 @@ const DealerSortingHeader: React.FC<DealerSortingHeaderProps> = ({
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="ძიება დილერების მიხედვით..."
+                placeholder="ძიება ავტოსალონების მიხედვით..."
                 className="w-full lg:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-sm"
               />
             </div>
@@ -80,4 +89,4 @@ const DealerSortingHeader: React.FC<DealerSortingHeaderProps> = ({
   );
 };
 
-export default DealerSortingHeader;
+export default AutosalonSortingHeader;
