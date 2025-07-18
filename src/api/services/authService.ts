@@ -109,6 +109,41 @@ class AuthService {
     }
   }
 
+  async registerWithFile(data: RegisterCredentials, logoFile?: File): Promise<AuthResponse> {
+    try {
+      const formData = new FormData();
+      
+      // Add all registration data
+      Object.keys(data).forEach(key => {
+        const value = data[key as keyof RegisterCredentials];
+        if (value !== undefined) {
+          if (typeof value === 'object' && value !== null) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      // Add logo file if provided
+      if (logoFile) {
+        formData.append('logo', logoFile);
+      }
+
+      const response = await this.fetchWithRetry(() => 
+        api.post<AuthResponse>('/api/auth/register', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'რეგისტრაცია ვერ მოხერხდა');
+    }
+  }
+
+
   async logout(): Promise<void> {
     try {
       const refreshToken = getRefreshToken();
@@ -187,6 +222,21 @@ class AuthService {
       });
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'პაროლის შეცვლა ვერ მოხერხდა');
+    }
+  }
+
+  async uploadDealerLogo(dealerId: number, formData: FormData): Promise<{ logo_url: string }> {
+    try {
+      const response = await this.fetchWithRetry(() =>
+        api.post(`/api/dealers/${dealerId}/logo`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'ლოგოს ატვირთვა ვერ მოხერხდა');
     }
   }
 

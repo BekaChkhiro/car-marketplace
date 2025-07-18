@@ -18,20 +18,40 @@ const Register: React.FC = () => {
     confirmPassword: '',
     age: '',
     gender: '',
-    agreeToTerms: false
+    agreeToTerms: false,
+    userType: 'user',
+    dealerData: {
+      company_name: '',
+      established_year: '',
+      website_url: '',
+      social_media_url: '',
+      address: ''
+    }
   });
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
     
-    setFormData(prev => ({
-      ...prev,
-      [name]: newValue
-    }));
+    // Handle dealer data nested fields
+    if (name.startsWith('dealerData.')) {
+      const fieldName = name.replace('dealerData.', '');
+      setFormData(prev => ({
+        ...prev,
+        dealerData: {
+          ...prev.dealerData,
+          [fieldName]: newValue
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: newValue
+      }));
+    }
     
     if (error) setError(null);
 
@@ -60,17 +80,33 @@ const Register: React.FC = () => {
     e.preventDefault();
     
     if (step === 1) {
-      if (!formData.firstName || !formData.lastName || !formData.phone || !formData.age || !formData.gender) {
+      // Basic validation for both user types
+      if (!formData.firstName || !formData.lastName || !formData.phone) {
         setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
         return;
       }
 
-      const age = parseInt(formData.age);
-      if (isNaN(age) || age < 18 || age > 100) {
-        setError('ასაკი უნდა იყოს 18-დან 100-მდე');
-        return;
+      if (formData.userType === 'user') {
+        // Additional validation for regular users
+        if (!formData.age || !formData.gender) {
+          setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+          return;
+        }
+
+        const age = parseInt(formData.age);
+        if (isNaN(age) || age < 18 || age > 100) {
+          setError('ასაკი უნდა იყოს 18-დან 100-მდე');
+          return;
+        }
+      } else if (formData.userType === 'dealer') {
+        // Additional validation for dealers
+        if (!formData.dealerData.company_name) {
+          setError('გთხოვთ, შეიყვანოთ კომპანიის სახელი');
+          return;
+        }
       }
 
+      // Phone validation for personal phone (both user types)
       if (!formData.phone.match(/^(\+995|0)\d{9}$/)) {
         setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX');
         return;
@@ -113,13 +149,23 @@ const Register: React.FC = () => {
     try {
       const username = `${formData.firstName} ${formData.lastName}`;
       
-      await register(username, formData.email, formData.password, {
+      const registrationData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
-        age: parseInt(formData.age),
-        gender: formData.gender as 'male' | 'female' | 'other',
-        phone: formData.phone
-      });
+        age: formData.userType === 'user' ? parseInt(formData.age) : null,
+        gender: formData.userType === 'user' ? formData.gender as 'male' | 'female' | 'other' : null,
+        phone: formData.phone,
+        isDealer: formData.userType === 'dealer',
+        dealerData: formData.userType === 'dealer' ? {
+          company_name: formData.dealerData.company_name,
+          established_year: formData.dealerData.established_year ? parseInt(formData.dealerData.established_year) : undefined,
+          website_url: formData.dealerData.website_url || undefined,
+          social_media_url: formData.dealerData.social_media_url || undefined,
+          address: formData.dealerData.address || undefined
+        } : undefined
+      };
+      
+      await register(username, formData.email, formData.password, registrationData);
       
       navigate('/'); // Redirect to home page after successful registration
     } catch (err: any) {
@@ -147,122 +193,310 @@ const Register: React.FC = () => {
 
   const renderStep1 = () => (
     <form onSubmit={handleContinue} className="space-y-6">
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            სახელი
-          </label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-            required
-            placeholder="სახელი"
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            გვარი
-          </label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-            required
-            placeholder="გვარი"
-            disabled={isLoading}
-          />
-        </div>
-      </div>
-
+      {/* User Type Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          ასაკი
-        </label>
-        <select
-          name="age"
-          value={formData.age}
-          onChange={handleInputChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
-          required
-          disabled={isLoading}
-        >
-          <option value="">აირჩიეთ ასაკი</option>
-          {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
-            <option key={age} value={age}>
-              {age} წელი
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          სქესი
+          მომხმარებლის ტიპი
         </label>
         <div className="flex gap-4">
           <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
             <input
               type="radio"
-              name="gender"
-              value="male"
-              checked={formData.gender === 'male'}
+              name="userType"
+              value="user"
+              checked={formData.userType === 'user'}
               onChange={handleInputChange}
               className="absolute opacity-0 w-0 h-0"
               required
               disabled={isLoading}
             />
             <div className={`w-full text-center py-3 px-4 rounded-xl border ${
-              formData.gender === 'male' 
+              formData.userType === 'user' 
                 ? 'border-primary bg-primary/5 text-primary' 
                 : 'border-gray-300 hover:bg-gray-50'
             }`}>
-              მამრობითი
+              რეგულარული მომხმარებელი
             </div>
           </label>
           
           <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
             <input
               type="radio"
-              name="gender"
-              value="female"
-              checked={formData.gender === 'female'}
+              name="userType"
+              value="dealer"
+              checked={formData.userType === 'dealer'}
               onChange={handleInputChange}
               className="absolute opacity-0 w-0 h-0"
               disabled={isLoading}
             />
             <div className={`w-full text-center py-3 px-4 rounded-xl border ${
-              formData.gender === 'female' 
+              formData.userType === 'dealer' 
                 ? 'border-primary bg-primary/5 text-primary' 
                 : 'border-gray-300 hover:bg-gray-50'
             }`}>
-              მდედრობითი
+              დილერი
             </div>
           </label>
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          ტელეფონი
-        </label>
-        <input
-          type="tel"
-          name="phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
-          required
-          placeholder="+995"
-          disabled={isLoading}
-        />
-      </div>
+      {/* Fields for Regular Users */}
+      {formData.userType === 'user' && (
+        <>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                სახელი
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+                required
+                placeholder="სახელი"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                გვარი
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+                required
+                placeholder="გვარი"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ასაკი
+            </label>
+            <select
+              name="age"
+              value={formData.age}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
+              required
+              disabled={isLoading}
+            >
+              <option value="">აირჩიეთ ასაკი</option>
+              {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
+                <option key={age} value={age}>
+                  {age} წელი
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              სქესი
+            </label>
+            <div className="flex gap-4">
+              <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={formData.gender === 'male'}
+                  onChange={handleInputChange}
+                  className="absolute opacity-0 w-0 h-0"
+                  required
+                  disabled={isLoading}
+                />
+                <div className={`w-full text-center py-3 px-4 rounded-xl border ${
+                  formData.gender === 'male' 
+                    ? 'border-primary bg-primary/5 text-primary' 
+                    : 'border-gray-300 hover:bg-gray-50'
+                }`}>
+                  მამრობითი
+                </div>
+              </label>
+              
+              <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={formData.gender === 'female'}
+                  onChange={handleInputChange}
+                  className="absolute opacity-0 w-0 h-0"
+                  disabled={isLoading}
+                />
+                <div className={`w-full text-center py-3 px-4 rounded-xl border ${
+                  formData.gender === 'female' 
+                    ? 'border-primary bg-primary/5 text-primary' 
+                    : 'border-gray-300 hover:bg-gray-50'
+                }`}>
+                  მდედრობითი
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ტელეფონი
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+              required
+              placeholder="+995"
+              disabled={isLoading}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Fields for Dealers */}
+      {formData.userType === 'dealer' && (
+        <>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                სახელი (კონტაქტი)
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+                required
+                placeholder="სახელი"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                გვარი (კონტაქტი)
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+                required
+                placeholder="გვარი"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              კომპანიის სახელი <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="dealerData.company_name"
+              value={formData.dealerData.company_name}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+              required
+              placeholder="კომპანიის სახელი"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              პერსონალური ტელეფონი
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+              required
+              placeholder="+995"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              დაარსების წელი
+            </label>
+            <select
+              name="dealerData.established_year"
+              value={formData.dealerData.established_year}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
+              disabled={isLoading}
+            >
+              <option value="">აირჩიეთ წელი</option>
+              {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ვებ გვერდი / სოციალური ქსელი
+            </label>
+            <input
+              type="url"
+              name="dealerData.website_url"
+              value={formData.dealerData.website_url}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+              placeholder="https://example.com"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              სოციალური ქსელის ლინკი
+            </label>
+            <input
+              type="url"
+              name="dealerData.social_media_url"
+              value={formData.dealerData.social_media_url}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
+              placeholder="https://facebook.com/yourpage"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              მისამართი
+            </label>
+            <textarea
+              name="dealerData.address"
+              value={formData.dealerData.address}
+              onChange={handleInputChange}
+              rows={3}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed resize-vertical"
+              placeholder="მისამართი"
+              disabled={isLoading}
+            />
+          </div>
+        </>
+      )}
 
       {error && (
         <div className="p-3 bg-red-50 text-red-700 rounded-lg">

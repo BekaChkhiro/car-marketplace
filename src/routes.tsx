@@ -6,6 +6,8 @@ import CarListing from './pages/CarListing';
 import CarDetails from './pages/CarDetails';
 import PartListing from './pages/PartListing';
 import PartDetails from './pages/PartDetails';
+import DealerListing from './pages/DealerListing';
+import DealerProfile from './pages/DealerProfile';
 import ProfilePage from './pages/Profile';
 import AdminLayout from './pages/Admin/components/AdminLayout';
 import AdminDashboard from './pages/Admin/Dashboard';
@@ -78,6 +80,8 @@ const AppRoutes = () => {
       <Route path="cars/:id" element={<CarDetails />} />
       <Route path="parts" element={<PartListing />} />
       <Route path="parts/:id" element={<PartDetails />} />
+      <Route path="dealers" element={<DealerListing />} />
+      <Route path="dealers/:dealerId" element={<DealerProfile />} />
       <Route path="how-to-sell" element={<HowToSell />} />
       <Route path="terms" element={<TermsAndConditions />} />
       <Route path="about" element={<AboutPage />} />

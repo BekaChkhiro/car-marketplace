@@ -52,8 +52,9 @@ const Header = () => {
     { id: 2, text: t('aboutUs'), href: '/about', icon: Info },
     { id: 3, text: t('cars'), href: '/cars', icon: Car },
     { id: 4, text: t('parts'), href: '/parts', icon: Car },
-    { id: 5, text: 'რეკლამა', href: '/advertising-spaces', icon: Info },
-    { id: 6, text: t('contact'), href: '/contact', icon: Phone },
+    { id: 5, text: t('dealers'), href: '/dealers', icon: Car },
+    { id: 6, text: 'რეკლამა', href: '/advertising-spaces', icon: Info },
+    { id: 7, text: t('contact'), href: '/contact', icon: Phone },
   ];
   
   // Helper function to prefix paths with current language
@@ -68,6 +69,7 @@ const Header = () => {
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/cars' && location.pathname.includes('/cars')) return true;
     if (path === '/parts' && location.pathname.includes('/parts')) return true;
+    if (path === '/dealers' && location.pathname.includes('/dealers')) return true;
     if (path === '/about' && location.pathname.includes('/about')) return true;
     if (path === '/contact' && location.pathname.includes('/contact')) return true;
     if (path === '/advertising-spaces' && location.pathname.includes('/advertising-spaces')) return true;
@@ -171,7 +173,7 @@ const Header = () => {
           {/* Left Side Menu Items */}
           <nav className="flex-1">
             <ul className="flex items-center space-x-10 mb-0">
-              {menuItems.slice(0, 4).map((item) => (
+              {menuItems.slice(0, 5).map((item) => (
                 <li key={item.id}>
                   {item.component ? (
                     <item.component />
@@ -192,7 +194,7 @@ const Header = () => {
           {/* Right Side Menu Items */}
           <nav>
             <ul className="flex items-center space-x-10 mb-0">
-              {menuItems.slice(4, 6).map((item) => (
+              {menuItems.slice(5, 7).map((item) => (
                 <li key={item.id}>
                   {item.component ? (
                     <item.component />

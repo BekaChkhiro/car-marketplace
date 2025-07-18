@@ -13,6 +13,7 @@ export interface User {
   updated_at?: string;
   profile_completed?: boolean;
   google_id?: string;
+  dealer_id?: number;
 }
 
 export interface Tokens {

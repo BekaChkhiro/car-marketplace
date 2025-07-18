@@ -54,6 +54,9 @@ class CarService {
         if (filters.engineSizeFrom) serverFilters.engineSizeFrom = filters.engineSizeFrom;
         if (filters.engineSizeTo) serverFilters.engineSizeTo = filters.engineSizeTo;
         if (filters.airbags) serverFilters.airbags = filters.airbags;
+        
+        // Seller filter for dealer cars
+        if (filters.seller_id) serverFilters.seller_id = filters.seller_id;
       }
       
       console.log('[CarService.getCars] Mapped server filters:', serverFilters);
