@@ -221,7 +221,7 @@ const AutosalonProfile: React.FC = () => {
                       rel="noopener noreferrer"
                       className="text-primary hover:text-secondary transition-colors"
                     >
-                      ვებ გვერდი
+                      {autosalon.website_url}
                     </a>
                   </div>
                 )}

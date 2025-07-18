@@ -78,7 +78,7 @@ const DealerCard: React.FC<DealerCardProps> = ({ dealer }) => {
                     rel="noopener noreferrer"
                     className="text-primary hover:text-secondary truncate"
                   >
-                    ვებ გვერდი
+                    {dealer.website_url}
                   </a>
                 </div>
               )}

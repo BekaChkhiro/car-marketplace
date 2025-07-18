@@ -31,6 +31,7 @@ import Analytics from './pages/Admin/Analytics';
 import TransactionsPage from './pages/Admin/Transactions';
 import VipListingsPage from './pages/Admin/VipListings';
 import AutosalonsAdmin from './pages/Admin/Autosalons';
+import DealersAdmin from './pages/Admin/Dealers';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
@@ -105,6 +106,7 @@ const AppRoutes = () => {
         <Route path="cars" element={<CarsPage />} />
         <Route path="cars/edit/:id" element={<AdminEditCar />} />
         <Route path="autosalons" element={<AutosalonsAdmin />} />
+        <Route path="dealers" element={<DealersAdmin />} />
         <Route path="parts" element={<AdminParts />} />
         <Route path="transactions" element={<TransactionsPage />} />
         <Route path="vip-listings" element={<VipListingsPage />} />
