@@ -147,6 +147,8 @@ export interface CarFilters {
   location?: string;
   features?: string[];
   excludeId?: string;  // For filtering out current car in similar cars list
+  seller_id?: number;  // For filtering by seller/dealer
+  search?: string;  // For text search
   sortBy?: string;
   order?: 'asc' | 'desc';
   page?: number;

@@ -6,9 +6,10 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   title: string;
+  maxWidth?: string;
 }
 
-const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
+const Modal = ({ isOpen, onClose, children, title, maxWidth = 'max-w-2xl' }: ModalProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
         onClick={onClose}
       />
       <div 
-        className={`bg-white rounded-2xl p-4 sm:p-6 w-full max-w-md relative shadow-xl z-10 transform transition-all duration-200 ${
+        className={`bg-white rounded-2xl p-4 sm:p-6 w-full ${maxWidth} relative shadow-xl z-10 transform transition-all duration-200 ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
         onClick={e => e.stopPropagation()}

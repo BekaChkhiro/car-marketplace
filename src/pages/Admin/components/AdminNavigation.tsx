@@ -18,7 +18,8 @@ import {
   Award,
   Package,
   X,
-  Activity
+  Activity,
+  Building
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -55,6 +56,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
     { icon: <LayoutDashboard size={20} />, label: 'დაფა', path: buildPath('/admin') },
     { icon: <Users size={20} />, label: 'მომხმარებლები', path: buildPath('/admin/users') },
     { icon: <Car size={20} />, label: 'განცხადებები', path: buildPath('/admin/cars') },
+    { icon: <Building size={20} />, label: 'ავტოსალონები', path: buildPath('/admin/autosalons') },
     { icon: <Package size={20} />, label: 'ნაწილები', path: buildPath('/admin/parts') },
     { icon: <CreditCard size={20} />, label: 'ტრანზაქციები', path: buildPath('/admin/transactions') },
     { icon: <Award size={20} />, label: 'VIP განცხადებები', path: buildPath('/admin/vip-listings') },

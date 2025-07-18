@@ -40,6 +40,8 @@ const App = () => {
                       
                       {/* Redirect any non-language routes to include language prefix */}
                       <Route path="/cars/*" element={<Navigate to={`/ka/cars`} replace />} />
+                      <Route path="/dealers/*" element={<Navigate to={`/ka/dealers`} replace />} />
+                      <Route path="/autosalons/*" element={<Navigate to={`/ka/autosalons`} replace />} />
                       <Route path="/profile/*" element={<Navigate to={`/ka/profile`} replace />} />
                       <Route path="/wishlist" element={<Navigate to={`/ka/wishlist`} replace />} />
                       <Route path="/login" element={<Navigate to={`/ka/login`} replace />} />

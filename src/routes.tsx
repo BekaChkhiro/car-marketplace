@@ -6,6 +6,10 @@ import CarListing from './pages/CarListing';
 import CarDetails from './pages/CarDetails';
 import PartListing from './pages/PartListing';
 import PartDetails from './pages/PartDetails';
+import DealerListing from './pages/DealerListing';
+import DealerProfile from './pages/DealerProfile';
+import AutosalonListing from './pages/AutosalonListing';
+import AutosalonProfile from './pages/AutosalonProfile';
 import ProfilePage from './pages/Profile';
 import AdminLayout from './pages/Admin/components/AdminLayout';
 import AdminDashboard from './pages/Admin/Dashboard';
@@ -26,6 +30,7 @@ import SettingsPage from './pages/Admin/Settings';
 import Analytics from './pages/Admin/Analytics';
 import TransactionsPage from './pages/Admin/Transactions';
 import VipListingsPage from './pages/Admin/VipListings';
+import AutosalonsAdmin from './pages/Admin/Autosalons';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
@@ -78,6 +83,10 @@ const AppRoutes = () => {
       <Route path="cars/:id" element={<CarDetails />} />
       <Route path="parts" element={<PartListing />} />
       <Route path="parts/:id" element={<PartDetails />} />
+      <Route path="dealers" element={<DealerListing />} />
+      <Route path="dealers/:dealerId" element={<DealerProfile />} />
+      <Route path="autosalons" element={<AutosalonListing />} />
+      <Route path="autosalons/:autosalonId" element={<AutosalonProfile />} />
       <Route path="how-to-sell" element={<HowToSell />} />
       <Route path="terms" element={<TermsAndConditions />} />
       <Route path="about" element={<AboutPage />} />
@@ -95,6 +104,7 @@ const AppRoutes = () => {
         <Route path="users" element={<UsersPage />} />
         <Route path="cars" element={<CarsPage />} />
         <Route path="cars/edit/:id" element={<AdminEditCar />} />
+        <Route path="autosalons" element={<AutosalonsAdmin />} />
         <Route path="parts" element={<AdminParts />} />
         <Route path="transactions" element={<TransactionsPage />} />
         <Route path="vip-listings" element={<VipListingsPage />} />

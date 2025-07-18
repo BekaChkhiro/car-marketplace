@@ -20,6 +20,16 @@ interface AuthContextType {
     age: number;
     gender: 'male' | 'female' | 'other';
     phone: string;
+    isDealer?: boolean;
+    dealerData?: {
+      company_name: string;
+      established_year?: number;
+      website_url?: string;
+      social_media_url?: string;
+      address?: string;
+      images?: File[];
+      featuredImageIndex?: number;
+    };
   }) => Promise<void>;
   logout: () => void;
   updateProfile: (data: { username?: string; email?: string; phone?: string; first_name?: string; last_name?: string; age?: number; gender?: 'male' | 'female' | 'other' }) => Promise<User>;
@@ -182,20 +192,70 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       age: number;
       gender: 'male' | 'female' | 'other';
       phone: string;
+      isDealer?: boolean;
+      dealerData?: {
+        company_name: string;
+        established_year?: number;
+        website_url?: string;
+        social_media_url?: string;
+        address?: string;
+        images?: File[];
+        featuredImageIndex?: number;
+      };
     }
   ) => {
     showLoading();
     try {
-      const response = await authService.register({ 
-        username, 
-        email, 
-        password, 
-        ...additionalData 
-      });
+      // For now, register without image first, then upload separately
+      const registrationData: any = {
+        username,
+        email,
+        password,
+        ...additionalData
+      };
+
+      // If dealer, set isDealer flag for backend
+      if (additionalData.isDealer) {
+        registrationData.isDealer = true;
+        
+        // Prepare dealer data
+        if (additionalData.dealerData) {
+          registrationData.dealerData = {
+            company_name: additionalData.dealerData.company_name,
+            established_year: additionalData.dealerData.established_year,
+            website_url: additionalData.dealerData.website_url,
+            social_media_url: additionalData.dealerData.social_media_url,
+            address: additionalData.dealerData.address
+            // logo_url will be set after image upload
+          };
+        }
+      }
+
+      // Register the user/dealer with logo file if available
+      let response;
+      if (additionalData.isDealer && additionalData.dealerData?.images && additionalData.dealerData.images.length > 0) {
+        console.log('🔄 Registering dealer with logo file');
+        const logoFile = additionalData.dealerData.images[0];
+        response = await authService.registerWithFile(registrationData, logoFile);
+        console.log('✅ Registration with logo completed:', response);
+      } else {
+        console.log('🔄 Registering user without logo');
+        response = await authService.register(registrationData);
+      }
       
       setUser(response.user);
       setIsAuthenticated(true);
-      showToast('რეგისტრაცია წარმატებით დასრულდა', 'success');
+      storeUserData(response.user);
+      
+      // For dealer registrations, show success message
+      if (additionalData.isDealer && additionalData.dealerData?.images && additionalData.dealerData.images.length > 0) {
+        showToast('დილერის რეგისტრაცია და ლოგოს ატვირთვა წარმატებით დასრულდა!', 'success');
+      } else if (additionalData.isDealer) {
+        showToast('დილერის რეგისტრაცია წარმატებით დასრულდა!', 'success');
+      } else {
+        showToast('რეგისტრაცია წარმატებით დასრულდა!', 'success');
+      }
+      
     } catch (err: any) {
       const message = err.message || 'რეგისტრაცია ვერ მოხერხდა';
       showToast(message, 'error');
