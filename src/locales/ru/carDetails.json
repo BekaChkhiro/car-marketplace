@@ -195,5 +195,25 @@
     "turkey": "Турция",
     "poland": "Польша",
     "armenia": "Армения"
+  },
+  "dealerInfo": {
+    "title": "Информация о дилере",
+    "companyName": "Название компании",
+    "contactPerson": "Контактное лицо",
+    "address": "Адрес",
+    "establishedYear": "Год основания",
+    "website": "Веб-сайт",
+    "totalCars": "Всего автомобилей",
+    "cars": "Автомобили"
+  },
+  "autosalonInfo": {
+    "title": "Информация об автосалоне",
+    "companyName": "Название компании",
+    "contactPerson": "Контактное лицо",
+    "address": "Адрес",
+    "establishedYear": "Год основания",
+    "website": "Веб-сайт",
+    "totalCars": "Всего автомобилей",
+    "cars": "Автомобили"
   }
 }

@@ -195,5 +195,25 @@
     "turkey": "თურქეთი",
     "poland": "პოლონეთი",
     "armenia": "სომხეთი"
+  },
+  "dealerInfo": {
+    "title": "დილერის ინფორმაცია",
+    "companyName": "კომპანიის სახელი",
+    "contactPerson": "საკონტაქტო პირი",
+    "address": "მისამართი",
+    "establishedYear": "დაარსების წელი",
+    "website": "ვებსაიტი",
+    "totalCars": "მანქანების საერთო რაოდენობა",
+    "cars": "მანქანები"
+  },
+  "autosalonInfo": {
+    "title": "ავტოსალონის ინფორმაცია",
+    "companyName": "კომპანიის სახელი",
+    "contactPerson": "საკონტაქტო პირი",
+    "address": "მისამართი",
+    "establishedYear": "დაარსების წელი",
+    "website": "ვებსაიტი",
+    "totalCars": "მანქანების საერთო რაოდენობა",
+    "cars": "მანქანები"
   }
 }

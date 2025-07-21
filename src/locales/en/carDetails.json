@@ -195,5 +195,25 @@
     "turkey": "Turkey",
     "poland": "Poland",
     "armenia": "Armenia"
+  },
+  "dealerInfo": {
+    "title": "Dealer Information",
+    "companyName": "Company Name",
+    "contactPerson": "Contact Person",
+    "address": "Address",
+    "establishedYear": "Established Year",
+    "website": "Website",
+    "totalCars": "Total Cars",
+    "cars": "Cars"
+  },
+  "autosalonInfo": {
+    "title": "Auto Salon Information",
+    "companyName": "Company Name",
+    "contactPerson": "Contact Person",
+    "address": "Address",
+    "establishedYear": "Established Year",
+    "website": "Website",
+    "totalCars": "Total Cars",
+    "cars": "Cars"
   }
 }
