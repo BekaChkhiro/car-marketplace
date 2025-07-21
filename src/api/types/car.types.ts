@@ -1,3 +1,6 @@
+import { Dealer } from './dealer.types';
+import { Autosalon } from './autosalon.types';
+
 export interface Car {
   id: number;
   brand_id: number;
@@ -26,6 +29,10 @@ export interface Car {
   specifications: CarSpecifications;
   location: CarLocation;
   images: CarImage[];
+  // Seller information (can be dealer, autosalon, or regular user)
+  seller_type?: 'user' | 'dealer' | 'autosalon';
+  dealer?: Dealer;
+  autosalon?: Autosalon;
 }
 
 export interface CarSpecifications {
