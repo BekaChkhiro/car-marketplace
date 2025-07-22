@@ -1,4 +1,6 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 import { Autosalon } from '../../../api/types/autosalon.types';
 import AutosalonCard from './AutosalonCard';
 import { Loading } from '../../../components/ui';
@@ -9,6 +11,7 @@ interface AutosalonGridProps {
 }
 
 const AutosalonGrid: React.FC<AutosalonGridProps> = ({ autosalons, loading }) => {
+  const { t } = useTranslation([namespaces.autosalonListing]);
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -38,9 +41,9 @@ const AutosalonGrid: React.FC<AutosalonGridProps> = ({ autosalons, loading }) =>
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <div className="text-gray-400 text-6xl mb-4">🏪</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">ავტოსალონები ვერ მოიძებნა</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('notFound')}</h3>
         <p className="text-gray-600 text-center max-w-md">
-          მოთხოვნილი ავტოსალონები ვერ მოიძებნა. სცადეთ სხვა ძიების პარამეტრები.
+          {t('notFoundDescription')}
         </p>
       </div>
     );

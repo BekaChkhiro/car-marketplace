@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../i18n';
 import dealerService from '../../api/services/dealerService';
 import { Dealer, DealerFilters } from '../../api/types/dealer.types';
 import DealerGrid from './components/DealerGrid';
 import DealerSortingHeader from './components/DealerSortingHeader';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { log } from 'console';
 
 const DealerListing: React.FC = () => {
+  const { t } = useTranslation([namespaces.dealerListing, namespaces.common]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,6 @@ const DealerListing: React.FC = () => {
       limit: parseInt(searchParams.get('limit') || '12'),
       search: searchParams.get('search') || undefined,
       established_year_min: searchParams.get('established_year_min') ? parseInt(searchParams.get('established_year_min')!) : undefined,
-      established_year_max: searchParams.get('established_year_max') ? parseInt(searchParams.get('established_year_max')!) : undefined,
       sortBy: searchParams.get('sortBy') || 'created_at',
       sortOrder: (searchParams.get('sortOrder') as 'ASC' | 'DESC') || 'DESC',
     };
@@ -97,7 +98,7 @@ const DealerListing: React.FC = () => {
       
       setDealers(dealersData);
     } catch (err: any) {
-      setError('დილერების ჩატვირთვა ვერ მოხერხდა');
+      setError(t('error.loadingFailed'));
       console.error('Error fetching dealers:', err);
       setDealers([]); // Reset to empty array on error
     } finally {
@@ -203,8 +204,8 @@ const DealerListing: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">დილერები</h1>
-          <p className="text-gray-600">იპოვეთ საიმედო ავტო დილერები</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
         </div>
 
         <div className="space-y-6">
@@ -221,7 +222,7 @@ const DealerListing: React.FC = () => {
                 onClick={fetchDealers}
                 className="mt-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
               >
-                თავიდან სცადეთ
+                {t('error.retry')}
               </button>
             </div>
           )}

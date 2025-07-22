@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useTranslation } from 'react-i18next';
 import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon } from 'lucide-react';
 import ImageProgress from './ImageProgress';
 
@@ -30,6 +31,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   error,
   isUploading
 }) => {
+  const { t } = useTranslation('profile');
   const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error'>();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [draggedOver, setDraggedOver] = useState(false);
@@ -90,7 +92,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
     
     if (filesRejected > 0) {
       // You could add a toast notification here if you have a toast system
-      console.warn(`${filesRejected} ფაილი ვერ აიტვირთა (დუბლიკატი ან ზედმეტი რაოდენობა)`);
+      console.warn(`${filesRejected} files could not be uploaded (duplicate or exceeding limit)`);
     }
   }, [files, maxFiles, onFilesChange]);
 
@@ -123,8 +125,8 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
           <ImageIcon size={20} className="text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">სურათები</h2>
-          <p className="text-sm text-gray-500">ატვირთეთ მანქანის სურათები</p>
+          <h2 className="text-lg font-semibold text-gray-900">{t('addCar.images.title')}</h2>
+          <p className="text-sm text-gray-500">{t('addCar.images.subtitle')}</p>
         </div>
       </div>
 
@@ -175,18 +177,18 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                 : 'text-gray-700'
             }`}>
               {isDragReject
-                ? 'ფაილის ფორმატი არასწორია'
+                ? t('imageUpload.invalidFormat')
                 : isDragActive || draggedOver
-                ? 'ჩააგდეთ სურათები აქ...'
+                ? t('imageUpload.dropHere')
                 : isUploading
-                ? 'მიმდინარეობს ატვირთვა...'
-                : 'ჩააგდეთ სურათები ან დააჭირეთ ასატვირთად'}
+                ? t('imageUpload.uploading')
+                : t('imageUpload.dropOrClick')}
             </p>
             <p className="text-base text-gray-600">
-              {isDragActive ? 'ჩააგდეთ სურათები აქ...' : 'აირჩიეთ ან ჩააგდეთ სურათები'}
+              {isDragActive ? t('imageUpload.dropHere') : t('imageUpload.selectOrDrop')}
             </p>
             <p className="text-sm text-gray-500">
-              დაშვებულია JPEG, PNG, WebP ფორმატები, მაქსიმუმ 10MB
+              {t('imageUpload.formatInfo')}
             </p>
             {error && (
               <div className="mt-2 text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg flex items-center gap-2">
@@ -202,7 +204,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
       {existingImages && existingImages.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-medium text-gray-600">არსებული ფოტოები</h4>
+            <h4 className="text-sm font-medium text-gray-600">{t('imageUpload.existingPhotos')}</h4>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {existingImages.map((image, index) => (
@@ -223,7 +225,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                       onExistingImageRemove(image.id);
                     }}
                     className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/90 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-                    title="ფოტოს წაშლა"
+                    title={t('imageUpload.removePhoto')}
                   >
                     <X size={18} />
                   </button>
@@ -235,7 +237,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                       onSetPrimaryImage(image.id);
                     }}
                     className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:text-primary"
-                    title="დააყენეთ მთავარ სურათად"
+                    title={t('imageUpload.setAsPrimary')}
                   >
                     <Star size={18} fill="none" 
                       className="transform transition-transform duration-300 hover:rotate-12"
@@ -257,7 +259,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
       {files.length > 0 && (
         <div className="space-y-4 mt-6">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-medium text-gray-600">ახალი ფოტოები</h4>
+            <h4 className="text-sm font-medium text-gray-600">{t('imageUpload.newPhotos')}</h4>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {files.map((file, index) => (
@@ -296,7 +298,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                       ? 'bg-primary text-white opacity-100 scale-110'
                       : 'bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 hover:text-primary'
                   }`}
-                  title={featuredIndex === index ? 'მთავარი სურათი' : 'დააყენეთ მთავარ სურათად'}
+                  title={featuredIndex === index ? t('imageUpload.primaryPhoto') : t('imageUpload.setAsPrimary')}
                 >
                   <Star size={18} fill={featuredIndex === index ? 'white' : 'none'} 
                     className="transform transition-transform duration-300 hover:rotate-12"
@@ -315,7 +317,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                   <UploadCloud className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors duration-300" />
                 </div>
                 <span className="text-sm text-gray-500 group-hover:text-primary transition-colors duration-300">
-                  დაამატეთ მეტი
+                  {t('imageUpload.addMore')}
                 </span>
               </div>
             )}
@@ -325,12 +327,12 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600 flex items-center gap-2">
                 <ImageIcon size={16} className="text-primary" />
-                {files.length} / {maxFiles} სურათი
+                {files.length} / {maxFiles} {t('imageUpload.photos')}
               </span>
               {featuredIndex > -1 && (
                 <span className="text-sm text-primary flex items-center gap-2">
                   <Star size={16} className="fill-primary" />
-                  მთავარი სურათი არჩეულია
+                  {t('imageUpload.primaryPhotoSelected')}
                 </span>
               )}
             </div>
@@ -338,7 +340,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
               onClick={handleRemoveAll}
               className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-red-50"
             >
-              ყველას წაშლა
+              {t('imageUpload.removeAll')}
             </button>
           </div>
         </div>

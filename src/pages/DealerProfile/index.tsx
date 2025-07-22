@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../i18n';
 import dealerService from '../../api/services/dealerService';
 import carService from '../../api/services/carService';
 import { Dealer } from '../../api/types/dealer.types';
@@ -15,6 +17,7 @@ import { MapPin, Phone, Globe, Calendar, Car as CarIcon, Building } from 'lucide
 // No conversion needed - using main cars API directly
 
 const DealerProfile: React.FC = () => {
+  const { t } = useTranslation([namespaces.dealerProfile, namespaces.common]);
   const { dealerId } = useParams<{ dealerId: string }>();
   const [dealer, setDealer] = useState<Dealer | null>(null);
   const [cars, setCars] = useState<Car[]>([]);
@@ -94,7 +97,7 @@ const DealerProfile: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching dealer:', error);
-        showToast('დილერის მონაცემების ჩატვირთვა ვერ მოხერხდა', 'error');
+        showToast(t('errors.loadingFailed'), 'error');
       } finally {
         setLoading(false);
       }
@@ -160,9 +163,9 @@ const DealerProfile: React.FC = () => {
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🏪</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">დილერი ვერ მოიძებნა</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('notFound.title')}</h3>
           <p className="text-gray-600 text-center max-w-md">
-            მოთხოვნილი დილერი ვერ მოიძებნა.
+            {t('notFound.message')}
           </p>
           <p className="text-sm text-gray-500 mt-4">Debug: dealerId = {dealerId}</p>
         </div>
@@ -201,7 +204,7 @@ const DealerProfile: React.FC = () => {
                 {dealer.established_year && (
                   <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100 gap-2 text-gray-600 text-sm">
                     <Calendar className="w-4 h-4" />
-                    <span>დაარსდა {dealer.established_year} წელს</span>
+                    <span>{t('dealerInfo.established')} {dealer.established_year} {t('dealerInfo.year')}</span>
                   </div>
                 )}
 
@@ -263,10 +266,10 @@ const DealerProfile: React.FC = () => {
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-gray-400 text-6xl mb-4">🚗</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {dealer.company_name}-ს მანქანები ვერ მოიძებნა
+                  {t('cars.notFound.title')}
                 </h3>
                 <p className="text-gray-600 text-center max-w-md">
-                  ამ დილერს ამჟამად არ აქვს მანქანები გამოსატანი ან არ აკმაყოფილებს თქვენს ფილტრებს.
+                  {t('cars.notFound.message')}
                 </p>
               </div>
             ) : (

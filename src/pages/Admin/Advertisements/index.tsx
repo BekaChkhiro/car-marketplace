@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Plus, BarChart2, Edit, Trash, ExternalLink, LayoutGrid, Rows, SlidersHorizontal, PanelRight } from 'lucide-react';
 import { routes } from '../../../config/routes';
 import { motion } from 'framer-motion';
@@ -8,6 +9,7 @@ import AdvertisementForm from './components/AdvertisementForm';
 import AdvertisementAnalyticsTable from './components/AdvertisementAnalytics';
 
 const AdvertisementsPage: React.FC = () => {
+  const { t } = useTranslation('admin');
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -170,7 +172,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <LayoutGrid className="mr-2 h-4 w-4" />
-              ყველა რეკლამა
+              {t('advertisements.allAdvertisements')}
             </NavLink>
             <NavLink
               to={routes.adminAdvertisementsSlider}
@@ -180,7 +182,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <SlidersHorizontal className="mr-2 h-4 w-4" />
-              სლაიდერი
+              {t('advertisements.slider')}
             </NavLink>
             <NavLink
               to={routes.adminAdvertisementsBanners}
@@ -190,7 +192,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <Rows className="mr-2 h-4 w-4" />
-              ბანერები
+              {t('advertisements.banners')}
             </NavLink>
             {/* Sidebar advertisement navigation removed as requested */}
             <NavLink
@@ -201,7 +203,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <BarChart2 className="mr-2 h-4 w-4" />
-              ანალიტიკა
+              {t('advertisements.analytics.title')}
             </NavLink>
           </nav>
         </div>

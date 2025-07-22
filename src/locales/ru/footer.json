@@ -1,0 +1,33 @@
+{
+    "copyright": "Все права защищены",
+    "aboutSection": {
+        "title": "О нас",
+        "description": "autovend.ge — это платформа объявлений, где вы можете легко и быстро размещать объявления о продаже автомобилей и запчастей совершенно бесплатно."
+    },
+    "quickLinks": {
+        "title": "Быстрые ссылки",
+        "home": "Главная",
+        "cars": "Автомобили",
+        "about": "О нас",
+        "contact": "Контакты",
+        "terms": "Условия и правила"
+    },
+    "contactInfo": {
+        "title": "Контактная информация",
+        "address": "Мцхетский район, село Мисакциели, 1-я улица VII поворот, N10",
+        "phone": "+995 595 03 88 88",
+        "email": "info@autovend.ge"
+    },
+    "socialLinks": {
+        "title": "Следите за нами",
+        "description": "Свяжитесь с нами в социальных сетях для новостей и специальных предложений.",
+        "facebook": "Facebook",
+        "twitter": "Twitter",
+        "instagram": "Instagram"
+    },
+    "paymentMethods": {
+        "title": "Способы оплаты",
+        "visa": "Visa",
+        "mastercard": "Mastercard"
+    }
+}

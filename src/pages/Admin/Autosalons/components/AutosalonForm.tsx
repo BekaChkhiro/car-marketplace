@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Upload, Building, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Autosalon, CreateAutosalonRequest } from '../../../../api/types/autosalon.types';
 import autosalonService from '../../../../api/services/autosalonService';
 import { useToast } from '../../../../context/ToastContext';
@@ -13,6 +14,7 @@ interface AutosalonFormProps {
 }
 
 const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSubmit }) => {
+  const { t } = useTranslation('admin');
   const [loading, setLoading] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -141,14 +143,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
   };
 
   const getPasswordStrength = (password: string): { color: string; text: string } => {
-    if (!password) return { color: 'bg-gray-200', text: 'სიძლიერე' };
+    if (!password) return { color: 'bg-gray-200', text: t('common.strength') };
 
     const { errors } = validatePassword(password);
     const remainingChecks = errors.length;
 
-    if (remainingChecks === 0) return { color: 'bg-green-500', text: 'ძლიერი' };
-    if (remainingChecks <= 2) return { color: 'bg-yellow-500', text: 'საშუალო' };
-    return { color: 'bg-red-500', text: 'სუსტი' };
+    if (remainingChecks === 0) return { color: 'bg-green-500', text: t('common.strong') };
+    if (remainingChecks <= 2) return { color: 'bg-yellow-500', text: t('common.medium') };
+    return { color: 'bg-red-500', text: t('common.weak') };
   };
 
   const handleContinue = (e: React.FormEvent) => {
@@ -244,7 +246,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           setIsUploading(false);
         }
 
-        showToast('ავტოსალონი წარმატებით განახლდა', 'success');
+        showToast(t('common.updated'), 'success');
       } else {
         // Create new autosalon
         const createData: CreateAutosalonRequest = {
@@ -276,13 +278,13 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           setIsUploading(false);
         }
 
-        showToast('ავტოსალონი წარმატებით შეიქმნა', 'success');
+        showToast(t('common.created'), 'success');
       }
 
       onSubmit(true);
     } catch (error: any) {
       console.error('Form submission error:', error);
-      showToast(error.message || 'მოქმედება ვერ შესრულდა', 'error');
+      showToast(error.message || t('common.error'), 'error');
     } finally {
       setLoading(false);
     }
@@ -751,7 +753,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-xl font-bold">
-            {autosalon ? 'ავტოსალონის რედაქტირება' : 'ახალი ავტოსალონის შექმნა'}
+            {autosalon ? t('autosalons.edit') : t('autosalons.create')}
           </h2>
           <button
             onClick={onClose}

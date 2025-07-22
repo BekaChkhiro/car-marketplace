@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { INTERIOR_COLOR_OPTIONS } from '../pages/Profile/pages/AddCar/types';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../i18n';
 
 interface InteriorColorDropdownProps {
   value: string;
@@ -13,10 +14,21 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
   value, 
   onChange, 
   error, 
-  placeholder = 'აირჩიეთ სალონის ფერი' 
+  placeholder 
 }) => {
+  const { t } = useTranslation([namespaces.filter]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  const interiorColorOptions = [
+    { value: 'black', label: t('interiorColors.black') },
+    { value: 'white', label: t('interiorColors.white') },
+    { value: 'gray', label: t('interiorColors.gray') },
+    { value: 'brown', label: t('interiorColors.brown') },
+    { value: 'beige', label: t('interiorColors.beige') },
+    { value: 'red', label: t('interiorColors.red') },
+    { value: 'other', label: t('interiorColors.other') }
+  ];
 
   // Map color values to Tailwind classes
   const colorClasses: Record<string, string> = {
@@ -47,7 +59,7 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
     };
   }, []);
 
-  const selectedColor = INTERIOR_COLOR_OPTIONS.find(option => option.value === value);
+  const selectedColor = interiorColorOptions.find(option => option.value === value);
 
   return (
     <div className="relative border-2 rounded-lg" ref={dropdownRef}>
@@ -67,7 +79,7 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
               <span>{selectedColor.label}</span>
             </>
           ) : (
-            <span className="text-gray-500 text-sm sm:text-base">{placeholder}</span>
+            <span className="text-gray-500 text-sm sm:text-base">{placeholder || t('anyOption')}</span>
           )}
         </div>
         <ChevronDown size={18} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -75,7 +87,7 @@ const InteriorColorDropdown: React.FC<InteriorColorDropdownProps> = ({
 
       {isOpen && (
         <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-          {INTERIOR_COLOR_OPTIONS.map((option) => (
+          {interiorColorOptions.map((option) => (
             <div
               key={option.value}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"

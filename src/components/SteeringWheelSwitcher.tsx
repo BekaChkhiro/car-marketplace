@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface SteeringWheelSwitcherProps {
   value: string | undefined;
@@ -6,16 +7,18 @@ interface SteeringWheelSwitcherProps {
   className?: string;
 }
 
-// Steering wheel options based on the existing STEERING_WHEEL_OPTIONS
-const STEERING_WHEEL_OPTIONS = [
-  { value: 'left', label: 'მარცხენა' },
-  { value: 'right', label: 'მარჯვენა' }
-];
 
 const SteeringWheelSwitcher: React.FC<SteeringWheelSwitcherProps> = ({ value, onChange, className = '' }) => {
+  const { t } = useTranslation('filter');
+  
+  const steeringWheelOptions = [
+    { value: 'left', label: t('steeringWheels.left') },
+    { value: 'right', label: t('steeringWheels.right') }
+  ];
+
   return (
     <div className={`flex items-center p-1 bg-gray-100 rounded-lg ${className}`}>
-      {STEERING_WHEEL_OPTIONS.map((option) => (
+      {steeringWheelOptions.map((option) => (
         <button
           key={option.value}
           type="button"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapPin, Truck, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export type LocationType = 'georgia' | 'transit' | 'international';
 
@@ -10,6 +11,7 @@ interface LocationTypeSwitcherProps {
 }
 
 const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onChange, className = '' }) => {
+  const { t } = useTranslation('profile');
   return (
     <div className={`w-full sm:w-1/2 px-4 inline-flex  flex-col sm:flex-row items-center p-1 bg-gray-100 rounded-lg ${className}`}>
       <button
@@ -22,7 +24,7 @@ const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onCh
         onClick={() => onChange('georgia')}
       >
         <MapPin size={14} />
-        <span>საქართველო</span>
+        <span>{t('addCar.location.inGeorgia')}</span>
       </button>
       <button
         type="button"
@@ -34,7 +36,7 @@ const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onCh
         onClick={() => onChange('transit')}
       >
         <Truck size={14} />
-        <span>ტრანზიტი</span>
+        <span>{t('addCar.location.inTransit')}</span>
       </button>
       <button
         type="button"
@@ -46,7 +48,7 @@ const LocationTypeSwitcher: React.FC<LocationTypeSwitcherProps> = ({ value, onCh
         onClick={() => onChange('international')}
       >
         <Globe size={14} />
-        <span>საზღვარგარეთ</span>
+        <span>{t('addCar.location.international')}</span>
       </button>
     </div>
   );

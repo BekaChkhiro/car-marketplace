@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LanguageSwitcher, { Language } from '../../../../../components/LanguageSwitcher';
 
 interface DescriptionProps {
@@ -16,22 +17,18 @@ const Description: React.FC<DescriptionProps> = ({
   onChange,
   errors
 }) => {
+  const { t } = useTranslation('profile');
   const [activeLanguage, setActiveLanguage] = useState<Language>('ka');
 
   const getPlaceholder = (lang: Language) => {
-    switch (lang) {
-      case 'ka': return 'დაწერეთ დეტალური ინფორმაცია მანქანის შესახებ...';
-      case 'en': return 'Write detailed information about the car...';
-      case 'ru': return 'Напишите подробную информацию об автомобиле...';
-      default: return '';
-    }
+    return t('addCar.description.placeholder');
   };
 
   const getLabel = (lang: Language) => {
     switch (lang) {
-      case 'ka': return 'აღწერა (ქართულად)';
-      case 'en': return 'Description (in English)';
-      case 'ru': return 'Описание (на русском)';
+      case 'ka': return t('addCar.description.georgian');
+      case 'en': return t('addCar.description.english');
+      case 'ru': return t('addCar.description.russian');
       default: return '';
     }
   };
@@ -62,7 +59,7 @@ const Description: React.FC<DescriptionProps> = ({
     <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border">
       <div className="flex flex-col sm:flex-row justify-between items-start border-b pb-4">
         <h2 className="text-lg font-semibold text-gray-dark">
-          აღწერა
+          {t('addCar.description.title')}
         </h2>
         <LanguageSwitcher 
           value={activeLanguage} 

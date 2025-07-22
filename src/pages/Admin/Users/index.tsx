@@ -3,6 +3,7 @@ import { User as UserIcon, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2, A
 import authService from '../../../api/services/authService';
 import { useToast } from '../../../context/ToastContext';
 import { User } from '../../../api/types/auth.types';
+import { useTranslation } from 'react-i18next';
 
 // Extended user interface with status field which might not be in the original User type
 interface UserWithStatus extends User {
@@ -19,6 +20,7 @@ interface DeleteConfirmationState {
 
 const UsersPage = () => {
   const { showToast } = useToast();
+  const { t } = useTranslation('admin');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [users, setUsers] = useState<UserWithStatus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -109,7 +111,7 @@ const UsersPage = () => {
         // If we're showing mock data, inform the user
         if (isMockData) {
           console.log('Using mock data for users');
-          showToast('სერვერთან კავშირი ვერ მოხერხდა. ნაჩვენებია მოდელირებული მონაცემები.', 'warning');
+          showToast(t('users.error') + '. ' + t('common.mockData'), 'warning');
         }
       } else {
         console.error('Invalid user data received:', usersData);
@@ -134,15 +136,15 @@ const UsersPage = () => {
           
           setUsers(usersWithStatus);
           setTotalUsers(usersWithStatus.length);
-          setError('სერვერთან კავშირი ვერ მოხერხდა. ნაჩვენებია მოდელირებული მონაცემები.');
-          showToast('სერვერთან კავშირი ვერ მოხერხდა. ნაჩვენებია მოდელირებული მონაცემები.', 'warning');
+          setError(t('users.error') + '. ' + t('common.mockData'));
+          showToast(t('users.error') + '. ' + t('common.mockData'), 'warning');
         } else {
           throw new Error('Failed to retrieve mock data');
         }
       } catch (mockErr) {
         console.error('Failed to use mock data:', mockErr);
         setError(err.message || 'Failed to load users');
-        showToast('მომხმარებლების ჩატვირთვა ვერ მოხერხდა', 'error');
+        showToast(t('users.error'), 'error');
       }
     } finally {
       setLoading(false);
@@ -165,7 +167,7 @@ const UsersPage = () => {
         setTotalUsers(prev => prev - 1);
         
         // Show success message
-        showToast('მომხმარებელი წარმატებით წაიშალა', 'success');
+        showToast(t('users.deleteSuccess'), 'success');
         
         // Check if we need to adjust pagination
         const filteredUsers = getFilteredUsers();
@@ -178,7 +180,7 @@ const UsersPage = () => {
       }
     } catch (err: any) {
       console.error('Error deleting user:', err);
-      showToast('მომხმარებლის წაშლა ვერ მოხერხდა', 'error');
+      showToast(t('users.deleteError'), 'error');
     } finally {
       setLoading(false);
       // Close confirmation dialog
@@ -189,11 +191,11 @@ const UsersPage = () => {
   return (
     <div className="p-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">მომხმარებლები</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">{t('users.title')}</h1>
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <input
             type="text"
-            placeholder="მოძებნე მომხმარებელი..."
+            placeholder={t('users.searchUsers')}
             className="px-4 py-3 sm:py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -203,9 +205,9 @@ const UsersPage = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">ყველა</option>
-            <option value="active">აქტიური</option>
-            <option value="blocked">დაბლოკილი</option>
+            <option value="all">{t('users.allRoles')}</option>
+            <option value="active">{t('common.active')}</option>
+            <option value="blocked">{t('common.blocked')}</option>
           </select>
         </div>
       </div>
@@ -219,14 +221,14 @@ const UsersPage = () => {
           <p className="mb-2">{error}</p>
           {users.length > 0 && (
             <p className="text-amber-600 mb-2">
-              ნაჩვენებია მოდელირებული მონაცემები სერვერის პრობლემის გამო.
+              {t('common.mockData')}
             </p>
           )}
           <button 
             onClick={fetchUsers} 
             className="ml-4 underline hover:text-red-800"
           >
-            სცადეთ თავიდან
+            {t('common.retry')}
           </button>
         </div>
       ) : (
@@ -241,16 +243,16 @@ const UsersPage = () => {
                       className="flex items-center gap-2"
                       onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
                     >
-                      მომხმარებელი
+                      {t('users.user')}
                       {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </button>
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">სახელი</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">გვარი</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ელ. ფოსტა</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">სტატუსი</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">რეგისტრაციის თარიღი</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">მოქმედებები</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.name')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.lastName')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.email')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.status')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.registrationDate')}</th>
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{t('users.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -281,7 +283,7 @@ const UsersPage = () => {
                             : 'bg-red-100 text-red-800'
                         }`}
                       >
-                        {user.status === 'active' ? 'აქტიური' : 'დაბლოკილი'}
+                        {user.status === 'active' ? t('common.active') : t('common.blocked')}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -294,13 +296,13 @@ const UsersPage = () => {
                       <div className="flex justify-end gap-2">
                         <button 
                           className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
-                          title="რედაქტირება"
+                          title={t('users.edit')}
                         >
                           <Edit size={18} />
                         </button>
                         <button 
                           className="p-2 rounded-lg hover:bg-gray-100 text-red-500"
-                          title="წაშლა"
+                          title={t('users.delete')}
                           onClick={() => setDeleteConfirmation({ show: true, userId: user.id })}
                         >
                           <Trash2 size={18} />
@@ -314,7 +316,7 @@ const UsersPage = () => {
                 {getFilteredUsers().length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                      მომხმარებელი ვერ მოიძებნა
+                      {t('users.noUsersFound')}
                     </td>
                   </tr>
                 )}
@@ -336,13 +338,13 @@ const UsersPage = () => {
                   <div className="flex gap-2">
                     <button 
                       className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
-                      title="რედაქტირება"
+                      title={t('users.edit')}
                     >
                       <Edit size={18} />
                     </button>
                     <button 
                       className="p-2 rounded-lg hover:bg-gray-100 text-red-500"
-                      title="წაშლა"
+                      title={t('users.delete')}
                       onClick={() => setDeleteConfirmation({ show: true, userId: user.id })}
                     >
                       <Trash2 size={18} />
@@ -351,16 +353,16 @@ const UsersPage = () => {
                 </div>
                 <div className="ml-13 pl-3">
                   <div className="grid grid-cols-2 gap-1 mt-2">
-                    <p className="text-xs text-gray-500">სახელი:</p>
+                    <p className="text-xs text-gray-500">{t('users.name')}:</p>
                     <p className="text-xs font-medium">{user.first_name || '-'}</p>
                     
-                    <p className="text-xs text-gray-500">გვარი:</p>
+                    <p className="text-xs text-gray-500">{t('users.lastName')}:</p>
                     <p className="text-xs font-medium">{user.last_name || '-'}</p>
                     
-                    <p className="text-xs text-gray-500">ელ. ფოსტა:</p>
+                    <p className="text-xs text-gray-500">{t('users.email')}:</p>
                     <p className="text-xs font-medium">{user.email || '-'}</p>
                     
-                    <p className="text-xs text-gray-500">სტატუსი:</p>
+                    <p className="text-xs text-gray-500">{t('users.status')}:</p>
                     <p className="text-xs">
                       <span 
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -369,11 +371,11 @@ const UsersPage = () => {
                             : 'bg-red-100 text-red-800'
                         }`}
                       >
-                        {user.status === 'active' ? 'აქტიური' : 'დაბლოკილი'}
+                        {user.status === 'active' ? t('common.active') : t('common.blocked')}
                       </span>
                     </p>
                     
-                    <p className="text-xs text-gray-500">რეგისტრაციის თარიღი:</p>
+                    <p className="text-xs text-gray-500">{t('users.registrationDate')}:</p>
                     <p className="text-xs font-medium">
                       {user.created_at
                         ? new Date(user.created_at).toLocaleDateString('ka-GE')
@@ -388,7 +390,7 @@ const UsersPage = () => {
             {/* If no users match the filter criteria */}
             {getFilteredUsers().length === 0 && (
               <div className="px-6 py-8 text-center text-gray-500">
-                მომხმარებელი ვერ მოიძებნა
+                {t('users.noUsersFound')}
               </div>
             )}
           </div>
@@ -398,10 +400,10 @@ const UsersPage = () => {
             <div className="text-sm text-gray-600 text-center sm:text-left">
               {getFilteredUsers().length > 0 ? (
                 <>
-                  ნაჩვენებია {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, getFilteredUsers().length)} / {getFilteredUsers().length}
+                  {t('common.showing')} {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, getFilteredUsers().length)} / {getFilteredUsers().length}
                 </>
               ) : (
-                'მომხმარებლები არ მოიძებნა'
+                t('users.noUsersFound')
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -453,7 +455,7 @@ const UsersPage = () => {
                       : 'text-gray-600 border-gray-200 hover:bg-gray-50 active:bg-gray-100'
                   }`}
                 >
-                  უკან
+                  {t('common.previous')}
                 </button>
                 <button 
                   onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
@@ -464,7 +466,7 @@ const UsersPage = () => {
                       : 'bg-primary text-white hover:bg-secondary active:bg-secondary/90'
                   }`}
                 >
-                  შემდეგი
+                  {t('common.next')}
                 </button>
               </div>
             </div>
@@ -478,23 +480,23 @@ const UsersPage = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center mb-4 text-amber-600">
               <AlertCircle className="mr-2" size={24} />
-              <h3 className="text-lg font-medium">მომხმარებლის წაშლა</h3>
+              <h3 className="text-lg font-medium">{t('users.deleteUser')}</h3>
             </div>
-            <p className="mb-6 text-gray-700">დარწმუნებული ხართ, რომ გსურთ წაშალოთ ეს მომხმარებელი?</p>
+            <p className="mb-6 text-gray-700">{t('users.deleteConfirmation')}</p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirmation({show: false, userId: null})}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                 disabled={loading}
               >
-                გაუქმება
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => deleteConfirmation.userId && handleDeleteUser(deleteConfirmation.userId)}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
                 disabled={loading}
               >
-                {loading ? 'იტვირთება...' : 'წაშლა'}
+                {loading ? t('common.loading') : t('users.delete')}
               </button>
             </div>
           </div>

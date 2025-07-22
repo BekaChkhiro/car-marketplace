@@ -105,6 +105,11 @@
       "km": "კმ",
       "available": "ხელმისაწვდომია"
     },
+    "actions": {
+      "edit": "რედაქტირება",
+      "delete": "წაშლა",
+      "view": "ნახვა"
+    },
     "vip": {
       "title": "VIP სტატუსი",
       "daysLeft": "დარჩენილი დღეები",
@@ -114,6 +119,12 @@
       "inactive": "არააქტიური",
       "buyDays": "დღეების შეძენა",
       "extendDays": "ვადის გაგრძელება",
+      "remaining": {
+        "minutes": "დარჩენილია {minutes} წუთი",
+        "hoursMinutes": "დარჩენილია {hours} საათი და {minutes} წუთი",
+        "day": "დარჩენილია 1 დღე",
+        "days": "დარჩენილია {days} დღე"
+      },
       "modal": {
         "buyVip": "VIP სტატუსის შეძენა",
         "balance": "ბალანსი",
@@ -154,13 +165,409 @@
     "paymentMethod": "გადახდის მეთოდი",
     "date": "თარიღი",
     "status": "სტატუსი",
-    "noTransactions": "ტრანზაქციები არ არის"
+    "noTransactions": "ტრანზაქციები არ არის",
+    "bankOfGeorgia": "საქართველოს ბანკი",
+    "bogPaymentSuccess": "საქართველოს ბანკის გადახდა წარმატებით დასრულდა",
+    "onlinePaymentSuccess": "ონლაინ გადახდა წარმატებით დასრულდა",
+    "bogPaymentFailed": "საქართველოს ბანკის გადახდა ვერ დასრულდა",
+    "onlinePaymentFailed": "ონლაინ გადახდა ვერ დასრულდა",
+    "waitingForBogPayment": "ველოდებით საქართველოს ბანკის გადახდის დასტურს...",
+    "waitingForPayment": "ველოდებით გადახდის დასტურს...",
+    "bogPaymentProcessed": "საქართველოს ბანკის გადახდა დამუშავებულია",
+    "paymentProcessed": "გადახდა დამუშავებულია",
+    "checkingPayment": "ვამოწმებთ გადახდის სტატუსს...",
+    "paymentError": "გადახდის დამუშავებისას მოხდა შეცდომა",
+    "updateFailed": "ბალანსის მიღება ვერ მოხერხდა",
+    "invalidAmount": "გთხოვთ შეიყვანოთ სწორი თანხა",
+    "fundsAdded": "თანხა წარმატებით დაემატა",
+    "addFailed": "თანხის დამატება ვერ მოხერხდა",
+    "redirectingToBank": "მიმდინარეობს გადამისამართება {{bank}}-ზე...",
+    "paymentInitFailed": "გადახდის ინიციალიზაცია ვერ მოხერხდა",
+    "payOnline": "ონლაინ გადახდა",
+    "processingPayment": "მიმდინარეობს გადახდის დამუშავება..."
   },
   "wishlist": {
     "title": "რჩეულები",
     "empty": "თქვენ ჯერ არ გაქვთ რჩეული განცხადებები",
+    "clearList": "სიის გასუფთავება",
+    "clearListTitle": "რჩეულების გასუფთავება",
+    "clearListMessage": "დარწმუნებული ხართ, რომ გსურთ ყველა რჩეული განცხადების წაშლა?",
+    "clearButton": "გასუფთავება",
+    "removeTitle": "განცხადების წაშლა",
+    "removeMessage": "დარწმუნებული ხართ, რომ გსურთ {{brand}} {{model}}-ის წაშლა რჩეულებიდან?",
+    "removeButton": "წაშლა",
+    "clearSuccess": "რჩეული განცხადებები წარმატებით გასუფთავდა",
+    "clearError": "რჩეულების გასუფთავების დროს მოხდა შეცდომა",
+    "removeSuccess": "განცხადება წარმატებით ამოიშალა რჩეულებიდან",
+    "removeError": "განცხადების ამოშლების დროს მოხდა შეცდომა",
     "viewDetails": "დეტალების ნახვა",
     "removeFromFavorites": "რჩეულებიდან ამოშლა",
     "addToFavorites": "რჩეულებში დამატება"
+  },
+  "addCar": {
+    "title": "მანქანის დამატება",
+    "subtitle": "შეავსეთ ყველა საჭირო ინფორმაცია",
+    "submit": "დამატება",
+    "basicInfo": {
+      "title": "სათაური",
+      "titlePlaceholder": "მაგ: BMW X5 M-პაკეტი, იდეალურ მდგომარეობაში",
+      "brand": "მარკა",
+      "selectBrand": "აირჩიეთ მარკა",
+      "model": "მოდელი",
+      "selectModel": "აირჩიეთ მოდელი",
+      "vinCode": "VIN კოდი",
+      "vinPlaceholder": "მაგ: 1HGBH41JXMN109186",
+      "category": "კატეგორია",
+      "selectCategory": "აირჩიეთ კატეგორია",
+      "year": "გამოშვების წელი",
+      "selectYear": "აირჩიეთ წელი",
+      "price": "ფასი",
+      "pricePlaceholder": "მაგ: 15000"
+    },
+    "technicalSpecs": {
+      "title": "ტექნიკური მახასიათებლები",
+      "subtitle": "მანქანის ტექნიკური დეტალები",
+      "transmission": "გადაცემათა კოლოფი",
+      "manual": "მექანიკური",
+      "automatic": "ავტომატური",
+      "fuelType": "საწვავის ტიპი",
+      "selectFuelType": "აირჩიეთ საწვავის ტიპი",
+      "engineSize": "ძრავის მოცულობა (ლიტრი)",
+      "selectEngineSize": "აირჩიეთ ძრავის მოცულობა",
+      "engineSizeHint": "აირჩიეთ ძრავის მოცულობა ლიტრებში",
+      "cylinders": "ცილინდრების რაოდენობა",
+      "cylindersPlaceholder": "მაგ: 4",
+      "cylindersHint": "მიუთითეთ ძრავის ცილინდრების რაოდენობა",
+      "mileage": "გარბენი (კმ)",
+      "mileagePlaceholder": "მაგ: 100000",
+      "driveType": "წამყვანი თვლები",
+      "steeringWheel": "საჭე",
+      "color": "ფერი",
+      "selectColor": "აირჩიეთ ფერი",
+      "interiorColor": "სალონის ფერი",
+      "selectInteriorColor": "აირჩიეთ სალონის ფერი",
+      "interiorMaterial": "სალონის მასალა",
+      "selectInteriorMaterial": "აირჩიეთ სალონის მასალა",
+      "airbagsCount": "უსაფრთხოების ბალიშების რაოდენობა",
+      "selectAirbagsCount": "აირჩიეთ აირბეგების რაოდენობა",
+      "airbags": "ედუღები",
+      "doors": "კარები",
+      "selectDoors": "აირჩიეთ კარები"
+    },
+    "features": {
+      "title": "მანქანის თავისებურებები",
+      "subtitle": "აირჩიეთ ხელმისაწვდომი თავისებურებები",
+      "groups": {
+        "safety": "უსაფრთხოება",
+        "comfort": "კომფორტი",
+        "electronics": "ელექტრონიკა",
+        "additional": "დამატებითი აღჭურვილობა"
+      },
+      "items": {
+        "has_abs": "ABS",
+        "has_traction_control": "მოცურების საწინააღმდეგო სისტემა",
+        "has_central_locking": "ცენტრალური საკეტი",
+        "has_alarm": "სიგნალიზაცია",
+        "has_fog_lights": "სანისლე ფარები",
+        "has_air_conditioning": "კონდიციონერი",
+        "has_climate_control": "კლიმატკონტროლი",
+        "has_heated_seats": "სავარძლის გათბობა",
+        "has_seat_memory": "სავარძლის მეხსიერება",
+        "has_cruise_control": "კრუიზ-კონტროლი",
+        "has_start_stop": "Start/Stop სისტემა",
+        "has_sunroof": "ლუქი",
+        "has_electric_windows": "ელექტრო შუშები",
+        "has_board_computer": "ბორტკომპიუტერი",
+        "has_navigation": "მონიტორი (ნავიგაცია)",
+        "has_parking_control": "პარკინგკონტროლი",
+        "has_rear_view_camera": "უკანა ხედვის კამერა",
+        "has_aux": "AUX",
+        "has_bluetooth": "Bluetooth",
+        "has_multifunction_steering_wheel": "მულტი საჭე",
+        "has_hydraulics": "ჰიდრავლიკა",
+        "has_alloy_wheels": "დისკები",
+        "has_spare_tire": "სათადარიგო საბურავი",
+        "is_disability_adapted": "სსმპ ადაპტირებული"
+      }
+    },
+    "location": {
+      "title": "მდებარეობა",
+      "subtitle": "მიუთითეთ მანქანის ადგილმდებარეობა",
+      "locationType": "მდებარეობის ტიპი",
+      "country": "ქვეყანა",
+      "city": "ქალაქი",
+      "selectCountry": "აირჩიეთ ქვეყანა",
+      "selectCity": "აირჩიეთ ქალაქი",
+      "inGeorgia": "საქართველოში",
+      "inTransit": "ტრანზიტში",
+      "international": "საზღვარგარეთ",
+      "transitDescription": "მანქანა იმყოფება ტრანზიტში საქართველოსკენ მომავალში",
+      "internationalDescription": "მანქანა იმყოფება საზღვარგარეთ"
+    },
+    "description": {
+      "title": "აღწერა",
+      "subtitle": "აღწერეთ თქვენი მანქანა სხვადასხვა ენაზე",
+      "georgian": "აღწერა ქართულად",
+      "english": "აღწერა ინგლისურად",
+      "russian": "აღწერა რუსულად",
+      "placeholder": "აღწერეთ მანქანის მდგომარეობა, თავისებურებები და სხვა მნიშვნელოვანი დეტალები..."
+    },
+    "authorInfo": {
+      "title": "საკონტაქტო ინფორმაცია",
+      "name": "კონტაქტის სახელი",
+      "namePlaceholder": "თქვენი სახელი ან კომპანიის სახელი",
+      "phone": "ტელეფონის ნომერი",
+      "phonePlaceholder": "თქვენი ტელეფონის ნომერი"
+    },
+    "images": {
+      "title": "მანქანის ფოტოები",
+      "subtitle": "ატვირთეთ მაღალი ხარისხის ფოტოები თქვენი მანქანისა"
+    },
+    "vipStatus": {
+      "title": "VIP სტატუსი",
+      "subtitle": "გახადეთ თქვენი განცხადება უფრო თვალსაჩინო",
+      "titleFull": "VIP სტატუსი და დამატებითი სერვისები",
+      "description": "აირჩიეთ VIP სტატუსი და დამატებითი სერვისები თქვენი განცხადებისთვის.",
+      "balance": "ბალანსი",
+      "currency": "ლარი",
+      "confirmTitle": "VIP სტატუსის შეძენის დადასტურება",
+      "confirmQuestion": "გსურთ შეიძინოთ {status} სტატუსი?",
+      "additionalServices": "დამატებითი სერვისები",
+      "colorHighlighting": "ფერის გამოყოფა",
+      "colorHighlightingDescription": "თქვენი განცხადება გამოირჩევა ფერადი ფონით",
+      "autoRenewal": "ავტომატური განახლება",
+      "autoRenewalDescription": "განცხადება ავტომატურად განახლდება ყოველდღე",
+      "pricePerDay": "1 დღე {price} ლარი",
+      "totalPrice": "საერთო ფასი: {price} ლარი (1 დღე)",
+      "cancel": "გაუქმება",
+      "confirm": "დადასტურება",
+      "processing": "მიმდინარეობს...",
+      "insufficientBalance": "არასაკმარისი ბალანსი",
+      "select": "არჩევა",
+      "purchase": "შეძენა",
+      "types": {
+        "none": "სტანდარტული",
+        "vip": "VIP",
+        "vip_plus": "VIP+",
+        "super_vip": "SUPER VIP"
+      },
+      "descriptions": {
+        "none": "სტანდარტული განთავსება",
+        "vip": "გაზრდილი ხილვადობა",
+        "vip_plus": "მაღალი ხილვადობა და გამორჩეული ბეჯი",
+        "super_vip": "მაქსიმალური ხილვადობა და პრემიუმ ბეჯი"
+      },
+      "features": {
+        "vip": [
+          "გამოკვეთილი განცხადება",
+          "5-ჯერ მეტი ხილვადობა"
+        ],
+        "vip_plus": [
+          "გამოკვეთილი განცხადება",
+          "კატეგორიაში ზედა პოზიცია",
+          "10-ჯერ მეტი ხილვადობა"
+        ],
+        "super_vip": [
+          "გამოკვეთილი განცხადება",
+          "კატეგორიაში ზედა პოზიცია",
+          "ძიების შედეგებში პირველობა",
+          "20-ჯერ მეტი ხილვადობა"
+        ]
+      },
+      "free": "უფასო"
+    }
+  },
+  "editCar": {
+    "title": "მანქანის რედაქტირება",
+    "subtitle": "განაახლეთ თქვენი მანქანის ინფორმაცია",
+    "submit": "ცვლილებების შენახვა"
+  },
+  "addPart": {
+    "title": "ნაწილის დამატება",
+    "subtitle": "დაამატეთ მანქანის ნაწილი გასაყიდად",
+    "submit": "ნაწილის დამატება"
+  },
+  "editPart": {
+    "title": "ნაწილის რედაქტირება",
+    "subtitle": "განაახლეთ ნაწილის ინფორმაცია",
+    "submit": "ცვლილებების შენახვა"
+  },
+  "profileHome": {
+    "title": "პროფილის დაშბორდი",
+    "welcome": "კეთილი იყოს დაბრუნება",
+    "quickStats": "სწრაფი სტატისტიკა",
+    "recentActivity": "ბოლო აქტივობა"
+  },
+  "parts": {
+    "title": "ჩემი ნაწილები",
+    "subtitle": "მართეთ თქვენი ნაწილების განცხადებები",
+    "noParts": "თქვენ ჯერ არ გაქვთ ნაწილების განცხადებები",
+    "addYourFirst": "დაამატეთ თქვენი პირველი ნაწილი"
+  },
+  "imageUpload": {
+    "invalidFormat": "ფაილის ფორმატი არასწორია",
+    "dropHere": "ჩააგდეთ სურათები აქ...",
+    "uploading": "მიმდინარეობს ატვირთვა...",
+    "dropOrClick": "ჩააგდეთ სურათები ან დააწკაპუნეთ ასატვირთად",
+    "selectOrDrop": "აირჩიეთ ან ჩააგდეთ სურათები",
+    "formatInfo": "დაშვებულია JPEG, PNG, WebP ფორმატები, მაქსიმუმ 10MB",
+    "existingPhotos": "არსებული ფოტოები",
+    "removePhoto": "ფოტოს წაშლა",
+    "setAsPrimary": "დააყენეთ მთავარ სურათად",
+    "newPhotos": "ახალი ფოტოები",
+    "primaryPhoto": "მთავარი სურათი",
+    "addMore": "დაამატეთ მეტი",
+    "photos": "სურათი",
+    "primaryPhotoSelected": "მთავარი სურათი არჩეულია",
+    "removeAll": "ყველას წაშლა"
+  },
+  "cities": {
+    "khashuri": "ხაშური",
+    "samtredia": "სამტრედია",
+    "senaki": "სენაკი"
+  },
+  "countries": {
+    "georgia": "საქართველო",
+    "germany": "გერმანია",
+    "usa": "აშშ",
+    "japan": "იაპონია",
+    "uk": "დიდი ბრიტანეთი",
+    "france": "საფრანგეთი",
+    "italy": "იტალია",
+    "spain": "ესპანეთი",
+    "netherlands": "ნიდერლანდები",
+    "china": "ჩინეთი",
+    "canada": "კანადა",
+    "turkey": "თურქეთი",
+    "poland": "პოლონეთი",
+    "armenia": "სომხეთი"
+  },
+  "login": {
+    "title": "შესვლა",
+    "email": {
+      "label": "ელ-ფოსტა",
+      "placeholder": "შეიყვანეთ ელ-ფოსტა"
+    },
+    "password": {
+      "label": "პაროლი",
+      "placeholder": "შეიყვანეთ პაროლი"
+    },
+    "rememberMe": "დამიმახსოვრე",
+    "forgotPassword": "დაგავიწყდა პაროლი?",
+    "submit": "შესვლა",
+    "loading": "გთხოვთ მოიცადოთ...",
+    "orLoginWith": "ან გაიარეთ ავტორიზაცია",
+    "noAccount": "არ გაქვთ ანგარიში?",
+    "registerLink": "რეგისტრაცია",
+    "errors": {
+      "invalidCredentials": "არასწორი ელ-ფოსტა ან პაროლი",
+      "general": "შესვლა ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან"
+    }
+  },
+  "register": {
+    "title": "რეგისტრაცია",
+    "stepIndicator": {
+      "step1": "1",
+      "step2": "2"
+    },
+    "back" : "უკან",
+    "userType": {
+      "label": "მომხმარებლის ტიპი",
+      "regular": "რეგულარული მომხმარებელი",
+      "dealer": "დილერი"
+    },
+    "personalInfo": {
+      "firstName": {
+        "label": "სახელი",
+        "placeholder": "სახელი"
+      },
+      "lastName": {
+        "label": "გვარი",
+        "placeholder": "გვარი"
+      },
+      "age": {
+        "label": "ასაკი",
+        "placeholder": "აირჩიეთ ასაკი"
+      },
+      "gender": {
+        "label": "სქესი",
+        "male": "მამრობითი",
+        "female": "მდედრობითი"
+      },
+      "phone": {
+        "label": "ტელეფონი",
+        "placeholder": "+995"
+      },
+      "year" : "წელი"
+    },
+    "dealerInfo": {
+      "title": "დილერის ინფორმაცია",
+      "companyName": {
+        "label": "კომპანიის სახელი",
+        "placeholder": "კომპანიის სახელი"
+      },
+      "establishedYear": {
+        "label": "დაარსების წელი",
+        "placeholder": "აირჩიეთ წელი"
+      },
+      "website": {
+        "label": "ვებ გვერდი",
+        "placeholder": "https://example.com"
+      },
+      "address": {
+        "label": "მისამართი",
+        "placeholder": "მისამრთი"
+      },
+      "logo": {
+        "label": "კომპანიის ლოგო",
+        "error": "გთხოვთ, ატვირთოთ ლოგო"
+      }
+    },
+    "accountInfo": {
+      "email": {
+        "label": "ელ-ფოსტა",
+        "placeholder": "შეიყვანეთ ელ-ფოსტა"
+      },
+      "password": {
+        "label": "პაროლი",
+        "placeholder": "შეიყვანეთ პაროლი",
+        "strength": {
+          "weak": "სიძლიერი",
+          "medium": "შუა",
+          "strong": "ძლიერი"
+        }
+      },
+      "confirmPassword": {
+        "label": "გაიმეორეთ პაროლი",
+        "placeholder": "გაიმეორეთ პაროლი"
+      },
+      "terms": {
+        "label": "ვეთანხმები",
+        "termsLink": "წესებს და პირობებს"
+      }
+    },
+    "errors": {
+      "required": "გთხოვთ, შეავსოთ ყველა სავალდებულო ველი",
+      "companyName": "გთხოვთ, შეიყვანოთ კომპანიის სახელი",
+      "logo": "გთხოვთ, ატვირთოთ მინიმუმ ერთი სურათი",
+      "age": "ასაკი უნდა იყოს 18-დან 100-მდე",
+      "phone": "გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX",
+      "email": "გთხოვთ, შეიყვანოთ ელ-ფოსტის სწორი ფორმატი",
+      "passwordMismatch": "პაროლები არ ემთხვევა",
+      "terms": "გთხოვთ, დაეთანხმოთ წესებს და პირობებს",
+      "registrationFailed": "რეგისტრაცია ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან"
+    },
+    "next": "შემდეგი",
+    "alreadyHaveAccount": "უკვე გაქვთ ანგარიში?",
+    "loginLink": "შესვლა",
+    "validation": {
+      "password": {
+        "minLength": "პაროლი უნდა შეიცავდეს მინიმუმ 8 სიმბოლო",
+        "specialChar": "პაროლი უნდა შეიცავდეს მინიმუმ ერთ სპეციალურ სიმბოლო",
+        "number": "პაროლი უნდა შეიცავდეს მინიმუმ ერთ რიცხვს",
+        "uppercase": "პაროლი უნდა შეიცავდეს მინიმუმ ერთ დიდ ასოს",
+        "lowercase": "პაროლი უნდა შეიცავდეს მინიმუმ ერთ პატარა ასოს"
+      }
+    }
   }
 }

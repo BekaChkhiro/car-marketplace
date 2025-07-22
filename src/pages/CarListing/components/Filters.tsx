@@ -212,14 +212,75 @@ const Filters: React.FC<FiltersProps> = ({
 
   // Prepare options for select inputs
   const years = Array.from({ length: 50 }, (_, i) => (new Date().getFullYear() - i).toString());
-  const fuelTypes = ['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო', 'ბუნებრივი აირი'];
-  const transmissions = ['ავტომატიკა', 'მექანიკა', 'ვარიატორი', 'ნახევრად ავტომატური'];
-  const driveTypes = ['წინა', 'უკანა', '4x4'];
-  const steeringWheels = ['მარცხენა', 'მარჯვენა'];
-  const colors = ['თეთრი', 'შავი', 'ლურჯი', 'წითელი', 'ვერცხლისფერი', 'რუხი', 'ყავისფერი', 'ბეჟი', 'მწვანე', 'ყვითელი', 'ოქროსფერი', 'სხვა'];
-  const interiorMaterials = ['ტყავი', 'ნაჭერი', 'ალკანტარა', 'ველიური', 'სხვა'];
-  const interiorColors = ['შავი', 'ბეჟი', 'რუხი', 'ყავისფერი', 'წითელი', 'თეთრი', 'სხვა'];
-  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი', 'თელავი', 'სხვა'];
+  
+  const fuelTypes = [
+    { key: 'petrol', value: t('filter:fuel.petrol') },
+    { key: 'diesel', value: t('filter:fuel.diesel') },
+    { key: 'hybrid', value: t('filter:fuel.hybrid') },
+    { key: 'electric', value: t('filter:fuel.electric') },
+    { key: 'naturalGas', value: t('filter:fuel.naturalGas') }
+  ];
+  
+  const transmissions = [
+    { key: 'automatic', value: t('filter:transmissions.automatic') },
+    { key: 'manual', value: t('filter:transmissions.manual') },
+    { key: 'variator', value: t('filter:transmissions.variator') },
+    { key: 'semiAutomatic', value: t('filter:transmissions.semiAutomatic') }
+  ];
+  
+  const driveTypes = [
+    { key: 'front', value: t('filter:driveTypes.front') },
+    { key: 'rear', value: t('filter:driveTypes.rear') },
+    { key: 'allWheel', value: t('filter:driveTypes.allWheel') }
+  ];
+  
+  const steeringWheels = [
+    { key: 'left', value: t('filter:steeringWheels.left') },
+    { key: 'right', value: t('filter:steeringWheels.right') }
+  ];
+  
+  const colors = [
+    { key: 'white', value: t('filter:colors.white') },
+    { key: 'black', value: t('filter:colors.black') },
+    { key: 'blue', value: t('filter:colors.blue') },
+    { key: 'red', value: t('filter:colors.red') },
+    { key: 'silver', value: t('filter:colors.silver') },
+    { key: 'gray', value: t('filter:colors.gray') },
+    { key: 'brown', value: t('filter:colors.brown') },
+    { key: 'green', value: t('filter:colors.green') },
+    { key: 'yellow', value: t('filter:colors.yellow') }
+  ];
+  
+  const interiorMaterials = [
+    { key: 'leather', value: t('filter:interiorMaterials.leather') },
+    { key: 'fabric', value: t('filter:interiorMaterials.fabric') },
+    { key: 'alcantara', value: t('filter:interiorMaterials.alcantara') },
+    { key: 'velour', value: t('filter:interiorMaterials.velour') },
+    { key: 'other', value: t('filter:interiorMaterials.other') }
+  ];
+  
+  const interiorColors = [
+    { key: 'black', value: t('filter:interiorColors.black') },
+    { key: 'beige', value: t('filter:interiorColors.beige') },
+    { key: 'gray', value: t('filter:interiorColors.gray') },
+    { key: 'brown', value: t('filter:interiorColors.brown') },
+    { key: 'red', value: t('filter:interiorColors.red') },
+    { key: 'white', value: t('filter:interiorColors.white') },
+    { key: 'other', value: t('filter:interiorColors.other') }
+  ];
+  
+  const locations = [
+    { key: 'tbilisi', value: t('filter:locations.tbilisi') },
+    { key: 'batumi', value: t('filter:locations.batumi') },
+    { key: 'kutaisi', value: t('filter:locations.kutaisi') },
+    { key: 'rustavi', value: t('filter:locations.rustavi') },
+    { key: 'gori', value: t('filter:locations.gori') },
+    { key: 'zugdidi', value: t('filter:locations.zugdidi') },
+    { key: 'poti', value: t('filter:locations.poti') },
+    { key: 'telavi', value: t('filter:locations.telavi') },
+    { key: 'other', value: t('filter:locations.other') }
+  ];
+  
   const cylinderOptions = ['3', '4', '5', '6', '8', '10', '12'];
   const airbagOptions = ['0', '1', '2', '3', '4', '6', '8', '10+'];
   
@@ -232,7 +293,7 @@ const Filters: React.FC<FiltersProps> = ({
         <Filter size={22} className="text-primary" /> {t('carListing:filters.title')}
       </h2>
         <div className="text-sm font-medium px-2 py-1 bg-green-50 text-primary rounded-full">
-          {totalCars > 0 ? `${totalCars} განცხადება` : ""}
+          {totalCars > 0 ? `${totalCars} ${t('filter:resultsCount')}` : ""}
         </div>
       </div>
 
@@ -262,7 +323,7 @@ const Filters: React.FC<FiltersProps> = ({
                     { value: '', label: t('carListing:filters.allCategories') },
                     ...categories.map(category => ({
                       value: category.id.toString(),
-                      label: category.name
+                      label: t(`filter:${category.name}`, category.name)
                     }))
                   ]}
                   icon={<Car size={18} />}
@@ -322,7 +383,7 @@ const Filters: React.FC<FiltersProps> = ({
                   name="year"
                   fromValue={tempFilters.yearFrom?.toString() || ''}
                   toValue={tempFilters.yearTo?.toString() || ''}
-                  placeholder={{ from: t('carListing:filters.from'), to: t('carListing:filters.to') }}
+                  placeholder={{ from: t('carListing:yearFrom'), to: t('carListing:yearTo') }}
                   onChange={handleRangeChange}
                 />
               </div>
@@ -346,7 +407,7 @@ const Filters: React.FC<FiltersProps> = ({
                 name="price"
                 fromValue={tempFilters.priceFrom?.toString() || ''}
                 toValue={tempFilters.priceTo?.toString() || ''}
-                placeholder={{ from: t('carListing:filters.from'), to: t('carListing:filters.to') }}
+                placeholder={{ from: t('carListing:priceFrom'), to: t('carListing:priceTo') }}
                 onChange={handleRangeChange}
               />
             </div>
@@ -425,8 +486,8 @@ const Filters: React.FC<FiltersProps> = ({
                   options={[
                     { value: '', label: t('carListing:filters.any') },
                     ...fuelTypes.map(type => ({
-                      value: type,
-                      label: type
+                      value: type.value,
+                      label: type.value
                     }))
                   ]}
                   icon={<Droplets size={18} />}
@@ -460,8 +521,8 @@ const Filters: React.FC<FiltersProps> = ({
                   options={[
                     { value: '', label: t('carListing:filters.any') },
                     ...transmissions.map(type => ({
-                      value: type,
-                      label: type
+                      value: type.value,
+                      label: type.value
                     }))
                   ]}
                   icon={<Sliders size={18} />}
@@ -480,8 +541,8 @@ const Filters: React.FC<FiltersProps> = ({
                   options={[
                     { value: '', label: t('carListing:filters.any') },
                     ...driveTypes.map(type => ({
-                      value: type,
-                      label: type
+                      value: type.value,
+                      label: type.value
                     }))
                   ]}
                   icon={<Gauge size={18} />}
@@ -500,8 +561,8 @@ const Filters: React.FC<FiltersProps> = ({
                   options={[
                     { value: '', label: t('carListing:filters.any') },
                     ...steeringWheels.map(type => ({
-                      value: type,
-                      label: type
+                      value: type.value,
+                      label: type.value
                     }))
                   ]}
                 />
@@ -546,8 +607,8 @@ const Filters: React.FC<FiltersProps> = ({
                   options={[
                     { value: '', label: t('carListing:filters.any') },
                     ...interiorMaterials.map(material => ({
-                      value: material,
-                      label: material
+                      value: material.value,
+                      label: material.value
                     }))
                   ]}
                 />
@@ -606,8 +667,8 @@ const Filters: React.FC<FiltersProps> = ({
                 options={[
                   { value: '', label: t('carListing:filters.any') },
                   ...locations.map(location => ({
-                    value: location,
-                    label: location
+                    value: location.value,
+                    label: location.value
                   }))
                 ]}
                 icon={<MapPin size={18} />}

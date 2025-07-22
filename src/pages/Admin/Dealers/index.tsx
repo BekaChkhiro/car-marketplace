@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Loading } from '../../../components/ui';
 import { useToast } from '../../../context/ToastContext';
+import { useTranslation } from 'react-i18next';
 import dealerService from '../../../api/services/dealerService';
 import { Dealer } from '../../../api/types/dealer.types';
 import { Building, Plus, Edit, Trash2, Search, Calendar, Phone, Globe, MapPin } from 'lucide-react';
@@ -8,6 +9,7 @@ import DealerForm from './components/DealerForm';
 import Pagination from '../../../components/ui/Pagination';
 
 const DealersAdmin: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -49,7 +51,7 @@ const DealersAdmin: React.FC = () => {
         setTotalCount(response.meta?.total || 0);
       } else {
         console.log('API call failed:', response);
-        showToast('დილერების ჩამოტვირთვა ვერ მოხერხდა', 'error');
+        showToast(t('dealers.error'), 'error');
       }
     } catch (error) {
       console.error('Error fetching dealers:', error);
@@ -74,17 +76,17 @@ const DealersAdmin: React.FC = () => {
   };
 
   const handleDeleteDealer = async (id: number) => {
-    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ ამ დილერის წაშლა?')) {
+    if (!window.confirm(t('users.deleteConfirmation'))) {
       return;
     }
 
     try {
       await dealerService.deleteDealer(id);
-      showToast('დილერი წარმატებით წაიშალა', 'success');
+      showToast(t('users.deleteSuccess'), 'success');
       fetchDealers();
     } catch (error) {
       console.error('Error deleting dealer:', error);
-      showToast('დილერის წაშლა ვერ მოხერხდა', 'error');
+      showToast(t('users.deleteError'), 'error');
     }
   };
 
@@ -110,13 +112,13 @@ const DealersAdmin: React.FC = () => {
     <Container>
       <div className="py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">დილერების მართვა</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('dealers.title')}</h1>
           <button
             onClick={handleCreateDealer}
             className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors flex items-center gap-2"
           >
             <Plus size={20} />
-            ახალი დილერი
+            {t('common.create')} {t('dealers.title')}
           </button>
         </div>
 
@@ -127,7 +129,7 @@ const DealersAdmin: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="ძიება კომპანიის სახელით ან მომხმარებლის სახელით..."
+                placeholder={t('dealers.searchDealers')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -137,14 +139,14 @@ const DealersAdmin: React.FC = () => {
               type="submit"
               className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
-              ძიება
+              {t('common.search')}
             </button>
           </form>
         </div>
 
         {/* Results count */}
         <div className="mb-4 text-sm text-gray-600">
-          სულ მოიძებნა: {totalCount} დილერი
+          {t('common.total')}: {totalCount} {t('dealers.title')}
         </div>
 
         {/* Dealers List */}
@@ -152,8 +154,8 @@ const DealersAdmin: React.FC = () => {
           {dealers.length === 0 ? (
             <div className="text-center py-12">
               <Building className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">დილერები არ მოიძებნა</h3>
-              <p className="text-gray-500">დაამატეთ ახალი დილერი სისტემაში</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('dealers.noDealersFound')}</h3>
+              <p className="text-gray-500">{t('dealers.noDealersFound')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -161,19 +163,19 @@ const DealersAdmin: React.FC = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      დილერი
+                      {t('dealers.companyName')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      მომხმარებელი
+                      {t('dealers.contactPerson')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      კონტაქტი
+                      {t('common.contact')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      სტატისტიკა
+                      {t('common.statistics')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      მოქმედებები
+                      {t('dealers.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -203,7 +205,7 @@ const DealersAdmin: React.FC = () => {
                               {dealer.established_year && (
                                 <>
                                   <Calendar size={12} />
-                                  <span>{dealer.established_year} წლიდან</span>
+                                  <span>{dealer.established_year} {t('common.since')}</span>
                                 </>
                               )}
                             </div>
@@ -235,7 +237,7 @@ const DealersAdmin: React.FC = () => {
                                 rel="noopener noreferrer"
                                 className="text-primary hover:text-secondary"
                               >
-                                ვებ გვერდი
+                                {t('common.website')}
                               </a>
                             </div>
                           )}
@@ -249,7 +251,7 @@ const DealersAdmin: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="text-sm text-gray-900">
-                          {dealer.car_count || 0} მანქანა
+                          {dealer.car_count || 0} {t('cars.title')}
                         </div>
                         <div className="text-sm text-gray-500">
                           {new Date(dealer.created_at).toLocaleDateString('ka-GE')}
@@ -272,7 +274,7 @@ const DealersAdmin: React.FC = () => {
                         </div>
                       </td>
                     </tr>
-                  )) : <tr><td colSpan={5} className="text-center py-4">მონაცემები არ არის მასივი</td></tr>}
+                  )) : <tr><td colSpan={5} className="text-center py-4">{t('common.noData')}</td></tr>}
                 </tbody>
               </table>
             </div>

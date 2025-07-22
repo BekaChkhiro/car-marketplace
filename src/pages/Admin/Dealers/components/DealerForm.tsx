@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Upload, Building, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Dealer } from '../../../../api/types/dealer.types';
 import dealerService from '../../../../api/services/dealerService';
 import { useToast } from '../../../../context/ToastContext';
@@ -14,6 +15,7 @@ interface DealerFormProps {
 }
 
 const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) => {
+  const { t } = useTranslation('admin');
   const [loading, setLoading] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -142,14 +144,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
   };
 
   const getPasswordStrength = (password: string): { color: string; text: string } => {
-    if (!password) return { color: 'bg-gray-200', text: 'სიძლიერე' };
+    if (!password) return { color: 'bg-gray-200', text: t('dealers.form.passwordStrength') };
 
     const { errors } = validatePassword(password);
     const remainingChecks = errors.length;
 
-    if (remainingChecks === 0) return { color: 'bg-green-500', text: 'ძლიერი' };
-    if (remainingChecks <= 2) return { color: 'bg-yellow-500', text: 'საშუალო' };
-    return { color: 'bg-red-500', text: 'სუსტი' };
+    if (remainingChecks === 0) return { color: 'bg-green-500', text: t('dealers.form.strong') };
+    if (remainingChecks <= 2) return { color: 'bg-yellow-500', text: t('dealers.form.medium') };
+    return { color: 'bg-red-500', text: t('dealers.form.weak') };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,27 +160,27 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
     if (!dealer) {
       // Validate all required fields for new dealer
       if (!formData.first_name || !formData.last_name || !formData.phone || !formData.company_name) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('dealers.form.errors.fillRequired'));
         return;
       }
 
       if (!formData.email || !formData.password || !formData.confirm_password) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('dealers.form.errors.emailRequired'));
         return;
       }
       
       if (!formData.agreeToTerms) {
-        setError('გთხოვთ, დაეთანხმოთ წესებს და პირობებს');
+        setError(t('dealers.form.errors.termsRequired'));
         return;
       }
 
       if (!validateEmail(formData.email)) {
-        setError('გთხოვთ, შეიყვანოთ ელ-ფოსტის სწორი ფორმატი');
+        setError(t('dealers.form.errors.emailFormat'));
         return;
       }
       
       if (formData.password !== formData.confirm_password) {
-        setError('პაროლები არ ემთხვევა');
+        setError(t('dealers.form.errors.passwordMismatch'));
         return;
       }
 
@@ -190,7 +192,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
       // Phone validation
       if (!formData.phone.match(/^(\+995|0)\d{9}$/)) {
-        setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX');
+        setError(t('dealers.form.errors.phoneFormat'));
         return;
       }
     }
@@ -219,7 +221,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
           setIsUploading(false);
         }
 
-        showToast('დილერი წარმატებით განახლდა', 'success');
+        showToast(t('dealers.form.dealerUpdatedSuccess'), 'success');
       } else {
         // Create new dealer
         const createData = {
@@ -252,13 +254,13 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
           setIsUploading(false);
         }
 
-        showToast('დილერი წარმატებით შეიქმნა', 'success');
+        showToast(t('dealers.form.dealerCreatedSuccess'), 'success');
       }
 
       onSubmit(true);
     } catch (error: any) {
       console.error('Form submission error:', error);
-      showToast(error.message || 'მოქმედება ვერ შესრულდა', 'error');
+      showToast(error.message || t('dealers.form.operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -267,11 +269,11 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
   const renderEditForm = () => (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">დილერის ინფორმაცია</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('dealers.form.dealerInfo')}</h3>
         
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            კომპანიის სახელი *
+            {t('dealers.companyName')} *
           </label>
           <input
             type="text"
@@ -279,14 +281,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
             value={formData.company_name}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="კომპანიის სახელი"
+            placeholder={t('dealers.companyName')}
             required
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ტელეფონი
+            {t('dealers.phone')}
           </label>
           <input
             type="tel"
@@ -300,7 +302,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            დაარსების წელი
+            {t('dealers.form.establishedYear')}
           </label>
           <select
             name="established_year"
@@ -308,7 +310,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <option value="">აირჩიეთ წელი</option>
+            <option value="">{t('dealers.form.chooseYear')}</option>
             {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
               <option key={year} value={year}>
                 {year}
@@ -319,7 +321,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ვებ გვერდი
+            {t('dealers.form.website')}
           </label>
           <input
             type="url"
@@ -333,7 +335,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            სოციალური მედია
+            {t('dealers.form.socialMedia')}
           </label>
           <input
             type="url"
@@ -347,7 +349,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            მისამართი
+            {t('dealers.address')}
           </label>
           <textarea
             name="address"
@@ -355,14 +357,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
             onChange={handleInputChange}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="მისამართი"
+            placeholder={t('dealers.address')}
           />
         </div>
 
         {/* Logo Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ლოგო
+            {t('dealers.form.logo')}
           </label>
           <DealerImageUpload
             files={images}
@@ -370,7 +372,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
             onFileRemove={removeImage}
             featuredIndex={featuredImageIndex}
             onFeaturedIndexChange={handleFeaturedImageChange}
-            error={error && images.length === 0 ? 'გთხოვთ, ატვირთოთ ლოგო' : undefined}
+            error={error && images.length === 0 ? t('dealers.form.errors.logoRequired') : undefined}
             isUploading={isUploading}
             maxFiles={1}
           />
@@ -384,14 +386,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
           className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
           disabled={loading}
         >
-          გაუქმება
+          {t('dealers.form.cancel')}
         </button>
         <button
           type="submit"
           className="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary disabled:opacity-50"
           disabled={loading}
         >
-          {loading ? 'მიმდინარეობს...' : 'განახლება'}
+          {loading ? t('dealers.form.processing') : t('dealers.form.update')}
         </button>
       </div>
     </form>
@@ -402,7 +404,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-xl font-bold">
-            {dealer ? 'დილერის რედაქტირება' : 'ახალი დილერის შექმნა'}
+            {dealer ? t('dealers.form.editDealer') : t('dealers.form.createDealer')}
           </h2>
           <button
             onClick={onClose}
@@ -419,12 +421,12 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">პირადი ინფორმაცია (კონტაქტი)</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('dealers.form.personalInfo')}</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      სახელი *
+                      {t('dealers.form.firstName')} *
                     </label>
                     <input
                       type="text"
@@ -433,14 +435,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="სახელი"
+                      placeholder={t('dealers.form.firstName')}
                       disabled={loading}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      გვარი *
+                      {t('dealers.form.lastName')} *
                     </label>
                     <input
                       type="text"
@@ -449,7 +451,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="გვარი"
+                      placeholder={t('dealers.form.lastName')}
                       disabled={loading}
                     />
                   </div>
@@ -457,7 +459,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    პერსონალური ტელეფონი *
+                    {t('dealers.form.personalPhone')} *
                   </label>
                   <input
                     type="tel"
@@ -473,7 +475,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ელ-ფოსტა *
+                    {t('dealers.email')} *
                   </label>
                   <input
                     type="email"
@@ -489,7 +491,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    სქესი *
+                    {t('dealers.form.gender')} *
                   </label>
                   <div className="flex gap-4">
                     {['male', 'female'].map(gender => (
@@ -508,7 +510,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                             ? 'border-primary bg-primary/5 text-primary'
                             : 'border-gray-300 hover:bg-gray-50'
                           } transition-all duration-200`}>
-                          {gender === 'male' ? 'მამრობითი' : 'მდედრობითი'}
+                          {gender === 'male' ? t('dealers.form.male') : t('dealers.form.female')}
                         </div>
                       </label>
                     ))}
@@ -518,7 +520,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      პაროლი *
+                      {t('dealers.form.password')} *
                     </label>
                     <input
                       type="password"
@@ -527,14 +529,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="შეიყვანეთ პაროლი"
+                      placeholder={t('dealers.form.enterPassword')}
                       disabled={loading}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      გაიმეორეთ პაროლი *
+                      {t('dealers.form.confirmPassword')} *
                     </label>
                     <input
                       type="password"
@@ -543,7 +545,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="გაიმეორეთ პაროლი"
+                      placeholder={t('dealers.form.confirmPasswordPlaceholder')}
                       disabled={loading}
                     />
                   </div>
@@ -577,11 +579,11 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
               {/* Company Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">კომპანიის ინფორმაცია</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('dealers.form.companyInfo')}</h3>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    კომპანიის სახელი *
+                    {t('dealers.companyName')} *
                   </label>
                   <input
                     type="text"
@@ -590,14 +592,14 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                     required
-                    placeholder="კომპანიის სახელი"
+                    placeholder={t('dealers.companyName')}
                     disabled={loading}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    დაარსების წელი
+                    {t('dealers.form.establishedYear')}
                   </label>
                   <select
                     name="established_year"
@@ -606,7 +608,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
                     disabled={loading}
                   >
-                    <option value="">აირჩიეთ წელი</option>
+                    <option value="">{t('dealers.form.chooseYear')}</option>
                     {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
                       <option key={year} value={year}>
                         {year}
@@ -617,7 +619,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ვებ გვერდი
+                    {t('dealers.form.website')}
                   </label>
                   <input
                     type="url"
@@ -632,7 +634,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    სოციალური მედია
+                    {t('dealers.form.socialMedia')}
                   </label>
                   <input
                     type="url"
@@ -647,7 +649,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    მისამართი
+                    {t('dealers.address')}
                   </label>
                   <textarea
                     name="address"
@@ -655,7 +657,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                     onChange={handleInputChange}
                     rows={3}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed resize-vertical"
-                    placeholder="მისამართი"
+                    placeholder={t('dealers.address')}
                     disabled={loading}
                   />
                 </div>
@@ -663,7 +665,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                 {/* Logo Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ლოგო
+                    {t('dealers.form.logo')}
                   </label>
                   <DealerImageUpload
                     files={images}
@@ -671,7 +673,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                     onFileRemove={removeImage}
                     featuredIndex={featuredImageIndex}
                     onFeaturedIndexChange={handleFeaturedImageChange}
-                    error={error && images.length === 0 ? 'გთხოვთ, ატვირთოთ ლოგო' : undefined}
+                    error={error && images.length === 0 ? t('dealers.form.errors.logoRequired') : undefined}
                     isUploading={isUploading}
                     maxFiles={1}
                   />
@@ -689,7 +691,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                     disabled={loading}
                   />
                   <span className="ml-2 text-sm text-gray-700">
-                    ვეთანხმები წესებს და პირობებს
+                    {t('dealers.form.agreeTerms')}
                   </span>
                 </label>
               </div>
@@ -707,7 +709,7 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                   className="px-4 py-2 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
                   disabled={loading}
                 >
-                  გაუქმება
+                  {t('dealers.form.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -720,10 +722,10 @@ const DealerForm: React.FC<DealerFormProps> = ({ dealer, onClose, onSubmit }) =>
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      მიმდინარეობს...
+                      {t('dealers.form.processing')}
                     </>
                   ) : (
-                    'შექმნა'
+                    t('dealers.form.create')
                   )}
                 </button>
               </div>

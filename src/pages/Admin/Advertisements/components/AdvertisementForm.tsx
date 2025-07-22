@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Info, Monitor, Smartphone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import advertisementService, { Advertisement } from '../../../../api/services/advertisementService';
 
 interface AdvertisementFormProps {
@@ -9,6 +10,7 @@ interface AdvertisementFormProps {
 }
 
 const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, onClose, onSave }) => {
+  const { t } = useTranslation('admin');
   const [formData, setFormData] = useState({
     title: '',
     link_url: '',
@@ -78,25 +80,25 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
     }
   };
 
-  // Helper function to get placement name in Georgian
+  // Helper function to get placement name
   const getPlacementName = (placement: string): string => {
     switch (placement) {
       case 'home_slider':
-        return 'მთავარი გვერდის სლაიდერი';
+        return t('advertisements.placements.home_slider');
       case 'home_banner':
-        return 'მთავარი გვერდის ბანერი';
+        return t('advertisements.placements.home_banner');
       case 'home_after_vip_plus':
-        return 'მთავარი გვერდის VIP+ განცხადებების შემდეგ';
+        return t('advertisements.placements.home_after_vip_plus');
       case 'car_listing_top':
-        return 'მანქანების ყიდვის გვერდი - ზედა';
+        return t('advertisements.placements.car_listing_top');
       case 'car_listing_bottom':
-        return 'მანქანების ყიდვის გვერდი - ქვედა';
+        return t('advertisements.placements.car_listing_bottom');
       case 'car_details_top':
-        return 'მანქანის დეტალების გვერდი - ზედა';
+        return t('advertisements.placements.car_details_top');
       case 'car_details_bottom':
-        return 'მანქანის დეტალების გვერდი - შუა';
+        return t('advertisements.placements.car_details_bottom');
       case 'car_details_after_similar':
-        return 'მანქანის დეტალების გვერდი - მსგავსი მანქანების შემდეგ';
+        return t('advertisements.placements.car_details_after_similar');
       default:
         return placement;
     }
@@ -106,25 +108,25 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
     const newErrors: Record<string, string> = {};
     
     if (!formData.placement) {
-      newErrors.placement = 'განთავსების ადგილი აუცილებელია';
+      newErrors.placement = t('advertisements.form.placementRequired');
     }
     
     if (!formData.title.trim()) {
-      newErrors.title = 'სახელი აუცილებელია';
+      newErrors.title = t('advertisements.form.titleRequired');
     }
     
     if (!formData.start_date) {
-      newErrors.start_date = 'დაწყების თარიღი აუცილებელია';
+      newErrors.start_date = t('advertisements.form.startDateRequired');
     }
     
     if (!formData.end_date) {
-      newErrors.end_date = 'დასრულების თარიღი აუცილებელია';
+      newErrors.end_date = t('advertisements.form.endDateRequired');
     } else if (formData.start_date && new Date(formData.end_date) < new Date(formData.start_date)) {
-      newErrors.end_date = 'დასრულების თარიღი უნდა იყოს დაწყების თარიღის შემდეგ';
+      newErrors.end_date = t('advertisements.form.endDateAfterStart');
     }
     
     if (!advertisement && !imageFile) {
-      newErrors.image = 'სურათი აუცილებელია';
+      newErrors.image = t('advertisements.form.imageRequired');
     }
     
     setErrors(newErrors);
@@ -182,7 +184,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
           </button>
           
           <h2 className="text-xl font-medium mb-6 text-gray-700">
-            {advertisement ? 'რეკლამის რედაქტირება' : 'ახალი რეკლამის დამატება'}
+            {advertisement ? t('advertisements.form.editAdvertisement') : t('advertisements.form.addNewAdvertisement')}
           </h2>
           
           <form onSubmit={handleSubmit}>
@@ -191,14 +193,14 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
               <div>
                 <div className="flex justify-between items-center">
                   <label htmlFor="placement" className="block text-sm text-gray-600">
-                    განთავსების ადგილი <span className="text-red-500">*</span>
+                    {t('advertisements.form.placement')} <span className="text-red-500">*</span>
                   </label>
                   <button 
                     type="button" 
                     onClick={() => setShowPlacementPreview(!showPlacementPreview)}
                     className="text-xs flex items-center gap-1 text-blue-500 hover:text-blue-700 transition-colors"
                   >
-                    {showPlacementPreview ? 'დამალვა' : 'პრევიუ'}
+{showPlacementPreview ? t('common.close') : t('advertisements.form.previewTitle')}
                     <Info className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -214,7 +216,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                   }}
                   className={`mt-1 block w-full px-3 py-2 border ${errors.placement ? 'border-red-300' : 'border-gray-200'} rounded focus:outline-none focus:border-blue-500 text-sm`}
                 >
-                  <option value="" disabled>აირჩიეთ განთავსების ადგილი</option>
+                  <option value="" disabled>{t('advertisements.form.selectPlacement')}</option>
                   
                   {/* მთავარი გვერდი */}
                   <optgroup label="მთავარი გვერდი">
@@ -539,7 +541,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm text-gray-600">
-                  სახელი <span className="text-red-500">*</span>
+                  {t('advertisements.title')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -557,7 +559,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
               {/* Image Upload */}
               <div>
                 <label htmlFor="image" className="block text-sm text-gray-600">
-                  სურათი <span className="text-red-500">*</span>
+                  {t('advertisements.form.imageUpload')} <span className="text-red-500">*</span>
                 </label>
                 <div className="mt-1">
                   {previewImage ? (
@@ -614,7 +616,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
               {/* Link URL */}
               <div>
                 <label htmlFor="link_url" className="block text-sm text-gray-600">
-                  ბმული
+                  {t('advertisements.form.linkUrl')}
                 </label>
                 <input
                   type="url"
@@ -634,7 +636,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="start_date" className="block text-sm text-gray-600">
-                    დაწყების თარიღი <span className="text-red-500">*</span>
+                    {t('advertisements.startDate')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -650,7 +652,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                 </div>
                 <div>
                   <label htmlFor="end_date" className="block text-sm text-gray-600">
-                    დასრულების თარიღი <span className="text-red-500">*</span>
+                    {t('advertisements.endDate')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -678,7 +680,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                     className="w-4 h-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                   />
                   <label htmlFor="is_active" className="ml-2 text-sm text-gray-600 cursor-pointer">
-                    აქტიური
+                    {t('advertisements.active')}
                   </label>
                 </div>
               </div>
@@ -689,7 +691,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                   onClick={onClose}
                   className="px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
                 >
-                  გაუქმება
+                  {t('advertisements.form.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -702,7 +704,7 @@ const AdvertisementForm: React.FC<AdvertisementFormProps> = ({ advertisement, on
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   )}
-                  {advertisement ? 'განახლება' : 'დამატება'}
+{advertisement ? t('common.update') : t('common.add')}
                 </button>
               </div>
             </div>

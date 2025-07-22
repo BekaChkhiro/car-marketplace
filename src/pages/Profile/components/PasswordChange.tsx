@@ -56,7 +56,9 @@ const PasswordChange = () => {
     } catch (err: any) {
       setError(err.response?.data?.message || t('profile:settings.passwordChangeFailed', 'პაროლის შეცვლა ვერ მოხერხდა'));
     }
-  };  return (
+  };
+
+  return (
     <div className="max-w-md mx-auto space-y-5 sm:space-y-6">
       {success && (
         <div className="p-3 sm:p-4 bg-green-50 text-green-700 text-sm sm:text-base rounded-xl flex items-center gap-2">
@@ -78,7 +80,10 @@ const PasswordChange = () => {
           <h2 className="text-lg sm:text-xl font-bold text-gray-800">{t('profile:settings.changePassword')}</h2>
           <p className="text-gray-500 text-sm sm:text-base mt-1">{t('profile:settings.enterCurrentAndNewPassword', 'შეიყვანეთ მიმდინარე და ახალი პაროლი')}</p>
         </div>
-      </div>      <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">        <div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+        <div>
           <label htmlFor="currentPassword" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
             {t('profile:settings.currentPassword')}
           </label>
@@ -154,7 +159,9 @@ const PasswordChange = () => {
               {showPasswords.confirm ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-        </div>        <button
+        </div>
+
+        <button
           type="submit"
           disabled={isLoading}
           className="w-full bg-primary text-white py-3.5 sm:py-3 text-base rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md disabled:bg-gray-400 disabled:transform-none disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"

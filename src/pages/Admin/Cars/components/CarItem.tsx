@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Calendar, Gauge, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Car } from '../../../../api/types/car.types';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 
@@ -10,16 +11,17 @@ interface CarItemProps {
 }
 
 const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
+  const { t } = useTranslation('admin');
   const navigate = useNavigate();
   
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'available':
-        return <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">ხელმისაწვდომი</span>;
+        return <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">{t('available')}</span>;
       case 'sold':
-        return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">გაყიდული</span>;
+        return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">{t('common.sold')}</span>;
       case 'pending':
-        return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">მოლოდინში</span>;
+        return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">{t('common.pending')}</span>;
       default:
         return null;
     }
@@ -90,7 +92,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
               </div>
               {car.specifications.transmission && (
                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                  {car.specifications.transmission === 'automatic' ? 'ავტომატიკა' : 'მექანიკა'}
+                  {car.specifications.transmission === 'automatic' ? t('common.automatic') : t('common.manual')}
                 </span>
               )}
             </div>
@@ -99,7 +101,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
       </td>
       <td className="px-6 py-4">
         <div className="font-semibold text-gray-900">{car.price.toLocaleString()} ₾</div>
-        <div className="text-xs text-gray-500 mt-1">დამატებულია: {formatDate(car.created_at)}</div>
+        <div className="text-xs text-gray-500 mt-1">{t('cars.createdAt')}: {formatDate(car.created_at)}</div>
       </td>
       <td className="px-6 py-4">
         <div className="flex flex-col gap-2">
@@ -107,7 +109,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
           {getVipBadge(car.vip_status)}
           {car.vip_expiration_date && (
             <div className="text-xs text-gray-500">
-              VIP ვადა: {formatDate(car.vip_expiration_date)}
+              {t('cars.vipExpiration')}: {formatDate(car.vip_expiration_date)}
             </div>
           )}
         </div>
@@ -117,21 +119,21 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
           <button 
             onClick={() => navigate(`/cars/${car.id}`)}
             className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
-            title="ნახვა"
+            title={t('cars.view')}
           >
             <Eye size={16} className="text-gray-600 group-hover:text-blue-600" />
           </button>
           <button 
             onClick={() => navigate(`/admin/cars/edit/${car.id}`)}
             className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
-            title="რედაქტირება"
+            title={t('cars.edit')}
           >
             <Edit size={16} className="text-gray-600 group-hover:text-blue-600" />
           </button>
           <button 
             onClick={handleDeleteClick}
             className="p-1.5 hover:bg-red-100 rounded-lg transition-colors group-hover:bg-red-100"
-            title="წაშლა"
+            title={t('cars.delete')}
           >
             <Trash2 size={16} className="text-red-600" />
           </button>
@@ -139,10 +141,10 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
           {isDeleteModalOpen && (
             <ConfirmationModal
               isOpen={isDeleteModalOpen}
-              title="მანქანის წაშლა"
-              message={`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${car.brand} ${car.model}?`}
-              confirmText="წაშლა"
-              cancelText="გაუქმება"
+              title={t('cars.deleteCar')}
+              message={`${t('cars.deleteConfirmation')} ${car.brand} ${car.model}?`}
+              confirmText={t('cars.delete')}
+              cancelText={t('common.cancel')}
               onConfirm={handleConfirmDelete}
               onCancel={handleCancelDelete}
             />

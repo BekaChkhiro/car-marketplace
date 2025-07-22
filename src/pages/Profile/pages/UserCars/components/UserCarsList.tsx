@@ -397,14 +397,14 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                         <button
                           onClick={() => navigate(`/${currentLang}/profile/cars/edit/${car.id}`)}
                           className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
-                          title="რედაქტირება"
+                          title={t('profile:cars.actions.edit')}
                         >
                           <Edit2 size={16} className="text-gray-600 group-hover:text-blue-600" />
                         </button>
                         <button
                           onClick={() => onDelete(car.id)}
                           className="p-1.5 hover:bg-red-100 rounded-lg transition-colors group-hover:bg-red-100"
-                          title="წაშლა"
+                          title={t('profile:cars.actions.delete')}
                         >
                           <Trash2 size={16} className="text-red-600" />
                         </button>
@@ -628,14 +628,14 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                   <button
                     onClick={() => navigate(`/${currentLang}/profile/edit-car/${car.id}`)}
                     className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
-                    title="რედაქტირება"
+                    title={t('profile:cars.actions.edit')}
                   >
                     <Edit2 size={16} className="text-gray-600 hover:text-blue-600" />
                   </button>
                   <button
                     onClick={() => onDelete(car.id)}
                     className="p-2 hover:bg-red-100 rounded-lg transition-colors"
-                    title="წაშლა"
+                    title={t('profile:cars.actions.delete')}
                   >
                     <Trash2 size={16} className="text-red-600" />
                   </button>

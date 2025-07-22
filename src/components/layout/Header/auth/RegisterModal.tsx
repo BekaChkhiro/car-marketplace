@@ -7,6 +7,7 @@ import { Check, Building } from 'lucide-react';
 import { validatePassword, validateEmail } from '../../../../utils/validation';
 import ImageUploadWithFeatured from '../../../ImageUploadWithFeatured';
 import DealerImageUpload from 'components/DealerImageUpload';
+import { useTranslation } from 'react-i18next';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -61,38 +62,40 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
+  const { t } = useTranslation("profile");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (step === 1) {
       if (!formData.firstName || !formData.lastName || !formData.phone || !formData.age || !formData.gender) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('register.errors.required'));
         return;
       }
 
       // Additional validation for dealer
       if (formData.userType === 'dealer') {
         if (!formData.dealerData.company_name) {
-          setError('გთხოვთ, შეიყვანოთ კომპანიის სახელი');
+          setError(t('register.errors.companyName'));
           return;
         }
 
         // Require at least one image for dealer
         if (images.length === 0) {
-          setError('გთხოვთ, ატვირთოთ მინიმუმ ერთი სურათი');
+          setError(t('register.errors.logo'));
           return;
         }
       }
 
       const age = parseInt(formData.age);
       if (isNaN(age) || age < 18 || age > 100) {
-        setError('ასაკი უნდა იყოს 18-დან 100-მდე');
+        setError(t('register.errors.age'));
         return;
       }
 
       if (!formData.phone.match(/^(\+995|0)\d{9}$/)) {
-        setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX');
+        setError(t('register.errors.phone'));
         return;
       }
 
@@ -100,22 +103,22 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
       setStep(2);
     } else {
       if (!formData.email || !formData.password || !formData.confirmPassword) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('register.errors.required'));
         return;
       }
 
       if (!formData.agreeToTerms) {
-        setError('გთხოვთ, დაეთანხმოთ წესებს და პირობებს');
+        setError(t('register.errors.terms'));
         return;
       }
 
       if (!validateEmail(formData.email)) {
-        setError('გთხოვთ, შეიყვანოთ ელ-ფოსტის სწორი ფორმატი');
+        setError(t('register.errors.email'));
         return;
       }
 
       if (formData.password !== formData.confirmPassword) {
-        setError('პაროლები არ ემთხვევა');
+        setError(t('register.errors.passwordMismatch'));
         return;
       }
 
@@ -181,7 +184,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
         });
         setStep(1);
       } catch (err: any) {
-        const message = err.message || 'რეგისტრაცია ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან';
+        const message = err.message || t('register.errors.registrationFailed');
         setError(message);
       }
     }
@@ -226,14 +229,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
   };
 
   const getPasswordStrength = (password: string): { color: string; text: string } => {
-    if (!password) return { color: 'bg-gray-200', text: '\u10e1\u10d8\u10eb\u10da\u10d8\u10d4\u10e0\u10d4' };
+    if (!password) return { color: 'bg-gray-200', text: t('register.accountInfo.password.strength.weak') };
 
     const { errors } = validatePassword(password);
     const remainingChecks = errors.length;
 
-    if (remainingChecks === 0) return { color: 'bg-green-500', text: '\u10eb\u10da\u10d8\u10d4\u10e0\u10d8' };
-    if (remainingChecks <= 2) return { color: 'bg-yellow-500', text: '\u10e1\u10d0\u10e8\u10e3\u10d0\u10da\u10dd' };
-    return { color: 'bg-red-500', text: '\u10e1\u10e3\u10e1\u10e2\u10d8' };
+    if (remainingChecks === 0) return { color: 'bg-green-500', text: t('register.accountInfo.password.strength.strong') };
+    if (remainingChecks <= 2) return { color: 'bg-yellow-500', text: t('register.accountInfo.password.strength.medium') };
+    return { color: 'bg-red-500', text: t('register.accountInfo.password.strength.weak') };
   };
 
   // Image handling functions
@@ -263,7 +266,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     <>
       {/* User Type Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">მომხმარებლის ტიპი</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.userType.label")}</label>
         <div className="flex gap-4">
           <label className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
             <input
@@ -277,10 +280,10 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
               disabled={isLoading}
             />
             <div className={`w-full text-center py-3 px-4 rounded-xl border ${formData.userType === 'user'
-                ? 'border-primary bg-primary/5 text-primary'
-                : 'border-gray-300 hover:bg-gray-50'
+              ? 'border-primary bg-primary/5 text-primary'
+              : 'border-gray-300 hover:bg-gray-50'
               }`}>
-              რეგულარული მომხმარებელი
+              {t('register.userType.regular')}
             </div>
           </label>
 
@@ -295,10 +298,10 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
               disabled={isLoading}
             />
             <div className={`w-full text-center py-3 px-4 rounded-xl border ${formData.userType === 'dealer'
-                ? 'border-primary bg-primary/5 text-primary'
-                : 'border-gray-300 hover:bg-gray-50'
+              ? 'border-primary bg-primary/5 text-primary'
+              : 'border-gray-300 hover:bg-gray-50'
               }`}>
-              დილერი
+              {t('register.userType.dealer')}
             </div>
           </label>
         </div>
@@ -310,7 +313,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
         <div className="flex-1 space-y-4">
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">სახელი</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.personalInfo.firstName.label")}</label>
               <input
                 type="text"
                 name="firstName"
@@ -318,12 +321,12 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                 onChange={handleInputChange}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200"
                 required
-                placeholder="სახელი"
+                placeholder={t("register.personalInfo.firstName.label")}
                 disabled={isLoading}
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">გვარი</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.personalInfo.lastName.label")}</label>
               <input
                 type="text"
                 name="lastName"
@@ -331,14 +334,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                 onChange={handleInputChange}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200"
                 required
-                placeholder="გვარი"
+                placeholder={t("register.personalInfo.lastName.label")}
                 disabled={isLoading}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">ასაკი</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.personalInfo.age.label")}</label>
             <select
               name="age"
               value={formData.age}
@@ -347,15 +350,15 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
               required
               disabled={isLoading}
             >
-              <option value="">აირჩიეთ ასაკი</option>
+              <option value="">{t("register.personalInfo.age.placeholder")}</option>
               {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
-                <option key={age} value={age}>{age} წელი</option>
+                <option key={age} value={age}>{age} {t("register.personalInfo.year")}</option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">სქესი</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.personalInfo.gender.label")}</label>
             <div className="flex gap-4">
               {['male', 'female'].map(gender => (
                 <label key={gender} className={`flex-1 relative cursor-pointer ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
@@ -369,10 +372,10 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                     disabled={isLoading}
                   />
                   <div className={`w-full text-center py-3 px-4 rounded-xl border ${formData.gender === gender
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-300 hover:bg-gray-50'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-gray-300 hover:bg-gray-50'
                     }`}>
-                    {gender === 'male' ? 'მამრობითი' : 'მდედრობითი'}
+                    {gender === 'male' ? t("register.personalInfo.gender.male") : t("register.personalInfo.gender.female")}
                   </div>
                 </label>
               ))}
@@ -380,7 +383,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">ტელეფონი</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.personalInfo.phone.label")}</label>
             <input
               type="tel"
               name="phone"
@@ -402,13 +405,13 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Building size={18} className="text-primary" />
                 </div>
-                დილერის ინფორმაცია
+                {t("register.dealerInfo.title")}
               </h3>
 
               <div className="space-y-4">
                 {/* Company Info Fields */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">კომპანიის სახელი <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.dealerInfo.companyName.label")} <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     name="dealerData.company_name"
@@ -416,14 +419,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-800 bg-white hover:bg-gray-50 focus:bg-white disabled:bg-gray-200"
                     required
-                    placeholder="კომპანიის სახელი"
+                    placeholder={t("register.dealerInfo.companyName.label")}
                     disabled={isLoading}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">დაარსების წელი</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.dealerInfo.establishedYear.label")}</label>
                     <select
                       name="dealerData.established_year"
                       value={formData.dealerData.established_year}
@@ -431,7 +434,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-800 bg-white hover:bg-gray-50 focus:bg-white disabled:bg-gray-200 appearance-none"
                       disabled={isLoading}
                     >
-                      <option value="">აირჩიეთ წელი</option>
+                      <option value="">{t("register.dealerInfo.establishedYear.placeholder")}</option>
                       {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
                         <option key={year} value={year}>{year}</option>
                       ))}
@@ -439,7 +442,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ვებ გვერდი</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.dealerInfo.website.label")}</label>
                     <input
                       type="url"
                       name="dealerData.website_url"
@@ -453,14 +456,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">მისამართი</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("register.dealerInfo.address.label")}</label>
                   <textarea
                     name="dealerData.address"
                     value={formData.dealerData.address}
                     onChange={handleInputChange}
                     rows={2}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-gray-800 bg-white hover:bg-gray-50 focus:bg-white disabled:bg-gray-200 resize-none"
-                    placeholder="მისამართი"
+                    placeholder={t("register.dealerInfo.address.label")}
                     disabled={isLoading}
                   />
                 </div>
@@ -468,7 +471,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                 {/* Image Upload Section */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <label className="block mb-3 text-sm font-medium text-gray-700">
-                    კომპანიის ლოგო <span className="text-red-500">*</span>
+                    {t("register.dealerInfo.logo.label")} <span className="text-red-500">*</span>
                   </label>
                   <div className="space-y-3">
                     <DealerImageUpload
@@ -477,7 +480,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
                       onFileRemove={removeImage}
                       featuredIndex={featuredImageIndex}
                       onFeaturedIndexChange={setFeaturedImageIndex}
-                      error={error && images.length === 0 ? 'გთხოვთ, ატვირთოთ ლოგო' : undefined}
+                      error={error && images.length === 0 ? t("register.dealerInfo.logo.error") : undefined}
                       isUploading={isUploading}
                       maxFiles={1}
                     />
@@ -496,7 +499,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
     <>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          ელ-ფოსტა
+          {t("register.accountInfo.email.label")}
         </label>
         <input
           type="email"
@@ -505,14 +508,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="შეიყვანეთ ელ-ფოსტა"
+          placeholder={t("register.accountInfo.email.placeholder")}
           disabled={isLoading}
         />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          პაროლი
+        {t("register.accountInfo.password.label")}
         </label>
         <input
           type="password"
@@ -521,7 +524,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="შეიყვანეთ პაროლი"
+          placeholder={t("register.accountInfo.password.placeholder")}
           disabled={isLoading}
         />
         {formData.password && (
@@ -552,7 +555,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          გაიმეორეთ პაროლი
+          {t("register.accountInfo.confirmPassword.label")}
         </label>
         <input
           type="password"
@@ -561,7 +564,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="გაიმეორეთ პაროლი"
+          placeholder={t("register.accountInfo.confirmPassword.placeholder")}
           disabled={isLoading}
         />
       </div>
@@ -577,7 +580,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
             disabled={isLoading}
           />
           <span className="ml-2 text-sm text-gray-700">
-            ვეთანხმები <a href={`/${currentLang}/terms`} target="_blank" className="text-primary hover:text-secondary font-medium transition-colors">წესებს და პირობებს</a>
+            {t("register.accountInfo.terms.label")} <a href={`/${currentLang}/terms`} target="_blank" className="text-primary hover:text-secondary font-medium transition-colors">{t("register.accountInfo.terms.termsLink")}</a>
           </span>
         </label>
       </div>
@@ -585,10 +588,10 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
   );
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      title="რეგისტრაცია"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t("register.title")}
       maxWidth={formData.userType === 'dealer' && step === 1 ? 'max-w-5xl' : 'max-w-2xl'}
     >
       <div className={formData.userType === 'dealer' && step === 1 ? 'max-h-[70vh] overflow-y-auto' : ''}>
@@ -603,52 +606,52 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps)
         <form onSubmit={handleSubmit} className={formData.userType === 'dealer' && step === 1 ? "space-y-4" : "space-y-6"}>
           {step === 1 ? renderStep1() : renderStep2()}
 
-        <div className="flex items-center justify-between gap-4">
-          {step === 2 && (
-            <button
-              type="button"
-              onClick={() => {
-                setStep(1);
-                setError(null);
-              }}
-              disabled={isLoading}
-              className="flex-1 px-4 py-3 border border-primary text-primary hover:bg-primary/5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              უკან
-            </button>
-          )}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="flex-1 bg-primary text-white py-3 rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md font-medium text-base disabled:bg-gray-400 disabled:transform-none disabled:shadow-none flex items-center justify-center"
-          >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                გთხოვთ მოიცადოთ...
-              </>
-            ) : (
-              step === 1 ? 'შემდეგი' : 'რეგისტრაცია'
+          <div className="flex items-center justify-between gap-4">
+            {step === 2 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setStep(1);
+                  setError(null);
+                }}
+                disabled={isLoading}
+                className="flex-1 px-4 py-3 border border-primary text-primary hover:bg-primary/5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t("register.back")}
+              </button>
             )}
-          </button>
-        </div>
-      </form>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 bg-primary text-white py-3 rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md font-medium text-base disabled:bg-gray-400 disabled:transform-none disabled:shadow-none flex items-center justify-center"
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('profile.common.pleaseWait')}
+                </>
+              ) : (
+                step === 1 ? t('register.next') : t('register.title')
+              )}
+            </button>
+          </div>
+        </form>
 
-      <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
-          უკვე გაქვთ ანგარიში?{' '}
-          <button
-            onClick={onSwitchToLogin}
-            disabled={isLoading}
-            className="text-primary hover:text-secondary font-medium transition-colors hover:underline disabled:text-gray-400"
-          >
-            შესვლა
-          </button>
-        </p>
-      </div>
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">
+            {t('register.alreadyHaveAccount')}{' '}
+            <button
+              onClick={onSwitchToLogin}
+              disabled={isLoading}
+              className="text-primary hover:text-secondary font-medium transition-colors hover:underline disabled:text-gray-400"
+            >
+              {t('register.loginLink')}
+            </button>
+          </p>
+        </div>
       </div>
     </Modal>
   );

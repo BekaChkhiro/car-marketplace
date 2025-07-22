@@ -1,0 +1,52 @@
+{
+  "title": "Admin Dashboard",
+  "subtitle": "Site Statistics and Recent Data",
+  "stats": {
+    "users": {
+      "active": "Active Users",
+      "blocked": "Blocked Users",
+      "total": "Total Users"
+    },
+    "cars": {
+      "available": "Available Cars",
+      "sold": "Sold Cars",
+      "featured": "Featured Cars",
+      "total": "Total Cars"
+    },
+    "parts": {
+      "new": "New Parts",
+      "used": "Used Parts",
+      "vip": "VIP Parts",
+      "total": "Total Parts"
+    }
+  },
+  "status": {
+    "active": "Active",
+    "blocked": "Blocked",
+    "available": "Available",
+    "sold": "Sold",
+    "featured": "Featured",
+    "new": "New",
+    "used": "Used",
+    "vip": "VIP",
+    "inStock": "In Stock",
+    "other": "Other"
+  },
+  "filters": {
+    "any": "Any",
+    "all": "All"
+  },
+  "recentCars": {
+    "title": "Recently Added",
+    "viewAll": "View All Listings",
+    "noCarsFound": "No listings found",
+    "view": "View"
+  },
+  "recentParts": {
+    "title": "Recent Parts",
+    "viewAll": "View All Parts",
+    "noPartsFound": "No parts found",
+    "view": "View"
+  },
+  "loading": "Loading..."
+}

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 import { Dealer } from '../../../api/types/dealer.types';
 import DealerCard from './DealerCard';
 
@@ -8,6 +10,8 @@ interface DealerGridProps {
 }
 
 const DealerGrid: React.FC<DealerGridProps> = ({ dealers, loading }) => {
+  const { t } = useTranslation(namespaces.dealerListing);
+  
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -38,9 +42,9 @@ const DealerGrid: React.FC<DealerGridProps> = ({ dealers, loading }) => {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <div className="text-gray-400 text-6xl mb-4">🏪</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">დილერები ვერ მოიძებნა</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.title')}</h3>
         <p className="text-gray-600 text-center max-w-md">
-          თქვენი ძიების კრიტერიუმებით დილერები ვერ მოიძებნა. სცადეთ სხვა ფილტრები.
+          {t('empty.message')}
         </p>
       </div>
     );
@@ -52,7 +56,7 @@ const DealerGrid: React.FC<DealerGridProps> = ({ dealers, loading }) => {
         <DealerCard key={dealer.id} dealer={dealer} />
       )) : (
         <div className="col-span-2 text-center py-8 text-gray-500">
-          დილერების მონაცემები არ არის ხელმისაწვდომი
+          {t('error.noData')}
         </div>
       )}
     </div>

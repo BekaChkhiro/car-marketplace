@@ -294,39 +294,47 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
     },
   ];
   
+  // Helper function to translate feature names
+  const translateFeature = (featureName: string) => {
+    const featureKey = featureName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    console.log(featureKey, featureName+"**************************");
+    
+    return t(`carDetails:features.${featureName}`, featureName);
+  };
+
   // Features list with explicit fallback values - all required features from Georgian list
   const carFeatures = [
     // უსაფრთხოება
-    { name: 'ABS', value: car.specifications?.has_abs ?? false },
-    { name: 'მოცურების საწინააღმდეგო სისტემა', value: car.specifications?.has_traction_control ?? false },
-    { name: 'ცენტრალური საკეტი', value: car.specifications?.has_central_locking ?? false },
-    { name: 'სიგნალიზაცია', value: car.specifications?.has_alarm ?? false },
-    { name: 'სანისლე ფარები', value: car.specifications?.has_fog_lights ?? false },
+    { name: translateFeature('ABS'), value: car.specifications?.has_abs ?? false },
+    { name: translateFeature('tractionControl'), value: car.specifications?.has_traction_control ?? false },
+    { name: translateFeature('centralLocking'), value: car.specifications?.has_central_locking ?? false },
+    { name: translateFeature('alarm'), value: car.specifications?.has_alarm ?? false },
+    { name: translateFeature('fogLights'), value: car.specifications?.has_fog_lights ?? false },
     
     // კომფორტი
-    { name: 'კონდიციონერი', value: car.specifications?.has_air_conditioning ?? false },
-    { name: 'კლიმატკონტროლი', value: car.specifications?.has_climate_control ?? false },
-    { name: 'სავარძლის გათბობა', value: car.specifications?.has_heated_seats ?? car.specifications?.has_heated_seats ?? false },
-    { name: 'სავარძლის მეხსიერება', value: car.specifications?.has_seat_memory ?? car.specifications?. has_heated_seats ?? false },
-    { name: 'კრუიზ-კონტროლი', value: car.specifications?.has_cruise_control ?? false },
-    { name: 'Start/Stop სისტემა', value: car.specifications?.has_start_stop ?? false },
-    { name: 'ლუქი', value: car.specifications?.has_sunroof ?? false },
-    { name: 'ელექტრო შუშები', value: car.specifications?.has_electric_windows ?? false },
+    { name: translateFeature('airConditioning'), value: car.specifications?.has_air_conditioning ?? false },
+    { name: translateFeature('climateControl'), value: car.specifications?.has_climate_control ?? false },
+    { name: translateFeature('heatedSeats'), value: car.specifications?.has_heated_seats ?? false },
+    { name: translateFeature('seatMemory'), value: car.specifications?.has_seat_memory ?? false },
+    { name: translateFeature('cruiseControl'), value: car.specifications?.has_cruise_control ?? false },
+    { name: translateFeature('startStop'), value: car.specifications?.has_start_stop ?? false },
+    { name: translateFeature('sunroof'), value: car.specifications?.has_sunroof ?? false },
+    { name: translateFeature('electricWindows'), value: car.specifications?.has_electric_windows ?? false },
     
     // ელექტრონიკა
-    { name: 'ბორტკომპიუტერი', value: car.specifications?.has_board_computer ?? false },
-    { name: 'მონიტორი (ნავიგაცია)', value: car.specifications?.has_navigation ?? false },
-    { name: 'პარკინგკონტროლი', value: car.specifications?.has_parking_control ?? false },
-    { name: 'უკანა ხედვის კამერა', value: car.specifications?.has_rear_view_camera ?? false },
-    { name: 'AUX', value: car.specifications?.has_aux ?? false },
-    { name: 'Bluetooth', value: car.specifications?.has_bluetooth ?? false },
-    { name: 'მულტი საჭე', value: car.specifications?.has_multifunction_steering_wheel ?? false },
+    { name: translateFeature('boardComputer'), value: car.specifications?.has_board_computer ?? false },
+    { name: translateFeature('navigation'), value: car.specifications?.has_navigation ?? false },
+    { name: translateFeature('parkingControl'), value: car.specifications?.has_parking_control ?? false },
+    { name: translateFeature('rearViewCamera'), value: car.specifications?.has_rear_view_camera ?? false },
+    { name: translateFeature('aux'), value: car.specifications?.has_aux ?? false },
+    { name: translateFeature('bluetooth'), value: car.specifications?.has_bluetooth ?? false },
+    { name: translateFeature('multifunctionSteeringWheel'), value: car.specifications?.has_multifunction_steering_wheel ?? false },
     
     // დამატებითი აღჭურვილობა
-    { name: 'ჰიდრავლიკა', value: car.specifications?.has_hydraulics ?? false },
-    { name: 'დისკები', value: car.specifications?.has_alloy_wheels ?? false },
-    { name: 'სათადარიგო საბურავი', value: car.specifications?.has_spare_tire ?? false },
-    { name: 'სსმპ ადაპტირებული', value: car.specifications?.is_disability_adapted ?? false },
+    { name: translateFeature('hydraulics'), value: car.specifications?.has_hydraulics ?? false },
+    { name: translateFeature('alloyWheels'), value: car.specifications?.has_alloy_wheels ?? false },
+    { name: translateFeature('spareTire'), value: car.specifications?.has_spare_tire ?? false },
+    { name: translateFeature('disabilityAdapted'), value: car.specifications?.is_disability_adapted ?? false },
   ];
 
   return (

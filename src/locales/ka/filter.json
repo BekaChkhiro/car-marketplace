@@ -54,24 +54,36 @@
     "diesel": "დიზელი",
     "hybrid": "ჰიბრიდი",
     "electric": "ელექტრო",
+    "plug_in_hybrid": "დატენვადი ჰიბრიდი",
     "naturalGas": "ბუნებრივი აირი",
-    "lpg": "თხევადი გაზი"
+    "lpg": "გაზი (LPG)",
+    "cng": "ბუნებრივი აირი (CNG)",
+    "hydrogen": "წყალბადი"
   },
   "colors": {
-    "black": "შავი",
     "white": "თეთრი",
+    "black": "შავი",
     "silver": "ვერცხლისფერი",
-    "gray": "ნაცრისფერი",
-    "blue": "ლურჯი",
+    "gray": "რუხი",
     "red": "წითელი",
+    "blue": "ლურჯი",
+    "yellow": "ყვითელი",
     "green": "მწვანე",
+    "orange": "ნარინჯისფერი",
+    "gold": "ოქროსფერი",
+    "purple": "იისფერი",
+    "pink": "ვარდისფერი",
+    "beige": "ჩალისფერი",
+    "burgundy": "შინდისფერი",
+    "lightblue": "ცისფერი",
     "brown": "ყავისფერი",
-    "yellow": "ყვითელი"
+    "other": "სხვა"
   },
   "driveTypes": {
     "front": "წინა",
     "rear": "უკანა",
-    "allWheel": "4x4"
+    "allWheel": "4x4",
+    "fourWheel": "სრული"
   },
   "conditions": {
     "new": "ახალი",
@@ -80,5 +92,65 @@
   "steeringWheels": {
     "right": "მარჯვენა",
     "left": "მარცხენა"
-  }
+  },
+  "transmissions": {
+    "automatic": "ავტომატიკა",
+    "manual": "მექანიკა", 
+    "variator": "ვარიატორი",
+    "semiAutomatic": "ნახევრად ავტომატური"
+  },
+  "interiorMaterials": {
+    "leather": "ტყავი",
+    "fabric": "ნაჭერი",
+    "synthetic_leather": "ხელოვნური ტყავი",
+    "combined": "კომბინირებული",
+    "alcantara": "ალკანტარა",
+    "velour": "ველიური",
+    "other": "სხვა"
+  },
+  "interiorColors": {
+    "black": "შავი",
+    "beige": "ბეჟი", 
+    "gray": "რუხი",
+    "brown": "ყავისფერი",
+    "red": "წითელი",
+    "white": "თეთრი",
+    "other": "სხვა"
+  },
+  "locations": {
+    "tbilisi": "თბილისი",
+    "batumi": "ბათუმი", 
+    "kutaisi": "ქუთაისი",
+    "rustavi": "რუსთავი",
+    "gori": "გორი",
+    "zugdidi": "ზუგდიდი",
+    "poti": "ფოთი",
+    "telavi": "თელავი",
+    "other": "სხვა"
+  },
+  "totalCars": "განცხადება",
+  "resultsCount": "განცხადება",
+  "filterSidebar": {
+    "title": "ფილტრი",
+    "brandModel": "მარკა & მოდელი",
+    "allBrands": "ყველა მარკა",
+    "allModels": "ყველა მოდელი",
+    "allCategories": "ყველა კატეგორია",
+    "anyYear": "ნებისმიერი წელი",
+    "fuelTypeLabel": "საწვავის ტიპი",
+    "transmissionLabel": "გადაცემათა კოლოფი",
+    "locationLabel": "მდებარეობა",
+    "clear": "გასუფთავება",
+    "filter": "ფილტრი"
+  },
+  "სედანი": "სედანი",
+  "ჯიპი": "ჯიპი", 
+  "კუპე": "კუპე",
+  "ჰეტჩბექი": "ჰეტჩბექი",
+  "უნივერსალი": "უნივერსალი",
+  "კაბრიოლეტი": "კაბრიოლეტი",
+  "პიკაპი": "პიკაპი",
+  "მინივენი": "მინივენი",
+  "ლიმუზინი": "ლიმუზინი",
+  "კროსოვერი": "კროსოვერი"
 }

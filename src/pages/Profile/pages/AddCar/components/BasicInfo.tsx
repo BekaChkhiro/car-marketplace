@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { NewCarFormData } from '../types';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import { CITY_OPTIONS, COUNTRY_OPTIONS, LOCATION_TYPE_OPTIONS } from '../types';
@@ -20,6 +21,7 @@ interface BasicInfoProps {
 }
 
 const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: BasicInfoProps) => {
+  const { t } = useTranslation(['profile', 'filter']);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<{id: number; name: string}[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +120,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
         <div className="flex flex-col md:flex-col gap-6">
           <div className="w-full">
             <label className="block text-sm font-medium  text-gray-700 mb-2">
-              სათაური *
+              {t('addCar.basicInfo.title')} *
               {errors?.title && (
                 <span className="text-red-500 ml-1 text-xs">{errors.title}</span>
               )}
@@ -128,14 +130,14 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
               value={formData.title || ''}
               onChange={(e) => onChange('title', e.target.value)}
               className="w-full px-4 py-2.5 border-2 rounded-lg text-sm sm:text-md bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              placeholder="მაგ: BMW X5 M-პაკეტი, იდეალურ მდგომარეობაში"
+              placeholder={t('addCar.basicInfo.titlePlaceholder')}
             />
           </div>
           
           <div className='w-full flex flex-col sm:flex-row justify-between gap-6'>
             <div className='w-full sm:w-1/2'>
               <label className="block text-sm font-medium  text-gray-700 mb-2">
-                მარკა *
+                {t('addCar.basicInfo.brand')} *
                 {errors?.brand_id && (
                   <span className="text-red-500 ml-1 text-xs">{errors.brand_id}</span>
                 )}
@@ -147,7 +149,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                 }))}
                 value={String(formData.brand_id || '')}
                 onChange={handleBrandChange}
-                placeholder="აირჩიეთ მარკა"
+                placeholder={t('addCar.basicInfo.selectBrand')}
                 error={errors?.brand_id}
                 isValid={!!formData.brand_id}
                 icon={<Car size={18} />}
@@ -156,7 +158,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
 
             <div className='w-full sm:w-1/2'>
               <label className="block text-sm font-medium  text-gray-700 mb-2">
-                მოდელი *
+                {t('addCar.basicInfo.model')} *
                 {errors?.model && (
                   <span className="text-red-500 ml-1 text-xs">{errors.model}</span>
                 )}
@@ -168,7 +170,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                 }))}
                 value={formData.model || ''}
                 onChange={(value) => onChange('model', value)}
-                placeholder="აირჩიეთ მოდელი"
+                placeholder={t('addCar.basicInfo.selectModel')}
                 disabled={!formData.brand_id}
                 error={errors?.model}
                 isValid={!!formData.model}
@@ -178,7 +180,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
           
           <div className='w-full'>
             <label className="block text-sm font-medium  text-gray-700 mb-2">
-              VIN კოდი
+              {t('addCar.basicInfo.vinCode')}
               {errors?.vin_code && (
                 <span className="text-red-500 ml-1 text-xs">{errors.vin_code}</span>
               )}
@@ -188,14 +190,14 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
               value={formData.vin_code || ''}
               onChange={(e) => onChange('vin_code', e.target.value)}
               className="w-full px-4 py-2.5 border-2 rounded-lg text-sm sm:text-md bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              placeholder="მაგ: 1HGBH41JXMN109186"
+              placeholder={t('addCar.basicInfo.vinPlaceholder')}
             />
           </div>
 
           <div className='w-full flex flex-col sm:flex-row justify-between items-center gap-6 '>
             <div className='w-full sm:w-1/3'>
                 <label className="block  align-middle  font-medium text-gray-700 mb-2 ">
-                  კატეგორია *
+                  {t('addCar.basicInfo.category')} *
                   {errors?.category_id && (
                     <span className="text-red-500 ml-1 text-xs">{errors.category_id}</span>
                   )}
@@ -203,11 +205,11 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                 <CustomSelect
                   options={categories.map(category => ({
                     value: String(category.id),
-                    label: category.name
+                    label: t(`filter:${category.name}`, category.name)
                   }))}
                   value={String(formData.category_id || '')}
                   onChange={(value) => onChange('category_id', value)}
-                  placeholder="აირჩიეთ კატეგორია"
+                  placeholder={t('addCar.basicInfo.selectCategory')}
                   error={errors?.category_id}
                   isValid={!!formData.category_id}
                 />
@@ -215,7 +217,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
 
             <div className='w-full sm:w-1/3'>
               <label className="block text-sm  font-medium text-gray-700 mb-2">
-                გამოშვების წელი *
+                {t('addCar.basicInfo.year')} *
                 {errors?.year && (
                   <span className="text-red-500 ml-1  text-xs ">{errors.year}</span>
                 )}
@@ -227,7 +229,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                 }))}
                 value={String(formData.year || '')}
                 onChange={(value) => onChange('year', Number(value))}
-                placeholder="აირჩიეთ წელი"
+                placeholder={t('addCar.basicInfo.selectYear')}
                 error={errors?.year}
                 isValid={!!formData.year}
               />
@@ -235,7 +237,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
 
             <div className='w-full sm:w-1/3'>
               <label className="block text-sm     font-medium text-gray-700 mb-2">
-                ფასი *
+                {t('addCar.basicInfo.price')} *
                 {errors?.price && (
                   <span className="text-red-500 ml-1 text-xs">{errors.price}</span>
                 )}
@@ -246,7 +248,7 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
                   value={formData.price || ''}
                   onChange={(e) => onChange('price', Number(e.target.value))}
                   className="w-full px-2 sm:px-4 py-2.5 border-2 text-sm text-md rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
-                  placeholder="მაგ: 15000"
+                  placeholder={t('addCar.basicInfo.pricePlaceholder')}
                   min="0"
                 />
                 <div className="absolute right-1 sm:right-2  top-1/2  transform -translate-y-1/2">

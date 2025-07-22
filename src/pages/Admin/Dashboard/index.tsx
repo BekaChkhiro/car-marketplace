@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, 
   Car, 
@@ -21,15 +22,17 @@ import { User } from '../../../api/types/auth.types';
 import { Car as CarType } from '../../../api/types/car.types';
 import { Link } from 'react-router-dom';
 import RecentParts from './components/RecentParts';
+import { namespaces } from 'i18n';
 
 // Recent cars component
 const RecentCars = ({ cars }: { cars: CarType[] }) => {
+  const { t } = useTranslation('admin');
   return (
     <div className="bg-white rounded-xl shadow-sm p-5">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">ბოლოს დამატებული</h3>
+        <h3 className="text-lg font-semibold text-gray-800">{t('dashboard.recentlyAdded')}</h3>
         <Link to="/admin/cars" className="text-primary text-sm flex items-center hover:underline">
-          ყველა განცხადება <ChevronRight size={16} />
+          {t('dashboard.viewAllListings')} <ChevronRight size={16} />
         </Link>
       </div>
       
@@ -38,7 +41,7 @@ const RecentCars = ({ cars }: { cars: CarType[] }) => {
           <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-3">
             <AlertTriangle size={20} className="text-gray-400" />
           </div>
-          <p className="text-gray-500">განცხადებები ვერ მოიძებნა</p>
+          <p className="text-gray-500">{t('dashboard.noListingsFound')}</p>
         </div>
       ) : (
         <div className="space-y-4  mt-6 sm:mt-0">
@@ -62,13 +65,13 @@ const RecentCars = ({ cars }: { cars: CarType[] }) => {
                   car.status === 'available' ? 'bg-green-100 text-green-800' : 
                   car.status === 'sold' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
-                  {car.status === 'available' ? 'ხელმისაწვდომი' : 
-                   car.status === 'sold' ? 'გაყიდული' : 'მოლოდინში'}
+                  {car.status === 'available' ? t('available') : 
+                   car.status === 'sold' ? t('common.sold') : t('common.pending')}
                 </span>
                 <Link 
                   to={`/cars/${car.id}`} 
                   className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                  title="ნახვა"
+                  title={t('dashboard.view')}
                 >
                   <Eye size={16} className="text-gray-500" />
                 </Link>
@@ -83,6 +86,7 @@ const RecentCars = ({ cars }: { cars: CarType[] }) => {
 
 const AdminDashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useTranslation([namespaces.admin, namespaces.common]);
   const [users, setUsers] = useState<User[]>([]);
   const [cars, setCars] = useState<CarType[]>([]);
   const [parts, setParts] = useState<Part[]>([]);
@@ -134,8 +138,8 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto">
-        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">ადმინ პანელი</h1>
-        <p className="text-gray-500 mb-8 text-md">საიტის სტატისტიკა და ბოლოს დამატებული მონაცემები</p>
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">{t('dashboard.title')}</h1>
+        <p className="text-gray-500 mb-8 text-md">{t('dashboard.welcome')}</p>
         
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -155,16 +159,16 @@ const AdminDashboard: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <Users size={24} className="text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-700">მომხმარებლები</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{t('totalUsers')}</h3>
                 </div>
                 <p className="text-3xl font-bold text-primary">{users.length}</p>
                 <div className="flex  gap-3 mt-3">
                   <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                    აქტიური: {activeUsers}
+                    {t('common.active')}: {activeUsers}
                   </span>
                   {blockedUsers > 0 && (
                     <span className="text-sm text-red-600 bg-red-50 px-2 py-1 rounded-full">
-                      დაბლოკილი: {blockedUsers}
+                      {t('common.blocked')}: {blockedUsers}
                     </span>
                   )}
                 </div>
@@ -175,16 +179,16 @@ const AdminDashboard: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <Car size={24} className="text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-700">განცხადებები</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{t('totalCars')}</h3>
                 </div>
                 <p className="text-3xl font-bold text-primary">{cars.length}</p>
                 <div className="flex gap-3 mt-3">
                   <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                    ხელმისაწვდომი: {availableCars}
+                    {t('available')}: {availableCars}
                   </span>
                   {soldCars > 0 && (
                     <span className="text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded-full">
-                      გაყიდული: {soldCars}
+                      {t('sold')}: {soldCars}
                     </span>
                   )}
                 </div>
@@ -195,16 +199,16 @@ const AdminDashboard: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <Package size={24} className="text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-700">ნაწილები</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.totalListings')}</h3>
                 </div>
                 <p className="text-3xl font-bold text-primary">{parts.length}</p>
                 <div className="flex gap-3 mt-3">
                   <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                    ახალი: {newParts}
+                    {t('dashboard.new')}: {newParts}
                   </span>
                   {usedParts > 0 && (
                     <span className="text-sm text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
-                      მეორადი: {usedParts}
+                      {t('used')}: {usedParts}
                     </span>
                   )}
                 </div>
@@ -215,12 +219,12 @@ const AdminDashboard: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <TrendingUp size={24} className="text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-700">VIP განცხადებები</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{t('vipListings.title')}</h3>
                 </div>
                 <p className="text-3xl font-bold text-primary">{featuredCars}</p>
                 <div className="mt-3">
-                  <span className="text-sm text-gray-600">
-                    ყველა განცხადების {cars.length > 0 ? Math.round((featuredCars / cars.length) * 100) : 0}%
+                  <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                    {t('vipListings.title')} {cars.length > 0 ? Math.round((featuredCars / cars.length) * 100) : 0}%
                   </span>
                 </div>
               </div>

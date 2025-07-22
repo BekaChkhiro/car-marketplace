@@ -63,6 +63,58 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   const { formatPrice } = usePrice();
   
   const images = car.images?.map(img => img.url) || [];
+  
+  // Helper function to translate fuel types
+  const translateFuelType = (fuelType?: string) => {
+    if (!fuelType) return '';
+    const normalizedFuelType = fuelType.toLowerCase().replace(/[_\s]/g, '');
+    const fuelTypeMap: Record<string, string> = {
+      'petrol': 'petrol',
+      'gasoline': 'petrol',
+      'benzin': 'petrol',
+      'diesel': 'diesel',
+      'hybrid': 'hybrid',
+      'electric': 'electric',
+      'ელექტრო': 'ელექტრო',
+      'cng': 'cng',
+      'naturalgas': 'naturalGas',
+      'lpg': 'lpg',
+      'pluginhybrid': 'plug_in_hybrid',
+      'hydrogen': 'hydrogen'
+    };
+    const translationKey = fuelTypeMap[normalizedFuelType] || fuelType;
+    return t(`car:${translationKey}`, fuelType);
+  };
+  
+  // Helper function to translate mileage units
+  const translateMileageUnit = (unit?: string) => {
+    if (!unit) return t('car:km', 'km');
+    const normalizedUnit = unit.toLowerCase();
+    if (normalizedUnit === 'km' || normalizedUnit === 'kilometer' || normalizedUnit === 'kilometers') {
+      return t('car:km', 'km');
+    } else if (normalizedUnit === 'mi' || normalizedUnit === 'mile' || normalizedUnit === 'miles') {
+      return t('car:mi', 'mi');
+    }
+    return t(`car:${unit}`, unit);
+  };
+
+  // Helper function to translate category names
+  const translateCategory = (categoryName?: string) => {
+    if (!categoryName) return t('car:noCategoryInfo');
+    // Check if it's a placeholder first
+    if (categoryName.includes('#{')) return categoryName;
+    // Try to translate the category name
+    const normalizedCategory = categoryName.toLowerCase().replace(/[_\s]/g, '');
+    return t(`car:${normalizedCategory}`, categoryName);
+  };
+
+  // Helper function to translate location/city names
+  const translateLocation = (city?: string) => {
+    if (!city) return t('car:noLocationInfo');
+    // Try to translate the city name, fallback to original if no translation found
+    const translationKey = city.toLowerCase();
+    return t(`car:${city}`, city);
+  };
 
   // Fetch category for this car
   useEffect(() => {
@@ -113,7 +165,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     };
 
     fetchCategory();
-  }, [car.category_id, propCategories, car.id]);
+  }, [car.category_id, propCategories, car.id, t]);
 
   useEffect(() => {
     if (showWishlistButton && isAuthenticated) {
@@ -195,8 +247,8 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
           <Star size={12} className="block sm:hidden" fill="currentColor" strokeWidth={0} />
           <Star size={14} className="hidden sm:block" fill="currentColor" strokeWidth={0} />
           <span className="text-[10px] sm:text-xs">
-            {car.vip_status === 'super_vip' ? 'SUPER VIP' : 
-             car.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
+            {car.vip_status === 'super_vip' ? t('car:superVip', 'SUPER VIP') : 
+             car.vip_status === 'vip_plus' ? t('car:vipPlus', 'VIP+') : t('car:vip', 'VIP')}
           </span>
         </div>
       )}
@@ -222,7 +274,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
               ? 'bg-blue-100 text-blue-800' 
               : 'bg-primary/10 text-primary'
           }`}>
-            {car.status === 'sold' ? t('car:sold') : t('home:vip')}
+            {car.status === 'sold' ? t('car:sold') : t('car:featured', 'Featured')}
           </div>
         )}
 
@@ -302,19 +354,19 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         <div className="grid grid-cols-2 gap-0.5 sm:gap-2 mt-1 sm:mt-3 mt-auto">
           <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <Gauge size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate" title={t('car:mileage')}>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {car.specifications?.mileage_unit || 'km'}</span>
+            <span className="truncate" title={t('car:mileage')}>{car.specifications?.mileage ? car.specifications.mileage.toLocaleString() : '0'} {translateMileageUnit(car.specifications?.mileage_unit)}</span>
           </div>
           <div className="flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <Fuel size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate" title={t('car:fuelType')}>{car.specifications?.fuel_type}</span>
+            <span className="truncate" title={t('car:fuelType')}>{translateFuelType(car.specifications?.fuel_type)}</span>
           </div>
           <div className="hidden sm:flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <Tag size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate" title={t('car:category')}>{localCategory?.name || (car.category_id ? t('car:categoryPlaceholder', { id: car.category_id }) : t('car:noCategoryInfo'))}</span>
+            <span className="truncate" title={t('car:category')}>{translateCategory(localCategory?.name || (car.category_id ? `Category ${car.category_id}` : undefined))}</span>
           </div>
           <div className="hidden sm:flex items-center gap-0.5 sm:gap-2 px-1 sm:px-2.5 py-0.5 sm:py-1.5 rounded-md sm:rounded-lg bg-gray-50 text-[10px] sm:text-sm text-gray-600">
             <MapPin size={10} className="text-gray-400 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
-            <span className="truncate" title={t('car:location')}>{car.location?.city}</span>
+            <span className="truncate" title={t('car:location')}>{translateLocation(car.location?.city)}</span>
           </div>
         </div>
 

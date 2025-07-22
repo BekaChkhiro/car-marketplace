@@ -92,7 +92,7 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
     // Display placeholder with "რეკლამა" text and phone number when no ad is available
     const placeholderContent = (
       <div className={`flex flex-col items-center justify-center bg-[#009c6d] w-[calc(100% - 24px)] mx-auto sm:w-[728px] h-[90px] sm:h-[140px] rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] ${className}`} style={{ padding: '10px 15px' }}>
-        <div className="text-white font-medium text-lg sm:text-xl">რეკლამა</div>
+        <div className="text-white font-medium text-lg sm:text-xl">{t("ad")}</div>
         <div className="text-white text-sm sm:text-md mt-2">+995 595 03 88 88</div>
       </div>
     );

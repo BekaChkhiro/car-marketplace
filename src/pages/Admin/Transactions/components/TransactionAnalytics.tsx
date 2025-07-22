@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import balanceService, { Transaction, AdminTransaction } from '../../../../api/services/balanceService';
 import { 
   ArrowUpCircle, 
@@ -25,6 +26,7 @@ const calculatePercentage = (value: number, total: number): number => {
 };
 
 const TransactionAnalytics: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [stats, setStats] = useState({
@@ -245,9 +247,9 @@ const TransactionAnalytics: React.FC = () => {
   const getTransactionTypeLabel = (type: string): string => {
     switch (type) {
       case 'deposit':
-        return 'შევსება';
+        return t('transactions.deposit');
       case 'vip_purchase':
-        return 'VIP შეძენა';
+        return t('transactions.vipPurchase');
       default:
         return type;
     }
@@ -256,11 +258,11 @@ const TransactionAnalytics: React.FC = () => {
   const getStatusLabel = (status: string): string => {
     switch (status) {
       case 'completed':
-        return 'დასრულებული';
+        return t('transactions.completed');
       case 'pending':
-        return 'მიმდინარე';
+        return t('transactions.pending');
       case 'failed':
-        return 'წარუმატებელი';
+        return t('transactions.failed');
       default:
         return status;
     }
@@ -276,12 +278,12 @@ const TransactionAnalytics: React.FC = () => {
     <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-100 transition-all duration-300 hover:shadow-xl">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
-          შევსების ანალიტიკა
+          {t('transactions.analytics.title')}
         </h2>
         <button 
           onClick={fetchTransactions}
           className="text-primary p-2 rounded-lg hover:bg-primary/10 transition-all duration-300 transform hover:scale-110"
-          title="განახლება"
+          title={t('transactions.analytics.refresh')}
         >
           <RefreshCw size={18} className="transition-transform hover:rotate-180 duration-700" />
         </button>
@@ -291,7 +293,7 @@ const TransactionAnalytics: React.FC = () => {
         <div className="py-12 text-center text-gray-500">
           <div className="flex flex-col items-center">
             <RefreshCw size={32} className="animate-spin mb-3" />
-            <span className="text-sm font-medium">იტვირთება...</span>
+            <span className="text-sm font-medium">{t('transactions.analytics.loading')}</span>
           </div>
         </div>
       ) : (
@@ -305,10 +307,10 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1.5 bg-green-100 rounded-lg">
                       <DollarSign size={16} className="text-green-600" />
                     </div>
-                    <p className="text-sm text-gray-600">ჯამური ბრუნვა</p>
+                    <p className="text-sm text-gray-600">{t('transactions.analytics.totalRevenue')}</p>
                   </div>
                   <p className="text-lg font-bold text-gray-800">{stats.totalAmount.toLocaleString()} ₾</p>
-                  <p className="text-xs text-gray-500 mt-1">საშ. {stats.averageDepositAmount.toLocaleString()} ₾</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('transactions.analytics.averageAmount')} {stats.averageDepositAmount.toLocaleString()} ₾</p>
                 </div>
               </div>
             </div>
@@ -320,10 +322,10 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1.5 bg-blue-100 rounded-lg">
                       <BarChart4 size={16} className="text-blue-600" />
                     </div>
-                    <p className="text-sm text-gray-600">შევსებები</p>
+                    <p className="text-sm text-gray-600">{t('transactions.analytics.deposits')}</p>
                   </div>
                   <p className="text-lg font-bold text-gray-800">{stats.total}</p>
-                  <p className="text-xs text-gray-500 mt-1">დღიური საშ. {stats.dailyAverage}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('transactions.analytics.dailyAverage')} {stats.dailyAverage}</p>
                 </div>
               </div>
             </div>
@@ -335,7 +337,7 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1.5 bg-teal-100 rounded-lg">
                       <Calendar size={16} className="text-teal-600" />
                     </div>
-                    <p className="text-sm text-gray-600">ბოლო კვირა</p>
+                    <p className="text-sm text-gray-600">{t('transactions.analytics.lastWeek')}</p>
                   </div>
                   <p className="text-lg font-bold text-gray-800">{stats.lastWeekAmount.toLocaleString()} ₾</p>
                   <div className=" flex items-start  gap-1 mt-1">
@@ -364,7 +366,7 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1.5 bg-orange-100 rounded-lg">
                       <Activity size={16} className="text-orange-600" />
                     </div>
-                    <p className="text-sm text-gray-600">წარმატება</p>
+                    <p className="text-sm text-gray-600">{t('transactions.analytics.success')}</p>
                   </div>
                   <p className="text-lg font-bold text-gray-800">{stats.successRate}%</p>
                   <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
@@ -386,7 +388,7 @@ const TransactionAnalytics: React.FC = () => {
                 <div className="p-1.5 bg-orange-100 rounded-lg">
                   <Activity size={14} className="text-orange-600" />
                 </div>
-                ტრანზაქციების სტატუსი
+                {t('transactions.analytics.transactionStatus')}
               </h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
@@ -395,7 +397,7 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1 bg-green-100 rounded-lg">
                       <CheckCircle size={14} className="text-green-600" />
                     </div>
-                    <p className="text-xs font-medium">წარმატებული</p>
+                    <p className="text-xs font-medium">{t('transactions.analytics.successful')}</p>
                   </div>
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-bold">{stats.completed}</p>
@@ -408,7 +410,7 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1 bg-yellow-100 rounded-lg">
                       <Clock size={14} className="text-yellow-600" />
                     </div>
-                    <p className="text-xs font-medium">მიმდინარე</p>
+                    <p className="text-xs font-medium">{t('transactions.analytics.ongoing')}</p>
                   </div>
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-bold">{stats.pending}</p>
@@ -421,7 +423,7 @@ const TransactionAnalytics: React.FC = () => {
                     <div className="p-1 bg-red-100 rounded-lg">
                       <XCircle size={14} className="text-red-600" />
                     </div>
-                    <p className="text-xs font-medium">წარუმატებელი</p>
+                    <p className="text-xs font-medium">{t('transactions.analytics.unsuccessful')}</p>
                   </div>
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-bold">{stats.failed}</p>
@@ -460,14 +462,14 @@ const TransactionAnalytics: React.FC = () => {
                 <div className="p-1.5 bg-blue-100 rounded-lg">
                   <Calendar size={14} className="text-blue-600" />
                 </div>
-                პერიოდული ანალიზი
+                {t('transactions.analytics.periodicAnalysis')}
               </h3>
               
               <div className="space-y-3">
                 {/* Weekly analysis */}
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-medium">ბოლო 7 დღე</p>
+                    <p className="text-sm font-medium">{t('transactions.analytics.last7Days')}</p>
                     <div className="flex items-start gap-1.5">
                       {stats.weeklyGrowth > 0 ? (
                         <>
@@ -491,13 +493,13 @@ const TransactionAnalytics: React.FC = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-50 p-2 rounded-lg">
                       <div className="flex justify-between">
-                        <p className="text-xs text-gray-500">შევსებები:</p>
+                        <p className="text-xs text-gray-500">{t('transactions.analytics.depositsLabel')}</p>
                         <p className="text-xs font-bold">{stats.lastWeekCount}</p>
                       </div>
                     </div>
                     <div className="bg-gray-50 p-2 rounded-lg">
                       <div className="flex justify-between">
-                        <p className="text-xs text-gray-500">თანხა:</p>
+                        <p className="text-xs text-gray-500">{t('transactions.analytics.amountLabel')}</p>
                         <p className="text-xs font-bold">{stats.lastWeekAmount.toLocaleString()} ₾</p>
                       </div>
                     </div>
@@ -507,7 +509,7 @@ const TransactionAnalytics: React.FC = () => {
                 {/* Monthly analysis */}
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-medium">ბოლო 30 დღე</p>
+                    <p className="text-sm font-medium">{t('transactions.analytics.last30Days')}</p>
                     <div className="flex items-start gap-1.5">
                       {stats.monthlyGrowth > 0 ? (
                         <>
@@ -531,13 +533,13 @@ const TransactionAnalytics: React.FC = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-50 p-2 rounded-lg">
                       <div className="flex justify-between">
-                        <p className="text-xs text-gray-500">შევსებები:</p>
+                        <p className="text-xs text-gray-500">{t('transactions.analytics.depositsLabel')}</p>
                         <p className="text-xs font-bold">{stats.lastMonthCount}</p>
                       </div>
                     </div>
                     <div className="bg-gray-50 p-2 rounded-lg">
                       <div className="flex justify-between">
-                        <p className="text-xs text-gray-500">თანხა:</p>
+                        <p className="text-xs text-gray-500">{t('transactions.analytics.amountLabel')}</p>
                         <p className="text-xs font-bold">{stats.lastMonthAmount.toLocaleString()} ₾</p>
                       </div>
                     </div>
@@ -552,7 +554,7 @@ const TransactionAnalytics: React.FC = () => {
                 <div className="p-1.5 bg-purple-100 rounded-lg">
                   <User size={14} className="text-purple-600" />
                 </div>
-                ტოპ მომხმარებლები
+                {t('transactions.analytics.topUsers')}
               </h3>
               
               {stats.topUsers && stats.topUsers.length > 0 ? (
@@ -570,7 +572,7 @@ const TransactionAnalytics: React.FC = () => {
                               <div className="p-1 bg-blue-100 rounded-lg">
                                 <Activity size={12} className="text-blue-600" />
                               </div>
-                              <p className="text-xs text-gray-500">{user.count} შევს.</p>
+                              <p className="text-xs text-gray-500">{user.count} {t('transactions.analytics.depositsShort')}</p>
                             </div>
                             <div className="flex items-start gap-2 ">
                               <div className="p-1 bg-green-100 rounded-lg">
@@ -586,7 +588,7 @@ const TransactionAnalytics: React.FC = () => {
                 </div>
               ) : (
                 <div className="bg-white p-4 rounded-xl text-center">
-                  <p className="text-sm text-gray-500">მომხმარებლების მონაცემები არ არის ხელმისაწვდომი</p>
+                  <p className="text-sm text-gray-500">{t('transactions.analytics.noUserData')}</p>
                 </div>
               )}
             </div>

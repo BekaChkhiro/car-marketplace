@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Car } from '../../../../api/types/car.types';
 import vipService, { VipStatus } from '../../../../api/services/vipService';
 import { X, Check, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface VipStatusModalProps {
   car: Car;
@@ -16,6 +17,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
   onClose,
   onStatusUpdate
 }) => {
+  const { t } = useTranslation('admin');
   const [selectedStatus, setSelectedStatus] = useState<VipStatus>('none');
   const [expirationDate, setExpirationDate] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -61,7 +63,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
         onClose();
       }, 1500);
     } catch (err: any) {
-      setError(err.message || 'VIP სტატუსის განახლება ვერ მოხერხდა');
+      setError(err.message || t('cars.vipUpdateError'));
     } finally {
       setLoading(false);
     }
@@ -91,7 +93,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
       case 'super_vip':
         return 'SUPER VIP';
       default:
-        return 'არავიპი';
+        return t('cars.noVip');
     }
   };
 
@@ -99,7 +101,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">VIP სტატუსის მართვა</h2>
+          <h2 className="text-xl font-bold">{t('cars.vipManagement')}</h2>
           <button
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-200 transition-colors"
@@ -113,13 +115,13 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
             <div className="mx-auto h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
               <Check className="text-green-600" size={28} />
             </div>
-            <p className="text-lg font-medium text-gray-900">სტატუსი განახლდა!</p>
+            <p className="text-lg font-medium text-gray-900">{t('cars.statusUpdated')}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {car.brand} {car.model} - აირჩიეთ VIP სტატუსი
+                {car.brand} {car.model} - {t('cars.selectVipStatus')}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 {['none', 'vip', 'vip_plus', 'super_vip'].map((status) => (
@@ -144,7 +146,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <div className="flex items-center">
                     <Calendar size={16} className="mr-1" />
-                    ვადის გასვლის თარიღი
+                    {t('cars.expirationDate')}
                   </div>
                 </label>
                 <input
@@ -170,7 +172,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
               >
-                გაუქმება
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
@@ -179,7 +181,7 @@ const VipStatusModal: React.FC<VipStatusModalProps> = ({
                   loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'
                 }`}
               >
-                {loading ? 'მიმდინარეობს...' : 'შენახვა'}
+                {loading ? t('common.loading') : t('common.save')}
               </button>
             </div>
           </form>

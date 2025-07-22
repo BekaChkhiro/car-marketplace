@@ -98,6 +98,11 @@
       "km": "км",
       "available": "Доступен"
     },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "view": "Просмотр"
+    },
     "vip": {
       "title": "VIP Статус",
       "daysLeft": "Осталось дней",
@@ -107,6 +112,12 @@
       "inactive": "Неактивен",
       "buyDays": "Купить дни",
       "extendDays": "Продлить срок",
+      "remaining": {
+        "minutes": "Осталось {minutes} минут",
+        "hoursMinutes": "Осталось {hours} часов и {minutes} минут",
+        "day": "Остался 1 день",
+        "days": "Осталось {days} дней"
+      },
       "modal": {
         "buyVip": "Приобрести VIP статус",
         "balance": "Баланс",
@@ -147,13 +158,360 @@
     "paymentMethod": "Способ оплаты",
     "date": "Дата",
     "status": "Статус",
-    "noTransactions": "Транзакций пока нет"
+    "noTransactions": "Транзакций пока нет",
+    "bankOfGeorgia": "Банк Грузии",
+    "bogPaymentSuccess": "Оплата через Банк Грузии успешно завершена",
+    "onlinePaymentSuccess": "Онлайн оплата успешно завершена",
+    "bogPaymentFailed": "Оплата через Банк Грузии не удалась",
+    "onlinePaymentFailed": "Онлайн оплата не удалась",
+    "waitingForBogPayment": "Ждем подтверждения оплаты от Банка Грузии...",
+    "waitingForPayment": "Ждем подтверждения оплаты...",
+    "bogPaymentProcessed": "Оплата через Банк Грузии обработана",
+    "paymentProcessed": "Оплата обработана",
+    "checkingPayment": "Проверяем статус оплаты...",
+    "paymentError": "Произошла ошибка при обработке платежа",
+    "updateFailed": "Не удалось получить баланс",
+    "invalidAmount": "Пожалуйста, введите корректную сумму",
+    "fundsAdded": "Средства успешно добавлены",
+    "addFailed": "Не удалось добавить средства",
+    "redirectingToBank": "Перенаправление в {{bank}}...",
+    "paymentInitFailed": "Не удалось инициализировать платеж",
+    "payOnline": "Оплатить онлайн",
+    "processingPayment": "Обрабатываем платеж..."
   },
   "wishlist": {
     "title": "Избранное",
     "empty": "У вас пока нет избранных объявлений",
+    "clearList": "Очистить список",
+    "clearListTitle": "Очистить избранное",
+    "clearListMessage": "Вы уверены, что хотите удалить все избранные объявления?",
+    "clearButton": "Очистить",
+    "removeTitle": "Удалить объявление",
+    "removeMessage": "Вы уверены, что хотите удалить {{brand}} {{model}} из избранного?",
+    "removeButton": "Удалить",
+    "clearSuccess": "Избранные объявления успешно очищены",
+    "clearError": "Произошла ошибка при очистке избранного",
+    "removeSuccess": "Объявление успешно удалено из избранного",
+    "removeError": "Произошла ошибка при удалении объявления",
     "viewDetails": "Посмотреть детали",
     "removeFromFavorites": "Удалить из избранного",
     "addToFavorites": "Добавить в избранное"
+  },
+  "addCar": {
+    "title": "Добавить машину",
+    "subtitle": "Заполните всю необходимую информацию",
+    "submit": "Добавить",
+    "basicInfo": {
+      "title": "Заголовок",
+      "titlePlaceholder": "например: BMW X5 M-пакет, в идеальном состоянии",
+      "brand": "Марка",
+      "selectBrand": "Выберите марку",
+      "model": "Модель",
+      "selectModel": "Выберите модель",
+      "vinCode": "VIN код",
+      "vinPlaceholder": "например: 1HGBH41JXMN109186",
+      "category": "Категория",
+      "selectCategory": "Выберите категорию",
+      "year": "Год выпуска",
+      "selectYear": "Выберите год",
+      "price": "Цена",
+      "pricePlaceholder": "например: 15000"
+    },
+    "technicalSpecs": {
+      "title": "Технические характеристики",
+      "subtitle": "Технические детали автомобиля",
+      "transmission": "Коробка передач",
+      "manual": "Механическая",
+      "automatic": "Автоматическая",
+      "fuelType": "Тип топлива",
+      "selectFuelType": "Выберите тип топлива",
+      "engineSize": "Объем двигателя (литры)",
+      "selectEngineSize": "Выберите объем двигателя",
+      "engineSizeHint": "Выберите объем двигателя в литрах",
+      "cylinders": "Количество цилиндров",
+      "cylindersPlaceholder": "например: 4",
+      "cylindersHint": "Укажите количество цилиндров двигателя",
+      "mileage": "Пробег (км)",
+      "mileagePlaceholder": "например: 100000",
+      "driveType": "Тип привода",
+      "steeringWheel": "Руль",
+      "color": "Цвет",
+      "selectColor": "Выберите цвет",
+      "interiorColor": "Цвет салона",
+      "selectInteriorColor": "Выберите цвет салона",
+      "interiorMaterial": "Материал салона",
+      "selectInteriorMaterial": "Выберите материал салона",
+      "airbagsCount": "Количество подушек безопасности",
+      "selectAirbagsCount": "Выберите количество подушек безопасности",
+      "airbags": "Подушки безопасности",
+      "doors": "Двери",
+      "selectDoors": "Выберите двери"
+    },
+    "features": {
+      "title": "Особенности автомобиля",
+      "subtitle": "Выберите доступные особенности",
+      "groups": {
+        "safety": "Безопасность",
+        "comfort": "Комфорт", 
+        "electronics": "Электроника",
+        "additional": "Дополнительное оборудование"
+      },
+      "items": {
+        "has_abs": "ABS",
+        "has_traction_control": "Система контроля тяги",
+        "has_central_locking": "Центральный замок",
+        "has_alarm": "Сигнализация",
+        "has_fog_lights": "Противотуманные фары",
+        "has_air_conditioning": "Кондиционер",
+        "has_climate_control": "Климат-контроль",
+        "has_heated_seats": "Подогрев сидений",
+        "has_seat_memory": "Память сидений",
+        "has_cruise_control": "Круиз-контроль",
+        "has_start_stop": "Система Start/Stop",
+        "has_sunroof": "Люк",
+        "has_electric_windows": "Электростеклоподъемники",
+        "has_board_computer": "Бортовой компьютер",
+        "has_navigation": "Навигация",
+        "has_parking_control": "Парктроник",
+        "has_rear_view_camera": "Камера заднего вида",
+        "has_aux": "AUX",
+        "has_bluetooth": "Bluetooth",
+        "has_multifunction_steering_wheel": "Мультифункциональный руль",
+        "has_hydraulics": "Гидравлика",
+        "has_alloy_wheels": "Литые диски",
+        "has_spare_tire": "Запасное колесо",
+        "is_disability_adapted": "Адаптировано для инвалидов"
+      }
+    },
+    "location": {
+      "title": "Местоположение",
+      "subtitle": "Укажите местоположение автомобиля",
+      "locationType": "Тип местоположения",
+      "country": "Страна",
+      "city": "Город",
+      "selectCountry": "Выберите страну",
+      "selectCity": "Выберите город",
+      "inGeorgia": "В Грузии",
+      "inTransit": "В транзите",
+      "international": "За границей",
+      "transitDescription": "Автомобиль находится в транзите в Грузию в будущем",
+      "internationalDescription": "Автомобиль находится за границей"
+    },
+    "description": {
+      "title": "Описание",
+      "subtitle": "Опишите свой автомобиль на разных языках",
+      "georgian": "Описание на грузинском",
+      "english": "Описание на английском",
+      "russian": "Описание на русском",
+      "placeholder": "Опишите состояние, особенности и другие важные детали вашего автомобиля..."
+    },
+    "authorInfo": {
+      "title": "Контактная информация",
+      "name": "Контактное имя",
+      "namePlaceholder": "Ваше имя или название компании",
+      "phone": "Номер телефона",
+      "phonePlaceholder": "Ваш номер телефона"
+    },
+    "images": {
+      "title": "Фотографии автомобиля",
+      "subtitle": "Загрузите качественные фотографии вашего автомобиля"
+    },
+    "vipStatus": {
+      "title": "VIP статус",
+      "subtitle": "Сделайте ваше объявление более заметным"
+    }
+  },
+  "editCar": {
+    "title": "Редактировать автомобиль",
+    "subtitle": "Обновите информацию о вашем автомобиле",
+    "submit": "Сохранить изменения"
+  },
+  "addPart": {
+    "title": "Добавить запчасть",
+    "subtitle": "Добавьте автозапчасть для продажи",
+    "submit": "Добавить запчасть"
+  },
+  "editPart": {
+    "title": "Редактировать запчасть",
+    "subtitle": "Обновите информацию о запчасти",
+    "submit": "Сохранить изменения"
+  },
+  "profileHome": {
+    "title": "Панель профиля",
+    "welcome": "Добро пожаловать обратно",
+    "quickStats": "Быстрая статистика",
+    "recentActivity": "Недавняя активность"
+  },
+  "parts": {
+    "title": "Мои запчасти",
+    "subtitle": "Управляйте своими объявлениями запчастей",
+    "noParts": "У вас пока нет объявлений запчастей",
+    "addYourFirst": "Добавьте вашу первую запчасть"
+  },
+  "imageUpload": {
+    "invalidFormat": "Неверный формат файла",
+    "dropHere": "Перетащите изображения сюда...",
+    "uploading": "Загрузка...",
+    "dropOrClick": "Перетащите изображения или нажмите для загрузки",
+    "selectOrDrop": "Выберите или перетащите изображения",
+    "formatInfo": "Разрешены форматы JPEG, PNG, WebP, максимум 10МБ",
+    "existingPhotos": "Существующие фотографии",
+    "removePhoto": "Удалить фото",
+    "setAsPrimary": "Установить как основное",
+    "newPhotos": "Новые фотографии",
+    "primaryPhoto": "Основное фото",
+    "addMore": "Добавить еще",
+    "photos": "фотографий",
+    "primaryPhotoSelected": "Основное фото выбрано",
+    "removeAll": "Удалить все"
+  },
+  "cities": {
+    "khashuri": "Хашури",
+    "samtredia": "Самтредиа",
+    "senaki": "Сенаки"
+  },
+  "countries": {
+    "georgia": "Грузия",
+    "germany": "Германия",
+    "usa": "США",
+    "japan": "Япония",
+    "uk": "Великобритания",
+    "france": "Франция",
+    "italy": "Италия",
+    "spain": "Испания",
+    "netherlands": "Нидерланды",
+    "china": "Китай",
+    "canada": "Канада",
+    "turkey": "Турция",
+    "poland": "Польша",
+    "armenia": "Армения"
+  },
+  "login": {
+    "title": "Вход",
+    "email": {
+      "label": "Электронная почта",
+      "placeholder": "Введите электронную почту"
+    },
+    "password": {
+      "label": "Пароль",
+      "placeholder": "Введите пароль"
+    },
+    "rememberMe": "Запомнить меня",
+    "forgotPassword": "Забыли пароль?",
+    "submit": "Войти",
+    "loading": "Пожалуйста, подождите...",
+    "orLoginWith": "Или войдите через",
+    "noAccount": "Нет аккаунта?",
+    "registerLink": "Регистрация",
+    "errors": {
+      "invalidCredentials": "Неверная электронная почта или пароль",
+      "general": "Не удалось войти. Пожалуйста, попробуйте еще раз"
+    }
+  },
+  "register": {
+    "title": "Регистрация",
+    "stepIndicator": {
+      "step1": "1",
+      "step2": "2"
+    },
+    "back" : "Назад",
+    "userType": {
+      "label": "Тип пользователя",
+      "regular": "Обычный пользователь",
+      "dealer": "Дилер"
+    },
+    "personalInfo": {
+      "firstName": {
+        "label": "Имя",
+        "placeholder": "Имя"
+      },
+      "lastName": {
+        "label": "Фамилия",
+        "placeholder": "Фамилия"
+      },
+      "age": {
+        "label": "Возраст",
+        "placeholder": "Выберите возраст"
+      },
+      "gender": {
+        "label": "Пол",
+        "male": "Мужской",
+        "female": "Женский"
+      },
+      "phone": {
+        "label": "Телефон",
+        "placeholder": "+995"
+      },
+      "year" : "лет"
+    },
+    "dealerInfo": {
+      "title": "Информация о дилере",
+      "companyName": {
+        "label": "Название компании",
+        "placeholder": "Название компании"
+      },
+      "establishedYear": {
+        "label": "Год основания",
+        "placeholder": "Выберите год"
+      },
+      "website": {
+        "label": "Веб-сайт",
+        "placeholder": "https://example.com"
+      },
+      "address": {
+        "label": "Адрес",
+        "placeholder": "Адрес"
+      },
+      "logo": {
+        "label": "Логотип компании",
+        "error": "Пожалуйста, загрузите логотип"
+      }
+    },
+    "accountInfo": {
+      "email": {
+        "label": "Эл. почта",
+        "placeholder": "Введите эл. почту"
+      },
+      "password": {
+        "label": "Пароль",
+        "placeholder": "Введите пароль",
+        "strength": {
+          "weak": "Слабый",
+          "medium": "Средний",
+          "strong": "Сильный"
+        }
+      },
+      "confirmPassword": {
+        "label": "Подтвердите пароль",
+        "placeholder": "Подтвердите пароль"
+      },
+      "terms": {
+        "label": "Я согласен",
+        "termsLink": "Условия использования"
+      }
+    },
+    "errors": {
+      "required": "Пожалуйста, заполните все обязательные поля",
+      "companyName": "Пожалуйста, введите название компании",
+      "logo": "Пожалуйста, загрузите хотя бы одно изображение",
+      "age": "Возраст должен быть от 18 до 100",
+      "phone": "Пожалуйста, введите номер телефона в правильном формате: +995XXXXXXXXX или 0XXXXXXXXX",
+      "email": "Пожалуйста, введите правильный формат эл. почты",
+      "passwordMismatch": "Пароли не совпадают",
+      "terms": "Пожалуйста, согласитесь с условиями использования",
+      "registrationFailed": "Регистрация не удалась. Пожалуйста, попробуйте снова"
+    },
+    "next": "Далее",
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "loginLink": "Войти",
+    "validation": {
+      "password": {
+        "minLength": "Пароль должен содержать минимум 8 символов",
+        "specialChar": "Пароль должен содержать минимум один специальный символ",
+        "number": "Пароль должен содержать минимум одну цифру",
+        "uppercase": "Пароль должен содержать минимум одну заглавную букву",
+        "lowercase": "Пароль должен содержать минимум одну строчную букву"
+      }
+    }
   }
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 import { Dealer } from '../../../api/types/dealer.types';
 import { MapPin, Phone, Globe, Calendar, Car } from 'lucide-react';
 
@@ -8,6 +10,8 @@ interface DealerCardProps {
 }
 
 const DealerCard: React.FC<DealerCardProps> = ({ dealer }) => {
+  const { t } = useTranslation(namespaces.dealerListing);
+  
   return (
     <div className="w-full bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
       <div className="flex h-full">
@@ -51,7 +55,7 @@ const DealerCard: React.FC<DealerCardProps> = ({ dealer }) => {
               {dealer.established_year && (
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
-                  <span>{dealer.established_year} წლიდან</span>
+                  <span>{dealer.established_year} {t('dealerCard.since')}</span>
                 </div>
               )}
               
@@ -91,7 +95,7 @@ const DealerCard: React.FC<DealerCardProps> = ({ dealer }) => {
               to={`/ka/dealers/${dealer.user_id}`}
               className="flex-1 flex justify-center items-center bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-medium min-h-[48px]"
             >
-              განცხადებების ნახვა ({dealer.car_count})
+              {t('dealerCard.viewListings')} ({dealer.car_count})
             </Link>
           </div>
         </div>

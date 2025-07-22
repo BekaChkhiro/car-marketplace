@@ -36,13 +36,13 @@ const AdvertisementsPage: React.FC = () => {
   // Get button text based on current route
   const getAddButtonText = () => {
     if (currentPath.includes('slider')) {
-      return 'სლაიდერის დამატება';
+      return t('advertisements.addSlider');
     } else if (currentPath.includes('banners')) {
-      return 'ბანერის დამატება';
+      return t('advertisements.addBanner');
     } else if (currentPath.includes('sidebar')) {
-      return 'გვერდითი რეკლამის დამატება';
+      return t('advertisements.addSidebar');
     }
-    return 'რეკლამის დამატება';
+    return t('advertisements.newAdvertisement');
   };
 
   // Get correct path for creating new ads
@@ -117,7 +117,7 @@ const AdvertisementsPage: React.FC = () => {
   
   // Handle delete advertisement
   const handleDelete = async (id: number) => {
-    if (window.confirm('ნამდვილად გსურთ რეკლამის წაშლა?')) {
+    if (window.confirm(t('advertisements.deleteConfirmation'))) {
       try {
         await advertisementService.delete(id);
         // Use the correct number type for the comparison
@@ -140,15 +140,15 @@ const AdvertisementsPage: React.FC = () => {
     setCurrentAdvertisement(null);
   };
   
-  // Get placement name in Georgian
+  // Get placement name
   const getPlacementName = (placement: string) => {
     switch (placement) {
       case 'home_slider':
-        return 'მთავარი სლაიდერი';
+        return t('advertisements.homeSlider');
       case 'home_banner':
-        return 'მთავარი ბანერი';
+        return t('advertisements.homeBanner');
       case 'sidebar':
-        return 'გვერდითი პანელი';
+        return t('advertisements.sidebarPanel');
       default:
         return placement;
     }
@@ -205,7 +205,7 @@ const AdvertisementsPage: React.FC = () => {
               }
             >
               <BarChart2 className="mr-2 h-4 w-4" />
-              {t('analytics')}
+              {t('advertisements.analytics.title')}
             </NavLink>
           </nav>
         </div>

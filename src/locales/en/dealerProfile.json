@@ -1,0 +1,19 @@
+{
+    "dealerInfo": {
+        "established": "Established",
+        "year": ""
+    },
+    "notFound": {
+        "title": "Dealer not found",
+        "message": "The requested dealer could not be found."
+    },
+    "cars": {
+        "notFound": {
+            "title": "No cars found",
+            "message": "This dealer currently has no cars listed or none match your filters."
+        }
+    },
+    "errors": {
+        "loadingFailed": "Failed to load dealer information"
+    }
+}

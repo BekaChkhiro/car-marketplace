@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, RefreshCw, Eye, Edit, Trash2, Calendar, Gauge, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Car } from '../../../../api/types/car.types';
 import CarItem from './CarItem';
 import EmptyState from './EmptyState';
@@ -16,6 +17,7 @@ const CarsList: React.FC<CarsListProps> = ({
   onDeleteCar,
   isLoading = false
 }) => {
+  const { t } = useTranslation('admin');
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
   const navigate = useNavigate();
@@ -38,8 +40,8 @@ const CarsList: React.FC<CarsListProps> = ({
     return (
       <div className="p-6 max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">მანქანები</h1>
-          <p className="text-gray-500 mt-1">თქვენი მანქანების მართვა</p>
+          <h1 className="text-3xl font-bold text-gray-800">{t('cars.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('cars.management')}</p>
         </div>
         <EmptyState />
       </div>
@@ -59,16 +61,16 @@ const CarsList: React.FC<CarsListProps> = ({
             <thead>
               <tr className="bg-gray-50">
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  მანქანა
+                  {t('cars.car')}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ფასი
+                  {t('cars.price')}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  სტატუსი
+                  {t('cars.status')}
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  მოქმედებები
+                  {t('cars.actions')}
                 </th>
               </tr>
             </thead>
@@ -95,11 +97,11 @@ const CarsList: React.FC<CarsListProps> = ({
               const getStatusBadge = (status: string) => {
                 switch (status) {
                   case 'available':
-                    return <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">ხელმისაწვდომი</span>;
+                    return <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">{t('common.available')}</span>;
                   case 'sold':
-                    return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">გაყიდული</span>;
+                    return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">{t('common.sold')}</span>;
                   case 'pending':
-                    return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">მოლოდინში</span>;
+                    return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">{t('common.pending')}</span>;
                   default:
                     return null;
                 }
@@ -151,18 +153,18 @@ const CarsList: React.FC<CarsListProps> = ({
                     <div className="grid grid-cols-3 gap-2 bg-gray-50 p-2 rounded-lg">
                       <div className="flex flex-col items-center justify-center p-2 text-center">
                         <Calendar size={16} className="text-gray-500 mb-1" />
-                        <span className="text-xs text-gray-500">წელი</span>
+                        <span className="text-xs text-gray-500">{t('cars.year')}</span>
                         <span className="text-sm font-medium text-gray-800">{car.year}</span>
                       </div>
                       <div className="flex flex-col items-center justify-center p-2 text-center">
                         <Gauge size={16} className="text-gray-500 mb-1" />
-                        <span className="text-xs text-gray-500">გარბენი</span>
+                        <span className="text-xs text-gray-500">{t('cars.mileage')}</span>
                         <span className="text-sm font-medium text-gray-800">{car.specifications.mileage ? car.specifications.mileage.toLocaleString() : '0'} კმ</span>
                       </div>
                       <div className="flex flex-col items-center justify-center p-2 text-center">
-                        <span className="text-xs text-gray-500">გადაცემათა კოლოფი</span>
+                        <span className="text-xs text-gray-500">{t('cars.transmission')}</span>
                         <span className="text-sm font-medium text-gray-800">
-                          {car.specifications.transmission === 'automatic' ? 'ავტომატიკა' : 'მექანიკა'}
+                          {car.specifications.transmission === 'automatic' ? t('common.automatic') : t('common.manual')}
                         </span>
                       </div>
                     </div>
@@ -174,10 +176,10 @@ const CarsList: React.FC<CarsListProps> = ({
                     </div>
                     
                     <div className="text-xs text-gray-500">
-                      დამატებულია: {formatDate(car.created_at)}
+                      {t('cars.createdAt')}: {formatDate(car.created_at)}
                       {car.vip_expiration_date && (
                         <div className="mt-1">
-                          VIP ვადა: {formatDate(car.vip_expiration_date)}
+                          {t('cars.vipExpiration')}: {formatDate(car.vip_expiration_date)}
                         </div>
                       )}
                     </div>
@@ -217,7 +219,7 @@ const CarsList: React.FC<CarsListProps> = ({
           {/* Pagination */}
         <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-gray-100 bg-gray-50">
           <div className="text-sm text-gray-600 text-center sm:text-left">
-            ნაჩვენებია <span className="font-medium">{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredCars.length)}</span> სულ <span className="font-medium">{filteredCars.length}</span>
+            {t('common.showing')} <span className="font-medium">{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredCars.length)}</span> {t('common.of')} <span className="font-medium">{filteredCars.length}</span>
           </div>
           <div className="flex items-center justify-center sm:justify-end gap-2">
             <button 
@@ -225,7 +227,7 @@ const CarsList: React.FC<CarsListProps> = ({
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
-              <ArrowLeft size={16} /> <span className="hidden sm:inline">უკან</span>
+              <ArrowLeft size={16} /> <span className="hidden sm:inline">{t('common.previous')}</span>
             </button>
             <span className="px-3 py-2 text-xs font-medium bg-white border border-gray-200 rounded-lg min-w-[70px] text-center">
               {currentPage} / {totalPages || 1}
@@ -235,7 +237,7 @@ const CarsList: React.FC<CarsListProps> = ({
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages === 0}
             >
-              <span className="hidden sm:inline">შემდეგი</span> <ArrowRight size={16} />
+              <span className="hidden sm:inline">{t('common.next')}</span> <ArrowRight size={16} />
             </button>
           </div>
         </div>
@@ -246,7 +248,7 @@ const CarsList: React.FC<CarsListProps> = ({
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600"
           onClick={() => window.location.reload()}
         >
-          <RefreshCw size={14} /> განახლება
+          <RefreshCw size={14} /> {t('common.refresh')}
         </button>
       </div>
     </div>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart, ChevronDown, ChevronUp, Search, TrendingUp, BarChart2, Eye, MousePointerClick } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import advertisementService, { AdvertisementAnalytics } from '../../../../api/services/advertisementService';
 
 const AdvertisementAnalyticsTable: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [analytics, setAnalytics] = useState<AdvertisementAnalytics[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
         setAnalytics(processedData);
         setError(null);
       } catch (err) {
-        setError('ანალიტიკის მონაცემების ჩატვირთვა ვერ მოხერხდა');
+        setError(t('advertisements.analytics.loadError'));
         console.error('Error fetching analytics:', err);
       } finally {
         setIsLoading(false);
@@ -50,15 +52,15 @@ const AdvertisementAnalyticsTable: React.FC = () => {
   const getPlacementName = (placement: string): string => {
     switch (placement) {
       case 'home_slider':
-        return 'მთავარი გვერდის სლაიდერი';
+        return t('advertisements.placements.home_slider');
       case 'home_banner':
-        return 'მთავარი გვერდის ბანერი';
+        return t('advertisements.placements.home_banner');
       case 'car_listing_top':
-        return 'მანქანების ყიდვის გვერდი - ზედა';
+        return t('advertisements.placements.car_listing_top');
       case 'car_details_top':
-        return 'მანქანის დეტალების გვერდი - ზედა';
+        return t('advertisements.placements.car_details_top');
       case 'car_details_bottom':
-        return 'მანქანის დეტალების გვერდი - ქვედა';
+        return t('advertisements.placements.car_details_bottom');
       default:
         return placement;
     }
@@ -100,7 +102,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
           }}
           className="w-12 h-12 border-l-2 border-t-2 border-primary rounded-full"
         />
-        <p className="ml-4 font-medium text-gray-600">მონაცემების ჩატვირთვა...</p>
+        <p className="ml-4 font-medium text-gray-600">{t('advertisements.analytics.loadingData')}</p>
       </div>
     );
   }
@@ -125,9 +127,9 @@ const AdvertisementAnalyticsTable: React.FC = () => {
 
   // Helper function to categorize CTR performance
   const getCtrPerformance = (ctr: number) => {
-    if (ctr >= 5) return { text: 'კარგი', color: 'bg-green-500', textColor: 'text-green-600' };
-    if (ctr >= 2) return { text: 'საშუალო', color: 'bg-yellow-500', textColor: 'text-yellow-600' };
-    return { text: 'დაბალი', color: 'bg-red-500', textColor: 'text-red-600' };
+    if (ctr >= 5) return { text: t('advertisements.analytics.performance.good'), color: 'bg-green-500', textColor: 'text-green-600' };
+    if (ctr >= 2) return { text: t('advertisements.analytics.performance.average'), color: 'bg-yellow-500', textColor: 'text-yellow-600' };
+    return { text: t('advertisements.analytics.performance.low'), color: 'bg-red-500', textColor: 'text-red-600' };
   };
 
   return (
@@ -147,7 +149,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
             <Eye className="h-8 w-8 text-blue-600" />
           </div>
           <div className="ml-5">
-            <p className="text-sm font-medium text-blue-600">ნახვები</p>
+            <p className="text-sm font-medium text-blue-600">{t('advertisements.views')}</p>
             <p className="text-2xl font-bold text-blue-800">{totalImpressions.toLocaleString()}</p>
           </div>
         </motion.div>
@@ -160,7 +162,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
             <MousePointerClick className="h-8 w-8 text-purple-600" />
           </div>
           <div className="ml-5">
-            <p className="text-sm font-medium text-purple-600">კლიკები</p>
+            <p className="text-sm font-medium text-purple-600">{t('advertisements.clicks')}</p>
             <p className="text-2xl font-bold text-purple-800">{totalClicks.toLocaleString()}</p>
           </div>
         </motion.div>
@@ -173,7 +175,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
             <TrendingUp className="h-8 w-8 text-emerald-600" />
           </div>
           <div className="ml-5">
-            <p className="text-sm font-medium text-emerald-600">CTR</p>
+            <p className="text-sm font-medium text-emerald-600">{t('advertisements.analytics.ctr')}</p>
             <p className="text-2xl font-bold text-emerald-800">{averageCTR}%</p>
           </div>
         </motion.div>
@@ -181,26 +183,26 @@ const AdvertisementAnalyticsTable: React.FC = () => {
 
       {/* CTR Performance Guide */}
       <motion.div variants={itemVariants} className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold mb-3">რეკლამის ეფექტურობის შეფასება (CTR)</h3>
+        <h3 className="text-lg font-semibold mb-3">{t('advertisements.analytics.ctrEvaluation')}</h3>
         <div className="text-sm text-gray-600 mb-4">
-          CTR (დაწკაპუნების ხვედრითი კოეფიციენტი) განსაზღვრავს რეკლამის ეფექტურობას და გამოითვლება ფორმულით: (100 * დაწკაპუნებები / ნახვები)%
+          {t('advertisements.analytics.ctrDescription')}
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center">
             <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-sm text-red-600">დაბალი CTR (&lt;2%)</span>
+            <span className="text-sm text-red-600">{t('advertisements.analytics.lowCTR')}</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
-            <span className="text-sm text-yellow-600">საშუალო CTR (2-5%)</span>
+            <span className="text-sm text-yellow-600">{t('advertisements.analytics.averageCTR')}</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-sm text-green-600">კარგი CTR (&gt;5%)</span>
+            <span className="text-sm text-green-600">{t('advertisements.analytics.goodCTR')}</span>
           </div>
         </div>
         <div className="mt-4 text-sm text-gray-500">
-          <p>შენიშვნა: უკეთესი CTR მიუთითებს უფრო ეფექტურ რეკლამაზე. თუ რეკლამის CTR დაბალია, გაკვეული შესაძლოა ცვლილებების შეტანა სურათსა და ტექსტში.</p>
+          <p>{t('advertisements.analytics.ctrNote')}</p>
         </div>
       </motion.div>
 
@@ -213,9 +215,9 @@ const AdvertisementAnalyticsTable: React.FC = () => {
           <div>
             <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center">
               <BarChart2 className="h-5 w-5 mr-2 text-primary" />
-              რეკლამების ანალიტიკა
+              {t('advertisements.analytics.title')}
             </h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">ნახვებისა და დაკლიკების სტატისტიკა</p>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">{t('advertisements.analytics.description')}</p>
           </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -224,7 +226,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
             <input 
               type="text" 
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-sm"
-              placeholder="მოძებნა..." 
+              placeholder={t('advertisements.analytics.search')}
             />
           </div>
         </div>
@@ -236,31 +238,31 @@ const AdvertisementAnalyticsTable: React.FC = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    სახელი
+                    {t('advertisements.title')}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    განთავსება
+                    {t('advertisements.table.placement')}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <div className="flex items-center">
                       <Eye className="h-3 w-3 mr-1" />
-                      ნახვები
+                      {t('advertisements.views')}
                     </div>
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <div className="flex items-center">
                       <MousePointerClick className="h-3 w-3 mr-1" />
-                      კლიკები
+                      {t('advertisements.clicks')}
                     </div>
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <div className="flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      CTR
+                      {t('advertisements.analytics.ctr')}
                     </div>
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    სტატუსი
+                    {t('advertisements.status')}
                   </th>
                 </tr>
               </thead>
@@ -270,8 +272,8 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                     <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
                       <div className="flex flex-col items-center justify-center space-y-2">
                         <BarChart className="h-12 w-12 text-gray-300" />
-                        <p className="text-sm">ანალიტიკის მონაცემები არ მოიძებნა</p>
-                        <p className="text-xs text-gray-400">დაელოდეთ სანამ რეკლამა განთავსდება</p>
+                        <p className="text-sm">{t('advertisements.analytics.noDataFound')}</p>
+                        <p className="text-xs text-gray-400">{t('advertisements.analytics.waitForData')}</p>
                       </div>
                     </td>
                   </tr>
@@ -328,12 +330,12 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                         {item.is_active ? (
                           <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
-                            აქტიური
+                            {t('advertisements.active')}
                           </span>
                         ) : (
                           <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-gray-100 text-gray-800">
                             <span className="w-1.5 h-1.5 rounded-full bg-gray-600 mr-1.5"></span>
-                            არააქტიური
+                            {t('advertisements.inactive')}
                           </span>
                         )}
                       </td>
@@ -350,15 +352,15 @@ const AdvertisementAnalyticsTable: React.FC = () => {
               <div className="px-4 py-8 text-center text-gray-500">
                 <div className="flex flex-col items-center justify-center space-y-3">
                   <BarChart className="h-14 w-14 text-gray-300" />
-                  <p className="text-sm font-medium">ანალიტიკის მონაცემები არ მოიძებნა</p>
-                  <p className="text-xs text-gray-400">დაელოდეთ სანამ რეკლამა განთავსდება</p>
+                  <p className="text-sm font-medium">{t('advertisements.analytics.noDataFound')}</p>
+                  <p className="text-xs text-gray-400">{t('advertisements.analytics.waitForData')}</p>
                 </div>
               </div>
             ) : (
               <div className="grid gap-4 p-4">
                 {analytics.map((item, index) => {
                   const ctrRating = typeof item.ctr === 'number' ? 
-                    (item.ctr >= 5 ? 'კარგი' : item.ctr >= 2 ? 'საშუალო' : 'დაბალი') : 'დაბალი';
+                    (item.ctr >= 5 ? t('advertisements.analytics.performance.good') : item.ctr >= 2 ? t('advertisements.analytics.performance.average') : t('advertisements.analytics.performance.low')) : t('advertisements.analytics.performance.low');
                   const ctrColor = typeof item.ctr === 'number' ? 
                     (item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500') : 'bg-red-500';
                   const ctrTextColor = typeof item.ctr === 'number' ? 
@@ -393,12 +395,12 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                             {item.is_active ? (
                               <span className="px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
                                 <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
-                                აქტიური
+                                {t('advertisements.active')}
                               </span>
                             ) : (
                               <span className="px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full bg-gray-100 text-gray-800">
                                 <span className="w-1.5 h-1.5 rounded-full bg-gray-600 mr-1.5"></span>
-                                არააქტიური
+                                {t('advertisements.inactive')}
                               </span>
                             )}
                           </div>
@@ -410,7 +412,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                           <div className="bg-white rounded-md p-2 flex flex-col">
                             <div className="text-xs text-gray-500 flex items-center mb-1">
                               <Eye className="h-3 w-3 mr-1" />
-                              ნახვები
+                              {t('advertisements.views')}
                             </div>
                             <div className="text-lg font-semibold text-gray-800">
                               {(item.impressions || 0).toLocaleString()}
@@ -421,7 +423,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                           <div className="bg-white rounded-md p-2 flex flex-col">
                             <div className="text-xs text-gray-500 flex items-center mb-1">
                               <MousePointerClick className="h-3 w-3 mr-1" />
-                              კლიკები
+                              {t('advertisements.clicks')}
                             </div>
                             <div className="text-lg font-semibold text-gray-800">
                               {(item.clicks || 0).toLocaleString()}
@@ -433,7 +435,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                             <div className="flex items-center justify-between mb-2">
                               <div className="text-xs text-gray-500 flex items-center">
                                 <TrendingUp className="h-3 w-3 mr-1" />
-                                CTR
+{t('advertisements.analytics.ctr')}
                               </div>
                               <div className="text-sm font-medium flex items-center">
                                 <span className={`${ctrTextColor} text-xs font-medium`}>

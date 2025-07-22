@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../i18n';
 import autosalonService from '../../api/services/autosalonService';
 import carService from '../../api/services/carService';
 import { Autosalon } from '../../api/types/autosalon.types';
@@ -13,6 +15,7 @@ import { useToast } from '../../context/ToastContext';
 import { MapPin, Phone, Globe, Calendar, Building } from 'lucide-react';
 
 const AutosalonProfile: React.FC = () => {
+  const { t } = useTranslation([namespaces.autosalonProfile]);
   const { autosalonId } = useParams<{ autosalonId: string }>();
   const [autosalon, setAutosalon] = useState<Autosalon | null>(null);
   const [cars, setCars] = useState<Car[]>([]);
@@ -64,7 +67,7 @@ const AutosalonProfile: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching autosalon:', error);
-        showToast('ავტოსალონის მონაცემების ჩატვირთვა ვერ მოხერხდა', 'error');
+        showToast(t('errorLoadingData'), 'error');
       } finally {
         setLoading(false);
       }
@@ -153,9 +156,9 @@ const AutosalonProfile: React.FC = () => {
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🏪</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">ავტოსალონი ვერ მოიძებნა</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('notFound')}</h3>
           <p className="text-gray-600 text-center max-w-md">
-            მოთხოვნილი ავტოსალონი ვერ მოიძებნა.
+            {t('notFoundDescription')}
           </p>
           <p className="text-sm text-gray-500 mt-4">Debug: autosalonId = {autosalonId}</p>
         </div>
@@ -194,7 +197,7 @@ const AutosalonProfile: React.FC = () => {
                 {autosalon.established_year && (
                   <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100 gap-2 text-gray-600 text-sm">
                     <Calendar className="w-4 h-4" />
-                    <span>დაარსდა {autosalon.established_year} წელს</span>
+                    <span>{t('establishedYear', { year: autosalon.established_year })}</span>
                   </div>
                 )}
                 
@@ -256,10 +259,10 @@ const AutosalonProfile: React.FC = () => {
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-gray-400 text-6xl mb-4">🚗</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {autosalon.company_name}-ს მანქანები ვერ მოიძებნა
+                  {t('noCarsFound', { companyName: autosalon.company_name })}
                 </h3>
                 <p className="text-gray-600 text-center max-w-md">
-                  ამ ავტოსალონს ამჟამად არ აქვს მანქანები გამოსატანი ან არ აკმაყოფილებს თქვენს ფილტრებს.
+                  {t('noCarsDescription')}
                 </p>
               </div>
             ) : (

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { User, Save, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import authService from '../../../api/services/authService';
 import { useToast } from '../../../context/ToastContext';
 
 const SettingsPage = () => {
+  const { t } = useTranslation('admin');
   const { user, refreshUserData } = useAuth();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -70,9 +72,9 @@ const SettingsPage = () => {
 
       await authService.updateProfile(updateData);
       await refreshUserData(); // Refresh user data after successful update
-      showToast('პროფილი წარმატებით განახლდა', 'success');
+      showToast(t('settings.profile.updateSuccess'), 'success');
     } catch (error: any) {
-      showToast(error.message || 'პროფილის განახლება ვერ მოხერხდა', 'error');
+      showToast(error.message || t('settings.profile.updateError'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +99,7 @@ const SettingsPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#009c6d] mx-auto mb-4"></div>
-          <p className="text-gray-600">მონაცემები იტვირთება...</p>
+          <p className="text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -108,9 +110,9 @@ const SettingsPage = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-[#009c6d] mb-2">
-            პარამეტრები
+            {t('settings.title')}
           </h1>
-          <p className="text-gray-600">მართეთ თქვენი ანგარიშის პარამეტრები</p>
+          <p className="text-gray-600">{t('settings.manageAccount')}</p>
         </div>
 
         <div className="w-full sm:w-2/3 mx-auto mb-8">
@@ -121,18 +123,17 @@ const SettingsPage = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-[#009c6d]">
-                  ადმინის პროფილის რედაქტირება
+                  {t('settings.profile.title')}
                 </h2>
-                <p className="text-gray-600 mt-1">მართეთ თქვენი პირადი ინფორმაცია</p>
+                <p className="text-gray-600 mt-1">{t('settings.profile.subtitle')}</p>
               </div>
             </div>
           
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* მომხმარებლის სახელი */}
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    მომხმარებლის სახელი
+                    {t('settings.profile.username')}
                   </label>
                   <input
                     type="text"
@@ -144,10 +145,9 @@ const SettingsPage = () => {
                   />
                 </div>
 
-                {/* ელ-ფოსტა */}
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    ელ-ფოსტა
+                    {t('settings.profile.email')}
                   </label>
                   <input
                     type="email"
@@ -159,10 +159,9 @@ const SettingsPage = () => {
                   />
                 </div>
 
-                {/* სახელი */}
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    სახელი
+                    {t('settings.profile.firstName')}
                   </label>
                   <input
                     type="text"
@@ -174,10 +173,9 @@ const SettingsPage = () => {
                   />
                 </div>
 
-                {/* გვარი */}
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    გვარი
+                    {t('settings.profile.lastName')}
                   </label>
                   <input
                     type="text"
@@ -189,10 +187,9 @@ const SettingsPage = () => {
                   />
                 </div>
 
-                {/* ტელეფონი */}
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    ტელეფონი
+                    {t('settings.profile.phone')}
                   </label>
                   <input
                     type="tel"
@@ -204,10 +201,9 @@ const SettingsPage = () => {
                   />
                 </div>
 
-                {/* ასაკი */}
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    ასაკი
+                    {t('settings.profile.age')}
                   </label>
                   <input
                     type="number"
@@ -220,10 +216,9 @@ const SettingsPage = () => {
                   />
                 </div>
 
-                {/* სქესი */}
                 <div className="md:col-span-2 group">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    სქესი
+                    {t('settings.profile.gender')}
                   </label>
                   <select
                     name="gender"
@@ -231,14 +226,13 @@ const SettingsPage = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-white/70 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#009c6d] focus:border-transparent transition-all duration-200 group-hover:border-[#009c6d]"
                   >
-                    <option value="male">მამრობითი</option>
-                    <option value="female">მდედრობითი</option>
-                    <option value="other">სხვა</option>
+                    <option value="male">{t('settings.profile.male')}</option>
+                    <option value="female">{t('settings.profile.female')}</option>
+                    <option value="other">{t('settings.profile.other')}</option>
                   </select>
                 </div>
               </div>
 
-              {/* ღილაკები */}
               <div className="flex gap-6 pt-8">
                 <button
                   type="submit"
@@ -246,7 +240,7 @@ const SettingsPage = () => {
                   className="flex items-center gap-3 px-8 py-4 bg-[#009c6d] text-white rounded-2xl hover:bg-[#007a56] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] font-semibold"
                 >
                   <Save size={20} />
-                  {isLoading ? 'იცვლება...' : 'შენახვა'}
+                  {isLoading ? t('settings.profile.saving') : t('settings.save')}
                 </button>
                 
                 <button
@@ -255,7 +249,7 @@ const SettingsPage = () => {
                   className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-2xl hover:from-gray-200 hover:to-gray-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] font-semibold"
                 >
                   <X size={20} />
-                  გაუქმება
+                  {t('settings.cancel')}
                 </button>
               </div>
             </form>

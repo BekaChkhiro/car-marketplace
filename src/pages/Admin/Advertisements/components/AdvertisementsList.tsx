@@ -1,6 +1,7 @@
 import React from 'react';
 import { Edit, Trash, ExternalLink, Eye, Clock, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Advertisement } from '../../../../api/services/advertisementService';
 
 interface AdvertisementsListProps {
@@ -14,20 +15,22 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation('admin');
+  
   const getPlacementName = (placement: string) => {
     switch (placement) {
       case 'home_slider':
-        return 'მთავარი გვერდის სლაიდერი';
+        return t('advertisements.placements.home_slider');
       case 'home_banner':
-        return 'მთავარი გვერდის ბანერი';
+        return t('advertisements.placements.home_banner');
       case 'sidebar':
-        return 'გვერდითი პანელი';
+        return t('advertisements.placements.sidebar');
       case 'car_details_top':
-        return 'მანქანის დეტალების გვერდი - ზედა';
+        return t('advertisements.placements.car_detail_top');
       case 'car_details_bottom':
-        return 'მანქანის დეტალების გვერდი - ქვედა';
+        return t('advertisements.placements.car_detail_bottom');
       case 'car_details':
-        return 'მანქანის დეტალების გვერდი';
+        return t('advertisements.placements.car_detail_top');
       default:
         return placement;
     }
@@ -61,8 +64,8 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
             <Eye className="h-8 w-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900">რეკლამები არ არის</h3>
-          <p className="text-gray-500 max-w-sm">დაამატეთ პირველი რეკლამა რომ დაიწყოთ კამპანიის მართვა.</p>
+          <h3 className="text-lg font-medium text-gray-900">{t('advertisements.table.noAdsMessage')}</h3>
+          <p className="text-gray-500 max-w-sm">{t('advertisements.table.addFirstAd')}</p>
         </div>
       </motion.div>
     );
@@ -80,22 +83,22 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                რეკლამა
+                {t('advertisements.table.advertisement')}
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                განთავსების ადგილი
+                {t('advertisements.table.placement')}
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <div className="flex items-center">
                   <Calendar className="mr-1 h-3 w-3" />
-                  პერიოდი
+                  {t('advertisements.table.period')}
                 </div>
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                სტატუსი
+                {t('advertisements.status')}
               </th>
               <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                მოქმედებები
+                {t('advertisements.actions')}
               </th>
             </tr>
           </thead>
@@ -149,7 +152,7 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
                     <div className="flex flex-col space-y-1">
                       <div className="flex items-center text-sm text-gray-700">
                         <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md">
-                          დაწყება
+                          {t('advertisements.table.start')}
                         </span>
                         <span className="ml-2">
                           {new Date(advertisement.start_date).toLocaleDateString('ka-GE')}
@@ -157,7 +160,7 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
                       </div>
                       <div className="flex items-center text-sm text-gray-700">
                         <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md">
-                          დასრულება
+                          {t('advertisements.table.end')}
                         </span>
                         <span className="ml-2">
                           {new Date(advertisement.end_date).toLocaleDateString('ka-GE')}
@@ -169,12 +172,12 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
                     {isActive ? (
                       <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>
-                        აქტიური
+                        {t('advertisements.active')}
                       </span>
                     ) : (
                       <span className="px-3 py-1.5 inline-flex items-center text-xs font-medium rounded-full bg-red-100 text-red-800">
                         <span className="w-1.5 h-1.5 rounded-full bg-red-600 mr-1.5"></span>
-                        არააქტიური
+                        {t('advertisements.inactive')}
                       </span>
                     )}
                   </td>
@@ -240,12 +243,12 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
                           {isActive ? (
                             <span className="px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full bg-green-100 text-green-800">
                               <span className="w-2 h-2 rounded-full bg-green-600 mr-1.5"></span>
-                              აქტიური
+                              {t('advertisements.active')}
                             </span>
                           ) : (
                             <span className="px-2.5 py-1 inline-flex items-center text-xs font-medium rounded-full bg-red-100 text-red-800">
                               <span className="w-2 h-2 rounded-full bg-red-600 mr-1.5"></span>
-                              არააქტიური
+                              {t('advertisements.inactive')}
                             </span>
                           )}
                         </div>
@@ -270,7 +273,7 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
                     {/* Placement */}
                     <div className="flex items-center justify-between">
                       <div className="w-1/3 text-xs font-semibold text-gray-500 uppercase tracking-wider pt-1">
-                        განთავსების ადგილი
+                        {t('advertisements.table.placement')}
                       </div>
                       <div className="w-1/3 text-xs text-gray-800 font-medium">
                         {getPlacementName(advertisement.placement)}
@@ -281,17 +284,17 @@ const AdvertisementsList: React.FC<AdvertisementsListProps> = ({
                     <div className="space-y-2">
                       <div className="flex items-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                        პერიოდი
+                        {t('advertisements.table.period')}
                       </div>
                       <div className="bg-white rounded-md p-2 divide-y divide-gray-100">
                         <div className="flex items-center justify-between py-1.5">
-                          <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">დაწყება</span>
+                          <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">{t('advertisements.table.start')}</span>
                           <span className="text-sm text-gray-700 font-medium">
                             {new Date(advertisement.start_date).toLocaleDateString('ka-GE')}
                           </span>
                         </div>
                         <div className="flex items-center justify-between py-1.5 pt-2">
-                          <span className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium">დასრულება</span>
+                          <span className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium">{t('advertisements.table.end')}</span>
                           <span className="text-sm text-gray-700 font-medium">
                             {new Date(advertisement.end_date).toLocaleDateString('ka-GE')}
                           </span>

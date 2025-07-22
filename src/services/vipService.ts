@@ -73,7 +73,7 @@ export const getVipListingsStats = async (): Promise<VipListingsStats> => {
 /**
  * Get list of all VIP listings
  */
-export const getVipListings = async (): Promise<VipListing[]> => {
+export const getVipListings = async (t?: (key: string) => string): Promise<VipListing[]> => {
   try {
     const response = await axios.get(`${API_URL}/api/admin/vip-listings`, {
       headers: authHeader()
@@ -104,7 +104,7 @@ export const getVipListings = async (): Promise<VipListing[]> => {
           car_id: 100 + i,
           car_title: `BMW X${i % 9 + 1}`,
           user_id: 200 + i,
-          user_name: `მომხმარებელი ${i}`,
+          user_name: t ? `${t('user')} ${i}` : `User ${i}`,
           start_date: startDate.toISOString(),
           end_date: endDate.toISOString(),
           status: isActive ? 'active' : 'expired',
@@ -124,7 +124,7 @@ export const getVipListings = async (): Promise<VipListing[]> => {
 /**
  * Get all VIP-related transactions
  */
-export const getVipTransactions = async (): Promise<VipTransaction[]> => {
+export const getVipTransactions = async (t?: (key: string) => string): Promise<VipTransaction[]> => {
   try {
     const response = await axios.get(`${API_URL}/api/admin/vip-transactions`, {
       headers: authHeader()
@@ -150,7 +150,7 @@ export const getVipTransactions = async (): Promise<VipTransaction[]> => {
           id: i,
           transaction_id: `vip-${10000 + i}`,
           user_id: 200 + i,
-          user_name: `მომხმარებელი ${i}`,
+          user_name: t ? `${t('user')} ${i}` : `User ${i}`,
           car_id: 100 + i,
           car_title: `BMW X${i % 9 + 1}`,
           amount: days * 5,
