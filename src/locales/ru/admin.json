@@ -46,8 +46,40 @@
     "advertisements": "Реклама",
     "analytics": "Аналитика",
     "transactions": "Транзакции",
+    "vipListings": "VIP объявления",
     "settings": "Настройки",
+    "vipPricing": "Управление ценами VIP",
+    "profile": "Профиль",
     "logout": "Выход"
+  },
+  "vipSettings": {
+    "errorLoadingPrices": "Не удалось загрузить цены",
+    "positiveNumbersRequired": "Пожалуйста, введите положительные числа для полей цены и продолжительности",
+    "pricesUpdatedSuccess": "Цены VIP успешно обновлены",
+    "saveError": "Не удалось сохранить цены",
+    "serviceTypes": {
+      "free": "Бесплатное объявление",
+      "vip": "VIP",
+      "vip_plus": "VIP+",
+      "super_vip": "SUPER VIP",
+      "color_highlighting": "Цветовое выделение",
+      "auto_renewal": "Автообновление"
+    },
+    "fields": {
+      "price": "Цена",
+      "currency": "лари", 
+      "duration": "Продолжительность (дни)",
+      "dailyPrice": "Дневная цена",
+      "yes": "Да",
+      "no": "Нет",
+      "effectiveCost": "Эффективная стоимость",
+      "perDay": "лари/день",
+      "days": "дней"
+    },
+    "actions": {
+      "save": "Сохранить",
+      "saving": "Сохранение..."
+    }
   },
   "dashboard": {
     "title": "Админ-панель",

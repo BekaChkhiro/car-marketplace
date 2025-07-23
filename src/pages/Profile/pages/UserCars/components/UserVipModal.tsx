@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Crown, X, Check } from 'lucide-react';
 import { Car } from '../../../../../api/types/car.types';
 import { VipStatus } from '../../../../../api/services/vipService';
+import vipPricingService, { VipServicePricing } from '../../../../../api/services/vipPricingService';
 import balanceService from '../../../../../api/services/balanceService';
 import { useToast } from '../../../../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
@@ -40,13 +41,63 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
   const [userBalance, setUserBalance] = useState<number | null>(null);
   const [loadingBalance, setLoadingBalance] = useState(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [vipPricing, setVipPricing] = useState<VipServicePricing[]>([]);
+  const [pricingLoaded, setPricingLoaded] = useState<boolean>(false);
   const { showToast } = useToast();
 
-  // VIP პაკეტების ფასები დღეში
-  const vipPricePerDay: Record<Exclude<VipStatus, 'none'>, number> = {
-    vip: 2.5,
-    vip_plus: 5,
-    super_vip: 8
+  // VIP პაკეტების ფასები - დინამიური ფასები API-დან
+  const getVipPricePerDay = (status: Exclude<VipStatus, 'none'>): number => {
+    if (!pricingLoaded || vipPricing.length === 0) {
+      // Fallback prices
+      const fallbackPrices: Record<Exclude<VipStatus, 'none'>, number> = {
+        vip: 2.5,
+        vip_plus: 5,
+        super_vip: 8
+      };
+      return fallbackPrices[status];
+    }
+    
+    const pricing = vipPricing.find(p => p.service_type === status);
+    return pricing ? Number(pricing.price) : 0;
+  };
+  
+  // VIP პაკეტის ფასის ფორმატირება is_daily_price-ის მიხედვით
+  const getVipPriceDisplay = (status: Exclude<VipStatus, 'none'>): string => {
+    if (!pricingLoaded || vipPricing.length === 0) {
+      // Fallback display
+      const price = getVipPricePerDay(status);
+      return `${price} ${t('profile:cars.vip.modal.currency')}/${t('profile:cars.vip.modal.day')}`;
+    }
+    
+    const pricing = vipPricing.find(p => p.service_type === status);
+    if (!pricing) {
+      const price = getVipPricePerDay(status);
+      return `${price} ${t('profile:cars.vip.modal.currency')}/${t('profile:cars.vip.modal.day')}`;
+    }
+    
+    const price = Number(pricing.price);
+    const currency = t('profile:cars.vip.modal.currency');
+    
+    if (pricing.is_daily_price) {
+      return `${price} ${currency}/${t('profile:cars.vip.modal.day')}`;
+    } else {
+      const duration = pricing.duration_days || 1;
+      const daysText = duration === 1 ? t('profile:cars.vip.modal.day') : t('profile:cars.vip.modal.days');
+      return `${price} ${currency} (${duration} ${daysText})`;
+    }
+  };
+  
+  // VIP პაკეტის ინფორმაციის მიღება
+  const getVipPricingInfo = (status: Exclude<VipStatus, 'none'>) => {
+    const pricing = vipPricing.find(p => p.service_type === status);
+    return pricing || null;
+  };
+  
+  // შევამოწმოთ არის თუ არა არჩეული სტატუსი ფიქსირებული ვადით
+  const isFixedDurationPackage = (status: VipStatus): boolean => {
+    if (status === 'none') return false;
+    const pricingInfo = getVipPricingInfo(status as Exclude<VipStatus, 'none'>);
+    return pricingInfo ? !pricingInfo.is_daily_price : false;
   };
   
   // VIP packages descriptions
@@ -73,25 +124,33 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     // გამოვიყენოთ ტიპიზირებული სტატუსი TypeScript-ისთვის
     const typedStatus = status as Exclude<VipStatus, 'none'>;
     
-    // ვრწმუნდებით რომ ფასის გამოთვლისას ვიყენებთ ზუსტად იმ რაოდენობის დღეებს, რაც მომხმარებელმა აირჩია
-    // ვრწმუნდებით რომ გამოვიყენოთ რიცხვით ტიპებს გამრავლებისთვის
-    const pricePerDay = parseFloat(vipPricePerDay[typedStatus].toString());
-    const daysNum = parseInt(validDays.toString(), 10);
-    const price = pricePerDay * daysNum;
+    // მივიღოთ pricing ინფორმაცია
+    const pricingInfo = getVipPricingInfo(typedStatus);
     
-    console.log(`FIXED PRICE CALCULATION:`);
-    console.log(`დღიური ფასი: ${pricePerDay}, ტიპი: ${typeof pricePerDay}`);
-    console.log(`დღეები: ${daysNum}, ტიპი: ${typeof daysNum}`);
-    console.log(`ჯამური ფასი: ${price} = ${pricePerDay} * ${daysNum}`);
-    
-    return price;
+    if (pricingInfo && !pricingInfo.is_daily_price) {
+      // თუ ფასი არ არის დღიური, გამოვიყენოთ ფიქსირებული ფასი დადგენილი ვადისთვის
+      const packagePrice = Number(pricingInfo.price);
+      const packageDuration = pricingInfo.duration_days || 1;
+      
+      // გამოვთვალოთ რამდენი პაკეტი სჭირდება
+      const packagesNeeded = Math.ceil(validDays / packageDuration);
+      const price = packagePrice * packagesNeeded;
+      
+      return price;
+    } else {
+      // დღიური ფასის გამოთვლა
+      const pricePerDay = parseFloat(getVipPricePerDay(typedStatus).toString());
+      const daysNum = parseInt(validDays.toString(), 10);
+      const price = pricePerDay * daysNum;
+      
+      return price;
+    }
   };
   
   // VIP სტატუსის ვადის გასვლის თარიღის გამოთვლა
   const calculateExpirationDate = (days: number): string => {
     // ვამოწმოთ, რომ days არის მთელი რიცხვი და არა ნული
     const validDays = Math.max(1, Math.round(days));
-    console.log(`ვადის გასვლის თარიღის გამოთვლა ${validDays} დღისთვის`);
     
     const expirationDate = new Date();
     
@@ -123,6 +182,17 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     }
   };
   
+  const fetchVipPricing = async () => {
+    try {
+      const pricingData = await vipPricingService.getAllPricing();
+      setVipPricing(pricingData.packages);
+      setPricingLoaded(true);
+    } catch (error) {
+      console.error('Error fetching VIP pricing:', error);
+      setPricingLoaded(true); // Still set to true to show fallback prices
+    }
+  };
+  
   useEffect(() => {
     if (isOpen) {
       // თუ VIP სტატუსი უკვე აქვს, დავაყენოთ არსებული სტატუსი
@@ -138,8 +208,9 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
       setStartDate(today);
       setDaysCount(7);
       
-      // მივიღოთ მომხმარებლის ბალანსი
+      // მივიღოთ მომხმარებლის ბალანსი და VIP ფასები
       fetchUserBalance();
+      fetchVipPricing();
     }
   }, [isOpen, car]);
   
@@ -177,16 +248,8 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
       const daysInt = parseInt(String(daysCount), 10);
       const finalDays = Math.max(1, daysInt);
       
-      console.log('FIXED VIP PURCHASE REQUEST:');
-      console.log(`სტატუსი: ${selectedStatus}`);
-      console.log(`მანქანის ID: ${car.id}`);
-      console.log(`დღეები (ორიგინალი): ${daysCount}, ტიპი: ${typeof daysCount}`);
-      console.log(`დღეები (გადაყვანილი): ${daysInt}, ტიპი: ${typeof daysInt}`);
-      console.log(`საბოლოო დღეები: ${finalDays}, ტიპი: ${typeof finalDays}`);
-      
       // გამოვთვალოთ ჯამური ფასი
       const calculatedPrice = calculateTotalPrice(selectedStatus, finalDays);
-      console.log(`ჯამური ფასი: ${calculatedPrice}`);
       
       // გამოვიყენოთ balanceService-ის purchaseVipStatus მეთოდი
       const result = await balanceService.purchaseVipStatus(
@@ -196,7 +259,6 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
       );
       
       if (result.success) {
-        console.log('VIP სტატუსი წარმატებით შეძენილია:', result);
         setUserBalance(result.newBalance); // განვაახლოთ ბალანსი
         
         // გამოვიძახოთ სტატუსის განახლების callback
@@ -233,13 +295,30 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
   // სტატუსის არჩევის ფუნქცია
   const handleStatusChange = (status: VipStatus) => {
     setSelectedStatus(status);
+    
+    // თუ არჩეული სტატუსი ფიქსირებული ვადით არის, ავტომატურად დავაყენოთ დღეები
+    if (status !== 'none') {
+      const pricingInfo = getVipPricingInfo(status as Exclude<VipStatus, 'none'>);
+      if (pricingInfo && !pricingInfo.is_daily_price && pricingInfo.duration_days) {
+        // ფიქსირებული ვადის შემთხვევაში დავაყენოთ განსაზღვრული დღეები
+        setDaysCount(pricingInfo.duration_days);
+      }
+    }
   };
   
   // დღეების რაოდენობის ცვლილება
   const handleDaysChange = (days: number) => {
+    // შევამოწმოთ არის თუ არა არჩეული სტატუსი ფიქსირებული ვადით
+    if (selectedStatus !== 'none') {
+      const pricingInfo = getVipPricingInfo(selectedStatus as Exclude<VipStatus, 'none'>);
+      if (pricingInfo && !pricingInfo.is_daily_price) {
+        // ფიქსირებული ვადის შემთხვევაში არ ვცვლით დღეების რაოდენობას
+        return;
+      }
+    }
+    
     // დავრწმუნდეთ, რომ days არის მთელი რიცხვი და არა ნული
     const validDays = Math.max(1, Math.round(days));
-    console.log(`handleDaysChange: original days=${days}, validDays=${validDays}`);
     setDaysCount(validDays);
     
     // განვაახლოთ ფასი ახალი დღეების რაოდენობის მიხედვით
@@ -281,7 +360,8 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
                     key={status}
                     status={status}
                     selectedStatus={selectedStatus}
-                    price={vipPricePerDay[status]}
+                    price={getVipPricePerDay(status)}
+                    priceDisplay={getVipPriceDisplay(status)}
                     label={vipStatusLabels[status]}
                     description={vipStatusDescriptions[status]}
                     onClick={handleStatusChange}
@@ -297,6 +377,8 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
               options={[1, 3, 7, 14, 30]} 
               minDays={1}
               maxDays={30}
+              disabled={isFixedDurationPackage(selectedStatus)}
+              fixedDuration={isFixedDurationPackage(selectedStatus)}
             />
             
             {/* ვადის გასვლის თარიღი */}

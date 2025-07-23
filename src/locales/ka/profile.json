@@ -147,7 +147,11 @@
         },
         "disabled": "VIP სტატუსი გაუქმებულია",
         "disableError": "შეცდომა VIP სტატუსის გაუქმებისას",
-        "success": "VIP სტატუსი წარმატებით შეძენილია"
+        "success": "VIP სტატუსი წარმატებით შეძენილია",
+        "currency": "ლარი",
+        "day": "დღე",
+        "days": "დღე",
+        "fixedDurationMessage": "ამ VIP პაკეტს აქვს ფიქსირებული ვადა: {days} დღე"
       }
     }
   },
@@ -337,7 +341,7 @@
       "colorHighlightingDescription": "თქვენი განცხადება გამოირჩევა ფერადი ფონით",
       "autoRenewal": "ავტომატური განახლება",
       "autoRenewalDescription": "განცხადება ავტომატურად განახლდება ყოველდღე",
-      "pricePerDay": "1 დღე {price} ლარი",
+      "pricePerDay": "1 დღე",
       "totalPrice": "საერთო ფასი: {price} ლარი (1 დღე)",
       "cancel": "გაუქმება",
       "confirm": "დადასტურება",

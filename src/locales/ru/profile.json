@@ -140,7 +140,11 @@
         },
         "disabled": "VIP статус отключен",
         "disableError": "Ошибка при отключении VIP статуса",
-        "success": "VIP статус успешно приобретен"
+        "success": "VIP статус успешно приобретен",
+        "currency": "лари",
+        "day": "день",
+        "days": "дней",
+        "fixedDurationMessage": "Данный VIP пакет имеет фиксированную продолжительность:"
       }
     }
   },
@@ -318,7 +322,39 @@
     },
     "vipStatus": {
       "title": "VIP статус",
-      "subtitle": "Сделайте ваше объявление более заметным"
+      "subtitle": "Сделайте ваше объявление более заметным",
+      "titleFull": "VIP статус и дополнительные услуги",
+      "description": "Выберите VIP статус и дополнительные услуги для вашего объявления.",
+      "balance": "Баланс",
+      "currency": "лари",
+      "confirmTitle": "Подтверждение покупки VIP статуса",
+      "confirmQuestion": "Хотите приобрести статус {status}?",
+      "additionalServices": "Дополнительные услуги",
+      "colorHighlighting": "Цветовое выделение",
+      "colorHighlightingDescription": "Ваше объявление будет выделено цветным фоном",
+      "autoRenewal": "Автоматическое обновление",
+      "autoRenewalDescription": "Объявление будет автоматически обновляться каждый день",
+      "pricePerDay": "1 день",
+      "totalPrice": "Общая цена: {price} лари (1 день)",
+      "cancel": "Отмена",
+      "confirm": "Подтвердить",
+      "processing": "Обработка...",
+      "insufficientBalance": "Недостаточно средств",
+      "select": "Выбрать",
+      "purchase": "Купить",
+      "free": "Бесплатно",
+      "types": {
+        "none": "Стандартное",
+        "vip": "VIP",
+        "vip_plus": "VIP+",
+        "super_vip": "SUPER VIP"
+      },
+      "descriptions": {
+        "none": "Обычное объявление",
+        "vip": "Выделенное объявление",
+        "vip_plus": "Премиум объявление",
+        "super_vip": "Максимальная видимость"
+      }
     }
   },
   "editCar": {

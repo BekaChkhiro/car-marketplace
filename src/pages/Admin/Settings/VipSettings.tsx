@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Award, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../../../api/config/api';
 import { authHeader } from '../../../utils';
 import { VipPrice, VipStatus } from '../../../api/services/vipService';
+import vipPricingService from '../../../api/services/vipPricingService';
 
 // Interface for the VIP price form
 interface VipPriceForm {
-  vip_status: VipStatus;
+  service_type: string;
   price: number;
   duration_days: number;
+  is_daily_price: boolean;
 }
 
 const VipSettings: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [vipPrices, setVipPrices] = useState<VipPriceForm[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
@@ -36,22 +40,28 @@ const VipSettings: React.FC = () => {
       } else {
         // Fallback to default prices if API doesn't return expected format
         setVipPrices([
-          { vip_status: 'vip', price: 10, duration_days: 7 },
-          { vip_status: 'vip_plus', price: 30, duration_days: 30 },
-          { vip_status: 'super_vip', price: 60, duration_days: 30 }
+          { service_type: 'free', price: 0, duration_days: 30, is_daily_price: false },
+          { service_type: 'vip', price: 2, duration_days: 1, is_daily_price: true },
+          { service_type: 'vip_plus', price: 5, duration_days: 1, is_daily_price: true },
+          { service_type: 'super_vip', price: 7, duration_days: 1, is_daily_price: true },
+          { service_type: 'color_highlighting', price: 0.5, duration_days: 1, is_daily_price: true },
+          { service_type: 'auto_renewal', price: 0.5, duration_days: 1, is_daily_price: true }
         ]);
       }
       
       setError(null);
     } catch (err) {
       console.error('Error fetching VIP prices:', err);
-      setError('ფასების ჩატვირთვა ვერ მოხერხდა');
+      setError(t('vipSettings.errorLoadingPrices'));
       
       // Set default prices if API fails
       setVipPrices([
-        { vip_status: 'vip', price: 10, duration_days: 7 },
-        { vip_status: 'vip_plus', price: 30, duration_days: 30 },
-        { vip_status: 'super_vip', price: 60, duration_days: 30 }
+        { service_type: 'free', price: 0, duration_days: 30, is_daily_price: false },
+        { service_type: 'vip', price: 2, duration_days: 1, is_daily_price: true },
+        { service_type: 'vip_plus', price: 5, duration_days: 1, is_daily_price: true },
+        { service_type: 'super_vip', price: 7, duration_days: 1, is_daily_price: true },
+        { service_type: 'color_highlighting', price: 0.5, duration_days: 1, is_daily_price: true },
+        { service_type: 'auto_renewal', price: 0.5, duration_days: 1, is_daily_price: true }
       ]);
     } finally {
       setLoading(false);
@@ -65,6 +75,8 @@ const VipSettings: React.FC = () => {
     // Convert to number if the field is price or duration_days
     if (field === 'price' || field === 'duration_days') {
       updatedPrices[index][field] = Number(value);
+    } else if (field === 'is_daily_price') {
+      updatedPrices[index][field] = Boolean(value);
     } else {
       updatedPrices[index][field] = value;
     }
@@ -81,12 +93,12 @@ const VipSettings: React.FC = () => {
       
       // Validate prices before saving
       const invalidPrices = vipPrices.filter(price => 
-        isNaN(price.price) || price.price <= 0 || 
+        isNaN(price.price) || price.price < 0 || 
         isNaN(price.duration_days) || price.duration_days <= 0
       );
       
       if (invalidPrices.length > 0) {
-        setError('გთხოვთ შეიყვანოთ დადებითი რიცხვები ფასებისა და დღეების ველებში');
+        setError(t('vipSettings.positiveNumbersRequired'));
         setSaving(false);
         return;
       }
@@ -96,7 +108,10 @@ const VipSettings: React.FC = () => {
         headers: authHeader()
       });
       
-      setSuccess('VIP ფასები წარმატებით განახლდა');
+      setSuccess(t('vipSettings.pricesUpdatedSuccess'));
+      
+      // Clear the VIP pricing cache so changes reflect immediately
+      vipPricingService.clearCache();
       
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -104,23 +119,34 @@ const VipSettings: React.FC = () => {
       }, 3000);
     } catch (err) {
       console.error('Error saving VIP prices:', err);
-      setError('ფასების შენახვა ვერ მოხერხდა');
+      setError(t('vipSettings.saveError'));
     } finally {
       setSaving(false);
     }
   };
 
-  // Get a human-readable name for VIP status
-  const getVipStatusName = (status: VipStatus): string => {
-    switch (status) {
+  // Get a human-readable name for service type
+  const getServiceTypeName = (serviceType: string): string => {
+    return t(`vipSettings.serviceTypes.${serviceType}`, serviceType);
+  };
+
+  // Get icon color for service type
+  const getServiceTypeColor = (serviceType: string): string => {
+    switch (serviceType) {
+      case 'free':
+        return 'bg-gray-100 text-gray-600';
       case 'vip':
-        return 'VIP';
+        return 'bg-blue-100 text-blue-600';
       case 'vip_plus':
-        return 'VIP+';
+        return 'bg-purple-100 text-purple-600';
       case 'super_vip':
-        return 'SUPER VIP';
+        return 'bg-amber-100 text-amber-600';
+      case 'color_highlighting':
+        return 'bg-green-100 text-green-600';
+      case 'auto_renewal':
+        return 'bg-orange-100 text-orange-600';
       default:
-        return status;
+        return 'bg-gray-100 text-gray-600';
     }
   };
 
@@ -164,62 +190,16 @@ const VipSettings: React.FC = () => {
         {vipPrices.map((price, index) => (
           <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
             <div className="flex items-center gap-3 mb-4">
-              <div className={`p-2 rounded-md ${
-                price.vip_status === 'vip' ? 'bg-blue-100 text-blue-600' :
-                price.vip_status === 'vip_plus' ? 'bg-purple-100 text-purple-600' :
-                'bg-amber-100 text-amber-600'
-              }`}>
+              <div className={`p-2 rounded-md ${getServiceTypeColor(price.service_type)}`}>
                 <Award size={20} />
               </div>
-              <h3 className="font-semibold text-gray-800">{getVipStatusName(price.vip_status)}</h3>
+              <h3 className="font-semibold text-gray-800">{getServiceTypeName(price.service_type)}</h3>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  <span className="font-bold text-primary">დღიური ფასი</span> (GEL/დღე)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={(price.price / price.duration_days).toFixed(2)}
-                  onChange={(e) => {
-                    const dailyPrice = parseFloat(e.target.value);
-                    if (!isNaN(dailyPrice) && dailyPrice > 0) {
-                      // Calculate new total price based on daily price and current duration
-                      const newTotalPrice = (dailyPrice * price.duration_days).toFixed(2);
-                      handlePriceChange(index, 'price', newTotalPrice);
-                    }
-                  }}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ხანგრძლივობა (დღე)
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={price.duration_days}
-                  onChange={(e) => {
-                    const newDuration = parseInt(e.target.value);
-                    if (!isNaN(newDuration) && newDuration > 0) {
-                      // Keep the daily price the same, but update the total price
-                      const dailyPrice = price.price / price.duration_days;
-                      const newTotalPrice = (dailyPrice * newDuration).toFixed(2);
-                      handlePriceChange(index, 'duration_days', e.target.value);
-                      handlePriceChange(index, 'price', newTotalPrice);
-                    }
-                  }}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ჯამური ფასი (GEL)
+                  <span className="font-bold text-primary">{t('vipSettings.fields.price')}</span> ({t('vipSettings.fields.currency')})
                 </label>
                 <input
                   type="number"
@@ -227,9 +207,48 @@ const VipSettings: React.FC = () => {
                   step="0.01"
                   value={price.price}
                   onChange={(e) => handlePriceChange(index, 'price', e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  disabled
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('vipSettings.fields.duration')}
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={price.duration_days}
+                  onChange={(e) => handlePriceChange(index, 'duration_days', e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('vipSettings.fields.dailyPrice')}
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={price.is_daily_price}
+                    onChange={(e) => handlePriceChange(index, 'is_daily_price', e.target.checked)}
+                    className="mr-2"
+                  />
+                  <span className="text-sm text-gray-600">
+                    {price.is_daily_price ? t('vipSettings.fields.yes') : t('vipSettings.fields.no')}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('vipSettings.fields.effectiveCost')}
+                </label>
+                <div className="p-2 bg-gray-100 rounded-md text-sm text-gray-700">
+                  {price.is_daily_price ? 
+                    `${price.price} ${t('vipSettings.fields.perDay')}` : 
+                    `${price.price} ${t('vipSettings.fields.currency')} (${price.duration_days} ${t('vipSettings.fields.days')})`
+                  }
+                </div>
               </div>
             </div>
           </div>
@@ -242,7 +261,7 @@ const VipSettings: React.FC = () => {
             className={`flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors ${saving ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             <Save size={18} />
-            <span>{saving ? 'მიმდინარეობს შენახვა...' : 'შენახვა'}</span>
+            <span>{saving ? t('vipSettings.actions.saving') : t('vipSettings.actions.save')}</span>
           </button>
         </div>
       </div>

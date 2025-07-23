@@ -20,7 +20,9 @@ import {
   X,
   Activity,
   Building,
-  UserCheck
+  UserCheck,
+  User,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +42,9 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
 
   // Check if advertisements menu should be expanded based on current path
   const isAdvertisementsPath = location.pathname.includes('/admin/advertisements');
+  
+  // Check if settings menu should be expanded based on current path
+  const isSettingsPath = location.pathname.includes('/admin/settings') || location.pathname.includes('/admin/vip-settings');
   
   // Toggle submenu expansion
   const toggleMenu = (menu: string) => {
@@ -79,15 +84,35 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
         { icon: <BarChart2 size={18} />, label: t('advertisements.analytics.title'), path: buildPath('/admin/advertisements/analytics') },
       ]
     },
-    { icon: <Settings size={20} />, label: t('admin:navigation.settings'), path: buildPath('/admin/settings') },
+    { 
+      icon: <Settings size={20} />, 
+      label: t('admin:navigation.settings'), 
+      path: buildPath('/admin/settings'),
+      hasSubmenu: true,
+      submenuId: 'settings',
+      submenu: [
+        { icon: <User size={18} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
+        { icon: <DollarSign size={18} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
+      ]
+    },
   ];
   
-  // Auto-expand advertisements menu if we're in that section
+  // Auto-expand advertisements and settings menus if we're in those sections
   React.useEffect(() => {
+    let newExpandedMenus = [...expandedMenus];
+    
     if (isAdvertisementsPath && !expandedMenus.includes('advertisements')) {
-      setExpandedMenus([...expandedMenus, 'advertisements']);
+      newExpandedMenus.push('advertisements');
     }
-  }, [location.pathname, isAdvertisementsPath, expandedMenus]);
+    
+    if (isSettingsPath && !expandedMenus.includes('settings')) {
+      newExpandedMenus.push('settings');
+    }
+    
+    if (newExpandedMenus.length !== expandedMenus.length) {
+      setExpandedMenus(newExpandedMenus);
+    }
+  }, [location.pathname, isAdvertisementsPath, isSettingsPath, expandedMenus]);
   return (
     <div className="w-64 bg-white border-r border-gray-100  shadow-sm rounded-lg overflow-y-auto">
       <div className="p-4 sm:p-6 border-b border-gray-100 flex items-left justify-center relative">

@@ -49,7 +49,38 @@
     "transactions": "ტრანზაქციები",
     "vipListings": "VIP განცხადებები",
     "settings": "პარამეტრები",
+    "vipPricing": "VIP ფასების მართვა",
+    "profile": "პროფილი",
     "logout": "გამოსვლა"
+  },
+  "vipSettings": {
+    "errorLoadingPrices": "ფასების ჩატვირთვა ვერ მოხერხდა",
+    "positiveNumbersRequired": "გთხოვთ შეიყვანოთ დადებითი რიცხვები ფასებისა და დღეების ველებში",
+    "pricesUpdatedSuccess": "VIP ფასები წარმატებით განახლდა",
+    "saveError": "ფასების შენახვა ვერ მოხერხდა",
+    "serviceTypes": {
+      "free": "უფასო განცხადება",
+      "vip": "VIP",
+      "vip_plus": "VIP+",
+      "super_vip": "SUPER VIP",
+      "color_highlighting": "ფერის გამოყოფა",
+      "auto_renewal": "ავტომატური განახლება"
+    },
+    "fields": {
+      "price": "ფასი",
+      "currency": "GEL",
+      "duration": "ხანგრძლივობა (დღე)",
+      "dailyPrice": "დღიური ფასი",
+      "yes": "კი",
+      "no": "არა",
+      "effectiveCost": "ეფექტური ღირებულება",
+      "perDay": "ლარი/დღე",
+      "days": "დღე"
+    },
+    "actions": {
+      "save": "შენახვა",
+      "saving": "მიმდინარეობს შენახვა..."
+    }
   },
   "dashboard": {
     "title": "ადმინისტრაციული პანელი",

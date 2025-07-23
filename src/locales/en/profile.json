@@ -140,7 +140,11 @@
         },
         "disabled": "VIP Status Disabled",
         "disableError": "Error disabling VIP status",
-        "success": "VIP status successfully purchased"
+        "success": "VIP status successfully purchased",
+        "currency": "GEL",
+        "day": "day",
+        "days": "days",
+        "fixedDurationMessage": "This VIP package has a fixed duration: "
       }
     }
   },
@@ -330,7 +334,7 @@
       "colorHighlightingDescription": "Your listing will be highlighted with colored background",
       "autoRenewal": "Auto Renewal",
       "autoRenewalDescription": "Listing will be automatically renewed daily",
-      "pricePerDay": "1 day {price} GEL",
+      "pricePerDay": "1 day",
       "totalPrice": "Total Price: {price} GEL (1 day)",
       "cancel": "Cancel",
       "confirm": "Confirm",
