@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ImageProgressProps {
   status: 'uploading' | 'success' | 'error';
@@ -8,6 +9,7 @@ interface ImageProgressProps {
 }
 
 const ImageProgress: React.FC<ImageProgressProps> = ({ status, progress = 0, error }) => {
+  const { t } = useTranslation('common');
   return (
     <div className={`fixed bottom-4 right-4 max-w-sm w-full bg-white rounded-xl shadow-lg p-4 transform transition-all duration-300 ${
       status === 'success' ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-95'
@@ -27,9 +29,9 @@ const ImageProgress: React.FC<ImageProgressProps> = ({ status, progress = 0, err
         
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-900">
-            {status === 'uploading' && 'სურათების ატვირთვა...'}
-            {status === 'success' && 'სურათები წარმატებით აიტვირთა'}
-            {status === 'error' && 'შეცდომა სურათების ატვირთვისას'}
+            {status === 'uploading' && t('uploadingImages')}
+            {status === 'success' && t('imagesUploadedSuccessfully')}
+            {status === 'error' && t('errorUploadingImages')}
           </p>
           
           {status === 'uploading' && (

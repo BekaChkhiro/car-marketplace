@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon, Building } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ImageProgress from './ImageProgress';
 
 interface DealerImageUploadProps {
@@ -24,6 +25,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
   error,
   isUploading
 }) => {
+  const { t } = useTranslation('common');
   const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error'>();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [draggedOver, setDraggedOver] = useState(false);
@@ -81,7 +83,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
     }
     
     if (filesRejected > 0) {
-      console.warn(`${filesRejected} ფაილი ვერ აიტვირთა (დუბლიკატი ან ზედმეტი რაოდენობა)`);
+      console.warn(`${filesRejected} files could not be uploaded (duplicate or excess amount)`);
     }
   }, [files, maxFiles, onFilesChange]);
 
@@ -158,11 +160,11 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
           <div className="text-center">
             <p className="text-sm text-gray-700 font-medium">
               {isDragActive
-                ? 'ჩააგდეთ სურათი აქ'
-                : 'დააჭირეთ ან ჩააგდეთ ლოგო'}
+                ? t('dragDropHere')
+                : t('clickOrDragLogo')}
             </p>
             <p className="text-xs text-gray-500">
-              PNG, JPG, WEBP • მაქს. 10MB
+              PNG, JPG, WEBP • {t('maxSize')} 10MB
             </p>
           </div>
         </div>
@@ -190,7 +192,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                     handleRemove(index);
                   }}
                   className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/90 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-                  title="ფოტოს წაშლა"
+                  title={t('deletePhoto')}
                 >
                   <X size={18} />
                 </button>
@@ -204,7 +206,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                       ? 'bg-primary text-white opacity-100 scale-110'
                       : 'bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 hover:text-primary'
                   }`}
-                  title={featuredIndex === index ? 'მთავარი სურათი' : 'დააყენეთ მთავარ სურათად'}
+                  title={featuredIndex === index ? t('mainPhoto') : t('setAsMainPhoto')}
                 >
                   <Star size={18} fill={featuredIndex === index ? 'white' : 'none'} 
                     className="transform transition-transform duration-300 hover:rotate-12"
@@ -223,7 +225,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                   <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors duration-300" />
                 </div>
                 <span className="text-xs text-gray-500 group-hover:text-primary transition-colors duration-300">
-                  დაამატეთ
+                  {t('add')}
                 </span>
               </div>
             )}
@@ -232,13 +234,13 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <span className="text-xs text-gray-600 flex items-center gap-2">
               <ImageIcon size={14} className="text-primary" />
-              {files.length} / {maxFiles} ლოგო
+              {files.length} / {maxFiles} {t('logo')}
             </span>
             <button
               onClick={handleRemoveAll}
               className="text-xs text-red-500 hover:text-red-600 font-medium transition-colors duration-300 px-3 py-1.5 rounded-md hover:bg-red-50"
             >
-              წაშლა
+              {t('delete')}
             </button>
           </div>
         </div>

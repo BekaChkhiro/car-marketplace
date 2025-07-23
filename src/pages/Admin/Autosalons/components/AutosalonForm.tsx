@@ -159,19 +159,19 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
     if (step === 1) {
       // Basic validation
       if (!formData.first_name || !formData.last_name || !formData.phone) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('autosalons.form.errors.fillRequired'));
         return;
       }
 
       // Company name validation
       if (!formData.company_name) {
-        setError('გთხოვთ, შეიყვანოთ კომპანიის სახელი');
+        setError(t('autosalons.form.errors.companyNameRequired'));
         return;
       }
 
       // Phone validation
       if (!formData.phone.match(/^(\+995|0)\d{9}$/)) {
-        setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX');
+        setError(t('autosalons.form.errors.phoneFormat'));
         return;
       }
       
@@ -186,27 +186,27 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
     if (!autosalon) {
       // Validate all required fields for new autosalon
       if (!formData.first_name || !formData.last_name || !formData.phone || !formData.company_name) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('autosalons.form.errors.fillRequired'));
         return;
       }
 
       if (!formData.email || !formData.password || !formData.confirm_password) {
-        setError('გთხოვთ, შეავსოთ ყველა სავალდებულო ველი');
+        setError(t('autosalons.form.errors.fillRequired'));
         return;
       }
       
       if (!formData.agreeToTerms) {
-        setError('გთხოვთ, დაეთანხმოთ წესებს და პირობებს');
+        setError(t('autosalons.form.errors.termsRequired'));
         return;
       }
 
       if (!validateEmail(formData.email)) {
-        setError('გთხოვთ, შეიყვანოთ ელ-ფოსტის სწორი ფორმატი');
+        setError(t('autosalons.form.errors.emailFormat'));
         return;
       }
       
       if (formData.password !== formData.confirm_password) {
-        setError('პაროლები არ ემთხვევა');
+        setError(t('autosalons.form.errors.passwordMismatch'));
         return;
       }
 
@@ -218,7 +218,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
       // Phone validation
       if (!formData.phone.match(/^(\+995|0)\d{9}$/)) {
-        setError('გთხოვთ, შეიყვანოთ ტელეფონის სწორი ფორმატი: +995XXXXXXXXX ან 0XXXXXXXXX');
+        setError(t('autosalons.form.errors.phoneFormat'));
         return;
       }
     }
@@ -312,12 +312,12 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
     <form onSubmit={handleContinue} className="space-y-6">
       {/* Personal Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">პირადი ინფორმაცია (კონტაქტი)</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('autosalons.form.personalInfo')}</h3>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              სახელი
+              {t('autosalons.form.firstName')}
             </label>
             <input
               type="text"
@@ -326,14 +326,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
               required
-              placeholder="სახელი"
+              placeholder={t('autosalons.form.firstName')}
               disabled={loading}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              გვარი
+              {t('autosalons.form.lastName')}
             </label>
             <input
               type="text"
@@ -342,7 +342,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
               required
-              placeholder="გვარი"
+              placeholder={t('autosalons.form.lastName')}
               disabled={loading}
             />
           </div>
@@ -350,7 +350,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            პერსონალური ტელეფონი
+            {t('autosalons.form.personalPhone')}
           </label>
           <input
             type="tel"
@@ -367,11 +367,11 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
       {/* Company Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">კომპანიის ინფორმაცია</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('autosalons.form.companyInfo')}</h3>
         
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            კომპანიის სახელი <span className="text-red-500">*</span>
+            {t('autosalons.companyName')} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -380,13 +380,13 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
             required
-            placeholder="კომპანიის სახელი"
+            placeholder={t('autosalons.companyName')}
             disabled={loading}
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            დაარსების წელი
+            {t('autosalons.form.establishedYear')}
           </label>
           <select
             name="established_year"
@@ -395,7 +395,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
             disabled={loading}
           >
-            <option value="">აირჩიეთ წელი</option>
+            <option value="">{t('autosalons.form.chooseYear')}</option>
             {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
               <option key={year} value={year}>
                 {year}
@@ -406,7 +406,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            ვებ გვერდი
+            {t('autosalons.form.website')}
           </label>
           <input
             type="url"
@@ -421,7 +421,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            მისამართი
+            {t('autosalons.address')}
           </label>
           <textarea
             name="address"
@@ -429,7 +429,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             onChange={handleInputChange}
             rows={3}
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed resize-vertical"
-            placeholder="მისამართი"
+            placeholder={t('autosalons.address')}
             disabled={loading}
           />
         </div>
@@ -437,7 +437,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
         {/* Logo Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            ლოგო
+            {t('autosalons.form.logo')}
           </label>
           <div className="flex items-center gap-4">
             <div className="flex-1">
@@ -453,7 +453,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                 className="inline-flex items-center px-4 py-3 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
               >
                 <Upload size={16} className="mr-2" />
-                ლოგოს ატვირთვა
+                {t('autosalons.form.uploadLogo')}
               </label>
             </div>
             {logoPreview && (
@@ -481,7 +481,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           className="w-full px-4 py-3 bg-primary text-white rounded-xl hover:bg-secondary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
           disabled={loading}
         >
-          {loading ? 'მიმდინარეობს...' : 'გაგრძელება'}
+          {loading ? t('autosalons.form.processing') : t('autosalons.form.continue')}
         </button>
       </div>
     </form>
@@ -491,7 +491,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          მომხმარებლის სახელი
+          {t('autosalons.form.username')}
         </label>
         <input
           type="text"
@@ -500,14 +500,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="მომხმარებლის სახელი"
+          placeholder={t('autosalons.form.username')}
           disabled={loading}
         />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          ელ-ფოსტა
+          {t('autosalons.email')}
         </label>
         <input
           type="email"
@@ -516,14 +516,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="შეიყვანეთ ელ-ფოსტა"
+          placeholder={t('autosalons.form.enterEmail')}
           disabled={loading}
         />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          პაროლი
+          {t('autosalons.form.password')}
         </label>
         <input
           type="password"
@@ -532,7 +532,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="შეიყვანეთ პაროლი"
+          placeholder={t('autosalons.form.enterPassword')}
           disabled={loading}
         />
         {formData.password && (
@@ -563,7 +563,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          გაიმეორეთ პაროლი
+          {t('autosalons.form.confirmPassword')}
         </label>
         <input
           type="password"
@@ -572,7 +572,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
-          placeholder="გაიმეორეთ პაროლი"
+          placeholder={t('autosalons.form.confirmPasswordPlaceholder')}
           disabled={loading}
         />
       </div>
@@ -588,7 +588,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             disabled={loading}
           />
           <span className="ml-2 text-sm text-gray-700">
-            ვეთანხმები წესებს და პირობებს
+            {t('autosalons.form.agreeTerms')}
           </span>
         </label>
       </div>
@@ -606,7 +606,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           disabled={loading}
           className="flex-1 px-4 py-3 border border-primary text-primary hover:bg-primary/5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          უკან
+          {t('autosalons.form.back')}
         </button>
         <button
           type="submit"
@@ -619,10 +619,10 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              გთხოვთ მოიცადოთ...
+              {t('autosalons.form.pleaseWait')}
             </>
           ) : (
-            'შექმნა'
+            t('common.create')
           )}
         </button>
       </div>
@@ -632,11 +632,11 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
   const renderEditForm = () => (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">ავტოსალონის ინფორმაცია</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('autosalons.title')}</h3>
         
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            კომპანიის სახელი *
+            {t('autosalons.companyName')} *
           </label>
           <input
             type="text"
@@ -644,14 +644,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             value={formData.company_name}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="კომპანიის სახელი"
+            placeholder={t('autosalons.companyName')}
             required
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ტელეფონი
+            {t('autosalons.phone')}
           </label>
           <input
             type="tel"
@@ -665,7 +665,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            დაარსების წელი
+            {t('autosalons.form.establishedYear')}
           </label>
           <select
             name="established_year"
@@ -673,7 +673,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <option value="">აირჩიეთ წელი</option>
+            <option value="">{t('autosalons.form.chooseYear')}</option>
             {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
               <option key={year} value={year}>
                 {year}
@@ -684,7 +684,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ვებ გვერდი
+            {t('autosalons.form.website')}
           </label>
           <input
             type="url"
@@ -698,7 +698,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            მისამართი
+            {t('autosalons.address')}
           </label>
           <textarea
             name="address"
@@ -706,14 +706,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             onChange={handleInputChange}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="მისამართი"
+            placeholder={t('autosalons.address')}
           />
         </div>
 
         {/* Logo Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ლოგო
+            {t('autosalons.form.logo')}
           </label>
           <DealerImageUpload
             files={images}
@@ -721,7 +721,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             onFileRemove={removeImage}
             featuredIndex={featuredImageIndex}
             onFeaturedIndexChange={handleFeaturedImageChange}
-            error={error && images.length === 0 ? 'გთხოვთ, ატვირთოთ ლოგო' : undefined}
+            error={error && images.length === 0 ? t('autosalons.form.errors.logoRequired') : undefined}
             isUploading={isUploading}
             maxFiles={1}
           />
@@ -735,14 +735,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
           className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
           disabled={loading}
         >
-          გაუქმება
+          {t('autosalons.form.cancel')}
         </button>
         <button
           type="submit"
           className="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary disabled:opacity-50"
           disabled={loading}
         >
-          {loading ? 'მიმდინარეობს...' : 'განახლება'}
+          {loading ? t('autosalons.form.processing') : t('autosalons.form.update')}
         </button>
       </div>
     </form>
@@ -770,12 +770,12 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">პირადი ინფორმაცია (კონტაქტი)</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('autosalons.form.personalInfo')}</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      სახელი *
+                      {t('autosalons.form.firstName')} *
                     </label>
                     <input
                       type="text"
@@ -784,14 +784,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="სახელი"
+                      placeholder={t('autosalons.form.firstName')}
                       disabled={loading}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      გვარი *
+                      {t('autosalons.form.lastName')} *
                     </label>
                     <input
                       type="text"
@@ -800,7 +800,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="გვარი"
+                      placeholder={t('autosalons.form.lastName')}
                       disabled={loading}
                     />
                   </div>
@@ -808,7 +808,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    პერსონალური ტელეფონი *
+                    {t('autosalons.form.personalPhone')} *
                   </label>
                   <input
                     type="tel"
@@ -824,7 +824,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ელ-ფოსტა *
+                    {t('autosalons.email')} *
                   </label>
                   <input
                     type="email"
@@ -840,7 +840,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    სქესი *
+                    {t('autosalons.form.gender')} *
                   </label>
                   <div className="flex gap-4">
                     {['male', 'female'].map(gender => (
@@ -859,7 +859,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                             ? 'border-primary bg-primary/5 text-primary'
                             : 'border-gray-300 hover:bg-gray-50'
                           } transition-all duration-200`}>
-                          {gender === 'male' ? 'მამრობითი' : 'მდედრობითი'}
+                          {gender === 'male' ? t('autosalons.form.male') : t('autosalons.form.female')}
                         </div>
                       </label>
                     ))}
@@ -869,7 +869,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      პაროლი *
+                      {t('autosalons.form.password')} *
                     </label>
                     <input
                       type="password"
@@ -878,14 +878,14 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="შეიყვანეთ პაროლი"
+                      placeholder={t('autosalons.form.enterPassword')}
                       disabled={loading}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      გაიმეორეთ პაროლი *
+                      {t('autosalons.form.confirmPassword')} *
                     </label>
                     <input
                       type="password"
@@ -894,7 +894,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                       required
-                      placeholder="გაიმეორეთ პაროლი"
+                      placeholder={t('autosalons.form.confirmPasswordPlaceholder')}
                       disabled={loading}
                     />
                   </div>
@@ -928,11 +928,11 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
               {/* Company Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">კომპანიის ინფორმაცია</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('autosalons.form.companyInfo')}</h3>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    კომპანიის სახელი *
+                    {t('autosalons.companyName')} *
                   </label>
                   <input
                     type="text"
@@ -941,7 +941,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed"
                     required
-                    placeholder="კომპანიის სახელი"
+                    placeholder={t('autosalons.companyName')}
                     disabled={loading}
                   />
                 </div>
@@ -949,7 +949,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    დაარსების წელი
+                    {t('autosalons.form.establishedYear')}
                   </label>
                   <select
                     name="established_year"
@@ -958,7 +958,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed appearance-none"
                     disabled={loading}
                   >
-                    <option value="">აირჩიეთ წელი</option>
+                    <option value="">{t('autosalons.form.chooseYear')}</option>
                     {Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
                       <option key={year} value={year}>
                         {year}
@@ -969,7 +969,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ვებ გვერდი
+                    {t('autosalons.form.website')}
                   </label>
                   <input
                     type="url"
@@ -984,7 +984,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    მისამართი
+                    {t('autosalons.address')}
                   </label>
                   <textarea
                     name="address"
@@ -992,7 +992,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                     onChange={handleInputChange}
                     rows={3}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none text-gray-800 bg-gray-50 hover:bg-gray-100 focus:bg-white disabled:bg-gray-200 disabled:cursor-not-allowed resize-vertical"
-                    placeholder="მისამართი"
+                    placeholder={t('autosalons.address')}
                     disabled={loading}
                   />
                 </div>
@@ -1000,7 +1000,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                 {/* Logo Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ლოგო
+                    {t('autosalons.form.logo')}
                   </label>
                   <DealerImageUpload
                     files={images}
@@ -1008,7 +1008,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                     onFileRemove={removeImage}
                     featuredIndex={featuredImageIndex}
                     onFeaturedIndexChange={handleFeaturedImageChange}
-                    error={error && images.length === 0 ? 'გთხოვთ, ატვირთოთ ლოგო' : undefined}
+                    error={error && images.length === 0 ? t('autosalons.form.errors.logoRequired') : undefined}
                     isUploading={isUploading}
                     maxFiles={1}
                   />
@@ -1026,7 +1026,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                     disabled={loading}
                   />
                   <span className="ml-2 text-sm text-gray-700">
-                    ვეთანხმები წესებს და პირობებს
+                    {t('autosalons.form.agreeTerms')}
                   </span>
                 </label>
               </div>
@@ -1044,7 +1044,7 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                   className="px-4 py-2 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
                   disabled={loading}
                 >
-                  გაუქმება
+                  {t('autosalons.form.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -1057,10 +1057,10 @@ const AutosalonForm: React.FC<AutosalonFormProps> = ({ autosalon, onClose, onSub
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      მიმდინარეობს...
+                      {t('autosalons.form.processing')}
                     </>
                   ) : (
-                    'შექმნა'
+                    t('common.create')
                   )}
                 </button>
               </div>

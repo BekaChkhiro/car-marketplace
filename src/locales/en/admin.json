@@ -640,6 +640,16 @@
     "created": "Created successfully",
     "website": "Website",
     "noData": "No data available",
-    "user": "User"
+    "user": "User",
+    "dragDropHere": "Drop image here",
+    "clickOrDragLogo": "Click or drag logo",
+    "maxSize": "Max.",
+    "deletePhoto": "Delete photo",
+    "mainPhoto": "Main photo",
+    "setAsMainPhoto": "Set as main photo",
+    "logo": "Logo",
+    "uploadingImages": "Uploading images...",
+    "imagesUploadedSuccessfully": "Images uploaded successfully",
+    "errorUploadingImages": "Error uploading images"
   }
 }

@@ -49,8 +49,8 @@ const RecentParts: React.FC<RecentPartsProps> = ({ parts }) => {
                   part.condition === 'used' ? 'bg-yellow-100 text-yellow-800' : 
                   'bg-gray-100 text-gray-800'
                 }`}>
-                  {part.condition === 'new' ? t('new') : 
-                   part.condition === 'used' ? t('used') : t('other')}
+                  {part.condition === 'new' ? t('dashboard.new') : 
+                   part.condition === 'used' ? t('dashboard.used') : t('common.other')}
                 </span>
                 {part.vip_status && part.vip_status !== 'none' && (
                   <span className="px-2 py-1 ml-2 rounded-full text-xs font-medium bg-purple-100 text-purple-800">

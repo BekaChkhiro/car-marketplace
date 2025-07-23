@@ -92,7 +92,7 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
               </div>
               {car.specifications.transmission && (
                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                  {car.specifications.transmission === 'automatic' ? t('common.automatic') : t('common.manual')}
+                  {car.specifications.transmission === 'automatic' ? t('automatic') : t('manual')}
                 </span>
               )}
             </div>
