@@ -32,7 +32,7 @@ interface FormData {
 
 const AddPart: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(namespaces.parts);
+  const { t } = useTranslation([namespaces.parts, namespaces.filter]);
   const { user } = useAuth();
   const { showToast } = useToast();
   const { showLoading, hideLoading } = useLoading();
@@ -167,13 +167,13 @@ const AddPart: React.FC = () => {
       const validFiles = files.filter(file => {
         // Basic validation for image files
         if (!file.type.startsWith('image/')) {
-          showToast('სურათის ფორმატი არასწორია. დაშვებულია მხოლოდ JPEG/PNG ფორმატი, მაქსიმუმ 5MB', 'error');
+          showToast(t('imageErrors.invalidFormat'), 'error');
           return false;
         }
         
         // Size validation (5MB max)
         if (file.size > 5 * 1024 * 1024) {
-          showToast('სურათის ზომა არ უნდა აღემატებოდეს 5MB-ს', 'error');
+          showToast(t('imageErrors.fileTooLarge'), 'error');
           return false;
         }
         
@@ -181,7 +181,7 @@ const AddPart: React.FC = () => {
       });
 
       if (validFiles.length > 15) {
-        showToast('მაქსიმუმ 15 სურათის ატვირთვაა შესაძლებელი', 'error');
+        showToast(t('imageErrors.tooManyImages'), 'error');
         setIsUploading(false);
         return;
       }
@@ -207,7 +207,7 @@ const AddPart: React.FC = () => {
       }
     } catch (error: any) {
       setIsUploading(false);
-      showToast(error.message || 'სურათის ატვირთვისას მოხდა შეცდომა', 'error');
+      showToast(error.message || t('imageErrors.uploadError'), 'error');
     }
   };
   
@@ -378,7 +378,7 @@ const AddPart: React.FC = () => {
                 <option value="0">{t('selectCategory')}</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
-                    {category.name}
+                    {t(`filter:${category.name}`, category.name)}
                   </option>
                 ))}
               </select>

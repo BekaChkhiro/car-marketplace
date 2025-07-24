@@ -10,6 +10,7 @@ interface VipStatusOptionProps {
   price: number;
   label: string;
   description: string;
+  priceDisplay?: string;
   onClick: (status: VipStatus) => void;
 }
 
@@ -19,6 +20,7 @@ const VipStatusOption: React.FC<VipStatusOptionProps> = ({
   price,
   label,
   description,
+  priceDisplay,
   onClick
 }) => {
   const { t } = useTranslation([namespaces.common]);
@@ -53,7 +55,9 @@ const VipStatusOption: React.FC<VipStatusOptionProps> = ({
       />
       <span className={`font-medium ${colors.text}`}>{label}</span>
       <span className="text-xs text-gray-500 mt-1">{description}</span>
-      <span className={`text-sm font-medium ${colors.text} mt-2`}>{price} ₾/{t('common:perDay')}</span>
+      <span className={`text-sm font-medium ${colors.text} mt-2`}>
+        {priceDisplay || `${price} ₾/${t('common:perDay')}`}
+      </span>
     </div>
   );
 };

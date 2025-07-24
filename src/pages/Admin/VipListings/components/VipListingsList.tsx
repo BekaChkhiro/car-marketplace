@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getVipListings, getVipTransactions } from '../../../../services/vipService';
 import { API_URL } from '../../../../config/api';
 import format from 'date-fns/format';
@@ -38,6 +39,7 @@ interface VipTransaction {
 }
 
 const VipListingsList: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [vipListings, setVipListings] = useState<VipListing[]>([]);
   const [transactions, setTransactions] = useState<VipTransaction[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,7 +62,7 @@ const VipListingsList: React.FC = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching VIP data:', err);
-        setError('მონაცემების ჩატვირთვა ვერ მოხერხდა');
+        setError(t('vipListings.loadError'));
         
         // Fallback mock data for development
         const mockListings: VipListing[] = [];
@@ -82,7 +84,7 @@ const VipListingsList: React.FC = () => {
             car_id: 100 + i,
             car_title: `BMW X${i % 9 + 1}`,
             user_id: 200 + i,
-            user_name: `მომხმარებელი ${i}`,
+            user_name: `${t('user')} ${i}`,
             start_date: startDate.toISOString(),
             end_date: endDate.toISOString(),
             status: isActive ? 'active' : 'expired',
@@ -96,7 +98,7 @@ const VipListingsList: React.FC = () => {
             id: i,
             transaction_id: `vip-${10000 + i}`,
             user_id: 200 + i,
-            user_name: `მომხმარებელი ${i}`,
+            user_name: `User ${i}`,
             car_id: 100 + i,
             car_title: `BMW X${i % 9 + 1}`,
             amount: days * 5,
@@ -116,7 +118,7 @@ const VipListingsList: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [t]);
 
   const filteredListings = vipListings.filter(listing => {
     const matchesSearch = search === '' || 
@@ -166,7 +168,7 @@ const VipListingsList: React.FC = () => {
             {activeTab === 'listings' ? 
               <Award className="text-primary" /> : 
               <CreditCard className="text-primary" />}
-            <span>VIP განცხადებების დეტალები</span>
+            <span>{t('vipListings.listDetails')}</span>
           </h2>
           
           {/* Tab Navigation */}
@@ -178,7 +180,7 @@ const VipListingsList: React.FC = () => {
                 : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <Award size={18} />
-              <span>განცხადებები</span>
+              <span>{t('vipListings.listings')}</span>
             </button>
             <button 
               onClick={() => setActiveTab('transactions')}
@@ -187,7 +189,7 @@ const VipListingsList: React.FC = () => {
                 : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <CreditCard size={18} />
-              <span>ტრანზაქციები</span>
+              <span>{t('vipListings.transactions')}</span>
             </button>
           </div>
         </div>
@@ -201,7 +203,7 @@ const VipListingsList: React.FC = () => {
             </div>
             <input
               type="text"
-              placeholder="ძებნა სახელით, ID-ით ან მომხმარებლით..."
+              placeholder={t('vipListings.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -228,9 +230,9 @@ const VipListingsList: React.FC = () => {
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
-                  <option value="all">ყველა სტატუსი</option>
-                  <option value="active">აქტიური</option>
-                  <option value="expired">ვადაგასული</option>
+                  <option value="all">{t('vipListings.allStatuses')}</option>
+                  <option value="active">{t('vipListings.active')}</option>
+                  <option value="expired">{t('vipListings.expired')}</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <ChevronDown size={18} className="text-gray-400" />
@@ -247,12 +249,12 @@ const VipListingsList: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">განცხადება</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">მომხმარებელი</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ვადა</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">დღეები</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">თანხა</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">სტატუსი</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.listing')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.user')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.period')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.days')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.amount')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.status')}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -293,11 +295,11 @@ const VipListingsList: React.FC = () => {
                           <div className="flex flex-col text-sm space-y-1">
                             <div className="flex items-center gap-1.5">
                               <Calendar size={14} className="text-gray-400" />
-                              <span className="text-gray-700">დაწყ.: {format(new Date(listing.start_date), 'dd MMM yyyy', { locale: ka })}</span>
+                              <span className="text-gray-700">{t('vipListings.table.startLabel')} {format(new Date(listing.start_date), 'dd MMM yyyy', { locale: ka })}</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                               <Clock size={14} className="text-gray-400" />
-                              <span className="text-gray-700">დასრ.: {format(new Date(listing.end_date), 'dd MMM yyyy', { locale: ka })}</span>
+                              <span className="text-gray-700">{t('vipListings.table.endLabel')} {format(new Date(listing.end_date), 'dd MMM yyyy', { locale: ka })}</span>
                             </div>
                           </div>
                         </td>
@@ -306,7 +308,7 @@ const VipListingsList: React.FC = () => {
                             <div className="text-base font-semibold text-gray-900">{listing.days}</div>
                             {listing.status === 'active' && (
                               <div className="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 mt-1">
-                                {daysRemaining > 0 ? `დარჩა: ${daysRemaining} დღე` : 'იწურება'}
+                                {daysRemaining > 0 ? `${t('vipListings.table.remainingLabel')} ${daysRemaining} ${t('vipListings.table.daysLabel')}` : t('vipListings.table.expiring')}
                               </div>
                             )}
                           </div>
@@ -316,7 +318,7 @@ const VipListingsList: React.FC = () => {
                             {listing.amount.toLocaleString()} {listing.currency}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {Math.round(listing.amount / listing.days)} {listing.currency}/დღე
+                            {Math.round(listing.amount / listing.days)} {listing.currency}{t('vipListings.table.perDay')}
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -324,7 +326,7 @@ const VipListingsList: React.FC = () => {
                             ${listing.status === 'active' 
                               ? 'bg-green-100 text-green-800' 
                               : 'bg-red-100 text-red-800'}`}>
-                            {listing.status === 'active' ? 'აქტიური' : 'ვადაგასული'}
+                            {listing.status === 'active' ? t('vipListings.active') : t('vipListings.expired')}
                           </span>
                         </td>
                       </tr>
@@ -335,7 +337,7 @@ const VipListingsList: React.FC = () => {
                     <td colSpan={6} className="px-6 py-12 text-sm text-gray-500 text-center">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Trash2 size={32} className="text-gray-300" />
-                        <p>მონაცემები არ მოიძებნა</p>
+                        <p>{t('vipListings.table.noDataFound')}</p>
                       </div>
                     </td>
                   </tr>
@@ -345,17 +347,17 @@ const VipListingsList: React.FC = () => {
           </div>
           <div className="mt-6 px-2 flex justify-between items-center">
             <div className="text-sm text-gray-600">
-              ნაჩვენებია <span className="font-medium">{filteredListings.length}</span> / {vipListings.length} განცხადება
+              {t('vipListings.table.showingCount')} <span className="font-medium">{filteredListings.length}</span> {t('vipListings.table.of')} {vipListings.length} {t('vipListings.table.listings')}
             </div>
             
             {/* Page selector mockup - can be implemented fully later */}
             <div className="flex items-center gap-2">
               <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-gray-600 text-sm disabled:opacity-50" disabled>
-                წინა
+                {t('vipListings.table.previous')}
               </button>
               <div className="px-3 py-1 border bg-primary text-white rounded-md text-sm">1</div>
               <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-gray-600 text-sm disabled:opacity-50" disabled>
-                შემდეგი
+                {t('vipListings.table.next')}
               </button>
             </div>
           </div>
@@ -366,12 +368,12 @@ const VipListingsList: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ტრანზაქცია</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">მომხმარებელი</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">განცხადება</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">დეტალები</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">თანხა</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">სტატუსი</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.table.transactionHeader')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.table.userHeader')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.table.listingHeader')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.table.detailsHeader')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.table.amountHeader')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('vipListings.table.statusHeader')}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -389,7 +391,7 @@ const VipListingsList: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-1 mt-1">
                               <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded">
-                                VIP შეძენა
+                                {t('vipListings.table.vipPurchase')}
                               </span>
                             </div>
                           </div>
@@ -425,7 +427,7 @@ const VipListingsList: React.FC = () => {
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Clock size={14} className="text-gray-400" />
-                            <span className="text-gray-700">{transaction.days} დღე</span>
+                            <span className="text-gray-700">{transaction.days} {t('vipListings.table.daysLabel')}</span>
                           </div>
                         </div>
                       </td>
@@ -434,7 +436,7 @@ const VipListingsList: React.FC = () => {
                           {transaction.amount.toLocaleString()} {transaction.currency}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          {Math.round(transaction.amount / transaction.days)} {transaction.currency}/დღე
+                          {Math.round(transaction.amount / transaction.days)} {transaction.currency}{t('vipListings.table.perDay')}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -445,10 +447,10 @@ const VipListingsList: React.FC = () => {
                               ? 'bg-yellow-100 text-yellow-800' 
                               : 'bg-red-100 text-red-800'}`}>
                           {transaction.status === 'completed' 
-                            ? 'დასრულებული' 
+                            ? t('vipListings.completed') 
                             : transaction.status === 'pending' 
-                              ? 'პროცესშია' 
-                              : 'წარუმატებელი'}
+                              ? t('vipListings.pending') 
+                              : t('vipListings.failed')}
                         </span>
                       </td>
                     </tr>
@@ -458,7 +460,7 @@ const VipListingsList: React.FC = () => {
                     <td colSpan={6} className="px-6 py-12 text-sm text-gray-500 text-center">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Trash2 size={32} className="text-gray-300" />
-                        <p>მონაცემები არ მოიძებნა</p>
+                        <p>{t('vipListings.table.noDataFound')}</p>
                       </div>
                     </td>
                   </tr>
@@ -468,17 +470,17 @@ const VipListingsList: React.FC = () => {
           </div>
           <div className="mt-6 px-2 flex justify-between items-center">
             <div className="text-sm text-gray-600">
-              ნაჩვენებია <span className="font-medium">{filteredTransactions.length}</span> / {transactions.length} ტრანზაქცია
+              {t('vipListings.table.showingCount')} <span className="font-medium">{filteredTransactions.length}</span> {t('vipListings.table.of')} {transactions.length} {t('vipListings.table.transactionLabel')}
             </div>
             
             {/* Page selector mockup - can be implemented fully later */}
             <div className="flex items-center gap-2">
               <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-gray-600 text-sm disabled:opacity-50" disabled>
-                წინა
+                {t('vipListings.table.previous')}
               </button>
               <div className="px-3 py-1 border bg-primary text-white rounded-md text-sm">1</div>
               <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-gray-600 text-sm disabled:opacity-50" disabled>
-                შემდეგი
+                {t('vipListings.table.next')}
               </button>
             </div>
           </div>

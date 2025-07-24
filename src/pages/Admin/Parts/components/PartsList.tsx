@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, RefreshCw, Eye, Trash2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Part } from '../../../../api/services/partService';
 import EmptyState from './EmptyState';
 
@@ -15,6 +16,7 @@ const PartsList: React.FC<PartsListProps> = ({
   onDeletePart,
   isLoading = false
 }) => {
+  const { t } = useTranslation('admin');
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredParts, setFilteredParts] = useState<Part[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -46,11 +48,11 @@ const PartsList: React.FC<PartsListProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'available':
-        return <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">ხელმისაწვდომი</span>;
+        return <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">{t('available')}</span>;
       case 'sold':
-        return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">გაყიდული</span>;
+        return <span className="px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">{t('sold')}</span>;
       case 'pending':
-        return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">მოლოდინში</span>;
+        return <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">{t('pending')}</span>;
       default:
         return null;
     }
@@ -61,8 +63,8 @@ const PartsList: React.FC<PartsListProps> = ({
     return (
       <div className="p-6 max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">ნაწილები</h1>
-          <p className="text-gray-500 mt-1">მანქანის ნაწილების მართვა</p>
+          <h1 className="text-3xl font-bold text-gray-800">{t('parts.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('parts.title')}</p>
         </div>
         <EmptyState />
       </div>
@@ -90,8 +92,8 @@ const PartsList: React.FC<PartsListProps> = ({
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">ნაწილები</h1>
-        <p className="text-gray-500 mt-1">მანქანის ნაწილების მართვა</p>
+        <h1 className="text-3xl font-bold text-gray-800">{t('parts.title')}</h1>
+        <p className="text-gray-500 mt-1">{t('parts.title')}</p>
       </div>
         <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
         {/* Desktop Table View (hidden on mobile) */}
@@ -100,22 +102,22 @@ const PartsList: React.FC<PartsListProps> = ({
             <thead>
               <tr className="bg-gray-50">
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ნაწილი
+                  {t('parts.name')}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  კატეგორია
+                  {t('parts.category')}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  გამყიდველი
+                  {t('parts.seller')}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ფასი
+                  {t('parts.price')}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  სტატუსი
+                  {t('parts.condition')}
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  მოქმედებები
+                  {t('parts.actions')}
                 </th>
               </tr>
             </thead>
@@ -137,7 +139,7 @@ const PartsList: React.FC<PartsListProps> = ({
                           {part.brand} {part.model && `- ${part.model}`}
                         </p>
                         <p className="text-xs text-gray-400 mt-1">
-                          მდგომარეობა: {part.condition}
+                          {t('parts.condition')}: {part.condition}
                         </p>
                       </div>
                     </div>
@@ -149,7 +151,7 @@ const PartsList: React.FC<PartsListProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {part.username || part.first_name || part.last_name || 'უცნობი'}
+                      {part.username || part.first_name || part.last_name || t('common.unknown')}
                     </div>
                     <div className="text-xs text-gray-500">
                       ID: {part.seller_id || 'N/A'}
@@ -167,13 +169,13 @@ const PartsList: React.FC<PartsListProps> = ({
                         onClick={() => navigate(`/${lang || 'ka'}/parts/${part.id}`)}
                         className="px-3 py-1.5 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded flex items-center transition-colors"
                       >
-                        <Eye size={16} className="mr-1.5" /> ნახვა
+                        <Eye size={16} className="mr-1.5" /> {t('parts.view')}
                       </button>
                       <button 
                         onClick={() => handleDeleteClick(part)}
                         className="px-3 py-1.5 text-red-700 bg-red-50 hover:bg-red-100 rounded flex items-center transition-colors"
                       >
-                        <Trash2 size={16} className="mr-1.5" /> წაშლა
+                        <Trash2 size={16} className="mr-1.5" /> {t('parts.delete')}
                       </button>
                     </div>
                   </td>
@@ -215,20 +217,20 @@ const PartsList: React.FC<PartsListProps> = ({
                     {/* Part Info */}
                     <div className="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-lg">
                       <div className="flex flex-col items-center justify-center p-2 text-center">
-                        <span className="text-xs text-gray-500">კატეგორია</span>
+                        <span className="text-xs text-gray-500">{t('parts.category')}</span>
                         <span className="text-sm font-medium text-gray-800">{part.category}</span>
                       </div>
                       <div className="flex flex-col items-center justify-center p-2 text-center">
-                        <span className="text-xs text-gray-500">მდგომარეობა</span>
+                        <span className="text-xs text-gray-500">{t('parts.condition')}</span>
                         <span className="text-sm font-medium text-gray-800">{part.condition}</span>
                       </div>
                     </div>
                     
                     {/* Seller Info */}
                     <div className="bg-blue-50 p-3 rounded-lg">
-                      <div className="text-xs text-gray-600 mb-1">გამყიდველი</div>
+                      <div className="text-xs text-gray-600 mb-1">{t('parts.seller')}</div>
                       <div className="text-sm font-medium text-gray-900">
-                        {part.username || part.first_name || part.last_name || 'უცნობი'}
+                        {part.username || part.first_name || part.last_name || t('common.unknown')}
                       </div>
                       <div className="text-xs text-gray-500">
                         ID: {part.seller_id || 'N/A'}
@@ -241,7 +243,7 @@ const PartsList: React.FC<PartsListProps> = ({
                     </div>
                     
                     <div className="text-xs text-gray-500">
-                      დამატებულია: {formatDate(part.created_at)}
+                      {t('parts.createdAt')}: {formatDate(part.created_at)}
                     </div>
                   </div>
                   
@@ -274,7 +276,7 @@ const PartsList: React.FC<PartsListProps> = ({
         {/* Pagination */}
         <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-gray-100 bg-gray-50">
           <div className="text-sm text-gray-600 text-center sm:text-left">
-            ნაჩვენებია <span className="font-medium">{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredParts.length)}</span> სულ <span className="font-medium">{filteredParts.length}</span>
+            {t('common.showing')} <span className="font-medium">{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredParts.length)}</span> {t('common.of')} <span className="font-medium">{filteredParts.length}</span>
           </div>
           <div className="flex items-center justify-center sm:justify-end gap-2">
             <button 
@@ -282,7 +284,7 @@ const PartsList: React.FC<PartsListProps> = ({
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
-              <ArrowLeft size={16} /> <span className="hidden sm:inline">უკან</span>
+              <ArrowLeft size={16} /> <span className="hidden sm:inline">{t('common.previous')}</span>
             </button>
             <span className="px-3 py-2 text-xs font-medium bg-white border border-gray-200 rounded-lg min-w-[70px] text-center">
               {currentPage} / {totalPages || 1}
@@ -292,7 +294,7 @@ const PartsList: React.FC<PartsListProps> = ({
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages === 0}
             >
-              <span className="hidden sm:inline">შემდეგი</span> <ArrowRight size={16} />
+              <span className="hidden sm:inline">{t('common.next')}</span> <ArrowRight size={16} />
             </button>
           </div>
         </div>
@@ -303,7 +305,7 @@ const PartsList: React.FC<PartsListProps> = ({
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600"
           onClick={() => window.location.reload()}
         >
-          <RefreshCw size={14} /> განახლება
+          <RefreshCw size={14} /> {t('common.refresh')}
         </button>
       </div>
 
@@ -312,23 +314,23 @@ const PartsList: React.FC<PartsListProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              დაადასტურეთ წაშლა
+              {t('parts.delete')}
             </h3>
             <p className="text-gray-600 mb-6">
-              დარწმუნებული ხართ, რომ გსურთ წაშლა "{partToDelete?.title}"?
+              {t('users.deleteConfirmation')} "{partToDelete?.title}"?
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={handleDeleteCancel}
                 className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
               >
-                გაუქმება
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleDeleteConfirm}
                 className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
               >
-                წაშლა
+                {t('common.delete')}
               </button>
             </div>
           </div>

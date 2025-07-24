@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import advertisementService, { Advertisement } from '../../../../api/services/advertisementService';
 import AdvertisementsList from '../components/AdvertisementsList';
 import AdvertisementForm from '../components/AdvertisementForm';
 
 const BannersAdvertisementsPage: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +40,7 @@ const BannersAdvertisementsPage: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('ნამდვილად გსურთ რეკლამის წაშლა?')) {
+    if (window.confirm(t('advertisements.deleteConfirmation'))) {
       try {
         await advertisementService.delete(id);
         setAdvertisements(advertisements.filter(ad => ad.id !== id));
@@ -85,13 +87,13 @@ const BannersAdvertisementsPage: React.FC = () => {
   return (
     <div className="p-1 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">ბანერები</h1>
+        <h1 className="text-2xl font-bold">{t('advertisements.banners')}</h1>
         <button
           onClick={handleAddClick}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
         >
           <Plus className="mr-2 h-4 w-4" />
-          ბანერის დამატება
+          {t('advertisements.addBanner')}
         </button>
       </div>
 

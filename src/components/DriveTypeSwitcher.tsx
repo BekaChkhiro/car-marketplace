@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface DriveTypeSwitcherProps {
   value: string | undefined;
@@ -6,18 +7,20 @@ interface DriveTypeSwitcherProps {
   className?: string;
 }
 
-// Drive type options based on the existing DRIVE_TYPE_OPTIONS
-const DRIVE_TYPE_OPTIONS = [
-  { value: 'front', label: 'წინა' },
-  { value: 'rear', label: 'უკანა' },
-  { value: '4x4', label: '4x4' },
-  { value: 'all', label: 'სრული' }
-];
 
 const DriveTypeSwitcher: React.FC<DriveTypeSwitcherProps> = ({ value, onChange, className = '' }) => {
+  const { t } = useTranslation('filter');
+  
+  const driveTypeOptions = [
+    { value: 'front', label: t('driveTypes.front') },
+    { value: 'rear', label: t('driveTypes.rear') },
+    { value: '4x4', label: t('driveTypes.allWheel') },
+    { value: 'all', label: t('driveTypes.fourWheel') }
+  ];
+
   return (
     <div className={`flex items-center p-1 bg-gray-100 rounded-lg ${className}`}>
-      {DRIVE_TYPE_OPTIONS.map((option) => (
+      {driveTypeOptions.map((option) => (
         <button
           key={option.value}
           type="button"

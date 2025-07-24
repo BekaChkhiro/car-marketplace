@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import BasicInfo from './components/BasicInfo';
 import TechnicalSpecs from './components/TechnicalSpecs';
@@ -14,6 +15,7 @@ import { CarFeatures } from './types';
 
 const AddCar: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('profile');
   const {
     formData,
     errors,
@@ -42,8 +44,8 @@ const AddCar: React.FC = () => {
               <ArrowLeft size={24} className="text-gray-600" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">მანქანის დამატება</h1>
-              <p className="text-sm text-gray-500">შეავსეთ ყველა საჭირო ინფორმაცია</p>
+              <h1 className="text-2xl font-bold text-gray-900">{t('addCar.title')}</h1>
+              <p className="text-sm text-gray-500">{t('addCar.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -115,13 +117,13 @@ const AddCar: React.FC = () => {
                 className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
                 onClick={() => navigate('/profile/cars')}
               >
-                გაუქმება
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
                 className="px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200"
               >
-                დამატება
+                {t('addCar.submit')}
               </button>
             </div>
           </div>

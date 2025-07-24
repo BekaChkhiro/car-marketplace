@@ -54,24 +54,36 @@
     "diesel": "Diesel",
     "hybrid": "Hybrid",
     "electric": "Electric",
+    "plug_in_hybrid": "Plug-in Hybrid",
     "naturalGas": "Natural Gas",
-    "lpg": "LPG"
+    "lpg": "LPG",
+    "cng": "CNG",
+    "hydrogen": "Hydrogen"
   },
   "colors": {
-    "black": "Black",
     "white": "White",
+    "black": "Black",
     "silver": "Silver",
     "gray": "Gray",
-    "blue": "Blue",
     "red": "Red",
+    "blue": "Blue",
+    "yellow": "Yellow",
     "green": "Green",
+    "orange": "Orange",
+    "gold": "Gold",
+    "purple": "Purple",
+    "pink": "Pink",
+    "beige": "Beige",
+    "burgundy": "Burgundy",
+    "lightblue": "Light Blue",
     "brown": "Brown",
-    "yellow": "Yellow"
+    "other": "Other"
   },
   "driveTypes": {
-    "front": "Front",
-    "rear": "Rear",
-    "allWheel": "All-Wheel (4x4)"
+    "front": "Front-wheel",
+    "rear": "Rear-wheel",
+    "allWheel": "(4x4)",
+    "fourWheel": "All-Wheel"
   },
   "conditions": {
     "new": "New",
@@ -80,5 +92,65 @@
   "steeringWheels": {
     "right": "Right",
     "left": "Left"
-  }
+  },
+  "transmissions": {
+    "automatic": "Automatic",
+    "manual": "Manual", 
+    "variator": "Variator",
+    "semiAutomatic": "Semi-automatic"
+  },
+  "interiorMaterials": {
+    "leather": "Leather",
+    "fabric": "Fabric",
+    "synthetic_leather": "Synthetic Leather",
+    "combined": "Combined",
+    "alcantara": "Alcantara",
+    "velour": "Velour",
+    "other": "Other"
+  },
+  "interiorColors": {
+    "black": "Black",
+    "beige": "Beige", 
+    "gray": "Gray",
+    "brown": "Brown",
+    "red": "Red",
+    "white": "White",
+    "other": "Other"
+  },
+  "locations": {
+    "tbilisi": "Tbilisi",
+    "batumi": "Batumi", 
+    "kutaisi": "Kutaisi",
+    "rustavi": "Rustavi",
+    "gori": "Gori",
+    "zugdidi": "Zugdidi",
+    "poti": "Poti",
+    "telavi": "Telavi",
+    "other": "Other"
+  },
+  "totalCars": "listings",
+  "resultsCount": "listings",
+  "filterSidebar": {
+    "title": "Filter",
+    "brandModel": "Brand & Model",
+    "allBrands": "All Brands",
+    "allModels": "All Models",
+    "allCategories": "All Categories",
+    "anyYear": "Any Year",
+    "fuelTypeLabel": "Fuel Type",
+    "transmissionLabel": "Transmission",
+    "locationLabel": "Location",
+    "clear": "Clear",
+    "filter": "Filter"
+  },
+  "სედანი": "Sedan",
+  "ჯიპი": "SUV", 
+  "კუპე": "Coupe",
+  "ჰეტჩბექი": "Hatchback",
+  "უნივერსალი": "Station Wagon",
+  "კაბრიოლეტი": "Convertible",
+  "პიკაპი": "Pickup",
+  "მინივენი": "Minivan",
+  "ლიმუზინი": "Limousine",
+  "კროსოვერი": "Crossover"
 }

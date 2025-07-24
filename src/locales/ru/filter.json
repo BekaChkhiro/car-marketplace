@@ -54,24 +54,36 @@
     "diesel": "Дизель",
     "hybrid": "Гибрид",
     "electric": "Электро",
+    "plug_in_hybrid": "Плагин-гибрид",
     "naturalGas": "Природный газ",
-    "lpg": "Сжиженный газ"
+    "lpg": "LPG",
+    "cng": "CNG",
+    "hydrogen": "Водород"
   },
   "colors": {
-    "black": "Черный",
     "white": "Белый",
+    "black": "Черный",
     "silver": "Серебристый",
     "gray": "Серый",
-    "blue": "Синий",
     "red": "Красный",
+    "blue": "Синий",
+    "yellow": "Желтый",
     "green": "Зеленый",
+    "orange": "Оранжевый",
+    "gold": "Золотой",
+    "purple": "Фиолетовый",
+    "pink": "Розовый",
+    "beige": "Бежевый",
+    "burgundy": "Бордовый",
+    "lightblue": "Голубой",
     "brown": "Коричневый",
-    "yellow": "Желтый"
+    "other": "Другой"
   },
   "driveTypes": {
     "front": "Передний",
     "rear": "Задний",
-    "allWheel": "Полный (4x4)"
+    "allWheel": "(4x4)",
+    "fourWheel": "Полный"
   },
   "conditions": {
     "new": "Новый",
@@ -80,5 +92,65 @@
   "steeringWheels": {
     "right": "Правый",
     "left": "Левый"
-  }
+  },
+  "transmissions": {
+    "automatic": "Автоматическая",
+    "manual": "Механическая", 
+    "variator": "Вариатор",
+    "semiAutomatic": "Полуавтоматическая"
+  },
+  "interiorMaterials": {
+    "leather": "Кожа",
+    "fabric": "Ткань",
+    "synthetic_leather": "Искусственная кожа",
+    "combined": "Комбинированные",
+    "alcantara": "Алькантара",
+    "velour": "Велюр",
+    "other": "Другое"
+  },
+  "interiorColors": {
+    "black": "Черный",
+    "beige": "Бежевый", 
+    "gray": "Серый",
+    "brown": "Коричневый",
+    "red": "Красный",
+    "white": "Белый",
+    "other": "Другой"
+  },
+  "locations": {
+    "tbilisi": "Тбилиси",
+    "batumi": "Батуми", 
+    "kutaisi": "Кутаиси",
+    "rustavi": "Рустави",
+    "gori": "Гори",
+    "zugdidi": "Зугдиди",
+    "poti": "Поти",
+    "telavi": "Телави",
+    "other": "Другое"
+  },
+  "totalCars": "объявлений",
+  "resultsCount": "объявлений",
+  "filterSidebar": {
+    "title": "Фильтр",
+    "brandModel": "Марка и модель",
+    "allBrands": "Все марки",
+    "allModels": "Все модели",
+    "allCategories": "Все категории",
+    "anyYear": "Любой год",
+    "fuelTypeLabel": "Тип топлива",
+    "transmissionLabel": "Трансмиссия",
+    "locationLabel": "Местоположение",
+    "clear": "Очистить",
+    "filter": "Фильтр"
+  },
+  "სედანი": "Седан",
+  "ჯიპი": "Внедорожник", 
+  "კუპე": "Купе",
+  "ჰეტჩბექი": "Хэтчбек",
+  "უნივერსალი": "Универсал",
+  "კაბრიოლეტი": "Кабриолет",
+  "პიკაპი": "Пикап",
+  "მინივენი": "Минивен",
+  "ლიმუზინი": "Лимузин",
+  "კროსოვერი": "Кроссовер"
 }

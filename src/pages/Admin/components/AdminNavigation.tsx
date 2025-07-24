@@ -20,9 +20,13 @@ import {
   X,
   Activity,
   Building,
-  UserCheck
+  UserCheck,
+  User,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 
 interface AdminNavigationProps {
   onCloseMobileMenu?: () => void;
@@ -32,11 +36,15 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
   const location = useLocation();
   const { logout } = useAuth();
   const { lang } = useParams<{ lang: string }>();
+  const { t } = useTranslation([namespaces.admin]);
 
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
   // Check if advertisements menu should be expanded based on current path
   const isAdvertisementsPath = location.pathname.includes('/admin/advertisements');
+  
+  // Check if settings menu should be expanded based on current path
+  const isSettingsPath = location.pathname.includes('/admin/settings') || location.pathname.includes('/admin/vip-settings');
   
   // Toggle submenu expansion
   const toggleMenu = (menu: string) => {
@@ -54,41 +62,61 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
 
   // Top level nav items
   const navItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'დაფა', path: buildPath('/admin') },
-    { icon: <Users size={20} />, label: 'მომხმარებლები', path: buildPath('/admin/users') },
-    { icon: <Car size={20} />, label: 'განცხადებები', path: buildPath('/admin/cars') },
-    { icon: <Building size={20} />, label: 'ავტოსალონები', path: buildPath('/admin/autosalons') },
-    { icon: <UserCheck size={20} />, label: 'დილერების მართვა', path: buildPath('/admin/dealers') },
-    { icon: <Package size={20} />, label: 'ნაწილები', path: buildPath('/admin/parts') },
-    { icon: <CreditCard size={20} />, label: 'ტრანზაქციები', path: buildPath('/admin/transactions') },
-    { icon: <Award size={20} />, label: 'VIP განცხადებები', path: buildPath('/admin/vip-listings') },
-    { icon: <Activity size={20} />, label: 'ანალიტიკა', path: buildPath('/admin/analytics') },
+    { icon: <LayoutDashboard size={20} />, label: t('admin:navigation.dashboard'), path: buildPath('/admin') },
+    { icon: <Users size={20} />, label: t('admin:navigation.users'), path: buildPath('/admin/users') },
+    { icon: <Car size={20} />, label: t('admin:navigation.cars'), path: buildPath('/admin/cars') },
+    { icon: <Building size={20} />, label: t('admin:navigation.autosalons'), path: buildPath('/admin/autosalons') },
+    { icon: <UserCheck size={20} />, label: t('admin:navigation.dealers'), path: buildPath('/admin/dealers') },
+    { icon: <Package size={20} />, label: t('admin:navigation.parts'), path: buildPath('/admin/parts') },
+    { icon: <CreditCard size={20} />, label: t('admin:navigation.transactions'), path: buildPath('/admin/transactions') },
+    { icon: <Award size={20} />, label: t('admin:navigation.vipListings'), path: buildPath('/admin/vip-listings') },
+    { icon: <Activity size={20} />, label: t('admin:navigation.analytics'), path: buildPath('/admin/analytics') },
     { 
       icon: <Image size={20} />, 
-      label: 'რეკლამები', 
+      label: t('admin:navigation.advertisements'), 
       path: buildPath('/admin/advertisements'),
       hasSubmenu: true,
       submenuId: 'advertisements',
       submenu: [
-        { icon: <LayoutGrid size={18} />, label: 'ყველა რეკლამა', path: buildPath('/admin/advertisements/all') },
-        { icon: <SlidersHorizontal size={18} />, label: 'სლაიდერი', path: buildPath('/admin/advertisements/slider') },
-        { icon: <Rows size={18} />, label: 'ბანერები', path: buildPath('/admin/advertisements/banners') },
-        { icon: <BarChart2 size={18} />, label: 'ანალიტიკა', path: buildPath('/admin/advertisements/analytics') },
+        { icon: <LayoutGrid size={18} />, label: t('admin:advertisements.allAdvertisements'), path: buildPath('/admin/advertisements/all') },
+        { icon: <SlidersHorizontal size={18} />, label: t('admin:advertisements.slider'), path: buildPath('/admin/advertisements/slider') },
+        { icon: <Rows size={18} />, label: t('admin:advertisements.banners'), path: buildPath('/admin/advertisements/banners') },
+        { icon: <BarChart2 size={18} />, label: t('advertisements.analytics.title'), path: buildPath('/admin/advertisements/analytics') },
       ]
     },
-    { icon: <Settings size={20} />, label: 'პარამეტრები', path: buildPath('/admin/settings') },
+    { 
+      icon: <Settings size={20} />, 
+      label: t('admin:navigation.settings'), 
+      path: buildPath('/admin/settings'),
+      hasSubmenu: true,
+      submenuId: 'settings',
+      submenu: [
+        { icon: <User size={18} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
+        { icon: <DollarSign size={18} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
+      ]
+    },
   ];
   
-  // Auto-expand advertisements menu if we're in that section
+  // Auto-expand advertisements and settings menus if we're in those sections
   React.useEffect(() => {
+    let newExpandedMenus = [...expandedMenus];
+    
     if (isAdvertisementsPath && !expandedMenus.includes('advertisements')) {
-      setExpandedMenus([...expandedMenus, 'advertisements']);
+      newExpandedMenus.push('advertisements');
     }
-  }, [location.pathname, isAdvertisementsPath, expandedMenus]);
+    
+    if (isSettingsPath && !expandedMenus.includes('settings')) {
+      newExpandedMenus.push('settings');
+    }
+    
+    if (newExpandedMenus.length !== expandedMenus.length) {
+      setExpandedMenus(newExpandedMenus);
+    }
+  }, [location.pathname, isAdvertisementsPath, isSettingsPath, expandedMenus]);
   return (
     <div className="w-64 bg-white border-r border-gray-100  shadow-sm rounded-lg overflow-y-auto">
       <div className="p-4 sm:p-6 border-b border-gray-100 flex items-left justify-center relative">
-        <h1 className="text-lg sm:text-xl  font-bold text-primary  mr-2">ადმინ პანელი</h1>
+        <h1 className="text-lg sm:text-xl  font-bold text-primary  mr-2">{t('admin:dashboard.title')}</h1>
         {/* Close button for mobile - positioned absolute right */}
         {onCloseMobileMenu && (
           <button 
@@ -173,7 +201,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-red-600 hover:bg-red-50 transition-all duration-300"
         >
           <LogOut size={20} />
-          <span>გასვლა</span>
+          <span>{t('admin:navigation.logout')}</span>
         </button>
       </div>
     </div>

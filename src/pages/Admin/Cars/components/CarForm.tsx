@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Car, Brand, Category, UpdateCarFormData } from '../../../../api/types/car.types';
 import carService from '../../../../api/services/carService';
 import { Loader } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import CurrencySwitcher from '../../../../components/CurrencySwitcher';
 
 interface CarFormProps {
@@ -17,6 +18,7 @@ const CarForm: React.FC<CarFormProps> = ({
   isSubmitting,
   mode
 }) => {
+  const { t } = useTranslation('admin');
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [models, setModels] = useState<string[]>([]);
@@ -51,8 +53,8 @@ const CarForm: React.FC<CarFormProps> = ({
       location_type: initialData.location.location_type || 'georgia',
       is_in_transit: initialData.location.is_in_transit || false
     } : {
-      city: 'თბილისი',
-      country: 'საქართველო',
+      city: t('cars.tbilisi'),
+      country: t('cars.georgia'),
       location_type: 'georgia',
       is_in_transit: false
     }
@@ -197,14 +199,14 @@ const CarForm: React.FC<CarFormProps> = ({
                 <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-5h2a2 2 0 012 2v1h-1.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-1a4 4 0 00-4-4h-1V6a1 1 0 00-1-1H3z" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-800">ძირითადი ინფორმაცია</h2>
+            <h2 className="text-lg font-semibold text-gray-800">{t('cars.basicInfo')}</h2>
           </div>
           <div className="p-4">
             <div className="grid grid-cols-1 gap-4 mb-4">
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  სათაური
+                  {t('cars.title')}
                 </label>
                 <input
                   type="text"
@@ -213,7 +215,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   value={formData.title}
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="მაგ: BMW X5 M-პაკეტი, იდეალურ მდგომარეობაში"
+                  placeholder={t('cars.titlePlaceholder')}
                   required
                 />
               </div>
@@ -223,7 +225,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Brand */}
               <div>
                 <label htmlFor="brand_id" className="block text-sm font-medium text-gray-700 mb-1">
-                  ბრენდი
+                  {t('cars.brand')}
                 </label>
                 <select
                   id="brand_id"
@@ -234,7 +236,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   required
                   disabled={loadingBrands}
                 >
-                  <option value="">აირჩიეთ ბრენდი</option>
+                  <option value="">{t('cars.selectBrand')}</option>
                   {brands.map(brand => (
                     <option key={brand.id} value={brand.id}>
                       {brand.name}
@@ -243,7 +245,7 @@ const CarForm: React.FC<CarFormProps> = ({
                 </select>
                 {loadingBrands && (
                   <div className="mt-1 text-sm text-gray-500 flex items-center">
-                    <Loader size={14} className="animate-spin mr-1" /> ბრენდების ჩატვირთვა...
+                    <Loader size={14} className="animate-spin mr-1" /> {t('cars.loadingBrands')}
                   </div>
                 )}
               </div>
@@ -251,7 +253,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Category */}
               <div>
                 <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
-                  კატეგორია
+                  {t('cars.category')}
                 </label>
                 <select
                   id="category_id"
@@ -262,7 +264,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   required
                   disabled={loadingCategories}
                 >
-                  <option value="">აირჩიეთ კატეგორია</option>
+                  <option value="">{t('cars.selectCategory')}</option>
                   {categories.map(category => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -271,7 +273,7 @@ const CarForm: React.FC<CarFormProps> = ({
                 </select>
                 {loadingCategories && (
                   <div className="mt-1 text-sm text-gray-500 flex items-center">
-                    <Loader size={14} className="animate-spin mr-1" /> კატეგორიების ჩატვირთვა...
+                    <Loader size={14} className="animate-spin mr-1" /> {t('cars.loadingCategories')}
                   </div>
                 )}
               </div>
@@ -279,7 +281,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Model */}
               <div>
                 <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-1">
-                  მოდელი
+                  {t('cars.model')}
                 </label>
                 <select
                   id="model"
@@ -290,7 +292,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   required
                   disabled={loadingModels || !formData.brand_id}
                 >
-                  <option value="">აირჩიეთ მოდელი</option>
+                  <option value="">{t('cars.selectModel')}</option>
                   {models.map(model => (
                     <option key={model} value={model}>
                       {model}
@@ -299,7 +301,7 @@ const CarForm: React.FC<CarFormProps> = ({
                 </select>
                 {loadingModels && (
                   <div className="mt-1 text-sm text-gray-500 flex items-center">
-                    <Loader size={14} className="animate-spin mr-1" /> მოდელების ჩატვირთვა...
+                    <Loader size={14} className="animate-spin mr-1" /> {t('cars.loadingModels')}
                   </div>
                 )}
               </div>
@@ -307,7 +309,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Year */}
               <div>
                 <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
-                  წელი
+                  {t('cars.year')}
                 </label>
                 <select
                   id="year"
@@ -317,7 +319,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
-                  <option value="">აირჩიეთ წელი</option>
+                  <option value="">{t('cars.selectYear')}</option>
                   {Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => {
                     const year = new Date().getFullYear() - i;
                     return (
@@ -332,7 +334,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Price */}
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                  ფასი
+                  {t('cars.price')}
                 </label>
                 <div className="relative">
                   <input
@@ -371,14 +373,14 @@ const CarForm: React.FC<CarFormProps> = ({
                 <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-800">სპეციფიკაციები</h2>
+            <h2 className="text-lg font-semibold text-gray-800">{t('cars.specifications')}</h2>
           </div>
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Transmission */}
               <div>
                 <label htmlFor="specifications.transmission" className="block text-sm font-medium text-gray-700 mb-1">
-                  გადაცემათა კოლოფი
+                  {t('cars.transmission')}
                 </label>
                 <select
                   id="specifications.transmission"
@@ -387,16 +389,16 @@ const CarForm: React.FC<CarFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="automatic">ავტომატური</option>
-                  <option value="manual">მექანიკური</option>
-                  <option value="semi-automatic">ნახევრად ავტომატური</option>
+                  <option value="automatic">{t('common.automatic')}</option>
+                  <option value="manual">{t('common.manual')}</option>
+                  <option value="semi-automatic">{t('cars.semiAutomatic')}</option>
                 </select>
               </div>
               
               {/* Fuel Type */}
               <div>
                 <label htmlFor="specifications.fuel_type" className="block text-sm font-medium text-gray-700 mb-1">
-                  საწვავის ტიპი
+                  {t('cars.fuelType')}
                 </label>
                 <select
                   id="specifications.fuel_type"
@@ -405,18 +407,18 @@ const CarForm: React.FC<CarFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="Gasoline">ბენზინი</option>
-                  <option value="Diesel">დიზელი</option>
-                  <option value="Hybrid">ჰიბრიდი</option>
-                  <option value="Electric">ელექტრო</option>
-                  <option value="LPG">გაზი</option>
+                  <option value="Gasoline">{t('cars.gasoline')}</option>
+                  <option value="Diesel">{t('cars.diesel')}</option>
+                  <option value="Hybrid">{t('cars.hybrid')}</option>
+                  <option value="Electric">{t('cars.electric')}</option>
+                  <option value="LPG">{t('cars.gas')}</option>
                 </select>
               </div>
               
               {/* Mileage */}
               <div>
                 <label htmlFor="specifications.mileage" className="block text-sm font-medium text-gray-700 mb-1">
-                  გარბენი
+                  {t('cars.mileage')}
                 </label>
                 <div className="flex">
                   <input
@@ -435,8 +437,8 @@ const CarForm: React.FC<CarFormProps> = ({
                     onChange={handleChange}
                     className="w-24 p-2 border border-gray-300 rounded-r-md focus:ring-blue-500 focus:border-blue-500 border-l-0"
                   >
-                    <option value="km">კმ</option>
-                    <option value="mi">მილი</option>
+                    <option value="km">{t('cars.km')}</option>
+                    <option value="mi">{t('cars.miles')}</option>
                   </select>
                 </div>
               </div>
@@ -444,7 +446,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Steering Wheel */}
               <div>
                 <label htmlFor="specifications.steering_wheel" className="block text-sm font-medium text-gray-700 mb-1">
-                  საჭე
+                  {t('cars.steeringWheel')}
                 </label>
                 <select
                   id="specifications.steering_wheel"
@@ -453,15 +455,15 @@ const CarForm: React.FC<CarFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="left">მარცხენა</option>
-                  <option value="right">მარჯვენა</option>
+                  <option value="left">{t('cars.left')}</option>
+                  <option value="right">{t('cars.right')}</option>
                 </select>
               </div>
               
               {/* Drive Type */}
               <div>
                 <label htmlFor="specifications.drive_type" className="block text-sm font-medium text-gray-700 mb-1">
-                  წამყვანი თვლები
+                  {t('cars.driveType')}
                 </label>
                 <select
                   id="specifications.drive_type"
@@ -470,16 +472,16 @@ const CarForm: React.FC<CarFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="FWD">წინა</option>
-                  <option value="RWD">უკანა</option>
-                  <option value="AWD">4x4</option>
+                  <option value="FWD">{t('cars.front')}</option>
+                  <option value="RWD">{t('cars.rear')}</option>
+                  <option value="AWD">{t('cars.fourWD')}</option>
                 </select>
               </div>
               
               {/* Color */}
               <div>
                 <label htmlFor="specifications.color" className="block text-sm font-medium text-gray-700 mb-1">
-                  ფერი
+                  {t('cars.color')}
                 </label>
                 <input
                   type="text"
@@ -488,7 +490,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   value={formData.specifications?.color || ''}
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="მაგ: შავი, თეთრი, ვერცხლისფერი"
+                  placeholder={t('cars.colorPlaceholder')}
                 />
               </div>
             </div>
@@ -503,20 +505,20 @@ const CarForm: React.FC<CarFormProps> = ({
                 <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-800">მდებარეობა</h2>
+            <h2 className="text-lg font-semibold text-gray-800">{t('cars.location')}</h2>
           </div>
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Country */}
               <div>
                 <label htmlFor="location.country" className="block text-sm font-medium text-gray-700 mb-1">
-                  ქვეყანა
+                  {t('cars.country')}
                 </label>
                 <input
                   type="text"
                   id="location.country"
                   name="location.country"
-                  value={formData.location?.country || 'საქართველო'}
+                  value={formData.location?.country || t('cars.georgia')}
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -527,13 +529,13 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* City */}
               <div>
                 <label htmlFor="location.city" className="block text-sm font-medium text-gray-700 mb-1">
-                  ქალაქი
+                  {t('cars.city')}
                 </label>
                 <input
                   type="text"
                   id="location.city"
                   name="location.city"
-                  value={formData.location?.city || 'თბილისი'}
+                  value={formData.location?.city || t('cars.tbilisi')}
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -542,7 +544,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Location Type */}
               <div>
                 <label htmlFor="location.location_type" className="block text-sm font-medium text-gray-700 mb-1">
-                  მდებარეობის ტიპი
+                  {t('cars.locationType')}
                 </label>
                 <select
                   id="location.location_type"
@@ -551,9 +553,9 @@ const CarForm: React.FC<CarFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="georgia">საქართველო</option>
-                  <option value="transit">ტრანზიტში</option>
-                  <option value="international">საზღვარგარეთ</option>
+                  <option value="georgia">{t('cars.georgia')}</option>
+                  <option value="transit">{t('cars.inTransit')}</option>
+                  <option value="international">{t('cars.international')}</option>
                 </select>
               </div>
               
@@ -568,7 +570,7 @@ const CarForm: React.FC<CarFormProps> = ({
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="location.is_in_transit" className="ml-2 block text-sm text-gray-700">
-                  ტრანზიტში
+                  {t('cars.inTransit')}
                 </label>
               </div>
             </div>
@@ -583,14 +585,14 @@ const CarForm: React.FC<CarFormProps> = ({
                 <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-800">აღწერა</h2>
+            <h2 className="text-lg font-semibold text-gray-800">{t('cars.description')}</h2>
           </div>
           <div className="p-4">
             <div className="space-y-4">
               {/* Georgian Description */}
               <div>
                 <label htmlFor="description_ka" className="block text-sm font-medium text-gray-700 mb-1">
-                  აღწერა (ქართულად)
+                  {t('cars.descriptionKa')}
                 </label>
                 <textarea
                   id="description_ka"
@@ -606,7 +608,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* English Description */}
               <div>
                 <label htmlFor="description_en" className="block text-sm font-medium text-gray-700 mb-1">
-                  აღწერა (ინგლისურად)
+                  {t('cars.descriptionEn')}
                 </label>
                 <textarea
                   id="description_en"
@@ -621,7 +623,7 @@ const CarForm: React.FC<CarFormProps> = ({
               {/* Russian Description */}
               <div>
                 <label htmlFor="description_ru" className="block text-sm font-medium text-gray-700 mb-1">
-                  აღწერა (რუსულად)
+                  {t('cars.descriptionRu')}
                 </label>
                 <textarea
                   id="description_ru"
@@ -641,7 +643,7 @@ const CarForm: React.FC<CarFormProps> = ({
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-6">
         <div className="flex flex-col sm:flex-row  justify-between items-center ">
           <div className="text-sm text-gray-500">
-            {mode === 'create' ? 'ახალი მანქანის დამატება' : 'მანქანის ინფორმაციის განახლება'}
+            {mode === 'create' ? t('cars.addingNewCar') : t('cars.updatingCarInfo')}
           </div>
           <div className="flex space-x-3 mt-2 sm:mt-0">
             <button
@@ -649,7 +651,7 @@ const CarForm: React.FC<CarFormProps> = ({
               onClick={() => window.history.back()}
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              გაუქმება
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -659,10 +661,10 @@ const CarForm: React.FC<CarFormProps> = ({
               {isSubmitting ? (
                 <>
                   <Loader size={16} className="animate-spin mr-2" />
-                  {mode === 'create' ? 'იქმნება...' : 'ნახლდება...'}
+                  {mode === 'create' ? t('cars.creating') : t('cars.updating')}
                 </>
               ) : (
-                mode === 'create' ? 'მანქანის დამატება' : 'მანქანის განახლება'
+                mode === 'create' ? t('cars.addCar') : t('cars.updateCar')
               )}
             </button>
           </div>

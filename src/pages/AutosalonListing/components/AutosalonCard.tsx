@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 import { Autosalon } from '../../../api/types/autosalon.types';
 import { MapPin, Phone, Globe, Calendar } from 'lucide-react';
 
@@ -8,6 +10,7 @@ interface AutosalonCardProps {
 }
 
 const AutosalonCard: React.FC<AutosalonCardProps> = ({ autosalon }) => {
+  const { t } = useTranslation([namespaces.autosalonListing]);
   const { lang } = useParams<{ lang: string }>();
   
   return (
@@ -53,7 +56,7 @@ const AutosalonCard: React.FC<AutosalonCardProps> = ({ autosalon }) => {
               {autosalon.established_year && (
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
-                  <span>{autosalon.established_year} წლიდან</span>
+                  <span>{t('establishedSince', { year: autosalon.established_year })}</span>
                 </div>
               )}
               
@@ -80,7 +83,7 @@ const AutosalonCard: React.FC<AutosalonCardProps> = ({ autosalon }) => {
                     rel="noopener noreferrer"
                     className="text-primary hover:text-secondary truncate"
                   >
-                    ვებ გვერდი
+                    {t('website')}
                   </a>
                 </div>
               )}
@@ -93,7 +96,7 @@ const AutosalonCard: React.FC<AutosalonCardProps> = ({ autosalon }) => {
               to={`/${lang}/autosalons/${autosalon.id}`}
               className="flex-1 flex justify-center items-center bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-medium min-h-[48px]"
             >
-              განცხადებების ნახვა ({autosalon.car_count})
+              {t('viewListings', { count: autosalon.car_count })}
             </Link>
           </div>
         </div>

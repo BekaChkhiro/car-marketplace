@@ -98,6 +98,11 @@
       "km": "km",
       "available": "Available"
     },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "view": "View"
+    },
     "vip": {
       "title": "VIP Status",
       "daysLeft": "Days Left",
@@ -107,6 +112,12 @@
       "inactive": "Inactive",
       "buyDays": "Buy Days",
       "extendDays": "Extend Days",
+      "remaining": {
+        "minutes": "{minutes} minutes left",
+        "hoursMinutes": "{hours} hours and {minutes} minutes left",
+        "day": "1 day left",
+        "days": "{days} days left"
+      },
       "modal": {
         "buyVip": "Buy VIP Status",
         "balance": "Balance",
@@ -129,7 +140,11 @@
         },
         "disabled": "VIP Status Disabled",
         "disableError": "Error disabling VIP status",
-        "success": "VIP status successfully purchased"
+        "success": "VIP status successfully purchased",
+        "currency": "GEL",
+        "day": "day",
+        "days": "days",
+        "fixedDurationMessage": "This VIP package has a fixed duration: "
       }
     }
   },
@@ -147,13 +162,409 @@
     "paymentMethod": "Payment Method",
     "date": "Date",
     "status": "Status",
-    "noTransactions": "No transactions yet"
+    "noTransactions": "No transactions yet",
+    "bankOfGeorgia": "Bank of Georgia",
+    "bogPaymentSuccess": "Bank of Georgia payment completed successfully",
+    "onlinePaymentSuccess": "Online payment completed successfully",
+    "bogPaymentFailed": "Bank of Georgia payment failed",
+    "onlinePaymentFailed": "Online payment failed",
+    "waitingForBogPayment": "Waiting for Bank of Georgia payment confirmation...",
+    "waitingForPayment": "Waiting for payment confirmation...",
+    "bogPaymentProcessed": "Bank of Georgia payment has been processed",
+    "paymentProcessed": "Payment has been processed",
+    "checkingPayment": "Checking payment status...",
+    "paymentError": "An error occurred while processing payment",
+    "updateFailed": "Failed to get balance",
+    "invalidAmount": "Please enter a valid amount",
+    "fundsAdded": "Funds added successfully",
+    "addFailed": "Failed to add funds",
+    "redirectingToBank": "Redirecting to {{bank}}...",
+    "paymentInitFailed": "Payment initialization failed",
+    "payOnline": "Pay Online",
+    "processingPayment": "Processing payment..."
   },
   "wishlist": {
     "title": "Favorites",
     "empty": "You don't have any favorites yet",
+    "clearList": "Clear List",
+    "clearListTitle": "Clear Favorites",
+    "clearListMessage": "Are you sure you want to remove all favorite listings?",
+    "clearButton": "Clear",
+    "removeTitle": "Remove Listing",
+    "removeMessage": "Are you sure you want to remove {{brand}} {{model}} from favorites?",
+    "removeButton": "Remove",
+    "clearSuccess": "Favorite listings successfully cleared",
+    "clearError": "Error occurred while clearing favorites",
+    "removeSuccess": "Listing successfully removed from favorites",
+    "removeError": "Error occurred while removing listing",
     "viewDetails": "View Details",
     "removeFromFavorites": "Remove from Favorites",
     "addToFavorites": "Add to Favorites"
+  },
+  "addCar": {
+    "title": "Add Car",
+    "subtitle": "Fill in all the required information",
+    "submit": "Add Car",
+    "basicInfo": {
+      "title": "Title",
+      "titlePlaceholder": "e.g., BMW X5 M-Package, excellent condition",
+      "brand": "Brand",
+      "selectBrand": "Select brand",
+      "model": "Model",
+      "selectModel": "Select model",
+      "vinCode": "VIN Code",
+      "vinPlaceholder": "e.g., 1HGBH41JXMN109186",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "year": "Manufacturing Year",
+      "selectYear": "Select year",
+      "price": "Price",
+      "pricePlaceholder": "e.g., 15000"
+    },
+    "technicalSpecs": {
+      "title": "Technical Specifications",
+      "subtitle": "Car technical details",
+      "transmission": "Transmission",
+      "manual": "Manual",
+      "automatic": "Automatic",
+      "fuelType": "Fuel Type",
+      "selectFuelType": "Select fuel type",
+      "engineSize": "Engine Size (Liters)",
+      "selectEngineSize": "Select engine size",
+      "engineSizeHint": "Select engine size in liters",
+      "cylinders": "Number of Cylinders",
+      "cylindersPlaceholder": "e.g., 4",
+      "cylindersHint": "Specify the number of engine cylinders",
+      "mileage": "Mileage (km)",
+      "mileagePlaceholder": "e.g., 100000",
+      "driveType": "Drive Type",
+      "steeringWheel": "Steering Wheel",
+      "color": "Color",
+      "selectColor": "Select color",
+      "interiorColor": "Interior Color",
+      "selectInteriorColor": "Select interior color",
+      "interiorMaterial": "Interior Material",
+      "selectInteriorMaterial": "Select interior material",
+      "airbagsCount": "Number of Airbags",
+      "selectAirbagsCount": "Select number of airbags",
+      "airbags": "Airbags",
+      "doors": "Doors",
+      "selectDoors": "Select doors"
+    },
+    "features": {
+      "title": "Car Features",
+      "subtitle": "Select available features",
+      "groups": {
+        "safety": "Safety",
+        "comfort": "Comfort",
+        "electronics": "Electronics",
+        "additional": "Additional Equipment"
+      },
+      "items": {
+        "has_abs": "ABS",
+        "has_traction_control": "Traction Control System",
+        "has_central_locking": "Central Locking",
+        "has_alarm": "Alarm System",
+        "has_fog_lights": "Fog Lights",
+        "has_air_conditioning": "Air Conditioning",
+        "has_climate_control": "Climate Control",
+        "has_heated_seats": "Heated Seats",
+        "has_seat_memory": "Seat Memory",
+        "has_cruise_control": "Cruise Control",
+        "has_start_stop": "Start/Stop System",
+        "has_sunroof": "Sunroof",
+        "has_electric_windows": "Electric Windows",
+        "has_board_computer": "Board Computer",
+        "has_navigation": "Navigation System",
+        "has_parking_control": "Parking Sensors",
+        "has_rear_view_camera": "Rear View Camera",
+        "has_aux": "AUX",
+        "has_bluetooth": "Bluetooth",
+        "has_multifunction_steering_wheel": "Multifunction Steering Wheel",
+        "has_hydraulics": "Hydraulic Suspension",
+        "has_alloy_wheels": "Alloy Wheels",
+        "has_spare_tire": "Spare Tire",
+        "is_disability_adapted": "Disability Adapted"
+      }
+    },
+    "location": {
+      "title": "Location",
+      "subtitle": "Specify the car's location",
+      "locationType": "Location Type",
+      "country": "Country",
+      "city": "City",
+      "selectCountry": "Select country",
+      "selectCity": "Select city",
+      "inGeorgia": "In Georgia",
+      "inTransit": "In Transit",
+      "international": "International",
+      "transitDescription": "Car is in transit to Georgia in the future",
+      "internationalDescription": "Car is located abroad"
+    },
+    "description": {
+      "title": "Description",
+      "subtitle": "Describe your car in different languages",
+      "georgian": "Description in Georgian",
+      "english": "Description in English",
+      "russian": "Description in Russian",
+      "placeholder": "Describe the condition, features, and other important details of your car..."
+    },
+    "authorInfo": {
+      "title": "Contact Information",
+      "name": "Contact Name",
+      "namePlaceholder": "Your name or company name",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Your phone number"
+    },
+    "images": {
+      "title": "Car Images",
+      "subtitle": "Upload high-quality photos of your car"
+    },
+    "vipStatus": {
+      "title": "VIP Status",
+      "subtitle": "Make your listing more visible",
+      "titleFull": "VIP Status and Additional Services",
+      "description": "Choose VIP status and additional services for your listing.",
+      "balance": "Balance",
+      "currency": "GEL",
+      "confirmTitle": "Confirm VIP Status Purchase",
+      "confirmQuestion": "Do you want to purchase {status} status?",
+      "additionalServices": "Additional Services",
+      "colorHighlighting": "Color Highlighting",
+      "colorHighlightingDescription": "Your listing will be highlighted with colored background",
+      "autoRenewal": "Auto Renewal",
+      "autoRenewalDescription": "Listing will be automatically renewed daily",
+      "pricePerDay": "1 day",
+      "totalPrice": "Total Price: {price} GEL (1 day)",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "processing": "Processing...",
+      "insufficientBalance": "Insufficient balance",
+      "select": "Select",
+      "purchase": "Purchase",
+      "types": {
+        "none": "Standard",
+        "vip": "VIP",
+        "vip_plus": "VIP+",
+        "super_vip": "SUPER VIP"
+      },
+      "descriptions": {
+        "none": "Standard placement",
+        "vip": "Increased visibility",
+        "vip_plus": "High visibility and featured badge",
+        "super_vip": "Maximum visibility and premium badge"
+      },
+      "features": {
+        "vip": [
+          "Highlighted listing",
+          "5x more visibility"
+        ],
+        "vip_plus": [
+          "Highlighted listing",
+          "Top position in category",
+          "10x more visibility"
+        ],
+        "super_vip": [
+          "Highlighted listing",
+          "Top position in category",
+          "Priority in search results",
+          "20x more visibility"
+        ]
+      },
+      "free": "Free"
+    }
+  },
+  "editCar": {
+    "title": "Edit Car",
+    "subtitle": "Update your car information",
+    "submit": "Save Changes"
+  },
+  "addPart": {
+    "title": "Add Part",
+    "subtitle": "Add a car part for sale",
+    "submit": "Add Part"
+  },
+  "editPart": {
+    "title": "Edit Part",
+    "subtitle": "Update part information",
+    "submit": "Save Changes"
+  },
+  "profileHome": {
+    "title": "Profile Dashboard",
+    "welcome": "Welcome back",
+    "quickStats": "Quick Stats",
+    "recentActivity": "Recent Activity"
+  },
+  "parts": {
+    "title": "My Parts",
+    "subtitle": "Manage your parts listings",
+    "noParts": "You don't have any parts listed yet",
+    "addYourFirst": "Add your first part"
+  },
+  "imageUpload": {
+    "invalidFormat": "Invalid file format",
+    "dropHere": "Drop images here...",
+    "uploading": "Uploading...",
+    "dropOrClick": "Drop images or click to upload",
+    "selectOrDrop": "Select or drop images",
+    "formatInfo": "JPEG, PNG, WebP formats allowed, maximum 10MB",
+    "existingPhotos": "Existing Photos",
+    "removePhoto": "Remove Photo",
+    "setAsPrimary": "Set as Primary",
+    "newPhotos": "New Photos",
+    "primaryPhoto": "Primary Photo",
+    "addMore": "Add More",
+    "photos": "photos",
+    "primaryPhotoSelected": "Primary photo selected",
+    "removeAll": "Remove All"
+  },
+  "cities": {
+    "khashuri": "Khashuri",
+    "samtredia": "Samtredia",
+    "senaki": "Senaki"
+  },
+  "countries": {
+    "georgia": "Georgia",
+    "germany": "Germany",
+    "usa": "United States",
+    "japan": "Japan",
+    "uk": "United Kingdom",
+    "france": "France",
+    "italy": "Italy",
+    "spain": "Spain",
+    "netherlands": "Netherlands",
+    "china": "China",
+    "canada": "Canada",
+    "turkey": "Turkey",
+    "poland": "Poland",
+    "armenia": "Armenia"
+  },
+  "login": {
+    "title": "Login",
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter password"
+    },
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "submit": "Login",
+    "loading": "Please wait...",
+    "orLoginWith": "Or sign in with",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register",
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "general": "Login failed. Please try again"
+    }
+  },
+  "register": {
+    "title": "Registration",
+    "stepIndicator": {
+      "step1": "1",
+      "step2": "2"
+    },
+    "back": "Back",
+    "userType": {
+      "label": "User Type",
+      "regular": "Regular User",
+      "dealer": "Dealer"
+    },
+    "personalInfo": {
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "First Name"
+      },
+      "lastName": {
+        "label": "Last Name",
+        "placeholder": "Last Name"
+      },
+      "age": {
+        "label": "Age",
+        "placeholder": "Select Age"
+      },
+      "gender": {
+        "label": "Gender",
+        "male": "Male",
+        "female": "Female"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "+995"
+      },
+      "year": "years old"
+    },
+    "dealerInfo": {
+      "title": "Dealer Information",
+      "companyName": {
+        "label": "Company Name",
+        "placeholder": "Company Name"
+      },
+      "establishedYear": {
+        "label": "Year Established",
+        "placeholder": "Select Year"
+      },
+      "website": {
+        "label": "Website",
+        "placeholder": "https://example.com"
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Address"
+      },
+      "logo": {
+        "label": "Company Logo",
+        "error": "Please upload a logo"
+      }
+    },
+    "accountInfo": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter password",
+        "strength": {
+          "weak": "Weak",
+          "medium": "Medium",
+          "strong": "Strong"
+        }
+      },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "placeholder": "Confirm password"
+      },
+      "terms": {
+        "label": "I agree",
+        "termsLink": "Terms and Conditions"
+      }
+    },
+    "errors": {
+      "required": "Please fill in all required fields",
+      "companyName": "Please enter company name",
+      "logo": "Please upload at least one image",
+      "age": "Age must be between 18 and 100",
+      "phone": "Please enter phone number in correct format: +995XXXXXXXXX or 0XXXXXXXXX",
+      "email": "Please enter correct email format",
+      "passwordMismatch": "Passwords do not match",
+      "terms": "Please agree to terms and conditions",
+      "registrationFailed": "Registration failed. Please try again"
+    },
+    "next": "Next",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "validation": {
+      "password": {
+        "minLength": "Password must contain at least 8 characters",
+        "specialChar": "Password must contain at least one special character",
+        "number": "Password must contain at least one number",
+        "uppercase": "Password must contain at least one uppercase letter",
+        "lowercase": "Password must contain at least one lowercase letter"
+      }
+    }
   }
 }

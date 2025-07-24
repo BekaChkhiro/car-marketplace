@@ -3,9 +3,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import advertisementService, { Advertisement } from '../../../api/services/advertisementService';
+import { namespaces } from 'i18n';
 
 const FeaturedSlider: React.FC = () => {
-  const { t, i18n } = useTranslation('home');
+  const { t, i18n } = useTranslation([namespaces.home,namespaces.common]);
   const currentLang = i18n.language; // Get current language at top level
   const [currentSlide, setCurrentSlide] = useState(0);
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
@@ -67,7 +68,7 @@ const FeaturedSlider: React.FC = () => {
     // Display the same advertisement placeholder as in AdvertisementDisplay component
     const placeholderContent = (
       <section className="h-full bg-[#009c6d] rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-[1.01]">
-        <div className="text-white font-medium text-3xl">რეკლამა</div>
+        <div className="text-white font-medium text-3xl">{t("ad")}</div>
         <div className="text-white text-xl mt-3">+995 595 03 88 88</div>
       </section>
     );

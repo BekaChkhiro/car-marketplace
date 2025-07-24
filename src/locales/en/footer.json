@@ -1,0 +1,33 @@
+{
+    "copyright": "All rights reserved",
+    "aboutSection": {
+        "title": "About Us",
+        "description": "autovend.ge is a classifieds platform where you can easily and quickly post listings for selling cars and spare parts completely free of charge."
+    },
+    "quickLinks": {
+        "title": "Quick Links",
+        "home": "Home",
+        "cars": "Cars",
+        "about": "About Us",
+        "contact": "Contact",
+        "terms": "Terms and Conditions"
+    },
+    "contactInfo": {
+        "title": "Contact Information",
+        "address": "Mtskheta District, Village Misaktsieli, 1st Street VII Turn, N10",
+        "phone": "+995 595 03 88 88",
+        "email": "info@autovend.ge"
+    },
+    "socialLinks": {
+        "title": "Follow Us",
+        "description": "Connect with us on social media for news and special offers.",
+        "facebook": "Facebook",
+        "twitter": "Twitter",
+        "instagram": "Instagram"
+    },
+    "paymentMethods": {
+        "title": "Payment Methods",
+        "visa": "Visa",
+        "mastercard": "Mastercard"
+    }
+}

@@ -16,5 +16,8 @@
   "info": "Information",
   "perDay": "per day",
   "search": "Search",
-  "notAvailable": "Not available"
+  "notAvailable": "Not available",
+  "viewStatments": "View Statements",
+  "ad" : "Advertisement",
+  "user":"User"
 }

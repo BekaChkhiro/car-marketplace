@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../i18n';
 import autosalonService from '../../api/services/autosalonService';
 import { Autosalon } from '../../api/types/autosalon.types';
 import AutosalonGrid from './components/AutosalonGrid';
@@ -17,6 +19,7 @@ interface AutosalonFilters {
 }
 
 const AutosalonListing: React.FC = () => {
+  const { t } = useTranslation([namespaces.autosalonListing]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [autosalons, setAutosalons] = useState<Autosalon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,7 +78,7 @@ const AutosalonListing: React.FC = () => {
       setTotalAutosalons(response.total);
       setTotalPages(response.totalPages);
     } catch (err: any) {
-      setError('ავტოსალონების ჩატვირთვა ვერ მოხერხდა');
+      setError(t('error'));
       console.error('Error fetching autosalons:', err);
     } finally {
       setLoading(false);
@@ -179,8 +182,8 @@ const AutosalonListing: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">ავტოსალონები</h1>
-          <p className="text-gray-600">იპოვეთ საიმედო ავტოსალონები</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
         </div>
 
         <div className="space-y-6">
@@ -197,7 +200,7 @@ const AutosalonListing: React.FC = () => {
                 onClick={fetchAutosalons}
                 className="mt-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
               >
-                თავიდან სცადეთ
+                {t('retry')}
               </button>
             </div>
           )}

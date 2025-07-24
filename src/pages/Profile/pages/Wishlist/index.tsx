@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWishlist } from '../../../../context/WishlistContext';
 import { useToast } from '../../../../context/ToastContext';
 import { Container } from '../../../../components/ui';
@@ -8,6 +9,7 @@ import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { Car } from '../../../../api/types/car.types';
 
 const WishlistPage: React.FC = () => {
+  const { t } = useTranslation('profile');
   const { wishlistCars, clearWishlist, removeFromWishlist } = useWishlist();
   const { showToast } = useToast();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -17,10 +19,10 @@ const WishlistPage: React.FC = () => {
   const handleClearWishlist = async () => {
     try {
       await clearWishlist();
-      showToast('სასურველების სია გასუფთავდა', 'success');
+      showToast(t('wishlist.clearSuccess'), 'success');
       setIsConfirmModalOpen(false);
     } catch (err) {
-      showToast('ვერ მოხერხდა სასურველების სიის გასუფთავება', 'error');
+      showToast(t('wishlist.clearError'), 'error');
     }
   };
 
@@ -34,11 +36,11 @@ const WishlistPage: React.FC = () => {
     
     try {
       await removeFromWishlist(carToDelete.id);
-      showToast('მანქანა წაიშალა სასურველებიდან', 'success');
+      showToast(t('wishlist.removeSuccess'), 'success');
       setIsDeleteModalOpen(false);
       setCarToDelete(null);
     } catch (err) {
-      showToast('ვერ მოხერხდა მანქანის წაშლა სასურველებიდან', 'error');
+      showToast(t('wishlist.removeError'), 'error');
     }
   };
 
@@ -46,14 +48,14 @@ const WishlistPage: React.FC = () => {
     <Container>
       <div className="py-4 sm:py-6 md:py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0 px-2 sm:px-0">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">სასურველები</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('wishlist.title')}</h1>
           {wishlistCars.length > 0 && (
             <button
               onClick={() => setIsConfirmModalOpen(true)}
               className="flex items-center justify-center w-full sm:w-auto gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-200 sm:border-transparent"
             >
               <Trash2 size={18} />
-              <span>სიის გასუფთავება</span>
+              <span>{t('wishlist.clearList')}</span>
             </button>
           )}
         </div>
@@ -65,7 +67,7 @@ const WishlistPage: React.FC = () => {
                 <path d="M3.53 2.47a.75.75 0 00-1.06 1.06l18 18a.75.75 0 101.06-1.06l-18-18zM20.25 5.507v11.561L5.853 2.671c.15-.043.306-.075.467-.094a49.255 49.255 0 0111.36 0c1.497.174 2.57 1.46 2.57 2.93zM3.75 21V6.932l14.063 14.063L12 18.088l-7.165 3.583A.75.75 0 013.75 21z" />
               </svg>
             </div>
-            <p className="text-gray-500 max-w-xs mx-auto">თქვენი სასურველების სია ცარიელია</p>
+            <p className="text-gray-500 max-w-xs mx-auto">{t('wishlist.empty')}</p>
           </div>
         ) : (
           <div className="px-1 sm:px-0">
@@ -82,10 +84,10 @@ const WishlistPage: React.FC = () => {
           isOpen={isConfirmModalOpen}
           onConfirm={handleClearWishlist}
           onCancel={() => setIsConfirmModalOpen(false)}
-          title="სასურველების სიის გასუფთავება"
-          message="დარწმუნებული ხართ, რომ გსურთ სასურველების სიის გასუფთავება?"
-          confirmText="გასუფთავება"
-          cancelText="გაუქმება"
+          title={t('wishlist.clearListTitle')}
+          message={t('wishlist.clearListMessage')}
+          confirmText={t('wishlist.clearButton')}
+          cancelText={t('common.cancel')}
         />
         
         <ConfirmationModal
@@ -95,10 +97,10 @@ const WishlistPage: React.FC = () => {
             setIsDeleteModalOpen(false);
             setCarToDelete(null);
           }}
-          title="ფავორიტიდან წაშლა"
-          message={`დარწმუნებული ხართ, რომ გსურთ წაშალოთ ${carToDelete?.brand} ${carToDelete?.model} სასურველებიდან?`}
-          confirmText="წაშლა"
-          cancelText="გაუქმება"
+          title={t('wishlist.removeTitle')}
+          message={t('wishlist.removeMessage', { brand: carToDelete?.brand, model: carToDelete?.model })}
+          confirmText={t('wishlist.removeButton')}
+          cancelText={t('common.cancel')}
         />
       </div>
     </Container>

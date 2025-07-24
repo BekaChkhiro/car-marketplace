@@ -1,0 +1,13 @@
+{
+  "loading": "Loading autosalon...",
+  "notFound": "Autosalon not found",
+  "notFoundDescription": "The requested autosalon could not be found.",
+  "establishedYear": "Established in {{year}}",
+  "noCarsFound": "No cars found from {{companyName}}",
+  "noCarsDescription": "This autosalon currently has no cars available or doesn't match your filters.",
+  "errorLoadingData": "Failed to load autosalon data",
+  "websiteLabel": "Website",
+  "phoneLabel": "Phone",
+  "addressLabel": "Address",
+  "establishedLabel": "Established"
+}

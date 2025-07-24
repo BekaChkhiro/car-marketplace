@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Loading } from '../../../components/ui';
 import { useToast } from '../../../context/ToastContext';
+import { useTranslation } from 'react-i18next';
 import autosalonService from '../../../api/services/autosalonService';
 import { Autosalon } from '../../../api/types/autosalon.types';
 import { Building, Plus, Edit, Trash2, Search, Calendar, Phone, Globe, MapPin } from 'lucide-react';
@@ -8,6 +9,7 @@ import AutosalonForm from './components/AutosalonForm';
 import Pagination from '../../../components/ui/Pagination';
 
 const AutosalonsAdmin: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [autosalons, setAutosalons] = useState<Autosalon[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -36,7 +38,7 @@ const AutosalonsAdmin: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching autosalons:', error);
-      showToast('ავტოსალონების ჩამოტვირთვა ვერ მოხერხდა', 'error');
+      showToast(t('autosalons.error'), 'error');
     } finally {
       setLoading(false);
     }
@@ -57,17 +59,17 @@ const AutosalonsAdmin: React.FC = () => {
   };
 
   const handleDeleteAutosalon = async (id: number) => {
-    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ ამ ავტოსალონის წაშლა?')) {
+    if (!window.confirm(t('users.deleteConfirmation'))) {
       return;
     }
 
     try {
       await autosalonService.deleteAutosalon(id);
-      showToast('ავტოსალონი წარმატებით წაიშალა', 'success');
+      showToast(t('users.deleteSuccess'), 'success');
       fetchAutosalons();
     } catch (error) {
       console.error('Error deleting autosalon:', error);
-      showToast('ავტოსალონის წაშლა ვერ მოხერხდა', 'error');
+      showToast(t('users.deleteError'), 'error');
     }
   };
 
@@ -93,13 +95,13 @@ const AutosalonsAdmin: React.FC = () => {
     <Container>
       <div className="py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">ავტოსალონების მართვა</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('autosalons.title')}</h1>
           <button
             onClick={handleCreateAutosalon}
             className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors flex items-center gap-2"
           >
             <Plus size={20} />
-            ახალი ავტოსალონი
+            {t('common.create')} {t('autosalons.title')}
           </button>
         </div>
 
@@ -110,7 +112,7 @@ const AutosalonsAdmin: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="ძიება კომპანიის სახელით ან მომხმარებლის სახელით..."
+                placeholder={t('autosalons.searchAutosalons')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -120,14 +122,14 @@ const AutosalonsAdmin: React.FC = () => {
               type="submit"
               className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
-              ძიება
+              {t('common.search')}
             </button>
           </form>
         </div>
 
         {/* Results count */}
         <div className="mb-4 text-sm text-gray-600">
-          სულ მოიძებნა: {totalCount} ავტოსალონი
+          {t('common.total')}: {totalCount} {t('autosalons.title')}
         </div>
 
         {/* Autosalons List */}
@@ -135,8 +137,8 @@ const AutosalonsAdmin: React.FC = () => {
           {autosalons.length === 0 ? (
             <div className="text-center py-12">
               <Building className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">ავტოსალონები არ მოიძებნა</h3>
-              <p className="text-gray-500">დაამატეთ ახალი ავტოსალონი სისტემაში</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('autosalons.noAutosalonsFound')}</h3>
+              <p className="text-gray-500">{t('autosalons.noAutosalonsFound')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -144,19 +146,19 @@ const AutosalonsAdmin: React.FC = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ავტოსალონი
+                      {t('autosalons.companyName')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      მომხმარებელი
+                      {t('autosalons.contactPerson')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      კონტაქტი
+                      {t('common.contact')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      სტატისტიკა
+                      {t('common.statistics')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      მოქმედებები
+                      {t('autosalons.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -186,7 +188,7 @@ const AutosalonsAdmin: React.FC = () => {
                               {autosalon.established_year && (
                                 <>
                                   <Calendar size={12} />
-                                  <span>{autosalon.established_year} წლიდან</span>
+                                  <span>{autosalon.established_year} {t('common.since')}</span>
                                 </>
                               )}
                             </div>
@@ -232,7 +234,7 @@ const AutosalonsAdmin: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="text-sm text-gray-900">
-                          {autosalon.car_count || 0} მანქანა
+                          {autosalon.car_count || 0} {t('cars.title')}
                         </div>
                         <div className="text-sm text-gray-500">
                           {new Date(autosalon.created_at).toLocaleDateString('ka-GE')}

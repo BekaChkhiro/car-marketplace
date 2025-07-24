@@ -1,0 +1,13 @@
+{
+  "loading": "ავტოსალონი იტვირთება...",
+  "notFound": "ავტოსალონი ვერ მოიძებნა",
+  "notFoundDescription": "მოთხოვნილი ავტოსალონი ვერ მოიძებნა.",
+  "establishedYear": "დაარსდა {{year}} წელს",
+  "noCarsFound": "{{companyName}}-ს მანქანები ვერ მოიძებნა",
+  "noCarsDescription": "ამ ავტოსალონს ამჟამად არ აქვს მანქანები გამოსატანი ან არ აკმაყოფილებს თქვენს ფილტრებს.",
+  "errorLoadingData": "ავტოსალონის მონაცემების ჩატვირთვa ვერ მოხერხდა",
+  "websiteLabel": "ვებ გვერდი",
+  "phoneLabel": "ტელეფონი",
+  "addressLabel": "მისამართი",
+  "establishedLabel": "დაარსების წელი"
+}

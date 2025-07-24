@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import balanceService, { AdminTransaction } from '../../../../api/services/balanceService';
 import { toast } from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { 
   RefreshCw, 
   ArrowUpCircle, 
@@ -40,6 +41,7 @@ const fadeInAnimation = `
 `;
 
 const TransactionList: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -92,7 +94,7 @@ const TransactionList: React.FC = () => {
       setTransactions(adminTransactionData);
     } catch (error) {
       console.error('Error fetching transactions:', error);
-      toast.error('ტრანზაქციების ჩატვირთვა ვერ მოხერხდა');
+      toast.error(t('transactions.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -101,9 +103,9 @@ const TransactionList: React.FC = () => {
   const getTransactionTypeLabel = (type: string): string => {
     switch (type) {
       case 'deposit':
-        return 'შევსება';
+        return t('transactions.deposit');
       case 'vip_purchase':
-        return 'VIP შეძენა';
+        return t('transactions.vipPurchase');
       default:
         return type;
     }
@@ -123,11 +125,11 @@ const TransactionList: React.FC = () => {
   const getStatusLabel = (status: string): string => {
     switch (status) {
       case 'completed':
-        return 'დასრულებული';
+        return t('transactions.completed');
       case 'pending':
-        return 'მიმდინარე';
+        return t('transactions.pending');
       case 'failed':
-        return 'წარუმატებელი';
+        return t('transactions.failed');
       default:
         return status;
     }
@@ -283,11 +285,11 @@ const TransactionList: React.FC = () => {
       <style>{fadeInAnimation}</style>
       
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">ტრანზაქციების ისტორია</h2>
+        <h2 className="text-xl font-bold">{t('transactions.history')}</h2>
         <button 
           onClick={fetchTransactions}
           className="text-primary p-2 rounded-full hover:bg-primary/10 transition-colors duration-300"
-          title="განახლება"
+          title={t('transactions.refresh')}
         >
           <RefreshCw size={20} />
         </button>
@@ -298,7 +300,7 @@ const TransactionList: React.FC = () => {
         <div className="relative w-full sm:w-auto flex-1 max-w-md">
           <input
             type="text"
-            placeholder="ძიება..."
+            placeholder={t('transactions.searchPlaceholder')}
             value={searchQuery}
             onChange={handleSearch}
             className="w-full py-2 pl-10 pr-4 border border-green-lighter rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
@@ -314,7 +316,7 @@ const TransactionList: React.FC = () => {
               className={`flex items-center gap-2 py-2 px-4 border rounded-lg ${isDateFilterActive ? 'bg-primary/10 border-primary text-primary' : 'border-green-lighter'}`}
             >
               <Calendar size={18} />
-              <span>თარიღი</span>
+              <span>{t('transactions.dateFilter')}</span>
               {isDateFilterActive && (
                 <div className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center ml-1">
                   <Check size={14} />
@@ -329,7 +331,7 @@ const TransactionList: React.FC = () => {
               >
                 <div className="flex flex-col gap-3">
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">დაწყების თარიღი</label>
+                    <label className="block text-sm text-gray-600 mb-1">{t('transactions.startDate')}</label>
                     <input
                       type="date"
                       value={startDate}
@@ -338,7 +340,7 @@ const TransactionList: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">დასრულების თარიღი</label>
+                    <label className="block text-sm text-gray-600 mb-1">{t('transactions.endDate')}</label>
                     <input
                       type="date"
                       value={endDate}
@@ -351,13 +353,13 @@ const TransactionList: React.FC = () => {
                       onClick={clearDateFilter}
                       className="flex-1 py-2 px-3 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors duration-300 text-sm"
                     >
-                      გასუფთავება
+                      {t('transactions.clear')}
                     </button>
                     <button
                       onClick={applyDateFilter}
                       className="flex-1 py-2 px-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-300 text-sm"
                     >
-                      გაფილტვრა
+                      {t('transactions.applyFilter')}
                     </button>
                   </div>
                 </div>
@@ -372,7 +374,7 @@ const TransactionList: React.FC = () => {
               className={`flex items-center gap-2 py-2 px-4 border rounded-lg ${isFilterActive ? 'bg-primary/10 border-primary text-primary' : 'border-green-lighter'}`}
             >
               <Filter size={18} />
-              <span>ფილტრი</span>
+              <span>{t('transactions.filter')}</span>
               {isFilterActive && selectedTypes.length + selectedStatuses.length > 0 && (
                 <div className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center ml-1">
                   <span className="text-xs font-bold">{selectedTypes.length + selectedStatuses.length}</span>
@@ -387,7 +389,7 @@ const TransactionList: React.FC = () => {
               >
                 <div className="flex flex-col gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">ტრანზაქციის ტიპი</h3>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">{t('transactions.transactionType')}</h3>
                     <div className="flex flex-col gap-2">
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input
@@ -396,7 +398,7 @@ const TransactionList: React.FC = () => {
                           onChange={() => toggleTypeFilter('deposit')}
                           className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                         />
-                        <span className="text-sm">შევსება</span>
+                        <span className="text-sm">{t('transactions.deposit')}</span>
                       </label>
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input
@@ -405,7 +407,7 @@ const TransactionList: React.FC = () => {
                           onChange={() => toggleTypeFilter('withdrawal')}
                           className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                         />
-                        <span className="text-sm">გატანა</span>
+                        <span className="text-sm">{t('transactions.withdrawal')}</span>
                       </label>
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input
@@ -414,13 +416,13 @@ const TransactionList: React.FC = () => {
                           onChange={() => toggleTypeFilter('vip_purchase')}
                           className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                         />
-                        <span className="text-sm">VIP შეძენა</span>
+                        <span className="text-sm">{t('transactions.vipPurchase')}</span>
                       </label>
                     </div>
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">სტატუსი</h3>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">{t('transactions.status')}</h3>
                     <div className="flex flex-col gap-2">
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input
@@ -429,7 +431,7 @@ const TransactionList: React.FC = () => {
                           onChange={() => toggleStatusFilter('completed')}
                           className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                         />
-                        <span className="text-sm">დასრულებული</span>
+                        <span className="text-sm">{t('transactions.completed')}</span>
                       </label>
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input
@@ -438,7 +440,7 @@ const TransactionList: React.FC = () => {
                           onChange={() => toggleStatusFilter('pending')}
                           className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                         />
-                        <span className="text-sm">მიმდინარე</span>
+                        <span className="text-sm">{t('transactions.pending')}</span>
                       </label>
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input
@@ -447,7 +449,7 @@ const TransactionList: React.FC = () => {
                           onChange={() => toggleStatusFilter('failed')}
                           className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                         />
-                        <span className="text-sm">წარუმატებელი</span>
+                        <span className="text-sm">{t('transactions.failed')}</span>
                       </label>
                     </div>
                   </div>
@@ -457,13 +459,13 @@ const TransactionList: React.FC = () => {
                       onClick={clearFilters}
                       className="flex-1 py-2 px-3 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors duration-300 text-sm"
                     >
-                      გასუფთავება
+                      {t('transactions.clear')}
                     </button>
                     <button
                       onClick={applyFilters}
                       className="flex-1 py-2 px-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-300 text-sm"
                     >
-                      გაფილტვრა
+                      {t('transactions.applyFilter')}
                     </button>
                   </div>
                 </div>
@@ -479,12 +481,12 @@ const TransactionList: React.FC = () => {
             <div className="py-10 text-center text-gray-500">
               <div className="flex flex-col items-center">
                 <RefreshCw size={24} className="animate-spin mb-2" />
-                <span>იტვირთება...</span>
+                <span>{t('transactions.loading')}</span>
               </div>
             </div>
           ) : currentTransactions.length === 0 ? (
             <div className="py-10 text-center text-gray-500">
-              ტრანზაქციები არ მოიძებნა
+              {t('transactions.noTransactionsFound')}
             </div>
           ) : (
             currentTransactions.map((transaction) => (
@@ -504,18 +506,18 @@ const TransactionList: React.FC = () => {
                 
                 <div className="grid grid-cols-2 gap-2 text-xs mt-2">
                   <div>
-                    <p className="text-gray-500">თარიღი</p>
+                    <p className="text-gray-500">{t('transactions.date')}</p>
                     <p className="font-medium">{formatDate(new Date(transaction.created_at))}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">ტიპი</p>
+                    <p className="text-gray-500">{t('transactions.type')}</p>
                     <div className="flex items-center gap-1 ">
                       {getTransactionTypeIcon(transaction.type)}
                       <span>{getTransactionTypeLabel(transaction.type)}</span>
                     </div>
                   </div>
                   <div>
-                    <p className="text-gray-500">თანხა</p>
+                    <p className="text-gray-500">{t('transactions.amount')}</p>
                     <p className={getAmountColor(transaction.amount)}>
                       {typeof transaction.amount === 'string'
                         ? (parseFloat(transaction.amount) > 0 ? '+' : '') 
@@ -525,7 +527,7 @@ const TransactionList: React.FC = () => {
                   </div>
                   {transaction.description && (
                     <div className="col-span-1 sm:col-span-2 mt-1">
-                      <p className="text-gray-500">აღწერა</p>
+                      <p className="text-gray-500">{t('transactions.description')}</p>
                       <p className="text-gray-600">{transaction.description || '—'}</p>
                     </div>
                   )}
@@ -541,12 +543,12 @@ const TransactionList: React.FC = () => {
             <thead>
               <tr className="bg-gray-50">
                 <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500 hidden sm:table-cell">ID</th>
-                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">მომხმარებელი</th>
-                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">თარიღი</th>
-                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">ტიპი</th>
-                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">თანხა</th>
-                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500 hidden lg:table-cell">აღწერა</th>
-                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">სტატუსი</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">{t('transactions.user')}</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">{t('transactions.date')}</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">{t('transactions.type')}</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">{t('transactions.amount')}</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500 hidden lg:table-cell">{t('transactions.description')}</th>
+                <th className="py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium text-gray-500">{t('transactions.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -555,14 +557,14 @@ const TransactionList: React.FC = () => {
                   <td colSpan={7} className="py-10 text-center text-gray-500">
                     <div className="flex flex-col items-center">
                       <RefreshCw size={24} className="animate-spin mb-2" />
-                      <span>იტვირთება...</span>
+                      <span>{t('transactions.loading')}</span>
                     </div>
                   </td>
                 </tr>
               ) : currentTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-10 text-center text-gray-500">
-                    ტრანზაქციები არ მოიძებნა
+                    {t('transactions.noTransactionsFound')}
                   </td>
                 </tr>
               ) : (
@@ -614,9 +616,9 @@ const TransactionList: React.FC = () => {
         {/* Pagination controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg mt-4">
         <div className="text-sm text-gray-600 flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto mb-2 sm:mb-0">
-          <span className="mb-2 sm:mb-0">სულ {filteredTransactions.length} ტრანზაქცია</span>
+          <span className="mb-2 sm:mb-0">{t('transactions.total')} {filteredTransactions.length} {t('transactions.transactions')}</span>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">გვერდზე:</span>
+            <span className="text-sm text-gray-600">{t('transactions.perPage')}</span>
             <select 
               value={itemsPerPage} 
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
@@ -635,7 +637,7 @@ const TransactionList: React.FC = () => {
             disabled={currentPage === 1}
             className={`px-3 py-2 sm:py-1 border border-green-lighter rounded text-sm min-w-[70px] ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 active:bg-gray-100 text-gray-700'}`}
           >
-            წინა
+            {t('transactions.previous')}
           </button>
           
           <div className="flex items-center gap-1">
@@ -676,7 +678,7 @@ const TransactionList: React.FC = () => {
             disabled={currentPage === totalPages || totalPages === 0}
             className={`px-3 py-2 sm:py-1 border border-green-lighter rounded text-sm min-w-[70px] ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white hover:bg-green-light/10 active:bg-gray-100 text-gray-700'}`}
           >
-            შემდეგი
+            {t('transactions.next')}
           </button>
         </div>
       </div>

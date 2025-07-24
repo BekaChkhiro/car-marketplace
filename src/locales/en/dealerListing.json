@@ -1,0 +1,35 @@
+{
+    "title": "Dealers",
+    "subtitle": "Find reliable auto dealers",
+    "totalDealers": "Dealers",
+    "search": {
+        "placeholder": "Search dealers..."
+    },
+    "sorting": {
+        "label": "Sort by:",
+        "options": {
+            "newestFirst": "Newest First",
+            "oldestFirst": "Oldest First",
+            "nameAsc": "Company (A-Z)",
+            "nameDesc": "Company (Z-A)",
+            "yearDesc": "Established Year (Newest)",
+            "yearAsc": "Established Year (Oldest)"
+        }
+    },
+    "dealerCard": {
+        "since": "Since",
+        "viewListings": "View Listings"
+    },
+    "loading": {
+        "message": "Loading..."
+    },
+    "empty": {
+        "title": "No dealers found",
+        "message": "No dealers were found matching your search criteria. Try different filters."
+    },
+    "error": {
+        "loadingFailed": "Failed to load dealers",
+        "retry": "Try Again",
+        "noData": "Dealer data is not available"
+    }
+}

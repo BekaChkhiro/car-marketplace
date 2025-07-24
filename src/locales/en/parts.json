@@ -91,6 +91,12 @@
     "pricePositive": "Price must be positive",
     "descriptionRequired": "Description is required"
   },
+  "imageErrors": {
+    "invalidFormat": "Invalid image format. Only JPEG/PNG format is allowed, maximum 5MB",
+    "fileTooLarge": "Image size must not exceed 5MB",
+    "tooManyImages": "Maximum 15 images can be uploaded",
+    "uploadError": "An error occurred while uploading the image"
+  },
   "totalParts": "{{count}} parts total",
   "noPartsYet": "No parts yet",
   "noPartsDescription": "You haven't added any parts yet",

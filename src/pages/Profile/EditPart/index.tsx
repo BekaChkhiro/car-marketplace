@@ -28,7 +28,7 @@ interface FormData {
 const EditPart: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation(namespaces.parts);
+  const { t } = useTranslation([namespaces.parts, namespaces.filter]);
   const { user } = useAuth();
   const { showToast } = useToast();
   
@@ -353,7 +353,7 @@ const EditPart: React.FC = () => {
                 <option value="0">{t('selectCategory')}</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
-                    {category.name}
+                    {t(`filter:${category.name}`, category.name)}
                   </option>
                 ))}
               </select>

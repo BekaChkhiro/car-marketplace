@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
-import { COLOR_OPTIONS } from '../pages/Profile/pages/AddCar/types';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../i18n';
 
 interface ColorDropdownProps {
   value: string;
@@ -13,10 +14,31 @@ const ColorDropdown: React.FC<ColorDropdownProps> = ({
   value, 
   onChange, 
   error, 
-  placeholder = 'აირჩიეთ ფერი' 
+  placeholder 
 }) => {
+  const { t } = useTranslation([namespaces.filter]);
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  
+  const colorOptions = [
+    { value: 'white', label: t('colors.white') },
+    { value: 'black', label: t('colors.black') },
+    { value: 'silver', label: t('colors.silver') },
+    { value: 'gray', label: t('colors.gray') },
+    { value: 'red', label: t('colors.red') },
+    { value: 'blue', label: t('colors.blue') },
+    { value: 'yellow', label: t('colors.yellow') },
+    { value: 'green', label: t('colors.green') },
+    { value: 'orange', label: t('colors.orange') },
+    { value: 'gold', label: t('colors.gold') },
+    { value: 'purple', label: t('colors.purple') },
+    { value: 'pink', label: t('colors.pink') },
+    { value: 'beige', label: t('colors.beige') },
+    { value: 'burgundy', label: t('colors.burgundy') },
+    { value: 'lightblue', label: t('colors.lightblue') },
+    { value: 'brown', label: t('colors.brown') },
+    { value: 'other', label: t('colors.other') }
+  ];
 
   // Map of color values to their visual representation
   const colorMap: Record<string, string> = {
@@ -53,7 +75,7 @@ const ColorDropdown: React.FC<ColorDropdownProps> = ({
     };
   }, []);
 
-  const selectedColor = COLOR_OPTIONS.find(option => option.value === value);
+  const selectedColor = colorOptions.find(option => option.value === value);
 
   return (
     <div className="relative border-2 rounded-lg" ref={dropdownRef}>
@@ -73,7 +95,7 @@ const ColorDropdown: React.FC<ColorDropdownProps> = ({
               <span>{selectedColor?.label || value}</span>
             </>
           ) : (
-            <span className="text-gray-500 text-sm sm:text-base">{placeholder}</span>
+            <span className="text-gray-500 text-sm sm:text-base">{placeholder || t('anyOption')}</span>
           )}
         </div>
         <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -81,7 +103,7 @@ const ColorDropdown: React.FC<ColorDropdownProps> = ({
 
       {isOpen && (
         <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-          {COLOR_OPTIONS.map((option) => (
+          {colorOptions.map((option) => (
             <div
               key={option.value}
               onClick={() => {

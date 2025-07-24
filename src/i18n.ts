@@ -15,6 +15,11 @@ import enAdmin from './locales/en/admin.json';
 import enCarListing from './locales/en/carListing.json';
 import enParts from './locales/en/parts.json';
 import enContact from './locales/en/contact.json';
+import enFooter from './locales/en/footer.json';
+import enDealerListing from './locales/en/dealerListing.json';
+import enDealerProfile from './locales/en/dealerProfile.json';
+import enAutosalonListing from './locales/en/autosalonListing.json';
+import enAutosalonProfile from './locales/en/autosalonProfile.json';
 
 // Georgian translations
 import kaCommon from './locales/ka/common.json';
@@ -29,6 +34,12 @@ import kaAdmin from './locales/ka/admin.json';
 import kaCarListing from './locales/ka/carListing.json';
 import kaParts from './locales/ka/parts.json';
 import kaContact from './locales/ka/contact.json';
+import kaFooter from './locales/ka/footer.json';
+import kaDealerListing from './locales/ka/dealerListing.json';
+import kaDealerProfile from './locales/ka/dealerProfile.json';
+import kaAutosalonListing from './locales/ka/autosalonListing.json';
+import kaAutosalonProfile from './locales/ka/autosalonProfile.json';
+
 
 // Russian translations
 import ruCommon from './locales/ru/common.json';
@@ -43,6 +54,12 @@ import ruAdmin from './locales/ru/admin.json';
 import ruCarListing from './locales/ru/carListing.json';
 import ruParts from './locales/ru/parts.json';
 import ruContact from './locales/ru/contact.json';
+import ruFooter from './locales/ru/footer.json';
+import ruDealerListing from './locales/ru/dealerListing.json';
+import ruDealerProfile from './locales/ru/dealerProfile.json';
+import ruAutosalonListing from './locales/ru/autosalonListing.json';
+import ruAutosalonProfile from './locales/ru/autosalonProfile.json';
+
 
 // Define namespaces for better organization
 export const namespaces = {
@@ -60,7 +77,12 @@ export const namespaces = {
   profile: 'profile',
   parts: 'parts',
   admin: 'admin',
-  contact: 'contact'
+  contact: 'contact',
+  footer: 'footer',
+  dealerListing: 'dealerListing',
+  dealerProfile: 'dealerProfile',
+  autosalonListing: 'autosalonListing',
+  autosalonProfile: 'autosalonProfile',
 };
 
 // Translation resources
@@ -78,6 +100,11 @@ const resources = {
     carListing: enCarListing,
     parts: enParts,
     contact: enContact,
+    footer: enFooter,
+    dealerListing: enDealerListing,
+    dealerProfile: enDealerProfile,
+    autosalonListing: enAutosalonListing,
+    autosalonProfile: enAutosalonProfile,
     // Other namespaces will be added here as needed
   },
   ka: {
@@ -93,6 +120,11 @@ const resources = {
     carListing: kaCarListing,
     parts: kaParts,
     contact: kaContact,
+    footer: kaFooter,
+    dealerListing: kaDealerListing,
+    dealerProfile: kaDealerProfile,
+    autosalonListing: kaAutosalonListing,
+    autosalonProfile: kaAutosalonProfile,
     // Other namespaces will be added here as needed
   },
   ru: {
@@ -108,6 +140,11 @@ const resources = {
     carListing: ruCarListing,
     parts: ruParts,
     contact: ruContact,
+    footer: ruFooter,
+    dealerListing: ruDealerListing,
+    dealerProfile: ruDealerProfile,
+    autosalonListing: ruAutosalonListing,
+    autosalonProfile: ruAutosalonProfile,
     // Other namespaces will be added here as needed
   }
 };

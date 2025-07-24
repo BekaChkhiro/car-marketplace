@@ -9,6 +9,8 @@ import {
   RotateCcw,
   MapPin
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
 import data from '../../../data/cars.json';
 import axios from '../../../api/config/axios';
 import CustomSelect from '../../../components/common/CustomSelect';
@@ -28,13 +30,33 @@ interface FilterSidebarProps {
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }) => {
+  const { t } = useTranslation([namespaces.filter]);
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
   const { brands } = data;
   const years = Array.from({ length: 35 }, (_, i) => 2024 - i);
-  const fuelTypes = ['ბენზინი', 'დიზელი', 'ჰიბრიდი', 'ელექტრო'];
-  const transmissions = ['ავტომატიკა', 'მექანიკა'];
-  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი'];
+  
+  const fuelTypes = [
+    t('fuel.petrol'),
+    t('fuel.diesel'),
+    t('fuel.hybrid'),
+    t('fuel.electric')
+  ];
+  
+  const transmissions = [
+    t('transmissions.automatic'),
+    t('transmissions.manual')
+  ];
+  
+  const locations = [
+    t('locations.tbilisi'),
+    t('locations.batumi'),
+    t('locations.kutaisi'),
+    t('locations.rustavi'),
+    t('locations.gori'),
+    t('locations.zugdidi'),
+    t('locations.poti')
+  ];
   const priceRanges = [
     { value: '0-5000', label: '0₾ - 5,000₾' },
     { value: '5000-10000', label: '5,000₾ - 10,000₾' },
@@ -86,7 +108,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
       <aside className={`fixed top-0 right-0 h-full bg-white w-80 shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto md:translate-x-0 md:static md:w-full md:shadow-none md:bg-transparent`}>
         <div className="p-4">
           <div className="flex justify-between items-center mb-4 md:hidden">
-            <h2 className="text-xl font-semibold">ფილტრი</h2>
+            <h2 className="text-xl font-semibold">{t('filterSidebar.title')}</h2>
             <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-700">
               <X size={24} />
             </button>
@@ -95,7 +117,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
           <div className="space-y-6">
             <div>
               <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-                <Car className="text-primary" size={18} /> მარკა & მოდელი
+                <Car className="text-primary" size={18} /> {t('filterSidebar.brandModel')}
               </h4>
               <div className="space-y-4">
                 <CustomSelect
@@ -105,7 +127,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                   }))}
                   value={filters.brand}
                   onChange={(value) => onFilterChange({ ...filters, brand: value, model: '' })}
-                  placeholder="ყველა მარკა"
+                  placeholder={t('filterSidebar.allBrands')}
                 />
                 
                 <CustomSelect
@@ -115,7 +137,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                   }))}
                   value={filters.model}
                   onChange={(value) => onFilterChange({ ...filters, model: value })}
-                  placeholder="ყველა მოდელი"
+                  placeholder={t('filterSidebar.allModels')}
                   disabled={!filters.brand}
                 />
               </div>
@@ -123,7 +145,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
 
             <div>
               <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-                <Car className="text-primary" size={18} /> კატეგორია
+                <Car className="text-primary" size={18} /> {t('category')}
               </h4>
               <CustomSelect
                 options={categories.map(category => ({
@@ -132,13 +154,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                 }))}
                 value={filters.category}
                 onChange={(value) => onFilterChange({ ...filters, category: value })}
-                placeholder="ყველა კატეგორია"
+                placeholder={t('filterSidebar.allCategories')}
               />
             </div>
 
             <div>
               <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-                <Calendar className="text-primary" size={18} /> წელი
+                <Calendar className="text-primary" size={18} /> {t('year')}
               </h4>
               <CustomSelect
                 options={years.map(year => ({
@@ -147,13 +169,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                 }))}
                 value={filters.year}
                 onChange={(value) => onFilterChange({ ...filters, year: value })}
-                placeholder="ნებისმიერი წელი"
+                placeholder={t('filterSidebar.anyYear')}
               />
             </div>
 
             <div>
               <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-                <Fuel className="text-primary" size={18} /> საწვავის ტიპი
+                <Fuel className="text-primary" size={18} /> {t('filterSidebar.fuelTypeLabel')}
               </h4>
               <CustomSelect
                 options={fuelTypes.map(type => ({
@@ -162,13 +184,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                 }))}
                 value={filters.fuelType}
                 onChange={(value) => onFilterChange({ ...filters, fuelType: value })}
-                placeholder="საწვავის ტიპი"
+                placeholder={t('fuelType')}
               />
             </div>
 
             <div>
               <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-                <Settings className="text-primary" size={18} /> გადაცემათა კოლოფი
+                <Settings className="text-primary" size={18} /> {t('filterSidebar.transmissionLabel')}
               </h4>
               <CustomSelect
                 options={transmissions.map(type => ({
@@ -177,13 +199,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                 }))}
                 value={filters.transmission}
                 onChange={(value) => onFilterChange({ ...filters, transmission: value })}
-                placeholder="გადაცემათა კოლოფი"
+                placeholder={t('transmission')}
               />
             </div>
 
             <div>
               <h4 className="text-base font-semibold text-gray-dark mb-3 flex items-center gap-2">
-                <MapPin className="text-primary" size={18} /> მდებარეობა
+                <MapPin className="text-primary" size={18} /> {t('filterSidebar.locationLabel')}
               </h4>
               <CustomSelect
                 options={locations.map(location => ({
@@ -192,7 +214,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                 }))}
                 value={filters.location}
                 onChange={(value) => onFilterChange({ ...filters, location: value })}
-                placeholder="მდებარეობა"
+                placeholder={t('location')}
               />
             </div>
 
@@ -201,14 +223,14 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
                 onClick={handleReset}
                 className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-gray-600 font-medium border-2 border-gray-100 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <RotateCcw size={16} /> გასუფთავება
+                <RotateCcw size={16} /> {t('filterSidebar.clear')}
               </button>
               <button
                 type="button"
                 onClick={toggleSidebar}
                 className="md:hidden flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-white font-medium bg-primary rounded-lg hover:bg-primary/90 transition-colors"
               >
-                <SlidersHorizontal size={16} /> ფილტრი
+                <SlidersHorizontal size={16} /> {t('filterSidebar.filter')}
               </button>
             </div>
           </div>

@@ -82,7 +82,17 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
 
   const years = Array.from({ length: 35 }, (_, i) => (new Date().getFullYear() - i).toString());
   const transmissions = [t('filter:automatic'), t('filter:manual'), t('filter:variator'), t('filter:semiAutomatic')];
-  const locations = ['თბილისი', 'ბათუმი', 'ქუთაისი', 'რუსთავი', 'გორი', 'ზუგდიდი', 'ფოთი', 'თელავი', 'სხვა']; // These are proper names, so we won't translate them
+  const locationOptions = [
+    { value: 'tbilisi', label: t('filter:locations.tbilisi') },
+    { value: 'batumi', label: t('filter:locations.batumi') },
+    { value: 'kutaisi', label: t('filter:locations.kutaisi') },
+    { value: 'rustavi', label: t('filter:locations.rustavi') },
+    { value: 'gori', label: t('filter:locations.gori') },
+    { value: 'zugdidi', label: t('filter:locations.zugdidi') },
+    { value: 'poti', label: t('filter:locations.poti') },
+    { value: 'telavi', label: t('filter:locations.telavi') },
+    { value: 'other', label: t('filter:locations.other') }
+  ];
   
   useEffect(() => {
     const fetchData = async () => {
@@ -300,7 +310,7 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
               { value: '', label: t('filter:selectCategory') },
               ...categories.map(category => ({
                 value: String(category.id),
-                label: category.name
+                label: t(`filter:${category.name}`, category.name)
               }))
             ]}
             value={formData.category}
@@ -352,10 +362,7 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
           <CustomSelect
             options={[
               { value: '', label: t('filter:anyOption') },
-              ...locations.map(location => ({
-                value: location,
-                label: location
-              }))
+              ...locationOptions
             ]}
             value={formData.location}
             onChange={value => handleChange('location', value)}

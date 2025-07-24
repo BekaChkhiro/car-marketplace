@@ -74,7 +74,7 @@ const AutosalonInfoCard: React.FC<AutosalonInfoCardProps> = ({ autosalon, author
               to={`/ka/autosalons/${autosalon.id}`}
               className="flex-1 flex justify-center items-center bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-medium min-h-[48px]"
             >
-              განცხადებების ნახვა ({autosalon.car_count})
+              {t('viewStatments')} ({autosalon.car_count})
             </Link>
         {/* Call Button */}
         <a

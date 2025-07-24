@@ -3,8 +3,10 @@ import { Outlet } from 'react-router-dom';
 import AdminNavigation from './AdminNavigation';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const AdminLayout: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { user } = useAuth();
@@ -33,7 +35,7 @@ const AdminLayout: React.FC = () => {
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white shadow-sm">
             {user?.username?.charAt(0).toUpperCase() || 'A'}
           </div>
-          <span className="font-medium text-primary">ადმინ პანელი</span>
+          <span className="font-medium text-primary">{t('dashboard.title')}</span>
         </div>
         <button 
           onClick={toggleMobileMenu}

@@ -1,0 +1,25 @@
+{
+  "title": "Autosalons",
+  "subtitle": "Find reliable autosalons",
+  "loading": "Loading autosalons...",
+  "error": "Failed to load autosalons",
+  "retry": "Try Again",
+  "notFound": "No autosalons found",
+  "notFoundDescription": "The requested autosalons could not be found. Try different search parameters.",
+  "totalCount": "Autosalons ({{count}})",
+  "searchPlaceholder": "Search by autosalon name...",
+  "sortBy": "Sort by:",
+  "sortOptions": {
+    "newest": "Newest first",
+    "oldest": "Oldest first",
+    "companyAsc": "Company (A-Z)",
+    "companyDesc": "Company (Z-A)",
+    "establishedNewest": "Establishment year (newest)",
+    "establishedOldest": "Establishment year (oldest)"
+  },
+  "establishedSince": "Since {{year}}",
+  "website": "Website",
+  "viewListings": "View Listings ({{count}})",
+  "phone": "Phone",
+  "address": "Address"
+}

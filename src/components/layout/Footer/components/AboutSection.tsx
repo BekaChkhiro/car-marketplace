@@ -1,14 +1,16 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../../i18n';
 
 const AboutSection: React.FC = () => {
+  const { t } = useTranslation(namespaces.footer);
+  
   return (
     <div>
-      <h3 className="text-xl font-bold mb-6 text-primary">ჩვენს შესახებ</h3>
+      <h3 className="text-xl font-bold mb-6 text-primary">{t('aboutSection.title')}</h3>
       <p className="text-gray-dark leading-relaxed mb-6">
-      autovend.ge არის განცხადებების განსათავსებელი პლატფორმა, სადაც სრულიად უფასოდ შეძლებთ ავტომანქანებისა და სათადარიგო ნაწილების სწრაფად და მარტივად გაყიდვის მიზნით განცხადებების განთავსებას.
+        {t('aboutSection.description')}
       </p>
-      
-      
     </div>
   );
 };

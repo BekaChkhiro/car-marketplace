@@ -29,7 +29,7 @@ const AddButton = () => {
           transform hover:scale-105 shadow-sm hover:shadow-md"
       >
         <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">{t('add')}</span>
+        <span className="text-sm font-medium">{t('addCar')}</span>
       </Link>
 
       <LoginModal 

@@ -4,6 +4,7 @@ import Modal from './Modal';
 import ForgotPasswordModal from './ForgotPasswordModal';
 import GoogleLoginButton from '../../../auth/GoogleLoginButton';
 import FacebookLoginButton from '../../../auth/FacebookLoginButton';
+import { useTranslation } from 'react-i18next';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister }) => {
   const { login, isLoading } = useAuth();
+  const { t } = useTranslation('profile');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -62,7 +64,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="შესვლა">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('login.title')}>
       <div className="p-3 sm:p-5">
         {error && (
           <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
@@ -73,7 +75,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div>
             <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-              ელ-ფოსტა
+              {t('login.email.label')}
             </label>
             <input
               type="email"
@@ -82,13 +84,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
               value={formData.email}
               onChange={handleInputChange}
               className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
+              placeholder={t('login.email.placeholder')}
               required
             />
           </div>
 
           <div>
             <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-              პაროლი
+              {t('login.password.label')}
             </label>
             <input
               type="password"
@@ -97,6 +100,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
               value={formData.password}
               onChange={handleInputChange}
               className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 outline-none"
+              placeholder={t('login.password.placeholder')}
               required
             />
           </div>
@@ -112,7 +116,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
                 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary focus:ring-primary border-gray-300 rounded"
               />
               <label htmlFor="rememberMe" className="ml-1.5 sm:ml-2 block text-xs sm:text-sm text-gray-900">
-                დამიმახსოვრე
+                {t('login.rememberMe')}
               </label>
             </div>
             
@@ -121,7 +125,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
               onClick={handleForgotPasswordClick}
               className="text-primary hover:text-secondary text-xs sm:text-sm"
             >
-              დაგავიწყდა პაროლი?
+              {t('login.forgotPassword')}
             </button>
           </div>
 
@@ -131,7 +135,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
               disabled={isLoading}
               className="w-full px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-primary text-white rounded-lg sm:rounded-xl hover:bg-secondary transition-colors disabled:bg-gray-400"
             >
-              {isLoading ? 'გთხოვთ მოიცადოთ...' : 'შესვლა'}
+              {isLoading ? t('login.loading') : t('login.submit')}
             </button>
           </div>
         </form>
@@ -143,7 +147,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
             </div>
             <div className="relative flex justify-center text-xs sm:text-sm">
               <span className="px-2 bg-white text-gray-500">
-                ან გაიარეთ ავტორიზაცია
+                {t('login.orLoginWith')}
               </span>
             </div>
           </div>
@@ -155,13 +159,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onShowRegister
         </div>
 
         <div className="mt-4 sm:mt-6 text-center">
-          <span className="text-xs sm:text-sm text-gray-600">არ გაქვთ ანგარიში?</span>
+          <span className="text-xs sm:text-sm text-gray-600">{t('login.noAccount')}</span>
           <button
             type="button"
             onClick={onShowRegister}
             className="ml-1.5 sm:ml-2 text-primary hover:text-secondary text-xs sm:text-sm"
           >
-            რეგისტრაცია
+            {t('login.registerLink')}
           </button>
         </div>
       </div>

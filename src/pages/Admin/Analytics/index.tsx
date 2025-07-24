@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import analyticsService from '../../../services/analyticsService';
 import { 
   BarChart3, 
@@ -35,6 +36,7 @@ interface AnalyticsData {
 }
 
 const Analytics: React.FC = () => {
+  const { t } = useTranslation('admin');
   const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
@@ -78,14 +80,24 @@ const Analytics: React.FC = () => {
 
   const getDeviceIcon = (type: string) => {
     switch (type) {
-      case 'მობილური':
+      case 'Mobile':
         return <Smartphone size={20} className="text-blue-500" />;
-      case 'დესკტოპი':
+      case 'Desktop':
         return <Monitor size={20} className="text-green-500" />;
-      case 'ტაბლეტი':
+      case 'Tablet':
         return <Tablet size={20} className="text-purple-500" />;
       default:
         return <Monitor size={20} className="text-gray-500" />;
+    }
+  };
+
+  const getDeviceTypeLabel = (type: string) => {
+    if(type.toLowerCase() === "მობილური"){
+      return t(`analytics.deviceTypes.mobile`) || type;
+    }else if(type.toLowerCase() === "დესკტოპი"){
+      return t(`analytics.deviceTypes.desktop`) || type;
+    }else{
+      return t(`analytics.deviceTypes.tablet`) || type;
     }
   };
 
@@ -94,12 +106,12 @@ const Analytics: React.FC = () => {
       <div className="mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">ანალიტიკა</h1>
-            <p className="text-gray-500 mt-1">საიტის ტრაფიკი და მომხმარებლის ქცევა</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('analytics.title')}</h1>
+            <p className="text-gray-500 mt-1">{t('analytics.overview')}</p>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Calendar size={16} />
-            <span>ბოლო 30 დღე</span>
+            <span>{t('analytics.last30Days')}</span>
           </div>
         </div>
 
@@ -123,7 +135,7 @@ const Analytics: React.FC = () => {
                   </div>
                   <TrendingUp size={20} className="text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">გვერდის ნახვები</h3>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">{t('analytics.pageViews')}</h3>
                 <p className="text-2xl font-bold text-gray-900">{analyticsData.pageViews.toLocaleString()}</p>
               </div>
 
@@ -134,7 +146,7 @@ const Analytics: React.FC = () => {
                   </div>
                   <TrendingUp size={20} className="text-green-500" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">უნიკალური ვიზიტორები</h3>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">{t('analytics.uniqueVisitors')}</h3>
                 <p className="text-2xl font-bold text-gray-900">{analyticsData.uniqueVisitors.toLocaleString()}</p>
               </div>
 
@@ -144,7 +156,7 @@ const Analytics: React.FC = () => {
                     <MousePointer size={24} className="text-yellow-600" />
                   </div>
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Bounce Rate</h3>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">{t('analytics.bounceRate')}</h3>
                 <p className="text-2xl font-bold text-gray-900">{analyticsData.bounceRate}%</p>
               </div>
 
@@ -154,7 +166,7 @@ const Analytics: React.FC = () => {
                     <Clock size={24} className="text-purple-600" />
                   </div>
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">საშუალო სესიის ხანგრძლივობა</h3>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">{t('analytics.avgSessionDuration')}</h3>
                 <p className="text-2xl font-bold text-gray-900">{formatDuration(analyticsData.avgSessionDuration)}</p>
               </div>
             </div>
@@ -163,7 +175,7 @@ const Analytics: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Top Pages */}
               <div className="bg-white p-6 rounded-xl shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">ყველაზე პოპულარული გვერდები</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">{t('analytics.topPages')}</h3>
                 <div className="space-y-4">
                   {analyticsData.topPages.map((page, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -175,7 +187,7 @@ const Analytics: React.FC = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-900">{page.views.toLocaleString()}</p>
-                        <p className="text-sm text-gray-500">ნახვა</p>
+                        <p className="text-sm text-gray-500">{t('analytics.views')}</p>
                       </div>
                     </div>
                   ))}
@@ -184,13 +196,13 @@ const Analytics: React.FC = () => {
 
               {/* Device Types */}
               <div className="bg-white p-6 rounded-xl shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">მოწყობილობის ტიპები</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">{t('analytics.deviceType')}</h3>
                 <div className="space-y-4">
                   {analyticsData.deviceTypes.map((device, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         {getDeviceIcon(device.type)}
-                        <span className="font-medium text-gray-700">{device.type}</span>
+                        <span className="font-medium text-gray-700">{getDeviceTypeLabel(device.type)}</span>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-900">{device.percentage}%</p>
@@ -209,7 +221,7 @@ const Analytics: React.FC = () => {
 
             {/* Referral Sources */}
             <div className="bg-white p-6 rounded-xl shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">ტრაფიკის წყაროები</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">{t('analytics.trafficSources')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {analyticsData.referralSources.map((source, index) => (
                   <div key={index} className="p-4 bg-gray-50 rounded-lg text-center">
@@ -218,7 +230,7 @@ const Analytics: React.FC = () => {
                     </div>
                     <p className="font-medium text-gray-700 mb-1">{source.source}</p>
                     <p className="text-xl font-bold text-gray-900">{source.visits.toLocaleString()}</p>
-                    <p className="text-sm text-gray-500">ვიზიტი</p>
+                    <p className="text-sm text-gray-500">{t('analytics.visits')}</p>
                   </div>
                 ))}
               </div>
@@ -233,12 +245,11 @@ const Analytics: React.FC = () => {
                 <h3 className="text-lg font-semibold text-green-900">Google Analytics</h3>
               </div>
               <p className="text-green-800 mb-4">
-                ეს მონაცემები Google Analytics Reporting API-ს მეშვეობითაა მოპოვებული. 
-                მონაცემები რეალურ დროში განახლება Google Analytics-იდან.
+                {t('analytics.gaIntegrationDesc')}
               </p>
               <div className="flex items-center gap-2 text-sm text-green-700">
                 <Activity size={16} />
-                <span>რეალურ დროში განახლება: ყოველ 5 წუთში</span>
+                <span>{t('analytics.realTimeUpdate')}</span>
               </div>
             </div>
           </>

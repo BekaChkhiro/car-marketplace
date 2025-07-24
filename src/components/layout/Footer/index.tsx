@@ -4,8 +4,14 @@ import QuickLinks from './components/QuickLinks';
 import ContactInfo from './components/ContactInfo';
 import SocialLinks from './components/SocialLinks';
 import PaymentMethods from './components/PaymentMethods';
+import { useTranslation } from 'react-i18next';
+import { namespaces } from '../../../i18n';
+
+
 
 const Footer: React.FC = () => {
+    const { t } = useTranslation([namespaces.footer, namespaces.common]);
+  
   return (
     <footer className="relative bg-white text-gray-dark pt-8 sm:pt-12 md:pt-16 border-t">
       <div className="w-[90%] mx-auto px-4 py-4">
@@ -33,7 +39,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
             <PaymentMethods />
             <p className="text-gray-dark text-sm mt-6 sm:mt-0">
-              &copy; {new Date().getFullYear()} Autovend.ge ყველა უფლება დაცულია.
+              &copy; {new Date().getFullYear()} Autovend.ge {t('copyright')}.
             </p>
           </div>
         </div>

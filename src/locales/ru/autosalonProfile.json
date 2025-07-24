@@ -1,0 +1,13 @@
+{
+  "loading": "Загружается автосалон...",
+  "notFound": "Автосалон не найден",
+  "notFoundDescription": "Запрашиваемый автосалон не найден.",
+  "establishedYear": "Основан в {{year}} году",
+  "noCarsFound": "Автомобили {{companyName}} не найдены",
+  "noCarsDescription": "В этом автосалоне в настоящее время нет автомобилей или они не соответствуют вашим фильтрам.",
+  "errorLoadingData": "Не удалось загрузить данные автосалона",
+  "websiteLabel": "Веб-сайт",
+  "phoneLabel": "Телефон",
+  "addressLabel": "Адрес",
+  "establishedLabel": "Год основания"
+}

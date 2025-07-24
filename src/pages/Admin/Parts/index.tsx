@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Import components
 import PartsList from './components/PartsList';
@@ -10,6 +11,7 @@ import partService from '../../../api/services/partService';
 import { Part } from '../../../api/services/partService';
 
 const AdminParts: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +24,7 @@ const AdminParts: React.FC = () => {
       setParts(response.parts);
     } catch (error) {
       console.error('Error fetching parts:', error);
-      setError('ნაწილების ჩატვირთვა ვერ მოხერხდა');
+      setError(t('parts.error'));
     } finally {
       setLoading(false);
     }
@@ -38,7 +40,7 @@ const AdminParts: React.FC = () => {
       setParts(prevParts => prevParts.filter(part => part.id.toString() !== partId));
     } catch (error) {
       console.error('Error deleting part:', error);
-      setError('ნაწილის წაშლა ვერ მოხერხდა');
+      setError(t('parts.deleteError'));
     }
   };
 
