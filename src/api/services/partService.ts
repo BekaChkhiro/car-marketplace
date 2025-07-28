@@ -382,6 +382,85 @@ class PartService {
    * @param condition - Condition code
    * @returns Georgian text for condition
    */
+  
+  /**
+   * Purchase VIP status for a part
+   * @param partId - The part ID
+   * @param vipStatus - VIP status level
+   * @param days - Number of days for VIP status
+   * @param colorHighlighting - Whether to enable color highlighting
+   * @param colorHighlightingDays - Number of days for color highlighting
+   * @param autoRenewal - Whether to enable auto renewal
+   * @param autoRenewalDays - Number of days for auto renewal
+   * @returns Purchase result
+   */
+  async purchaseVipStatus(
+    partId: number, 
+    vipStatus: 'none' | 'vip' | 'vip_plus' | 'super_vip',
+    days: number = 7,
+    colorHighlighting: boolean = false,
+    colorHighlightingDays: number = 1,
+    autoRenewal: boolean = false,
+    autoRenewalDays: number = 1
+  ): Promise<any> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const payload = {
+        partId,
+        vipStatus,
+        days,
+        colorHighlighting,
+        colorHighlightingDays,
+        autoRenewal,
+        autoRenewalDays
+      };
+      
+      console.log('[PartService.purchaseVipStatus] Purchasing VIP status:', payload);
+      
+      const response = await api.post('/api/parts/vip/purchase', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      console.log('[PartService.purchaseVipStatus] VIP purchase successful:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('[PartService.purchaseVipStatus] Error purchasing VIP status:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get VIP status information for a part
+   * @param partId - The part ID
+   * @returns VIP status information
+   */
+  async getVipStatusInfo(partId: number): Promise<any> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const response = await api.get(`/api/parts/${partId}/vip/status`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('[PartService.getVipStatusInfo] Error fetching VIP status info:', error);
+      throw error;
+    }
+  }
 }
 
 // Create an instance of PartService and export it as default

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Star, X } from 'lucide-react';
+import { ArrowLeft, Star, X, AlertCircle } from 'lucide-react';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import { Loading } from '../../../../components/ui';
 import { useEditCarForm } from './hooks/useEditCarForm';
@@ -13,6 +13,7 @@ import Features from './components/Features';
 import Location from './components/Location';
 import Description from './components/Description';
 import AuthorInfo from './components/AuthorInfo';
+import VIPStatus from './components/VIPStatus';
 
 const EditCar: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ const EditCar: React.FC = () => {
     existingImages,
     featuredImageIndex,
     isUploading,
+    userBalance,
     handleChange,
     handleSpecificationsChange,
     handleFeaturesChange,
@@ -34,7 +36,11 @@ const EditCar: React.FC = () => {
     removeExistingImage,
     setPrimaryImage,
     setFeaturedImageIndex,
-    handleSubmit
+    handleSubmit,
+    getTotalVipPrice,
+    hasSufficientBalance,
+    hasInsufficientBalance,
+    pricingLoaded
   } = useEditCarForm(Number(id));
 
   if (isLoading) {
@@ -244,6 +250,18 @@ const EditCar: React.FC = () => {
             errors={errors}
           />
 
+          <VIPStatus
+            carId={Number(id)}
+            vipStatus={formData.vip_status || 'none'}
+            vipDays={formData.vip_days || 1}
+            colorHighlighting={formData.color_highlighting || false}
+            colorHighlightingDays={formData.color_highlighting_days || 1}
+            autoRenewal={formData.auto_renewal || false}
+            autoRenewalDays={formData.auto_renewal_days || 1}
+            userBalance={userBalance}
+            onChange={handleChange}
+          />
+
           <div className="bg-white rounded-xl p-6 border">
             <ImageUploadWithFeatured
               files={images}
@@ -260,6 +278,24 @@ const EditCar: React.FC = () => {
           </div>
 
           <div className="sticky bottom-0 bg-white border py-4 px-6 rounded-b-xl shadow-lg transform translate-y-1">
+            {pricingLoaded && hasInsufficientBalance() && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-center">
+                <div className="flex items-center text-red-600 text-sm">
+                  <AlertCircle size={16} className="mr-2" />
+                  <span>
+                    არასაკმარისი ბალანსი VIP სერვისისთვის. საჭიროა: {getTotalVipPrice().toFixed(2)} ლარი, 
+                    ხელმისაწვდომია: {userBalance.toFixed(2)} ლარი
+                  </span>
+                </div>
+              </div>
+            )}
+            {!pricingLoaded && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center">
+                <div className="flex items-center text-blue-600 text-sm">
+                  <span>VIP ფასების ჩატვირთვა...</span>
+                </div>
+              </div>
+            )}
             <div className="flex justify-end gap-4 max-w-5xl mx-auto">
               <button
                 type="button"
@@ -270,9 +306,14 @@ const EditCar: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200"
+                disabled={!pricingLoaded || hasInsufficientBalance()}
+                className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition-all duration-200 ${
+                  !pricingLoaded || hasInsufficientBalance() 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-primary hover:bg-primary/90'
+                }`}
               >
-                შენახვა
+                {!pricingLoaded ? 'VIP ფასების ჩატვირთვა...' : hasInsufficientBalance() ? 'არასაკმარისი ბალანსი' : 'შენახვა'}
               </button>
             </div>
           </div>

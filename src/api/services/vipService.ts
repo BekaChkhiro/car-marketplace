@@ -118,6 +118,40 @@ class VipService {
   }
 
   /**
+   * Purchase comprehensive VIP package including additional services
+   * @param carId Car ID
+   * @param vipPackage VIP package details
+   * @returns Purchase result
+   */
+  async purchaseVipPackage(carId: number, vipPackage: {
+    vip_status: VipStatus;
+    vip_days: number;
+    color_highlighting: boolean;
+    color_highlighting_days: number;
+    auto_renewal: boolean;
+    auto_renewal_days: number;
+  }): Promise<any> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const response = await api.post(`/api/vip/purchase-package/${carId}`, vipPackage, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error purchasing VIP package:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get all available VIP status types
    * @returns Array of VIP status types
    */

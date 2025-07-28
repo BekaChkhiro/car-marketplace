@@ -122,6 +122,7 @@
         "buyVip": "Buy VIP Status",
         "balance": "Balance",
         "yourBalance": "Your Balance:",
+        "required" : "Required",
         "selectStatus": "VIP Status",
         "daysCount": "Number of Days",
         "expirationDate": "Expiration Date",
@@ -382,7 +383,60 @@
   "addPart": {
     "title": "Add Part",
     "subtitle": "Add a car part for sale",
-    "submit": "Add Part"
+    "submit": "Add Part",
+    "vipStatus": {
+      "title": "VIP Status",
+      "subtitle": "Make your listing more visible",
+      "titleFull": "VIP Status and Additional Services",
+      "description": "Choose VIP status and additional services for your listing.",
+      "balance": "Balance",
+      "currency": "GEL",
+      "confirmTitle": "Confirm VIP Status Purchase",
+      "confirmQuestion": "Do you want to purchase {status} status?",
+      "additionalServices": "Additional Services",
+      "colorHighlighting": "Color Highlighting",
+      "colorHighlightingDescription": "Your listing will be highlighted with colored background",
+      "autoRenewal": "Auto Renewal",
+      "autoRenewalDescription": "Listing will be automatically renewed daily",
+      "pricePerDay": "1 day",
+      "totalPrice": "Total Price: {price} GEL (1 day)",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "processing": "Processing...",
+      "insufficientBalance": "Insufficient balance",
+      "select": "Select",
+      "purchase": "Purchase",
+      "types": {
+        "none": "Standard",
+        "vip": "VIP",
+        "vip_plus": "VIP+",
+        "super_vip": "SUPER VIP"
+      },
+      "descriptions": {
+        "none": "Standard placement",
+        "vip": "Increased visibility",
+        "vip_plus": "High visibility and featured badge",
+        "super_vip": "Maximum visibility and premium badge"
+      },
+      "features": {
+        "vip": [
+          "Highlighted listing",
+          "5x more visibility"
+        ],
+        "vip_plus": [
+          "Highlighted listing",
+          "Top position in category",
+          "10x more visibility"
+        ],
+        "super_vip": [
+          "Highlighted listing",
+          "Top position in category",
+          "Priority in search results",
+          "20x more visibility"
+        ]
+      },
+      "free": "Free"
+    }
   },
   "editPart": {
     "title": "Edit Part",

@@ -103,6 +103,14 @@ class WishlistService {
     try {
       const response = await api.get('/api/wishlist');
       
+      console.log('[WishlistService.getWishlist] Raw API response:', response.data);
+      
+      // Check if response.data is an array
+      if (!Array.isArray(response.data)) {
+        console.error('[WishlistService.getWishlist] Invalid response format - expected array, got:', typeof response.data);
+        throw new Error('Invalid wishlist response format');
+      }
+      
       // Transform the API response to match the expected Car interface
       const transformedCars = response.data.map((car: any) => {
         // Ensure each car has all required properties according to the Car interface
@@ -148,9 +156,19 @@ class WishlistService {
       console.log('[WishlistService.getWishlist] Transformed cars:', transformedCars);
       return transformedCars;
     } catch (error: any) {
-      console.error('[WishlistService.getWishlist] Error:', error);
-      console.log('Using mock wishlist data instead of API');
-      return localMockWishlist; // Return mock data instead of throwing an error
+      console.error('[WishlistService.getWishlist] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers
+        }
+      });
+      
+      // Throw the error instead of returning mock data - this will help identify the issue
+      throw error;
     }
   }
 

@@ -563,8 +563,12 @@ const TransactionHistory: React.FC = () => {
             </div>
             
             {transaction.description && (
-              <div className="text-xs text-gray-600 line-clamp-2">
-                {transaction.description}
+              <div className="text-xs text-gray-600">
+                {transaction.description.split('\n').map((line, index) => (
+                  <div key={index} className={index === 0 ? 'font-medium' : ''}>
+                    {line}
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -607,7 +611,17 @@ const TransactionHistory: React.FC = () => {
                   </span>
                 </td>
                 <td className="py-3 px-4 text-sm text-gray-600">
-                  {transaction.description || '—'}
+                  {transaction.description ? (
+                    <div className="space-y-1">
+                      {transaction.description.split('\n').map((line, index) => (
+                        <div key={index} className={index === 0 ? 'font-medium' : 'text-xs'}>
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    '—'
+                  )}
                 </td>
                 <td className="py-3 px-4 text-sm whitespace-nowrap">
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>

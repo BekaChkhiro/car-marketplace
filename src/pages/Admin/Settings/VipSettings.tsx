@@ -11,7 +11,6 @@ interface VipPriceForm {
   service_type: string;
   price: number;
   duration_days: number;
-  is_daily_price: boolean;
 }
 
 const VipSettings: React.FC = () => {
@@ -40,12 +39,12 @@ const VipSettings: React.FC = () => {
       } else {
         // Fallback to default prices if API doesn't return expected format
         setVipPrices([
-          { service_type: 'free', price: 0, duration_days: 30, is_daily_price: false },
-          { service_type: 'vip', price: 2, duration_days: 1, is_daily_price: true },
-          { service_type: 'vip_plus', price: 5, duration_days: 1, is_daily_price: true },
-          { service_type: 'super_vip', price: 7, duration_days: 1, is_daily_price: true },
-          { service_type: 'color_highlighting', price: 0.5, duration_days: 1, is_daily_price: true },
-          { service_type: 'auto_renewal', price: 0.5, duration_days: 1, is_daily_price: true }
+          { service_type: 'free', price: 0, duration_days: 30 },
+          { service_type: 'vip', price: 2, duration_days: 1 },
+          { service_type: 'vip_plus', price: 5, duration_days: 1 },
+          { service_type: 'super_vip', price: 7, duration_days: 1 },
+          { service_type: 'color_highlighting', price: 0.5, duration_days: 1 },
+          { service_type: 'auto_renewal', price: 0.5, duration_days: 1 }
         ]);
       }
       
@@ -56,12 +55,12 @@ const VipSettings: React.FC = () => {
       
       // Set default prices if API fails
       setVipPrices([
-        { service_type: 'free', price: 0, duration_days: 30, is_daily_price: false },
-        { service_type: 'vip', price: 2, duration_days: 1, is_daily_price: true },
-        { service_type: 'vip_plus', price: 5, duration_days: 1, is_daily_price: true },
-        { service_type: 'super_vip', price: 7, duration_days: 1, is_daily_price: true },
-        { service_type: 'color_highlighting', price: 0.5, duration_days: 1, is_daily_price: true },
-        { service_type: 'auto_renewal', price: 0.5, duration_days: 1, is_daily_price: true }
+        { service_type: 'free', price: 0, duration_days: 30 },
+        { service_type: 'vip', price: 2, duration_days: 1 },
+        { service_type: 'vip_plus', price: 5, duration_days: 1 },
+        { service_type: 'super_vip', price: 7, duration_days: 1 },
+        { service_type: 'color_highlighting', price: 0.5, duration_days: 1 },
+        { service_type: 'auto_renewal', price: 0.5, duration_days: 1 }
       ]);
     } finally {
       setLoading(false);
@@ -75,8 +74,6 @@ const VipSettings: React.FC = () => {
     // Convert to number if the field is price or duration_days
     if (field === 'price' || field === 'duration_days') {
       updatedPrices[index][field] = Number(value);
-    } else if (field === 'is_daily_price') {
-      updatedPrices[index][field] = Boolean(value);
     } else {
       updatedPrices[index][field] = value;
     }
@@ -103,8 +100,13 @@ const VipSettings: React.FC = () => {
         return;
       }
       
-      // Send updated prices to the API
-      await api.put('/api/admin/vip/pricing', { prices: vipPrices }, {
+      // Send updated prices to the API with is_daily_price set to true for all services
+      const pricesToSave = vipPrices.map(price => ({
+        ...price,
+        is_daily_price: true
+      }));
+      
+      await api.put('/api/admin/vip/pricing', { prices: pricesToSave }, {
         headers: authHeader()
       });
       
@@ -196,7 +198,7 @@ const VipSettings: React.FC = () => {
               <h3 className="font-semibold text-gray-800">{getServiceTypeName(price.service_type)}</h3>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   <span className="font-bold text-primary">{t('vipSettings.fields.price')}</span> ({t('vipSettings.fields.currency')})
@@ -210,44 +212,13 @@ const VipSettings: React.FC = () => {
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('vipSettings.fields.duration')}
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={price.duration_days}
-                  onChange={(e) => handlePriceChange(index, 'duration_days', e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('vipSettings.fields.dailyPrice')}
-                </label>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={price.is_daily_price}
-                    onChange={(e) => handlePriceChange(index, 'is_daily_price', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm text-gray-600">
-                    {price.is_daily_price ? t('vipSettings.fields.yes') : t('vipSettings.fields.no')}
-                  </span>
-                </div>
-              </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t('vipSettings.fields.effectiveCost')}
                 </label>
                 <div className="p-2 bg-gray-100 rounded-md text-sm text-gray-700">
-                  {price.is_daily_price ? 
-                    `${price.price} ${t('vipSettings.fields.perDay')}` : 
-                    `${price.price} ${t('vipSettings.fields.currency')} (${price.duration_days} ${t('vipSettings.fields.days')})`
-                  }
+                  {`${price.price} ${t('vipSettings.fields.perDay')}`}
                 </div>
               </div>
             </div>

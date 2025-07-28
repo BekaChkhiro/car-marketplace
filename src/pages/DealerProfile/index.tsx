@@ -86,8 +86,11 @@ const DealerProfile: React.FC = () => {
             const dealerCars = carsResponse.cars.filter(car => car.seller_id === parseInt(dealerId));
             console.log('Filtered dealer cars:', dealerCars);
 
-            setCars(dealerCars);
-            setTotalCars(dealerCars.length);
+            // Only update cars state if we have dealer cars
+            if (dealerCars.length > 0) {
+              setCars(dealerCars);
+              setTotalCars(dealerCars.length);
+            }
           }
         } catch (carError) {
           console.error('Error fetching dealer cars:', carError);

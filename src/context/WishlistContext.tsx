@@ -27,13 +27,24 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
     
     try {
+      console.log('[WishlistContext] Fetching wishlist...');
       const cars = await wishlistService.getWishlist();
+      console.log('[WishlistContext] Wishlist fetched successfully:', cars.length, 'cars');
       setWishlistCars(cars);
     } catch (error: any) {
-      console.error('Error fetching wishlist:', error);
+      console.error('[WishlistContext] Error fetching wishlist:', error);
+      
+      // Show user-friendly error message
+      const errorMessage = error.response?.status === 401 
+        ? 'Please log in to view your wishlist'
+        : error.response?.status === 404
+        ? 'Wishlist not found'
+        : 'Failed to load wishlist. Please try again later.';
+      
+      showToast(errorMessage, 'error');
       setWishlistCars([]);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, showToast]);
 
   useEffect(() => {
     fetchWishlist();

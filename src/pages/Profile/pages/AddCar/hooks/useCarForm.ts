@@ -7,6 +7,9 @@ import { NewCarFormData, CarFeatures } from '../types';
 import { validateCarForm, validateImage } from '../utils/validation';
 import carService from '../../../../../api/services/carService';
 import { CreateCarFormData } from '../../../../../api/types/car.types';
+import balanceService from '../../../../../api/services/balanceService';
+import vipPricingService from '../../../../../api/services/vipPricingService';
+import vipService from '../../../../../api/services/vipService';
 
 // Auto-save delay in milliseconds
 const AUTO_SAVE_DELAY = 2000;
@@ -20,6 +23,9 @@ export const useCarForm = () => {
   const [images, setImages] = useState<File[]>([]);
   const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [userBalance, setUserBalance] = useState<number>(0);
+  const [vipPricing, setVipPricing] = useState<any[]>([]);
+  const [additionalServicesPricing, setAdditionalServicesPricing] = useState<any[]>([]);
   
   // Get saved draft or use initial state
   const [formData, setFormData] = useState<NewCarFormData>(() => {
@@ -44,6 +50,11 @@ export const useCarForm = () => {
       description_ru: '',
       vin_code: '', // VIN code field
       vip_status: 'none', // Default VIP status is none
+      vip_days: 1, // Default VIP days
+      color_highlighting: false,
+      color_highlighting_days: 1,
+      auto_renewal: false,
+      auto_renewal_days: 1,
       author_name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '', // Default to current user name
       author_phone: user?.phone || '', // Default to current user phone
       location: {
@@ -119,6 +130,27 @@ export const useCarForm = () => {
     return () => clearTimeout(timeoutId);
   }, [formData]);
 
+  // Fetch user balance and VIP pricing on component mount
+  useEffect(() => {
+    const fetchBalanceAndPricing = async () => {
+      try {
+        const [balance, pricingData] = await Promise.all([
+          balanceService.getBalance(),
+          vipPricingService.getAllPricing()
+        ]);
+        const processedBalance = typeof balance === 'number' ? balance : parseFloat(balance) || 0;
+        setUserBalance(processedBalance);
+        setVipPricing(pricingData.packages);
+        setAdditionalServicesPricing(pricingData.additionalServices);
+      } catch (error) {
+        console.error('Error fetching balance and pricing:', error);
+        setUserBalance(0);
+      }
+    };
+    
+    fetchBalanceAndPricing();
+  }, []);
+
   const handleChange = (field: string, value: any) => {
     console.log(`handleChange - field: ${field}, value:`, value);
     
@@ -184,6 +216,49 @@ export const useCarForm = () => {
   };
 
   // Validate form data using the validation utility
+  // VIP pricing functions
+  const getVipPrice = (status: string): number => {
+    if (status === 'none') {
+      const freePricing = vipPricing.find(p => p.service_type === 'free');
+      return freePricing ? Number(freePricing.price) : 0;
+    }
+
+    const pricing = vipPricing.find(p => p.service_type === status);
+    return pricing ? Number(pricing.price) : 0;
+  };
+
+  const getAdditionalServicesPrice = (): number => {
+    let price = 0;
+    
+    if (formData.color_highlighting) {
+      const colorPricing = additionalServicesPricing.find(s => s.service_type === 'color_highlighting');
+      const dailyPrice = colorPricing ? colorPricing.price : 0.5;
+      price += dailyPrice * formData.color_highlighting_days;
+    }
+    
+    if (formData.auto_renewal) {
+      const renewalPricing = additionalServicesPricing.find(s => s.service_type === 'auto_renewal');
+      const dailyPrice = renewalPricing ? renewalPricing.price : 0.5;
+      price += dailyPrice * formData.auto_renewal_days;
+    }
+    
+    return price;
+  };
+
+  const getTotalVipPrice = (): number => {
+    const basePrice = getVipPrice(formData.vip_status) * formData.vip_days;
+    const additionalPrice = getAdditionalServicesPrice();
+    return basePrice + additionalPrice;
+  };
+
+  const hasSufficientBalance = (): boolean => {
+    if (formData.vip_status === 'none' && getVipPrice('none') === 0) {
+      return true; // Free status
+    }
+    // Check total VIP cost including additional services
+    return userBalance >= getTotalVipPrice();
+  };
+
   const validate = () => {
     // Log all form data for debugging
     console.log('Form data being validated:', JSON.stringify(formData, null, 2));
@@ -403,16 +478,122 @@ export const useCarForm = () => {
       console.log('Submitting cleaned data:', cleanedData);
       
       const result = await carService.createCar(cleanedData);
+      console.log('Car creation result:', result);
+      console.log('Result type:', typeof result);
+      console.log('Result keys:', Object.keys(result || {}));
+      
+      // Extract car ID from the result - try multiple possible formats
+      let carId = null;
+      if (result && typeof result === 'object') {
+        // Cast to any to access potential response wrapper properties
+        const response = result as any;
+        
+        // Try common response formats
+        carId = result.id || (response.data && response.data.id) || (response.car && response.car.id) || response.carId;
+        
+        // If still no ID, check if the whole result is the car object
+        if (!carId && result.brand_id) {
+          carId = result.id;
+        }
+      } else if (typeof result === 'number') {
+        carId = result;
+      }
+      
+      console.log('Extracted car ID:', carId, typeof carId);
+      
+      // Process VIP purchase if user selected any paid VIP services
+      const totalVipCost = getTotalVipPrice();
+      if (totalVipCost > 0 && formData.vip_status !== 'none') {
+        try {
+          console.log('Processing comprehensive VIP purchase for car:', carId);
+          console.log('VIP status from formData:', formData.vip_status);
+          console.log('VIP days from formData:', formData.vip_days, typeof formData.vip_days);
+          console.log('Total VIP cost (including services):', totalVipCost);
+          console.log('User balance:', userBalance);
+          console.log('Full VIP package data:', {
+            vip_status: formData.vip_status,
+            vip_days: formData.vip_days,
+            color_highlighting: formData.color_highlighting,
+            color_highlighting_days: formData.color_highlighting_days,
+            auto_renewal: formData.auto_renewal,
+            auto_renewal_days: formData.auto_renewal_days
+          });
+          
+          // Ensure vip_days is a valid integer
+          const validDays = Math.max(1, Math.round(formData.vip_days));
+          console.log('Valid days for purchase:', validDays);
+          
+          // Validate car ID before making VIP purchase
+          if (!carId || carId === 'undefined') {
+            throw new Error(`Invalid car ID: ${carId}. Car creation may have failed.`);
+          }
+          
+          // Since the car was created with VIP data, just purchase the VIP status and deduct total cost
+          // The additional services should already be in the car data
+          console.log('Car created with VIP data. Now purchasing VIP status and deducting costs...');
+          
+          // Purchase VIP status with additional services (this applies the VIP status and its expiration)
+          const vipResult = await balanceService.purchaseVipStatus(
+            carId,
+            formData.vip_status as 'vip' | 'vip_plus' | 'super_vip',
+            validDays,
+            {
+              colorHighlighting: formData.color_highlighting,
+              colorHighlightingDays: formData.color_highlighting_days,
+              autoRenewal: formData.auto_renewal,
+              autoRenewalDays: formData.auto_renewal_days
+            }
+          );
+          
+          console.log('VIP status purchase result:', vipResult);
+          
+          if (vipResult.success) {
+            // The VIP status purchase only deducts VIP cost, we need to manually deduct additional services
+            const vipStatusCost = getVipPrice(formData.vip_status) * validDays;
+            const additionalServicesCost = getAdditionalServicesPrice();
+            
+            console.log('VIP status cost:', vipStatusCost);
+            console.log('Additional services cost:', additionalServicesCost);
+            console.log('Total cost should be:', totalVipCost);
+            
+            // Set balance to the VIP result balance minus additional services cost
+            const finalBalance = vipResult.newBalance - additionalServicesCost;
+            setUserBalance(finalBalance);
+            
+            console.log(`VIP status purchased successfully. Final balance: ${finalBalance} GEL`);
+            console.log(`Total cost deducted: ${totalVipCost} GEL (VIP: ${vipStatusCost}, Additional: ${additionalServicesCost})`);
+          } else {
+            throw new Error(vipResult.message || 'VIP status purchase failed');
+          }
+        } catch (vipError: any) {
+          console.error('VIP purchase failed with error:', vipError);
+          console.error('Error details:', {
+            message: vipError.message,
+            response: vipError.response?.data,
+            status: vipError.response?.status
+          });
+          hideLoading();
+          showToast(`Car created successfully, but VIP purchase failed: ${vipError.message || 'Unknown error'}`, 'warning');
+          
+          // Still navigate to the car even if VIP purchase failed
+          navigate(`/cars/${carId}`);
+          return;
+        }
+      }
+      
       hideLoading();
       
       // Clear the form draft from localStorage
       localStorage.removeItem('car_form_draft');
       
-      // Show success message
-      showToast('მანქანა წარმატებით დაემატა!', 'success');
+      // Show success message with VIP info
+      const successMessage = totalVipCost > 0 && formData.vip_status !== 'none'
+        ? `Car added successfully! VIP ${formData.vip_status.toUpperCase()} package purchased for ${formData.vip_days} days (${totalVipCost.toFixed(2)} GEL).`
+        : 'მანქანა წარმატებით დაემატა!';
+      showToast(successMessage, 'success');
       
       // Navigate to the car details page
-      navigate(`/cars/${result.id}`);
+      navigate(`/cars/${carId}`);
     } catch (error: any) {
       hideLoading();
       showToast(error.message || 'მანქანის დამატება ვერ მოხერხდა', 'error');
@@ -474,12 +655,15 @@ export const useCarForm = () => {
     images,
     featuredImageIndex,
     isUploading,
+    userBalance,
     setFeaturedImageIndex,
     handleChange,
     handleFeaturesChange,
     handleSpecificationsChange,
     handleSubmit,
     handleImageUpload,
-    removeImage
+    removeImage,
+    getTotalVipPrice,
+    hasSufficientBalance
   };
 };

@@ -230,10 +230,42 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     }
   };
 
+  // Debug: Log all car properties and their values
+  useEffect(() => {
+    console.log('=== CAR DATA ===');
+    console.log('Car ID:', car.id);
+    console.log('Car title:', car.title || `${car.brand} ${car.model}`);
+    
+    // Log all properties and their values
+    Object.entries(car).forEach(([key, value]) => {
+      console.log(`${key}:`, value);
+    });
+    
+    // Check for any highlighting-related properties
+    const highlightProps = Object.entries(car).filter(([key]) => 
+      key.toLowerCase().includes('highlight') || 
+      key.toLowerCase().includes('color_highlight')
+    );
+    
+    console.log('Highlight-related properties:', highlightProps);
+  }, [car]);
+
+  // Check if the car has highlighting service enabled or has VIP status
+  // For now, we'll use VIP status as a fallback since highlighting properties aren't in the response
+  const hasHighlighting = (
+    car.color_highlighting_enabled
+    ) === true;
+
+    const hasColor = car.color_highlighting_enabled;
+  
+    console.log(hasColor+"*******************************");
+    
+
   return (
-    <div 
-      onClick={handleClick}
-      className="group relative bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col h-full"
+    <div  onClick={handleClick}
+      className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg relative group ${
+        hasHighlighting ? 'border-2 border-green-500' : 'border border-gray-200'
+      }`}
     >
       {/* VIP Badge - improved visibility and style */}
       {showVipBadge && car.vip_status && car.vip_status !== 'none' && (

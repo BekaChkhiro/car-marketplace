@@ -426,7 +426,9 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
           return (
             <div 
               key={car.id} 
-              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+              className={`bg-white rounded-xl shadow-sm overflow-hidden ${
+                car.color_highlighting_enabled ? 'border-2 border-green-500 shadow-green-100' : 'border border-gray-100'
+              }`}
             >
               <div className="flex items-center p-2 border-b border-gray-100">
                   <div className="flex-shrink-0 h-18 w-20 bg-gray-100 rounded-md overflow-hidden mr-4 relative">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, X, Check } from 'lucide-react';
+import { Crown, X, Check, Paintbrush, RefreshCw } from 'lucide-react';
 import { Car } from '../../../../../api/types/car.types';
 import { VipStatus } from '../../../../../api/services/vipService';
 import vipPricingService, { VipServicePricing } from '../../../../../api/services/vipPricingService';
@@ -42,7 +42,15 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
   const [loadingBalance, setLoadingBalance] = useState(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [vipPricing, setVipPricing] = useState<VipServicePricing[]>([]);
+  const [additionalServicesPricing, setAdditionalServicesPricing] = useState<VipServicePricing[]>([]);
   const [pricingLoaded, setPricingLoaded] = useState<boolean>(false);
+  
+  // Additional services state
+  const [colorHighlighting, setColorHighlighting] = useState<boolean>(false);
+  const [colorHighlightingDays, setColorHighlightingDays] = useState<number>(1);
+  const [autoRenewal, setAutoRenewal] = useState<boolean>(false);
+  const [autoRenewalDays, setAutoRenewalDays] = useState<number>(1);
+  
   const { showToast } = useToast();
 
   // VIP პაკეტების ფასები - დინამიური ფასები API-დან
@@ -114,37 +122,72 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     super_vip: 'SUPER VIP'
   };
   
-  // ჯამური ფასის გამოთვლა
-  const calculateTotalPrice = (status: VipStatus, days: number): number => {
-    if (status === 'none') return 0;
+  // Get daily price for individual additional service
+  const getAdditionalServicePrice = (serviceType: string): number => {
+    const pricing = additionalServicesPricing.find(s => s.service_type === serviceType);
+    return pricing ? pricing.price : (serviceType === 'color_highlighting' || serviceType === 'auto_renewal' ? 0.5 : 0);
+  };
+
+  // Get total price for additional services
+  const getAdditionalServicesPrice = (): number => {
+    let price = 0;
     
-    // ვამოწმოთ, რომ days არის მთელი რიცხვი და არა ნული
-    const validDays = Math.max(1, Math.round(days));
-    
-    // გამოვიყენოთ ტიპიზირებული სტატუსი TypeScript-ისთვის
-    const typedStatus = status as Exclude<VipStatus, 'none'>;
-    
-    // მივიღოთ pricing ინფორმაცია
-    const pricingInfo = getVipPricingInfo(typedStatus);
-    
-    if (pricingInfo && !pricingInfo.is_daily_price) {
-      // თუ ფასი არ არის დღიური, გამოვიყენოთ ფიქსირებული ფასი დადგენილი ვადისთვის
-      const packagePrice = Number(pricingInfo.price);
-      const packageDuration = pricingInfo.duration_days || 1;
-      
-      // გამოვთვალოთ რამდენი პაკეტი სჭირდება
-      const packagesNeeded = Math.ceil(validDays / packageDuration);
-      const price = packagePrice * packagesNeeded;
-      
-      return price;
-    } else {
-      // დღიური ფასის გამოთვლა
-      const pricePerDay = parseFloat(getVipPricePerDay(typedStatus).toString());
-      const daysNum = parseInt(validDays.toString(), 10);
-      const price = pricePerDay * daysNum;
-      
-      return price;
+    if (colorHighlighting) {
+      const colorPricing = additionalServicesPricing.find(s => s.service_type === 'color_highlighting');
+      const dailyPrice = colorPricing ? colorPricing.price : 0.5;
+      price += dailyPrice * colorHighlightingDays;
     }
+    
+    if (autoRenewal) {
+      const renewalPricing = additionalServicesPricing.find(s => s.service_type === 'auto_renewal');
+      const dailyPrice = renewalPricing ? renewalPricing.price : 0.5;
+      price += dailyPrice * autoRenewalDays;
+    }
+    
+    return price;
+  };
+
+  // Helper function to format price - shows "Free" if price is 0
+  const formatPrice = (price: number | string): string => {
+    const numPrice = typeof price === 'string' ? parseFloat(price) || 0 : price || 0;
+    return numPrice === 0 ? 'Free' : `${numPrice.toFixed(2)} GEL`;
+  };
+
+  // ჯამური ფასის გამოთვლა (VIP + additional services)
+  const calculateTotalPrice = (status: VipStatus, days: number): number => {
+    let totalPrice = 0;
+    
+    // VIP status price
+    if (status !== 'none') {
+      // ვამოწმოთ, რომ days არის მთელი რიცხვი და არა ნული
+      const validDays = Math.max(1, Math.round(days));
+      
+      // გამოვიყენოთ ტიპიზირებული სტატუსი TypeScript-ისთვის
+      const typedStatus = status as Exclude<VipStatus, 'none'>;
+      
+      // მივიღოთ pricing ინფორმაცია
+      const pricingInfo = getVipPricingInfo(typedStatus);
+      
+      if (pricingInfo && !pricingInfo.is_daily_price) {
+        // თუ ფასი არ არის დღიური, გამოვიყენოთ ფიქსირებული ფასი დადგენილი ვადისთვის
+        const packagePrice = Number(pricingInfo.price);
+        const packageDuration = pricingInfo.duration_days || 1;
+        
+        // გამოვთვალოთ რამდენი პაკეტი სჭირდება
+        const packagesNeeded = Math.ceil(validDays / packageDuration);
+        totalPrice += packagePrice * packagesNeeded;
+      } else {
+        // დღიური ფასის გამოთვლა
+        const pricePerDay = parseFloat(getVipPricePerDay(typedStatus).toString());
+        const daysNum = parseInt(validDays.toString(), 10);
+        totalPrice += pricePerDay * daysNum;
+      }
+    }
+    
+    // Add additional services price
+    totalPrice += getAdditionalServicesPrice();
+    
+    return totalPrice;
   };
   
   // VIP სტატუსის ვადის გასვლის თარიღის გამოთვლა
@@ -186,6 +229,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     try {
       const pricingData = await vipPricingService.getAllPricing();
       setVipPricing(pricingData.packages);
+      setAdditionalServicesPricing(pricingData.additionalServices);
       setPricingLoaded(true);
     } catch (error) {
       console.error('Error fetching VIP pricing:', error);
@@ -214,7 +258,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     }
   }, [isOpen, car]);
   
-  // ფასის განახლება, როცა იცვლება სტატუსი ან დღეების რაოდენობა
+  // ფასის განახლება, როცა იცვლება სტატუსი ან დღეების რაოდენობა ან დამატებითი სერვისები
   useEffect(() => {
     // დავრწმუნდეთ, რომ დღეების რაოდენობა არის მთელი რიცხვი
     const validDaysCount = Math.max(1, Math.round(daysCount));
@@ -225,7 +269,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
     }
     
     setTotalPrice(calculateTotalPrice(selectedStatus, validDaysCount));
-  }, [selectedStatus, daysCount]);
+  }, [selectedStatus, daysCount, colorHighlighting, colorHighlightingDays, autoRenewal, autoRenewalDays]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -251,12 +295,55 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
       // გამოვთვალოთ ჯამური ფასი
       const calculatedPrice = calculateTotalPrice(selectedStatus, finalDays);
       
-      // გამოვიყენოთ balanceService-ის purchaseVipStatus მეთოდი
-      const result = await balanceService.purchaseVipStatus(
-        car.id,
-        selectedStatus as 'vip' | 'vip_plus' | 'super_vip',
-        finalDays // ვრწმუნდებით რომ გადავცემთ მთელ რიცხვს
-      );
+      // Try comprehensive VIP package purchase if additional services are selected
+      let result;
+      if (colorHighlighting || autoRenewal) {
+        try {
+          // Import vipService for comprehensive package purchase
+          const vipService = (await import('../../../../../api/services/vipService')).default;
+          
+          const vipPackage = {
+            vip_status: selectedStatus,
+            vip_days: finalDays,
+            color_highlighting: colorHighlighting,
+            color_highlighting_days: colorHighlightingDays,
+            auto_renewal: autoRenewal,
+            auto_renewal_days: autoRenewalDays
+          };
+          
+          console.log('Attempting comprehensive VIP package purchase:', vipPackage);
+          result = await vipService.purchaseVipPackage(car.id, vipPackage);
+          
+          // Convert to expected format
+          result = {
+            success: true,
+            newBalance: userBalance - calculatedPrice, // Manually calculate new balance
+            message: 'VIP package purchased successfully'
+          };
+        } catch (packageError) {
+          console.warn('Comprehensive VIP package purchase failed, falling back to basic VIP status:', packageError);
+          
+          // Fallback to basic VIP status purchase
+          result = await balanceService.purchaseVipStatus(
+            car.id,
+            selectedStatus as 'vip' | 'vip_plus' | 'super_vip',
+            finalDays
+          );
+          
+          // Manually deduct additional services cost
+          if (result.success) {
+            const additionalCost = getAdditionalServicesPrice();
+            result.newBalance -= additionalCost;
+          }
+        }
+      } else {
+        // গামოვიყენოთ balanceService-ის purchaseVipStatus მეთოდი
+        result = await balanceService.purchaseVipStatus(
+          car.id,
+          selectedStatus as 'vip' | 'vip_plus' | 'super_vip',
+          finalDays // ვრწმუნდებით რომ გადავცემთ მთელ რიცხვს
+        );
+      }
       
       if (result.success) {
         setUserBalance(result.newBalance); // განვაახლოთ ბალანსი
@@ -367,6 +454,95 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
                     onClick={handleStatusChange}
                   />
                 ))}
+              </div>
+            </div>
+            
+            {/* Additional Services */}
+            <div className="mb-6">
+              <h4 className="block text-gray-700 font-medium mb-4">{t("profile:addCar.vipStatus.additionalServices")}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Color Highlighting Card */}
+                <div 
+                  className={`relative border-2 rounded-lg p-3 cursor-pointer transition-all ${
+                    colorHighlighting ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`} 
+                  onClick={() => setColorHighlighting(!colorHighlighting)}
+                >
+                  {colorHighlighting && (
+                    <div className="absolute top-2 right-2">
+                      <Check className="text-blue-600" size={16} />
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 mb-2">
+                    <Paintbrush className="text-blue-500" size={18} />
+                    <h5 className="font-medium text-sm text-blue-700">{t("profile:addCar.vipStatus.colorHighlighting")}</h5>
+                  </div>
+                  <div className="text-xs font-medium text-blue-700 mb-2">
+                    {getAdditionalServicePrice('color_highlighting') === 0 ? t("profile:addCar.vipStatus.free") : `${getAdditionalServicePrice('color_highlighting')} ${t("profile:addCar.vipStatus.currency")}/${t('profile:cars.vip.modal.days')}`}
+                  </div>
+                  
+                  {/* Days input for Color Highlighting */}
+                  {colorHighlighting && (
+                    <div className="mt-2 p-2 bg-blue-100 rounded border border-blue-200">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="1"
+                          value={colorHighlightingDays}
+                          onChange={(e) => {
+                            const days = Math.max(1, parseInt(e.target.value) || 1);
+                            setColorHighlightingDays(days);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-16 px-1 py-1 border border-blue-300 rounded text-xs"
+                        />
+                        <span className="text-xs text-blue-600">{t("profile:cars.vip.modal.days")}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Auto Renewal Card */}
+                <div 
+                  className={`relative border-2 rounded-lg p-3 cursor-pointer transition-all ${
+                    autoRenewal ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`} 
+                  onClick={() => setAutoRenewal(!autoRenewal)}
+                >
+                  {autoRenewal && (
+                    <div className="absolute top-2 right-2">
+                      <Check className="text-green-600" size={16} />
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 mb-2">
+                    <RefreshCw className="text-green-500" size={18} />
+                    <h5 className="font-medium text-sm text-green-700">{t("profile:addCar.vipStatus.autoRenewal")}</h5>
+                  </div>
+                  <div className="text-xs font-medium text-green-700 mb-2">
+                    {getAdditionalServicePrice('auto_renewal') === 0 ? t("profile:addCar.vipStatus.free") : `${getAdditionalServicePrice('auto_renewal')} ${t("profile:addCar.vipStatus.currency")}/${t('profile:cars.vip.modal.days')}`}
+                  </div>
+                  
+                  {/* Days input for Auto Renewal */}
+                  {autoRenewal && (
+                    <div className="mt-2 p-2 bg-green-100 rounded border border-green-200">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="1"
+                          value={autoRenewalDays}
+                          onChange={(e) => {
+                            const days = Math.max(1, parseInt(e.target.value) || 1);
+                            setAutoRenewalDays(days);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-16 px-1 py-1 border border-green-300 rounded text-xs"
+                        />
+                        <span className="text-xs text-green-600">{t("profile:cars.vip.modal.days")}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             

@@ -1,44 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Check, AlertCircle, Paintbrush, RefreshCw } from 'lucide-react';
+import { Star, Check, AlertCircle, Paintbrush, RefreshCw, Crown, Award, Zap, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import vipService, { VipStatus } from '../../../../../api/services/vipService';
 import vipPricingService, { VipServicePricing } from '../../../../../api/services/vipPricingService';
 import { useToast } from '../../../../../context/ToastContext';
-import balanceService from '../../../../../api/services/balanceService';
 
 interface VIPStatusProps {
   vipStatus: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  vipDays: number;
+  colorHighlighting: boolean;
+  colorHighlightingDays: number;
+  autoRenewal: boolean;
+  autoRenewalDays: number;
+  userBalance: number;
   onChange: (field: string, value: any) => void;
 }
 
-const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
+const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighlighting, colorHighlightingDays, autoRenewal, autoRenewalDays, userBalance, onChange }) => {
   const { t } = useTranslation('profile');
   const { showToast } = useToast();
   const [isPurchasing, setIsPurchasing] = useState<boolean>(false);
-  const [userBalance, setUserBalance] = useState<number>(0);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [selectedVipStatus, setSelectedVipStatus] = useState<VipStatus>('none');
-  const [colorHighlighting, setColorHighlighting] = useState<boolean>(false);
-  const [autoRenewal, setAutoRenewal] = useState<boolean>(false);
   const [vipPricing, setVipPricing] = useState<VipServicePricing[]>([]);
   const [additionalServicesPricing, setAdditionalServicesPricing] = useState<VipServicePricing[]>([]);
   const [pricingLoaded, setPricingLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchUserBalance();
     fetchVipPricing();
   }, []);
 
 
-  const fetchUserBalance = async () => {
-    try {
-      const balance = await balanceService.getBalance();
-      setUserBalance(balance);
-    } catch (error) {
-      console.error('Error fetching user balance:', error);
-      setUserBalance(0);
-    }
-  };
 
   const fetchVipPricing = async () => {
     try {
@@ -46,6 +38,8 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
       setVipPricing(pricingData.packages);
       setAdditionalServicesPricing(pricingData.additionalServices);
       setPricingLoaded(true);
+      console.log(pricingData);
+
     } catch (error) {
       console.error('Error fetching VIP pricing:', error);
       setPricingLoaded(true); // Still set to true to show fallback prices
@@ -54,16 +48,27 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
 
   const handleStatusChange = (status: 'none' | 'vip' | 'vip_plus' | 'super_vip') => {
     onChange('vip_status', status);
+    if (status === 'none') {
+      onChange('vip_days', 1);
+    }
   };
 
   const handleColorHighlightingChange = (enabled: boolean) => {
-    setColorHighlighting(enabled);
     onChange('color_highlighting', enabled);
+    if (enabled && colorHighlightingDays === 0) {
+      onChange('color_highlighting_days', 1);
+    } else if (!enabled) {
+      onChange('color_highlighting_days', 1);
+    }
   };
 
   const handleAutoRenewalChange = (enabled: boolean) => {
-    setAutoRenewal(enabled);
     onChange('auto_renewal', enabled);
+    if (enabled && autoRenewalDays === 0) {
+      onChange('auto_renewal_days', 1);
+    } else if (!enabled) {
+      onChange('auto_renewal_days', 1);
+    }
   };
 
   const getVipPrice = (status: VipStatus): number => {
@@ -87,68 +92,55 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
     return price;
   };
 
-  // VIP პაკეტის ფასის ფორმატირება is_daily_price-ის მიხედვით
-  const getVipPriceDisplay = (status: Exclude<VipStatus, 'none'>): string => {
-    if (!pricingLoaded || vipPricing.length === 0) {
-      // Fallback display
-      const price = getVipPrice(status);
-      return `${price} ${t('addCar.vipStatus.currency')}/${t('profile:cars.vip.modal.day')}`;
-    }
+  // Helper function to format price - shows "Free" if price is 0
+  const formatPrice = (price: number | string): string => {
+    const numPrice = typeof price === 'string' ? parseFloat(price) || 0 : price || 0;
+    return numPrice === 0 ? t('addCar.vipStatus.free') : `${numPrice.toFixed(2)} ${t('addCar.vipStatus.currency')}`;
+  };
 
-    const pricing = vipPricing.find(p => p.service_type === status);
-    if (!pricing) {
-      const price = getVipPrice(status);
-      return `${price} ${t('addCar.vipStatus.currency')}/${t('profile:cars.vip.modal.day')}`;
-    }
-
-    const price = Number(pricing.price);
+  // VIP პაკეტის ფასის ფორმატირება - ყოველთვის დღიური ფასი
+  const getVipPriceDisplay = (status: VipStatus): string => {
+    const price = getVipPrice(status);
     const currency = t('addCar.vipStatus.currency');
-
-    if (pricing.is_daily_price) {
-      return `${price} ${currency}/${t('profile:cars.vip.modal.day')}`;
-    } else {
-      const duration = pricing.duration_days || 1;
-      const daysText = duration === 1 ? t('profile:cars.vip.modal.day') : t('profile:cars.vip.modal.days');
-      return `${price} ${currency} (${duration} ${daysText})`;
-    }
+    return price === 0 ? t('addCar.vipStatus.free') : `${price} ${currency}/${t('profile:cars.vip.modal.day')}`;
   };
 
-  // შევამოწმოთ არის თუ არა არჩეული სტატუსი ფიქსირებული ვადით
-  const isFixedDurationPackage = (status: VipStatus): boolean => {
-    if (status === 'none') return false;
-    const pricing = vipPricing.find(p => p.service_type === status);
-    return pricing ? !pricing.is_daily_price : false;
-  };
 
-  // VIP პაკეტის ინფორმაციის მიღება
-  const getVipPricingInfo = (status: Exclude<VipStatus, 'none'>) => {
-    const pricing = vipPricing.find(p => p.service_type === status);
-    return pricing || null;
-  };
-
+  // Get total price for additional services (calculated with their individual days)
   const getAdditionalServicesPrice = (): number => {
     let price = 0;
 
     if (colorHighlighting) {
       const colorPricing = additionalServicesPricing.find(s => s.service_type === 'color_highlighting');
-      price += colorPricing ? colorPricing.price : 0.5;
+      const dailyPrice = colorPricing ? colorPricing.price : 0.5;
+      price += dailyPrice * colorHighlightingDays;
     }
 
     if (autoRenewal) {
       const renewalPricing = additionalServicesPricing.find(s => s.service_type === 'auto_renewal');
-      price += renewalPricing ? renewalPricing.price : 0.5;
+      const dailyPrice = renewalPricing ? renewalPricing.price : 0.5;
+      price += dailyPrice * autoRenewalDays;
     }
 
     return price;
   };
 
+  // Get daily price for individual service (not multiplied by days)
   const getAdditionalServicePrice = (serviceType: string): number => {
     const pricing = additionalServicesPricing.find(s => s.service_type === serviceType);
     return pricing ? pricing.price : (serviceType === 'color_highlighting' || serviceType === 'auto_renewal' ? 0.5 : 0);
   };
 
-  const getTotalPrice = (status: VipStatus): number => {
-    return getVipPrice(status) + getAdditionalServicesPrice();
+  // Get total price for VIP status with its days
+  const getVipStatusTotalPrice = (status: VipStatus, days: number): number => {
+    return getVipPrice(status) * days;
+  };
+
+  // Get total price for everything (VIP + additional services)
+  const getTotalPrice = (status: VipStatus, days: number = vipDays): number => {
+    const vipPrice = getVipStatusTotalPrice(status, days);
+    const additionalPrice = getAdditionalServicesPrice();
+    return vipPrice + additionalPrice;
   };
 
   const handlePurchaseClick = (status: VipStatus) => {
@@ -157,9 +149,9 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
   };
 
   const confirmPurchase = async () => {
-    if (selectedVipStatus === 'none') return;
+    if (selectedVipStatus === 'none' && getVipPrice('none') === 0) return;
 
-    const totalPrice = getTotalPrice(selectedVipStatus);
+    const totalPrice = getTotalPrice(selectedVipStatus, vipDays);
 
     if (userBalance < totalPrice) {
       showToast(t('addCar.vipStatus.insufficientBalance'), 'error');
@@ -185,8 +177,9 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         ? ` ${t('addCar.vipStatus.additionalServices')}: ${additionalServices.join(', ')}`
         : '';
 
-      const statusName = selectedVipStatus === 'vip' ? t('addCar.vipStatus.types.vip') : selectedVipStatus === 'vip_plus' ? t('addCar.vipStatus.types.vip_plus') : t('addCar.vipStatus.types.super_vip');
-      showToast(`${statusName}${additionalServicesText} selected. After adding the car, ${totalPrice} GEL will be deducted from your balance.`, 'success');
+      const statusName = selectedVipStatus === 'none' ? t('addCar.vipStatus.types.none') : selectedVipStatus === 'vip' ? t('addCar.vipStatus.types.vip') : selectedVipStatus === 'vip_plus' ? t('addCar.vipStatus.types.vip_plus') : t('addCar.vipStatus.types.super_vip');
+      const totalCost = getTotalPrice(selectedVipStatus, vipDays);
+      showToast(`${statusName}${additionalServicesText} selected for ${vipDays} days. After adding the car, ${totalCost} GEL will be deducted from your balance.`, 'success');
     } catch (error) {
       console.error('Error setting VIP status:', error);
       showToast('Failed to select VIP status', 'error');
@@ -204,7 +197,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
           <h3 className="text-lg font-medium">{t('addCar.vipStatus.titleFull')}</h3>
         </div>
         <div className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm">
-          {t('addCar.vipStatus.balance')}: {userBalance} {t('addCar.vipStatus.currency')}
+          {t('addCar.vipStatus.balance')}: {formatPrice(userBalance || 0)}
         </div>
       </div>
 
@@ -231,7 +224,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
               </div>
             )}
 
-            <p className="mb-6 font-medium">{t('addCar.vipStatus.totalPrice', { price: getTotalPrice(selectedVipStatus) })}</p>
+            <p className="mb-6 font-medium">{t('addCar.vipStatus.totalPrice', { price: getTotalPrice(selectedVipStatus, vipDays) })}</p>
 
             <div className="flex justify-end space-x-4">
               <button
@@ -242,7 +235,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
               </button>
               <button
                 onClick={confirmPurchase}
-                disabled={isPurchasing || userBalance < getTotalPrice(selectedVipStatus)}
+                disabled={isPurchasing || userBalance < getTotalPrice(selectedVipStatus, vipDays)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
               >
                 {isPurchasing ? t('addCar.vipStatus.processing') : t('addCar.vipStatus.confirm')}
@@ -252,111 +245,195 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         </div>
       )}
 
-      {/* Additional Services - Independent of VIP status */}
-      <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-        <h4 className="font-medium mb-3">{t('addCar.vipStatus.additionalServices')}</h4>
-        <div className="space-y-4">
-          {/* Color Highlighting */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Paintbrush size={16} className="text-blue-500 mr-2" />
-              <div>
-                <p className="text-sm font-medium">{t('addCar.vipStatus.colorHighlighting')}</p>
-                <p className="text-xs text-gray-500">{t('addCar.vipStatus.colorHighlightingDescription')}</p>
+      {/* Additional Services - Card-based Design */}
+      <div className="mb-6">
+        <h4 className="font-medium mb-4">{t('addCar.vipStatus.additionalServices')}</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          {/* Color Highlighting Card */}
+          <div className={`relative border-2 rounded-xl p-4 cursor-pointer transition-all transform hover:scale-105 ${
+            colorHighlighting ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
+          }`} onClick={() => handleColorHighlightingChange(!colorHighlighting)}>
+            {colorHighlighting && (
+              <div className="absolute top-3 right-3">
+                <Check className="text-blue-600" size={20} />
               </div>
+            )}
+            <div className="flex items-center gap-2 mb-3">
+              <Paintbrush className="text-blue-500" size={24} />
+              <h5 className="font-semibold text-lg text-blue-700">{t('addCar.vipStatus.colorHighlighting')}</h5>
             </div>
-            <div className="flex items-center">
-              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2">{getAdditionalServicePrice('color_highlighting').toString() === '0.00' ? t('addCar.vipStatus.free') : t('addCar.vipStatus.pricePerDay') + " " + getAdditionalServicePrice('color_highlighting').toString() + " " + t("addCar.vipStatus.currency")}</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={colorHighlighting}
-                  onChange={(e) => handleColorHighlightingChange(e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
+            <p className="text-sm text-gray-600 mb-3">{t('addCar.vipStatus.colorHighlightingDescription')}</p>
+            <div className="flex items-center justify-between text-sm font-medium text-blue-700 mb-3">
+              <span>{getAdditionalServicePrice('color_highlighting').toString() === '0.00' ? t('addCar.vipStatus.free') : `${getAdditionalServicePrice('color_highlighting')} ${t("addCar.vipStatus.currency")}/${t('profile:cars.vip.modal.day')}`}</span>
             </div>
+            
+            {/* Days input for Color Highlighting */}
+            {colorHighlighting && (
+              <div className="mt-4 p-3 bg-blue-100 rounded-lg border border-blue-200">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="1"
+                    value={colorHighlightingDays}
+                    onChange={(e) => {
+                      const days = Math.max(1, parseInt(e.target.value) || 1);
+                      onChange('color_highlighting_days', days);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-20 px-2 py-1 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                  <span className="text-sm text-blue-600">{t('profile:cars.vip.modal.days')}</span>
+                  <div className="ml-auto text-sm font-medium text-blue-700">
+                    {formatPrice(getAdditionalServicePrice('color_highlighting') * colorHighlightingDays)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Auto Renewal */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <RefreshCw size={16} className="text-green-500 mr-2" />
-              <div>
-                <p className="text-sm font-medium">{t('addCar.vipStatus.autoRenewal')}</p>
-                <p className="text-xs text-gray-500">{t('addCar.vipStatus.autoRenewalDescription')}</p>
+          {/* Auto Renewal Card */}
+          <div className={`relative border-2 rounded-xl p-4 cursor-pointer transition-all transform hover:scale-105 ${
+            autoRenewal ? 'border-green-500 bg-green-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
+          }`} onClick={() => handleAutoRenewalChange(!autoRenewal)}>
+            {autoRenewal && (
+              <div className="absolute top-3 right-3">
+                <Check className="text-green-600" size={20} />
               </div>
+            )}
+            <div className="flex items-center gap-2 mb-3">
+              <RefreshCw className="text-green-500" size={24} />
+              <h5 className="font-semibold text-lg text-green-700">{t('addCar.vipStatus.autoRenewal')}</h5>
             </div>
-            <div className="flex items-center">
-              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2">{getAdditionalServicePrice('auto_renewal').toString() === '0.00' ? t('addCar.vipStatus.free') : t('addCar.vipStatus.pricePerDay') + " " + getAdditionalServicePrice('auto_renewal').toString() + " " + t("addCar.vipStatus.currency")}</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={autoRenewal}
-                  onChange={(e) => handleAutoRenewalChange(e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-              </label>
+            <p className="text-sm text-gray-600 mb-3">{t('addCar.vipStatus.autoRenewalDescription')}</p>
+            <div className="flex items-center justify-between text-sm font-medium text-green-700 mb-3">
+              <span>{getAdditionalServicePrice('auto_renewal').toString() === '0.00' ? t('addCar.vipStatus.free') : `${getAdditionalServicePrice('auto_renewal')} ${t("addCar.vipStatus.currency")}/${t('profile:cars.vip.modal.day')}`}</span>
             </div>
+            
+            {/* Days input for Auto Renewal */}
+            {autoRenewal && (
+              <div className="mt-4 p-3 bg-green-100 rounded-lg border border-green-200">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="1"
+                    value={autoRenewalDays}
+                    onChange={(e) => {
+                      const days = Math.max(1, parseInt(e.target.value) || 1);
+                      onChange('auto_renewal_days', days);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-20 px-2 py-1 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                  />
+                  <span className="text-sm text-green-600">{t('profile:cars.vip.modal.days')}</span>
+                  <div className="ml-auto text-sm font-medium text-green-700">
+                    {formatPrice(getAdditionalServicePrice('auto_renewal') * autoRenewalDays)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <h4 className="font-medium mb-3">{t('addCar.vipStatus.title')}</h4>
+      <h4 className="font-medium mb-4">{t('addCar.vipStatus.title')}</h4>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div
-          className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${vipStatus === 'none' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+          className={`relative border-2 rounded-xl p-5 cursor-pointer transition-all transform hover:scale-105 ${vipStatus === 'none' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
             }`}
           onClick={() => handleStatusChange('none')}
         >
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-medium">{t('addCar.vipStatus.types.none')}</h4>
-            <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-              {getVipPrice('none')=== 0 ? t('addCar.vipStatus.free') : t('addCar.vipStatus.pricePerDay') + " " + getVipPrice('none').toString() + " " + t("addCar.vipStatus.currency")}
+          {vipStatus === 'none' && (
+            <div className="absolute top-3 right-3">
+              <Check className="text-blue-600" size={24} />
+            </div>
+          )}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="text-gray-500" size={24} />
+              <h4 className="font-semibold m-0 text-lg">{t('addCar.vipStatus.types.none')}</h4>
+            </div>
+            <span className="text-sm font-medium text-gray-600">
+              {getVipPrice('none') === 0 ? t('addCar.vipStatus.free') : getVipPriceDisplay('none')}
             </span>
           </div>
-          <p className="text-xs text-gray-500">{t('addCar.vipStatus.descriptions.none')}</p>
+          <p className="text-sm text-gray-600 leading-relaxed mb-3">{t('addCar.vipStatus.descriptions.none')}</p>
+
+          {/* Days input field for 'none' status if it has a price */}
+          {vipStatus === 'none' && getVipPrice('none') > 0 && (
+            <div className="mt-4 p-3 bg-blue-100 rounded-lg border border-blue-200">
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  value={vipDays}
+                  onChange={(e) => {
+                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    onChange('vip_days', days);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-20 px-2 py-1 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                />
+                <span className="text-sm text-blue-600">{t('profile:cars.vip.modal.days')}</span>
+                <div className="ml-auto text-sm font-medium text-blue-700">
+                  {formatPrice(getVipStatusTotalPrice('none', vipDays))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div
-          className={`border-2 rounded-lg p-4 transition-all ${vipStatus === 'vip' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+          className={`relative border-2 rounded-xl p-5 cursor-pointer transition-all transform hover:scale-105 ${vipStatus === 'vip' ? 'border-yellow-500 bg-yellow-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
             }`}
+          onClick={() => handleStatusChange('vip')}
         >
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-medium">{t('addCar.vipStatus.types.vip')}</h4>
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+          {vipStatus === 'vip' && (
+            <div className="absolute top-3 right-3">
+              <Check className="text-yellow-600" size={24} />
+            </div>
+          )}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1">
+                <Star className="text-yellow-500" size={24} fill="currentColor" />
+                <Award className="text-yellow-500" size={20} />
+              </div>
+              <Crown className="text-yellow-500" size={28} fill="currentColor" />
+              <h4 className="font-semibold m-0 text-lg text-yellow-700">{t('addCar.vipStatus.types.vip')}</h4>
+            </div>
+            <span className="text-sm font-medium text-yellow-700">
               {getVipPrice("vip") === 0 ? t('addCar.vipStatus.free') : getVipPriceDisplay('vip')}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mb-2">{t('addCar.vipStatus.descriptions.vip')}</p>
-          {/* ფიქსირებული ვადის შეტყობინება */}
-          {isFixedDurationPackage('vip') && (
-            <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-              <p className="text-blue-700">
-                {t('profile:cars.vip.modal.fixedDurationMessage', { days: getVipPricingInfo('vip')?.duration_days || 1 })}
-              </p>
+          <p className="text-sm text-gray-600 leading-relaxed mb-3">{t('addCar.vipStatus.descriptions.vip')}</p>
+
+          {/* Days input field for VIP status */}
+          {vipStatus === 'vip' && (
+            <div className="mt-4 p-3 bg-yellow-100 rounded-lg border border-yellow-200">
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  value={vipDays}
+                  onChange={(e) => {
+                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    onChange('vip_days', days);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-20 px-2 py-1 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm"
+                />
+                <span className="text-sm text-yellow-600">{t('profile:cars.vip.modal.days')}</span>
+                <div className="ml-auto text-sm font-medium text-yellow-700">
+                  {formatPrice(getVipStatusTotalPrice('vip', vipDays))}
+                </div>
+              </div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-1">
-            <button
-              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 py-1 rounded transition-colors"
-              onClick={() => handleStatusChange('vip')}
-            >
-              {t('addCar.vipStatus.select')}
-            </button>
-            <button
-              className="text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 rounded transition-colors"
-              onClick={() => handlePurchaseClick('vip')}
-              disabled={userBalance < getVipPrice('vip')}
-            >
-              {t('addCar.vipStatus.purchase')}
-            </button>
-          </div>
-          {userBalance < getVipPrice('vip') && (
-            <div className="flex items-center mt-2 text-xs text-red-500">
+
+          {userBalance < getTotalPrice('vip', vipDays) && (
+            <div className="flex items-center mt-3 text-xs text-red-500">
               <AlertCircle size={12} className="mr-1" />
               <span>{t('addCar.vipStatus.insufficientBalance')}</span>
             </div>
@@ -364,41 +441,59 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         </div>
 
         <div
-          className={`border-2 rounded-lg p-4 transition-all ${vipStatus === 'vip_plus' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+          className={`relative border-2 rounded-xl p-5 cursor-pointer transition-all transform hover:scale-105 ${vipStatus === 'vip_plus' ? 'border-orange-500 bg-orange-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
             }`}
+          onClick={() => handleStatusChange('vip_plus')}
         >
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-medium">{t('addCar.vipStatus.types.vip_plus')}</h4>
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+          {vipStatus === 'vip_plus' && (
+            <div className="absolute top-3 right-3">
+              <Check className="text-orange-600" size={24} />
+            </div>
+          )}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1">
+                <Star className="text-orange-500" size={24} fill="currentColor" />
+                <Star className="text-orange-500" size={24} fill="currentColor" />
+                <Zap className="text-orange-500" size={20} />
+              </div>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Crown className="text-orange-500" size={28} fill="currentColor" />
+                <h4 className="font-semibold m-0 text-lg text-orange-700">{t('addCar.vipStatus.types.vip_plus')}</h4>
+              </div>
+
+            </div>
+            <span className="text-sm font-medium text-orange-700">
               {getVipPrice("vip_plus") === 0 ? t('addCar.vipStatus.free') : getVipPriceDisplay('vip_plus')}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mb-2">{t('addCar.vipStatus.descriptions.vip_plus')}</p>
-          {/* ფიქსირებული ვადის შეტყობინება */}
-          {isFixedDurationPackage('vip_plus') && (
-            <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-              <p className="text-blue-700">
-                {t('profile:cars.vip.modal.fixedDurationMessage') + getVipPricingInfo('vip_plus')?.duration_days || 1} {t("profile:cars.vip.modal.days")}
-              </p>
+          <p className="text-sm text-gray-600 leading-relaxed mb-3">{t('addCar.vipStatus.descriptions.vip_plus')}</p>
+
+          {/* Days input field for VIP Plus status */}
+          {vipStatus === 'vip_plus' && (
+            <div className="mt-4 p-3 bg-orange-100 rounded-lg border border-orange-200">
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  value={vipDays}
+                  onChange={(e) => {
+                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    onChange('vip_days', days);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-20 px-2 py-1 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                />
+                <span className="text-sm text-orange-600">{t('profile:cars.vip.modal.days')}</span>
+                <div className="ml-auto text-sm font-medium text-orange-700">
+                  {formatPrice(getVipStatusTotalPrice('vip_plus', vipDays))}
+                </div>
+              </div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-1">
-            <button
-              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 py-1 rounded transition-colors"
-              onClick={() => handleStatusChange('vip_plus')}
-            >
-              {t('addCar.vipStatus.select')}
-            </button>
-            <button
-              className="text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 rounded transition-colors"
-              onClick={() => handlePurchaseClick('vip_plus')}
-              disabled={userBalance < getVipPrice('vip_plus')}
-            >
-              {t('addCar.vipStatus.purchase')}
-            </button>
-          </div>
-          {userBalance < getVipPrice('vip_plus') && (
-            <div className="flex items-center mt-2 text-xs text-red-500">
+
+          {userBalance < getTotalPrice('vip_plus', vipDays) && (
+            <div className="flex items-center mt-3 text-xs text-red-500">
               <AlertCircle size={12} className="mr-1" />
               <span>{t('addCar.vipStatus.insufficientBalance')}</span>
             </div>
@@ -406,47 +501,114 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, onChange }) => {
         </div>
 
         <div
-          className={`border-2 rounded-lg p-4 transition-all ${vipStatus === 'super_vip' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+          className={`relative border-2 rounded-xl p-5 cursor-pointer transition-all transform hover:scale-105 ${vipStatus === 'super_vip' ? 'border-purple-500 bg-purple-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
             }`}
+          onClick={() => handleStatusChange('super_vip')}
         >
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-medium">{t('addCar.vipStatus.types.super_vip')}</h4>
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+          {vipStatus === 'super_vip' && (
+            <div className="absolute top-3 right-3">
+              <Check className="text-purple-600" size={24} />
+            </div>
+          )}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1">
+                <Crown className="text-purple-500" size={28} fill="currentColor" />
+                <Star className="text-purple-500" size={20} fill="currentColor" />
+                <Star className="text-purple-500" size={20} fill="currentColor" />
+                <Star className="text-purple-500" size={20} fill="currentColor" />
+              </div>
+              <Crown className="text-purple-500" size={28} fill="currentColor" />
+              <h4 className="font-semibold m-0 text-lg text-purple-700">{t('addCar.vipStatus.types.super_vip')}</h4>
+            </div>
+            <span className="text-sm font-medium text-purple-700">
               {getVipPrice("super_vip") === 0 ? t('addCar.vipStatus.free') : getVipPriceDisplay('super_vip')}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mb-2">{t('addCar.vipStatus.descriptions.super_vip')}</p>
-          {/* ფიქსირებული ვადის შეტყობინება */}
-          {isFixedDurationPackage('super_vip') && (
-            <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-              <p className="text-blue-700">
-                {t('profile:cars.vip.modal.fixedDurationMessage', { days: getVipPricingInfo('super_vip')?.duration_days || 1 })}
-              </p>
+          <p className="text-sm text-gray-600 leading-relaxed mb-3">{t('addCar.vipStatus.descriptions.super_vip')}</p>
+
+          {/* Days input field for Super VIP status */}
+          {vipStatus === 'super_vip' && (
+            <div className="mt-4 p-3 bg-purple-100 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  value={vipDays}
+                  onChange={(e) => {
+                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    onChange('vip_days', days);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-20 px-2 py-1 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                />
+                <span className="text-sm text-purple-600">{t('profile:cars.vip.modal.days')}</span>
+                <div className="ml-auto text-sm font-medium text-purple-700">
+                  {formatPrice(getVipStatusTotalPrice('super_vip', vipDays))}
+                </div>
+              </div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-1">
-            <button
-              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 py-1 rounded transition-colors"
-              onClick={() => handleStatusChange('super_vip')}
-            >
-              {t('addCar.vipStatus.select')}
-            </button>
-            <button
-              className="text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 rounded transition-colors"
-              onClick={() => handlePurchaseClick('super_vip')}
-              disabled={userBalance < getVipPrice('super_vip')}
-            >
-              {t('addCar.vipStatus.purchase')}
-            </button>
-          </div>
-          {userBalance < getVipPrice('super_vip') && (
-            <div className="flex items-center mt-2 text-xs text-red-500">
+
+          {userBalance < getTotalPrice('super_vip', vipDays) && (
+            <div className="flex items-center mt-3 text-xs text-red-500">
               <AlertCircle size={12} className="mr-1" />
               <span>{t('addCar.vipStatus.insufficientBalance')}</span>
             </div>
           )}
         </div>
       </div>
+
+      {/* Price Summary */}
+      {(vipStatus !== 'none' || getVipPrice('none') > 0 || colorHighlighting || autoRenewal) && (
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h4 className="font-medium mb-3">{t('addCar.vipStatus.priceSummary', { defaultValue: 'Price Summary' })}</h4>
+          <div className="space-y-2 text-sm">
+            {(vipStatus !== 'none' || getVipPrice('none') > 0) && (
+              <div className="flex justify-between">
+                <span>
+                  {t(`addCar.vipStatus.types.${vipStatus}`)} ({vipDays} {vipDays === 1 ? t('profile:cars.vip.modal.day') : t('profile:cars.vip.modal.days')})
+                </span>
+                <span className="font-medium">
+                  {formatPrice(getVipStatusTotalPrice(vipStatus, vipDays))}
+                </span>
+              </div>
+            )}
+            {colorHighlighting && (
+              <div className="flex justify-between">
+                <span>
+                  {t('addCar.vipStatus.colorHighlighting')} ({colorHighlightingDays} {colorHighlightingDays === 1 ? t('profile:cars.vip.modal.day') : t('profile:cars.vip.modal.days')})
+                </span>
+                <span className="font-medium">
+                  {formatPrice(getAdditionalServicePrice('color_highlighting') * colorHighlightingDays)}
+                </span>
+              </div>
+            )}
+            {autoRenewal && (
+              <div className="flex justify-between">
+                <span>
+                  {t('addCar.vipStatus.autoRenewal')} ({autoRenewalDays} {autoRenewalDays === 1 ? t('profile:cars.vip.modal.day') : t('profile:cars.vip.modal.days')})
+                </span>
+                <span className="font-medium">
+                  {formatPrice(getAdditionalServicePrice('auto_renewal') * autoRenewalDays)}
+                </span>
+              </div>
+            )}
+            <hr className="my-2" />
+            <div className="flex justify-between font-semibold text-lg">
+              <span>{t('cars.vip.modal.totalPrice')}:</span>
+              <span className="text-blue-600">
+                {formatPrice(getTotalPrice(vipStatus, vipDays))}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs text-gray-600">
+              <span>{t('cars.vip.modal.yourBalance')}</span>
+              <span>{formatPrice(userBalance || 0)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
