@@ -48,9 +48,37 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     // This effect will run whenever the language changes
     console.log('Current language in CarCard:', i18n.language);
   }, [i18n.language]);
-  // Simple: just use car.vip_status from API (same as color_highlighting_enabled)
-  console.log(`[CarCard API Check] Car ${car.id} - API vip_status:`, car.vip_status);
   const navigate = useNavigate();
+  
+  // Log initial props when component mounts
+  console.log(`[CarCard] Initial render - Car ${car.id} - VIP status:`, car.vip_status, 'Car object:', {
+    id: car.id,
+    brand: car.brand,
+    model: car.model,
+    vip_status: car.vip_status,
+    color_highlighting_enabled: car.color_highlighting_enabled,
+    timestamp: new Date().toISOString()
+  });
+
+  // Log when car prop changes
+  useEffect(() => {
+    console.log(`[CarCard] Car ${car.id} - Props changed - VIP status:`, car.vip_status, 'Car object:', {
+      id: car.id,
+      brand: car.brand,
+      model: car.model,
+      vip_status: car.vip_status,
+      color_highlighting_enabled: car.color_highlighting_enabled,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Log the actual prototype chain to check for getters/setters
+    console.log(`[CarCard] Car ${car.id} - Prototype chain:`, {
+      hasOwnVipStatus: car.hasOwnProperty('vip_status'),
+      prototypeChain: Object.getPrototypeOf(car),
+      descriptor: Object.getOwnPropertyDescriptor(car, 'vip_status') || 'No direct property',
+      keys: Object.keys(car)
+    });
+  }, [car]);
   const { showToast } = useToast();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { isAuthenticated } = useAuth();
@@ -231,44 +259,43 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     }
   };
 
-  // Debug: Log all car properties and their values
+  // Debug: Log car properties related to VIP and highlighting
   useEffect(() => {
-    console.log('=== CAR DATA ===');
-    console.log('Car ID:', car.id);
-    console.log('Car title:', car.title || `${car.brand} ${car.model}`);
+    console.log('=== CAR CARD DEBUG ===');
+    console.log(`Car ID: ${car.id}, Title: ${car.title || `${car.brand} ${car.model}`}`);
+    console.log(`VIP Status: ${car.vip_status}, Highlighting: ${car.color_highlighting_enabled}`);
 
-    // Log all properties and their values
-    Object.entries(car).forEach(([key, value]) => {
-      console.log(`${key}:`, value);
-    });
-
-    // Check for any highlighting-related properties
-    const highlightProps = Object.entries(car).filter(([key]) =>
-      key.toLowerCase().includes('highlight') ||
-      key.toLowerCase().includes('color_highlight')
+    // Log all VIP-related properties
+    const vipProps = Object.entries(car).filter(([key]) =>
+      key.toLowerCase().includes('vip') ||
+      key.toLowerCase().includes('highlight')
     );
-
-    console.log('Highlight-related properties:', highlightProps);
+    console.log('VIP/Highlighting properties:', Object.fromEntries(vipProps));
   }, [car]);
 
-  // Check if the car has highlighting service enabled or has VIP status
-  // For now, we'll use VIP status as a fallback since highlighting properties aren't in the response
-  const hasHighlighting = (
-    car.color_highlighting_enabled
-  ) === true;
+  // Check if the car should be highlighted based on VIP status or highlighting service
+  const hasHighlighting = (car.color_highlighting_enabled === true) ||
+    (car.vip_status && car.vip_status !== 'none');
 
-  const hasColor = car.color_highlighting_enabled;
-
-  console.log(hasColor + "*******************************");
-
+  // Determine if we should show the VIP badge
+  const showVipBadgeActual = showVipBadge &&
+    car.vip_status &&
+    car.vip_status !== 'none';
+  
+  console.log(`[CarCard] Car ${car.id} - Display check:`, {
+    showVipBadge: showVipBadge,
+    vip_status: car.vip_status,
+    showVipBadgeActual: showVipBadgeActual,
+    hasHighlighting: hasHighlighting
+  });
 
   return (
     <div onClick={handleClick}
       className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg relative group cursor-pointer	${hasHighlighting ? 'border-2 border-green-500' : 'border border-gray-200'
         }`}
     >
-      {/* VIP Badge - Simple: just like color highlighting */}
-      {showVipBadge && car.vip_status && car.vip_status !== 'none' && (
+      {/* VIP Badge */}
+      {showVipBadgeActual && (
         <div
           className="absolute top-2 left-2 z-20 py-1 px-2 rounded text-xs font-bold text-white flex items-center gap-1 shadow-lg"
           style={{

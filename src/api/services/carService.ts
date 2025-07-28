@@ -61,9 +61,25 @@ class CarService {
       
       console.log('[CarService.getCars] Mapped server filters:', serverFilters);
       
+      // Always include VIP-related fields in the response
+      serverFilters.include_vip = true;
+      
       // Make the API request with properly mapped filters
       const response = await api.get('/api/cars', { params: serverFilters });
-      console.log('[CarService.getCars] API response received');
+      console.log('[CarService.getCars] API response received:', {
+        status: response.status,
+        data: response.data?.data ? {
+          count: response.data.data.length,
+          sample: response.data.data[0] ? {
+            id: response.data.data[0].id,
+            brand: response.data.data[0].brand,
+            model: response.data.data[0].model,
+            vip_status: response.data.data[0].vip_status,
+            hasVipStatus: 'vip_status' in (response.data.data[0] || {})
+          } : 'No cars in response'
+        } : 'No data in response',
+        meta: response.data?.meta
+      });
       
       // Check if the response follows the new data structure with meta information
       if (response.data && response.data.data && response.data.meta) {

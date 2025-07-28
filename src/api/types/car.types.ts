@@ -18,6 +18,7 @@ export interface Car {
   featured: boolean;
   vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
   vip_expiration_date?: string;
+  vip_active?: boolean;
   color_highlighting_enabled?: boolean;
   color_highlighting_expiration_date?: string;
   seller_id: number;
