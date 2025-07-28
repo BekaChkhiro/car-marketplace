@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { namespaces } from '../i18n';
-import { 
+import {
   ChevronLeft,
   ChevronRight,
   Heart,
@@ -12,7 +12,8 @@ import {
   Tag,
   Calendar,
   Car as CarIcon,
-  Star
+  Star,
+  Crown
 } from 'lucide-react';
 import { CustomSwitch } from './layout/Header/components/CurrencySelector';
 import { useCurrency } from '../context/CurrencyContext';
@@ -38,17 +39,17 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   // Explicitly use the car namespace to ensure translations are loaded
   const { t, i18n } = useTranslation([namespaces.car, namespaces.common]);
   const { lang } = useParams<{ lang: string }>();
-  
+
   // Get current language from URL params or i18n
   const currentLang = lang || i18n.language || 'ka';
-  
+
   // Force rerender when language changes
   useEffect(() => {
     // This effect will run whenever the language changes
     console.log('Current language in CarCard:', i18n.language);
   }, [i18n.language]);
-  // Debug: log car VIP status
-  console.log(`[CarCard] Car ${car.id} - ${car.brand} ${car.model} - VIP Status: ${car.vip_status}, showVipBadge: ${showVipBadge}`);
+  // Simple: just use car.vip_status from API (same as color_highlighting_enabled)
+  console.log(`[CarCard API Check] Car ${car.id} - API vip_status:`, car.vip_status);
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -61,9 +62,9 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   const [localCategory, setLocalCategory] = useState<Category | null>(null);
   const { currency, setCurrency } = useCurrency();
   const { formatPrice } = usePrice();
-  
+
   const images = car.images?.map(img => img.url) || [];
-  
+
   // Helper function to translate fuel types
   const translateFuelType = (fuelType?: string) => {
     if (!fuelType) return '';
@@ -85,7 +86,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     const translationKey = fuelTypeMap[normalizedFuelType] || fuelType;
     return t(`car:${translationKey}`, fuelType);
   };
-  
+
   // Helper function to translate mileage units
   const translateMileageUnit = (unit?: string) => {
     if (!unit) return t('car:km', 'km');
@@ -122,26 +123,26 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
       try {
         // Try to use category_id from car if available
         const categoryId = car.category_id;
-        
+
         if (categoryId !== undefined && categoryId !== null) {
           // Try to use provided categories first
           let categories = propCategories || [];
-          
+
           // If no categories provided, fetch them
           if (categories.length === 0) {
             categories = await carService.getCategories();
           }
-          
+
           console.log(`[CarCard ${car.id}] Comparing category_id: ${categoryId} (${typeof categoryId}) with available categories:`, categories);
-          
+
           // Compare as strings to handle type differences (number vs string)
           // Force both to be strings for comparison
-          const foundCategory = categories.find(cat => 
-            String(cat.id) === String(categoryId) || 
-            cat.id === Number(categoryId) || 
+          const foundCategory = categories.find(cat =>
+            String(cat.id) === String(categoryId) ||
+            cat.id === Number(categoryId) ||
             Number(cat.id) === Number(categoryId)
           );
-          
+
           if (foundCategory) {
             console.log(`[CarCard ${car.id}] Found matching category:`, foundCategory);
             setLocalCategory(foundCategory);
@@ -235,18 +236,18 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     console.log('=== CAR DATA ===');
     console.log('Car ID:', car.id);
     console.log('Car title:', car.title || `${car.brand} ${car.model}`);
-    
+
     // Log all properties and their values
     Object.entries(car).forEach(([key, value]) => {
       console.log(`${key}:`, value);
     });
-    
+
     // Check for any highlighting-related properties
-    const highlightProps = Object.entries(car).filter(([key]) => 
-      key.toLowerCase().includes('highlight') || 
+    const highlightProps = Object.entries(car).filter(([key]) =>
+      key.toLowerCase().includes('highlight') ||
       key.toLowerCase().includes('color_highlight')
     );
-    
+
     console.log('Highlight-related properties:', highlightProps);
   }, [car]);
 
@@ -254,33 +255,32 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   // For now, we'll use VIP status as a fallback since highlighting properties aren't in the response
   const hasHighlighting = (
     car.color_highlighting_enabled
-    ) === true;
+  ) === true;
 
-    const hasColor = car.color_highlighting_enabled;
-  
-    console.log(hasColor+"*******************************");
-    
+  const hasColor = car.color_highlighting_enabled;
+
+  console.log(hasColor + "*******************************");
+
 
   return (
-    <div  onClick={handleClick}
-      className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg relative group ${
-        hasHighlighting ? 'border-2 border-green-500' : 'border border-gray-200'
-      }`}
+    <div onClick={handleClick}
+      className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg relative group cursor-pointer	${hasHighlighting ? 'border-2 border-green-500' : 'border border-gray-200'
+        }`}
     >
-      {/* VIP Badge - improved visibility and style */}
+      {/* VIP Badge - Simple: just like color highlighting */}
       {showVipBadge && car.vip_status && car.vip_status !== 'none' && (
-        <div 
-          className={`absolute top-1.5 sm:top-2 left-1.5 sm:left-2 z-30 py-1 sm:py-1.5 px-2 sm:px-3 rounded text-[10px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 ${            
-            car.vip_status === 'super_vip' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 
-            car.vip_status === 'vip_plus' ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white' : 
-            'bg-primary text-white'
-          } shadow-sm sm:shadow-lg animate-fadeIn`}
+        <div
+          className="absolute top-2 left-2 z-20 py-1 px-2 rounded text-xs font-bold text-white flex items-center gap-1 shadow-lg"
+          style={{
+            background: car.vip_status === 'super_vip' ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' :
+              car.vip_status === 'vip_plus' ? 'linear-gradient(135deg, #f59e0b, #f97316)' :
+                'linear-gradient(135deg, #10b981, #059669)'
+          }}
         >
-          <Star size={12} className="block sm:hidden" fill="currentColor" strokeWidth={0} />
-          <Star size={14} className="hidden sm:block" fill="currentColor" strokeWidth={0} />
-          <span className="text-[10px] sm:text-xs">
-            {car.vip_status === 'super_vip' ? t('car:superVip', 'SUPER VIP') : 
-             car.vip_status === 'vip_plus' ? t('car:vipPlus', 'VIP+') : t('car:vip', 'VIP')}
+          <Crown size={14} fill="currentColor" />
+          <span>
+            {car.vip_status === 'super_vip' ? 'SUPER VIP' :
+              car.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
           </span>
         </div>
       )}
@@ -298,14 +298,13 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             <CarIcon size={40} />
           </div>
         )}
-        
+
         {/* Status badge */}
         {(car.status === 'sold' || car.featured) && (
-          <div className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-xs font-medium ${
-            car.status === 'sold' 
-              ? 'bg-blue-100 text-blue-800' 
-              : 'bg-primary/10 text-primary'
-          }`}>
+          <div className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-xs font-medium ${car.status === 'sold'
+            ? 'bg-blue-100 text-blue-800'
+            : 'bg-primary/10 text-primary'
+            }`}>
             {car.status === 'sold' ? t('car:sold') : t('car:featured', 'Featured')}
           </div>
         )}
@@ -314,17 +313,16 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         {showWishlistButton && (
           <button
             onClick={handleWishlistClick}
-            className={`absolute top-2 sm:top-3 right-2 sm:right-3 p-1.5 sm:p-2 rounded-full ${  
-              isInWishlistState 
-                ? 'bg-primary text-white' 
-                : 'bg-white/90 text-gray-400 hover:bg-primary hover:text-white'
-            } transition-all duration-200 shadow-sm hover:shadow`}
+            className={`absolute top-2 sm:top-3 right-2 sm:right-3 p-1.5 sm:p-2 rounded-full ${isInWishlistState
+              ? 'bg-primary text-white'
+              : 'bg-white/90 text-gray-400 hover:bg-primary hover:text-white'
+              } transition-all duration-200 shadow-sm hover:shadow`}
             disabled={isLoadingWishlist}
             title={isInWishlistState ? t('car:removeFromWishlist') : t('car:addToWishlist')}
           >
-            <Heart 
-              className="h-4 w-4 sm:h-5 sm:w-5" 
-              fill={isInWishlistState ? "currentColor" : "none"} 
+            <Heart
+              className="h-4 w-4 sm:h-5 sm:w-5"
+              fill={isInWishlistState ? "currentColor" : "none"}
               strokeWidth={isInWishlistState ? 0 : 2}
             />
           </button>
@@ -345,17 +343,16 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             >
               <ChevronRight size={18} />
             </button>
-            
+
             {/* Image indicators */}
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
               {images.map((_, index) => (
                 <div
                   key={index}
-                  className={`h-1.5 rounded-full transition-all duration-200 ${
-                    index === currentImageIndex 
-                      ? 'w-3 bg-white' 
-                      : 'w-1.5 bg-white/60'
-                  }`}
+                  className={`h-1.5 rounded-full transition-all duration-200 ${index === currentImageIndex
+                    ? 'w-3 bg-white'
+                    : 'w-1.5 bg-white/60'
+                    }`}
                 />
               ))}
             </div>
@@ -427,7 +424,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
         )}
       </div>
 
-      <LoginModal 
+      <LoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         onShowRegister={() => {
@@ -435,7 +432,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
           setIsRegisterOpen(true);
         }}
       />
-      <RegisterModal 
+      <RegisterModal
         isOpen={isRegisterOpen}
         onClose={() => setIsRegisterOpen(false)}
         onSwitchToLogin={() => {
