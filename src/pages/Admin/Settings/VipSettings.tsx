@@ -12,32 +12,38 @@ interface VipPriceForm {
   price: number;
   duration_days: number;
   user_role: string;
+  category?: string;
 }
 
 // Available user roles
 type UserRole = 'user' | 'dealer' | 'autosalon';
 
+// Available categories
+type Category = 'cars' | 'parts';
+
 const USER_ROLES: UserRole[] = ['user', 'dealer', 'autosalon'];
+const CATEGORIES: Category[] = ['cars', 'parts'];
 
 const VipSettings: React.FC = () => {
   const { t } = useTranslation('admin');
   const [vipPrices, setVipPrices] = useState<Record<UserRole, VipPriceForm[]>>({} as Record<UserRole, VipPriceForm[]>);
   const [activeRole, setActiveRole] = useState<UserRole>('user');
+  const [activeCategory, setActiveCategory] = useState<Category>('cars');
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Fetch current VIP prices on component mount
+  // Fetch current VIP prices on component mount and when category changes
   useEffect(() => {
     fetchVipPrices();
-  }, []);
+  }, [activeCategory]);
 
   // Function to fetch VIP prices from the API
   const fetchVipPrices = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/admin/vip/pricing?grouped=true', {
+      const response = await api.get(`/api/admin/vip/pricing?grouped=true&category=${activeCategory}`, {
         headers: authHeader()
       });
       
@@ -140,10 +146,11 @@ const VipSettings: React.FC = () => {
         return;
       }
       
-      // Send updated prices to the API with is_daily_price set to true for all services
+      // Send updated prices to the API with is_daily_price set to true for all services and include category
       const pricesToSave = allPrices.map(price => ({
         ...price,
-        is_daily_price: true
+        is_daily_price: true,
+        category: activeCategory
       }));
       
       await api.put('/api/admin/vip/pricing', { prices: pricesToSave }, {
@@ -180,6 +187,15 @@ const VipSettings: React.FC = () => {
       autosalon: t('vipSettings.roles.autosalon', 'Autosalon')
     };
     return roleNames[role];
+  };
+
+  // Get a human-readable name for category
+  const getCategoryName = (category: Category): string => {
+    const categoryNames = {
+      cars: t('vipSettings.categories.cars', 'Cars'),
+      parts: t('vipSettings.categories.parts', 'Parts')
+    };
+    return categoryNames[category];
   };
 
   // Get icon color for service type
@@ -220,6 +236,27 @@ const VipSettings: React.FC = () => {
 
   return (
     <div>
+      {/* Category Selection Tabs */}
+      <div className="mb-6">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            {CATEGORIES.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeCategory === category
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {getCategoryName(category)}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
       {/* Role Selection Tabs */}
       <div className="mb-6">
         <div className="border-b border-gray-200">
@@ -259,10 +296,10 @@ const VipSettings: React.FC = () => {
         </div>
       )}
 
-      {/* Current Role Indicator */}
+      {/* Current Category and Role Indicator */}
       <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
         <p className="text-blue-700 text-sm font-medium">
-          {t('vipSettings.currentlyEditing', 'Currently editing prices for:')} <span className="font-bold">{getRoleName(activeRole)}</span>
+          {t('vipSettings.currentlyEditing', 'Currently editing prices for:')} <span className="font-bold">{getCategoryName(activeCategory)} - {getRoleName(activeRole)}</span>
         </p>
       </div>
 

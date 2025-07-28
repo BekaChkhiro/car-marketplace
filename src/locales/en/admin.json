@@ -80,6 +80,15 @@
     "actions": {
       "save": "Save",
       "saving": "Saving..."
+    },
+    "roles": {
+      "user": "Regular User",
+      "dealer": "Dealer",
+      "autosalon": "Autosalon"
+    },
+    "categories": {
+      "cars": "Cars",
+      "parts": "Parts"
     }
   },
   "dashboard": {

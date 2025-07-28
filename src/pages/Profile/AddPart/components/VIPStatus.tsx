@@ -34,23 +34,23 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
 
   const fetchVipPricing = async () => {
     try {
-      // Force refresh user-specific pricing to get latest data
-      const pricingData = await vipPricingService.refreshUserPricing();
+      // Force refresh user-specific pricing to get latest data for parts category
+      const pricingData = await vipPricingService.refreshUserPricing('parts');
       setVipPricing(pricingData.packages);
       setAdditionalServicesPricing(pricingData.additionalServices);
       setPricingLoaded(true);
-      console.log('User-specific pricing data (refreshed):', pricingData);
+      console.log('User-specific pricing data (refreshed) for parts:', pricingData);
 
     } catch (error) {
-      console.error('Error fetching user-specific VIP pricing:', error);
-      // Fallback to general pricing
+      console.error('Error fetching user-specific VIP pricing for parts:', error);
+      // Fallback to general pricing for parts
       try {
-        const fallbackData = await vipPricingService.getAllPricing();
+        const fallbackData = await vipPricingService.getAllPricing('parts');
         setVipPricing(fallbackData.packages);
         setAdditionalServicesPricing(fallbackData.additionalServices);
-        console.log('Fallback pricing data:', fallbackData);
+        console.log('Fallback pricing data for parts:', fallbackData);
       } catch (fallbackError) {
-        console.error('Error fetching fallback VIP pricing:', fallbackError);
+        console.error('Error fetching fallback VIP pricing for parts:', fallbackError);
       }
       setPricingLoaded(true); // Still set to true to show fallback prices
     }

@@ -31,7 +31,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
   const navigate = useNavigate();
   const { t } = useTranslation([namespaces.profile, namespaces.common]);
   const [selectedStatus, setSelectedStatus] = useState<VipStatus>('none');
-  const [daysCount, setDaysCount] = useState<number>(7); // default 7 days
+  const [daysCount, setDaysCount] = useState<number>(1); // default 1 days
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -258,7 +258,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
       // დაწყების თარიღისთვის დავაყენოთ დღევანდელი დღე
       const today = new Date();
       setStartDate(today);
-      setDaysCount(7);
+      setDaysCount(1);
       
       // მივიღოთ მომხმარებლის ბალანსი და VIP ფასები
       fetchUserBalance();
