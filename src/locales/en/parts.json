@@ -113,5 +113,6 @@
   "loadPartError": "Failed to load part details",
   "noPermissionToEdit": "You do not have permission to edit this part",
   "editPartComingSoon": "Edit part functionality will be implemented soon",
-  "backToMyParts": "Back to My Parts"
+  "backToMyParts": "Back to My Parts",
+  "savePart" : "Save"
 }

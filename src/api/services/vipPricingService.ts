@@ -6,6 +6,7 @@ export interface VipServicePricing {
   price: number;
   duration_days: number;
   is_daily_price: boolean;
+  user_role?: string;
   created_at: string;
   updated_at: string;
 }
@@ -14,11 +15,14 @@ export interface VipPricingData {
   packages: VipServicePricing[];
   additionalServices: VipServicePricing[];
   all: VipServicePricing[];
+  role?: string;
 }
 
 class VipPricingService {
   private cache: VipPricingData | null = null;
+  private userCache: VipPricingData | null = null;
   private cacheTimestamp: number = 0;
+  private userCacheTimestamp: number = 0;
   private cacheExpiration: number = 5 * 60 * 1000; // 5 minutes
 
   /**
@@ -29,11 +33,20 @@ class VipPricingService {
   }
 
   /**
-   * Clear the cache
+   * Check if user cache is valid
+   */
+  private isUserCacheValid(): boolean {
+    return this.userCache !== null && (Date.now() - this.userCacheTimestamp) < this.cacheExpiration;
+  }
+
+  /**
+   * Clear all caches
    */
   public clearCache(): void {
     this.cache = null;
+    this.userCache = null;
     this.cacheTimestamp = 0;
+    this.userCacheTimestamp = 0;
   }
 
   /**
@@ -92,6 +105,55 @@ class VipPricingService {
       
       return fallbackData;
     }
+  }
+
+  /**
+   * Get user-specific VIP pricing based on their role
+   */
+  public async getUserPricing(): Promise<VipPricingData> {
+    // Check user-specific cache first
+    if (this.isUserCacheValid() && this.userCache) {
+      console.log('Returning cached user-specific pricing');
+      return this.userCache;
+    }
+
+    try {
+      console.log('Fetching fresh user-specific pricing from API');
+      const response = await api.get('/api/pricing/user');
+      
+      if (response.data && response.data.success && response.data.data) {
+        const { role, packages, services, all } = response.data.data;
+        
+        this.userCache = {
+          packages,
+          additionalServices: services,
+          all,
+          role
+        };
+        this.userCacheTimestamp = Date.now();
+        
+        console.log(`Cached user-specific pricing for role: ${role}`, this.userCache);
+        return this.userCache;
+      } else {
+        console.log('Invalid user-specific pricing response, falling back to general pricing');
+        // Fall back to general pricing
+        return this.getAllPricing();
+      }
+    } catch (error) {
+      console.error('Error fetching user-specific VIP pricing:', error);
+      // Fall back to general pricing
+      return this.getAllPricing();
+    }
+  }
+
+  /**
+   * Force refresh user-specific pricing (bypasses cache)
+   */
+  public async refreshUserPricing(): Promise<VipPricingData> {
+    // Clear user cache to force refresh
+    this.userCache = null;
+    this.userCacheTimestamp = 0;
+    return this.getUserPricing();
   }
 
   /**

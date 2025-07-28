@@ -1,5 +1,6 @@
 import React from 'react';
 import { Wrench } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { CarFeatures } from '../types';
 
 interface FeaturesProps {
@@ -8,38 +9,40 @@ interface FeaturesProps {
 }
 
 const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
+  const { t } = useTranslation('profile');
+  
   const featureGroups = {
-    'უსაფრთხოება': [
-      { key: 'has_abs', label: 'ABS' },
-      { key: 'has_traction_control', label: 'მოცურების საწინააღმდეგო სისტემა' },
-      { key: 'has_central_locking', label: 'ცენტრალური საკეტი' },
-      { key: 'has_alarm', label: 'სიგნალიზაცია' },
-      { key: 'has_fog_lights', label: 'სანისლე ფარები' },
+    'safety': [
+      'has_abs',
+      'has_traction_control',
+      'has_central_locking',
+      'has_alarm',
+      'has_fog_lights',
     ],
-    'კომფორტი': [
-      { key: 'has_air_conditioning', label: 'კონდიციონერი' },
-      { key: 'has_climate_control', label: 'კლიმატკონტროლი' },
-      { key: 'has_heated_seats', label: 'სავარძლის გათბობა' },
-      { key: 'has_seat_memory', label: 'სავარძლის მეხსიერება' },
-      { key: 'has_cruise_control', label: 'კრუიზ-კონტროლი' },
-      { key: 'has_start_stop', label: 'Start/Stop სისტემა' },
-      { key: 'has_sunroof', label: 'ლუქი' },
-      { key: 'has_electric_windows', label: 'ელექტრო შუშები' },
+    'comfort': [
+      'has_air_conditioning',
+      'has_climate_control',
+      'has_heated_seats',
+      'has_seat_memory',
+      'has_cruise_control',
+      'has_start_stop',
+      'has_sunroof',
+      'has_electric_windows',
     ],
-    'ელექტრონიკა': [
-      { key: 'has_board_computer', label: 'ბორტკომპიუტერი' },
-      { key: 'has_navigation', label: 'მონიტორი (ნავიგაცია)' },
-      { key: 'has_parking_control', label: 'პარკინგკონტროლი' },
-      { key: 'has_rear_view_camera', label: 'უკანა ხედვის კამერა' },
-      { key: 'has_aux', label: 'AUX' },
-      { key: 'has_bluetooth', label: 'Bluetooth' },
-      { key: 'has_multifunction_steering_wheel', label: 'მულტი საჭე' },
+    'electronics': [
+      'has_board_computer',
+      'has_navigation',
+      'has_parking_control',
+      'has_rear_view_camera',
+      'has_aux',
+      'has_bluetooth',
+      'has_multifunction_steering_wheel',
     ],
-    'დამატებითი აღჭურვილობა': [
-      { key: 'has_hydraulics', label: 'ჰიდრავლიკა' },
-      { key: 'has_alloy_wheels', label: 'დისკები' },
-      { key: 'has_spare_tire', label: 'სათადარიგო საბურავი' },
-      { key: 'is_disability_adapted', label: 'სსმპ ადაპტირებული' },
+    'additional': [
+      'has_hydraulics',
+      'has_alloy_wheels',
+      'has_spare_tire',
+      'is_disability_adapted',
     ]
   } as const;
 
@@ -50,23 +53,23 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
           <Wrench size={20} className="text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">აღჭურვილობა და ფუნქციები</h2>
-          <p className="text-sm text-gray-500">მონიშნეთ მანქანის დამატებითი აღჭურვილობა</p>
+          <h2 className="text-lg font-semibold text-gray-900">{t('addCar.features.title')}</h2>
+          <p className="text-sm text-gray-500">{t('addCar.features.subtitle')}</p>
         </div>
       </div>
 
       <div className="space-y-8">
         {Object.entries(featureGroups).map(([groupName, groupFeatures]) => (
           <div key={groupName} className="space-y-4 ">
-            <h3 className="text-base font-semibold text-gray-800 border-b pb-2">{groupName}</h3>
+            <h3 className="text-base font-semibold text-gray-800 border-b pb-2">{t(`addCar.features.groups.${groupName}`)}</h3>
             <div className="flex flex-wrap gap-3 w-full"> 
-              {groupFeatures.map(({ key, label }) => {
-                const isActive = features[key as keyof CarFeatures] || false;
+              {groupFeatures.map((featureKey) => {
+                const isActive = features[featureKey as keyof CarFeatures] || false;
                 return (
                   <button
-                    key={key}
+                    key={featureKey}
                     type="button"
-                    onClick={() => onChange(key as keyof CarFeatures, !isActive)}
+                    onClick={() => onChange(featureKey as keyof CarFeatures, !isActive)}
                     className={`w-full sm:w-auto
                       px-2 sm:px-4 py-2 rounded-lg text-sm font-medium text-left transition-all duration-200
                       flex items-center gap-2 
@@ -85,7 +88,7 @@ const Features: React.FC<FeaturesProps> = ({ features, onChange }) => {
                         </svg>
                       )}
                     </div>
-                    {label}
+                    {t(`addCar.features.items.${featureKey}`)}
                   </button>
                 );
               })}

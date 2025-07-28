@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { MapPin, Truck, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import LocationTypeSwitcher from '../../../../../components/LocationTypeSwitcher';
-import { CITY_OPTIONS, COUNTRY_OPTIONS } from '../types';
+import { useTranslatedOptions } from '../../../../../hooks/useTranslatedOptions';
 
 interface LocationProps {
   city: string;
@@ -19,6 +20,8 @@ const Location: React.FC<LocationProps> = ({
   onChange,
   errors = {}
 }) => {
+  const { t } = useTranslation('profile');
+  const translatedOptions = useTranslatedOptions();
   // Set default values based on location type
   useEffect(() => {
     if (location_type === 'transit') {
@@ -47,8 +50,8 @@ const Location: React.FC<LocationProps> = ({
           <MapPin size={20} className="text-primary" />
         </div>
         <div>
-          <h2 className="text-lg  font-semibold text-gray-900 text-left">მდებარეობა</h2>
-          <p className="text-sm text-gray-500">მიუთითეთ მანქანის ადგილმდებარეობა</p>
+          <h2 className="text-lg  font-semibold text-gray-900 text-left">{t('addCar.location.title')}</h2>
+          <p className="text-sm text-gray-500">{t('addCar.location.subtitle')}</p>
         </div>
       </div>
 
@@ -56,7 +59,7 @@ const Location: React.FC<LocationProps> = ({
         <div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 ">
             <label className="block text-left text-sm font-medium text-gray-700 mb-2 sm:mb-0">
-              მდებარეობის ტიპი *
+              {t('addCar.location.locationType')} *
             </label>
             <LocationTypeSwitcher 
               value={location_type} 
@@ -75,18 +78,18 @@ const Location: React.FC<LocationProps> = ({
             <div className="bg-green-50 rounded-lg p-4 border border-green-100">
               <div className="flex  gap-2 mb-4">
                 <MapPin size={18} className="text-green-600 " />
-                <h3 className="font-medium text-green-800">საქართველოში</h3>
+                <h3 className="font-medium text-green-800">{t('addCar.location.inGeorgia')}</h3>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 ml-1">
-                    ქალაქი *
+                    {t('addCar.location.city')} *
                   </label>
                   <CustomSelect
                     value={city}
                     onChange={(value) => onChange('city', value as string)}
-                    options={CITY_OPTIONS}
-                    placeholder="აირჩიეთ ქალაქი"
+                    options={translatedOptions.cities}
+                    placeholder={t('addCar.location.selectCity')}
                     error={errors?.city}
                     multiple={false}
                   />
@@ -102,9 +105,9 @@ const Location: React.FC<LocationProps> = ({
             <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
               <div className="flex  gap-2 mb-2">
                 <Truck size={18} className="text-blue-600" />
-                <h3 className="font-medium text-blue-800">ტრანზიტში</h3>
+                <h3 className="font-medium text-blue-800">{t('addCar.location.inTransit')}</h3>
               </div>
-              <p className="text-blue-700 text-sm">მანქანა იმყოფება ტრანზიტში საქართველოსკენ მომავალში</p>
+              <p className="text-blue-700 text-sm">{t('addCar.location.transitDescription')}</p>
             </div>
           )}
 
@@ -112,18 +115,18 @@ const Location: React.FC<LocationProps> = ({
             <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
               <div className="flex  gap-2 mb-4">
                 <Globe size={18} className="text-purple-600" />
-                <h3 className="font-medium text-purple-800">საზღვარგარეთ</h3>
+                <h3 className="font-medium text-purple-800">{t('addCar.location.international')}</h3>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 ml-1">
-                    ქვეყანა *
+                    {t('addCar.location.country')} *
                   </label>
                   <CustomSelect
                     value={country}
                     onChange={(value) => onChange('country', value as string)}
-                    options={COUNTRY_OPTIONS}
-                    placeholder="აირჩიეთ ქვეყანა"
+                    options={translatedOptions.countries}
+                    placeholder={t('addCar.location.selectCountry')}
                     error={errors?.country}
                     multiple={false}
                   />

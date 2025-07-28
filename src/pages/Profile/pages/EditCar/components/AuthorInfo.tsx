@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormSectionProps } from '../types';
 
 interface AuthorInfoProps {
@@ -16,14 +17,15 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   onAuthorPhoneChange,
   errors
 }) => {
+  const { t } = useTranslation('profile');
   return (
     <div className="bg-white rounded-xl p-6 border">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">ავტორის ინფორმაცია</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('addCar.authorInfo.title')}</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="author_name" className="block text-sm font-medium text-gray-700 mb-1">
-            ავტორის სახელი
+            {t('addCar.authorInfo.name')}
           </label>
           <input
             type="text"
@@ -41,7 +43,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
         
         <div>
           <label htmlFor="author_phone" className="block text-sm font-medium text-gray-700 mb-1">
-            საკონტაქტო ტელეფონი
+            {t('addCar.authorInfo.phone')}
           </label>
           <input
             type="tel"

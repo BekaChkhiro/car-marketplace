@@ -152,7 +152,15 @@
         "currency": "ლარი",
         "day": "დღე",
         "days": "დღე",
-        "fixedDurationMessage": "ამ VIP პაკეტს აქვს ფიქსირებული ვადა: {days} დღე"
+        "fixedDurationMessage": "ამ VIP პაკეტს აქვს ფიქსირებული ვადა: {days} დღე",
+        "noVip": "VIP-ის გარეშე",
+        "additionalServicesOnly": "მხოლოდ დამატებითი სერვისები",
+        "additionalServicesOnlyDesc": "შეიძინეთ მხოლოდ დამატებითი სერვისები VIP სტატუსის გარეშე",
+        "free": "უფასო",
+        "selectAtLeastOne": "გთხოვთ აირჩიოთ მინიმუმ ერთი VIP პაკეტი ან დამატებითი სერვისი",
+        "purchaseFailed": "VIP პაკეტის შეძენა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.",
+        "serviceDuration": "სერვისის ხანგრძლივობა:",
+        "buyServices": "სერვისების შეძენა"
       }
     }
   },
@@ -350,6 +358,7 @@
       "insufficientBalance": "არასაკმარისი ბალანსი",
       "select": "არჩევა",
       "purchase": "შეძენა",
+      "PriceSummary" : "ფასის შეჯამება",
       "types": {
         "none": "სტანდარტული",
         "vip": "VIP",

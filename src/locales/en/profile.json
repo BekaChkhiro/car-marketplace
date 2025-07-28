@@ -145,7 +145,15 @@
         "currency": "GEL",
         "day": "day",
         "days": "days",
-        "fixedDurationMessage": "This VIP package has a fixed duration: "
+        "fixedDurationMessage": "This VIP package has a fixed duration: ",
+        "noVip": "No VIP",
+        "additionalServicesOnly": "Additional services only",
+        "additionalServicesOnlyDesc": "Purchase only additional services without VIP status",
+        "free": "Free",
+        "selectAtLeastOne": "Please select at least one VIP package or additional service",
+        "purchaseFailed": "Failed to purchase VIP package. Please try again.",
+        "serviceDuration": "Service Duration:",
+        "buyServices": "Buy Services"
       }
     }
   },
@@ -343,6 +351,7 @@
       "insufficientBalance": "Insufficient balance",
       "select": "Select",
       "purchase": "Purchase",
+      "PriceSummary" : "Price Summary",
       "types": {
         "none": "Standard",
         "vip": "VIP",

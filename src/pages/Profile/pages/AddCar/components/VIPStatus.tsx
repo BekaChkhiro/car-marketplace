@@ -34,14 +34,24 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
 
   const fetchVipPricing = async () => {
     try {
-      const pricingData = await vipPricingService.getAllPricing();
+      // Force refresh user-specific pricing to get latest data
+      const pricingData = await vipPricingService.refreshUserPricing();
       setVipPricing(pricingData.packages);
       setAdditionalServicesPricing(pricingData.additionalServices);
       setPricingLoaded(true);
-      console.log(pricingData);
+      console.log('User-specific pricing data (refreshed):', pricingData);
 
     } catch (error) {
-      console.error('Error fetching VIP pricing:', error);
+      console.error('Error fetching user-specific VIP pricing:', error);
+      // Fallback to general pricing
+      try {
+        const fallbackData = await vipPricingService.getAllPricing();
+        setVipPricing(fallbackData.packages);
+        setAdditionalServicesPricing(fallbackData.additionalServices);
+        console.log('Fallback pricing data:', fallbackData);
+      } catch (fallbackError) {
+        console.error('Error fetching fallback VIP pricing:', fallbackError);
+      }
       setPricingLoaded(true); // Still set to true to show fallback prices
     }
   };
@@ -272,17 +282,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
             {colorHighlighting && (
               <div className="mt-4 p-3 bg-blue-100 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    min="1"
+                  <select
                     value={colorHighlightingDays}
                     onChange={(e) => {
-                      const days = Math.max(1, parseInt(e.target.value) || 1);
+                      const days = parseInt(e.target.value) || 1;
                       onChange('color_highlighting_days', days);
                     }}
                     onClick={(e) => e.stopPropagation()}
                     className="w-20 px-2 py-1 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  />
+                  >
+                    {Array.from({ length: 30 }, (_, i) => i + 1).map(day => (
+                      <option key={day} value={day}>{day}</option>
+                    ))}
+                  </select>
                   <span className="text-sm text-blue-600">{t('profile:cars.vip.modal.days')}</span>
                   <div className="ml-auto text-sm font-medium text-blue-700">
                     {formatPrice(getAdditionalServicePrice('color_highlighting') * colorHighlightingDays)}
@@ -314,17 +326,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
             {autoRenewal && (
               <div className="mt-4 p-3 bg-green-100 rounded-lg border border-green-200">
                 <div className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    min="1"
+                  <select
                     value={autoRenewalDays}
                     onChange={(e) => {
-                      const days = Math.max(1, parseInt(e.target.value) || 1);
+                      const days = parseInt(e.target.value) || 1;
                       onChange('auto_renewal_days', days);
                     }}
                     onClick={(e) => e.stopPropagation()}
                     className="w-20 px-2 py-1 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
-                  />
+                  >
+                    {Array.from({ length: 30 }, (_, i) => i + 1).map(day => (
+                      <option key={day} value={day}>{day}</option>
+                    ))}
+                  </select>
                   <span className="text-sm text-green-600">{t('profile:cars.vip.modal.days')}</span>
                   <div className="ml-auto text-sm font-medium text-green-700">
                     {formatPrice(getAdditionalServicePrice('auto_renewal') * autoRenewalDays)}
@@ -364,17 +378,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
           {vipStatus === 'none' && getVipPrice('none') > 0 && (
             <div className="mt-4 p-3 bg-blue-100 rounded-lg border border-blue-200">
               <div className="flex items-center gap-3">
-                <input
-                  type="number"
-                  min="1"
+                <select
                   value={vipDays}
                   onChange={(e) => {
-                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    const days = parseInt(e.target.value) || 1;
                     onChange('vip_days', days);
                   }}
                   onClick={(e) => e.stopPropagation()}
                   className="w-20 px-2 py-1 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                />
+                >
+                  {Array.from({ length: 30 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>{day}</option>
+                  ))}
+                </select>
                 <span className="text-sm text-blue-600">{t('profile:cars.vip.modal.days')}</span>
                 <div className="ml-auto text-sm font-medium text-blue-700">
                   {formatPrice(getVipStatusTotalPrice('none', vipDays))}
@@ -413,17 +429,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
           {vipStatus === 'vip' && (
             <div className="mt-4 p-3 bg-yellow-100 rounded-lg border border-yellow-200">
               <div className="flex items-center gap-3">
-                <input
-                  type="number"
-                  min="1"
+                <select
                   value={vipDays}
                   onChange={(e) => {
-                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    const days = parseInt(e.target.value) || 1;
                     onChange('vip_days', days);
                   }}
                   onClick={(e) => e.stopPropagation()}
                   className="w-20 px-2 py-1 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm"
-                />
+                >
+                  {Array.from({ length: 30 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>{day}</option>
+                  ))}
+                </select>
                 <span className="text-sm text-yellow-600">{t('profile:cars.vip.modal.days')}</span>
                 <div className="ml-auto text-sm font-medium text-yellow-700">
                   {formatPrice(getVipStatusTotalPrice('vip', vipDays))}
@@ -473,17 +491,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
           {vipStatus === 'vip_plus' && (
             <div className="mt-4 p-3 bg-orange-100 rounded-lg border border-orange-200">
               <div className="flex items-center gap-3">
-                <input
-                  type="number"
-                  min="1"
+                <select
                   value={vipDays}
                   onChange={(e) => {
-                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    const days = parseInt(e.target.value) || 1;
                     onChange('vip_days', days);
                   }}
                   onClick={(e) => e.stopPropagation()}
                   className="w-20 px-2 py-1 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                />
+                >
+                  {Array.from({ length: 30 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>{day}</option>
+                  ))}
+                </select>
                 <span className="text-sm text-orange-600">{t('profile:cars.vip.modal.days')}</span>
                 <div className="ml-auto text-sm font-medium text-orange-700">
                   {formatPrice(getVipStatusTotalPrice('vip_plus', vipDays))}
@@ -531,17 +551,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
           {vipStatus === 'super_vip' && (
             <div className="mt-4 p-3 bg-purple-100 rounded-lg border border-purple-200">
               <div className="flex items-center gap-3">
-                <input
-                  type="number"
-                  min="1"
+                <select
                   value={vipDays}
                   onChange={(e) => {
-                    const days = Math.max(1, parseInt(e.target.value) || 1);
+                    const days = parseInt(e.target.value) || 1;
                     onChange('vip_days', days);
                   }}
                   onClick={(e) => e.stopPropagation()}
                   className="w-20 px-2 py-1 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
-                />
+                >
+                  {Array.from({ length: 30 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>{day}</option>
+                  ))}
+                </select>
                 <span className="text-sm text-purple-600">{t('profile:cars.vip.modal.days')}</span>
                 <div className="ml-auto text-sm font-medium text-purple-700">
                   {formatPrice(getVipStatusTotalPrice('super_vip', vipDays))}

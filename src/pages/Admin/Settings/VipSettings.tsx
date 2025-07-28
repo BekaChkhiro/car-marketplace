@@ -11,11 +11,18 @@ interface VipPriceForm {
   service_type: string;
   price: number;
   duration_days: number;
+  user_role: string;
 }
+
+// Available user roles
+type UserRole = 'user' | 'dealer' | 'autosalon';
+
+const USER_ROLES: UserRole[] = ['user', 'dealer', 'autosalon'];
 
 const VipSettings: React.FC = () => {
   const { t } = useTranslation('admin');
-  const [vipPrices, setVipPrices] = useState<VipPriceForm[]>([]);
+  const [vipPrices, setVipPrices] = useState<Record<UserRole, VipPriceForm[]>>({} as Record<UserRole, VipPriceForm[]>);
+  const [activeRole, setActiveRole] = useState<UserRole>('user');
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,22 +37,46 @@ const VipSettings: React.FC = () => {
   const fetchVipPrices = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/admin/vip/pricing', {
+      const response = await api.get('/api/admin/vip/pricing?grouped=true', {
         headers: authHeader()
       });
       
-      if (response.data && Array.isArray(response.data.data)) {
-        setVipPrices(response.data.data);
+      if (response.data && response.data.data) {
+        const groupedData = response.data.data;
+        const organizedPrices: Record<UserRole, VipPriceForm[]> = {} as Record<UserRole, VipPriceForm[]>;
+        
+        // Organize data by role
+        USER_ROLES.forEach(role => {
+          if (groupedData[role]) {
+            organizedPrices[role] = groupedData[role];
+          } else {
+            // Fallback to default prices if role data doesn't exist
+            organizedPrices[role] = [
+              { service_type: 'free', price: 0, duration_days: 30, user_role: role },
+              { service_type: 'vip', price: 2, duration_days: 1, user_role: role },
+              { service_type: 'vip_plus', price: 5, duration_days: 1, user_role: role },
+              { service_type: 'super_vip', price: 7, duration_days: 1, user_role: role },
+              { service_type: 'color_highlighting', price: 0.5, duration_days: 1, user_role: role },
+              { service_type: 'auto_renewal', price: 0.5, duration_days: 1, user_role: role }
+            ];
+          }
+        });
+        
+        setVipPrices(organizedPrices);
       } else {
-        // Fallback to default prices if API doesn't return expected format
-        setVipPrices([
-          { service_type: 'free', price: 0, duration_days: 30 },
-          { service_type: 'vip', price: 2, duration_days: 1 },
-          { service_type: 'vip_plus', price: 5, duration_days: 1 },
-          { service_type: 'super_vip', price: 7, duration_days: 1 },
-          { service_type: 'color_highlighting', price: 0.5, duration_days: 1 },
-          { service_type: 'auto_renewal', price: 0.5, duration_days: 1 }
-        ]);
+        // Fallback to default prices for all roles
+        const fallbackPrices: Record<UserRole, VipPriceForm[]> = {} as Record<UserRole, VipPriceForm[]>;
+        USER_ROLES.forEach(role => {
+          fallbackPrices[role] = [
+            { service_type: 'free', price: 0, duration_days: 30, user_role: role },
+            { service_type: 'vip', price: 2, duration_days: 1, user_role: role },
+            { service_type: 'vip_plus', price: 5, duration_days: 1, user_role: role },
+            { service_type: 'super_vip', price: 7, duration_days: 1, user_role: role },
+            { service_type: 'color_highlighting', price: 0.5, duration_days: 1, user_role: role },
+            { service_type: 'auto_renewal', price: 0.5, duration_days: 1, user_role: role }
+          ];
+        });
+        setVipPrices(fallbackPrices);
       }
       
       setError(null);
@@ -53,15 +84,19 @@ const VipSettings: React.FC = () => {
       console.error('Error fetching VIP prices:', err);
       setError(t('vipSettings.errorLoadingPrices'));
       
-      // Set default prices if API fails
-      setVipPrices([
-        { service_type: 'free', price: 0, duration_days: 30 },
-        { service_type: 'vip', price: 2, duration_days: 1 },
-        { service_type: 'vip_plus', price: 5, duration_days: 1 },
-        { service_type: 'super_vip', price: 7, duration_days: 1 },
-        { service_type: 'color_highlighting', price: 0.5, duration_days: 1 },
-        { service_type: 'auto_renewal', price: 0.5, duration_days: 1 }
-      ]);
+      // Set default prices for all roles if API fails
+      const fallbackPrices: Record<UserRole, VipPriceForm[]> = {} as Record<UserRole, VipPriceForm[]>;
+      USER_ROLES.forEach(role => {
+        fallbackPrices[role] = [
+          { service_type: 'free', price: 0, duration_days: 30, user_role: role },
+          { service_type: 'vip', price: 2, duration_days: 1, user_role: role },
+          { service_type: 'vip_plus', price: 5, duration_days: 1, user_role: role },
+          { service_type: 'super_vip', price: 7, duration_days: 1, user_role: role },
+          { service_type: 'color_highlighting', price: 0.5, duration_days: 1, user_role: role },
+          { service_type: 'auto_renewal', price: 0.5, duration_days: 1, user_role: role }
+        ];
+      });
+      setVipPrices(fallbackPrices);
     } finally {
       setLoading(false);
     }
@@ -69,15 +104,17 @@ const VipSettings: React.FC = () => {
 
   // Handle price input change
   const handlePriceChange = (index: number, field: keyof VipPriceForm, value: any) => {
-    const updatedPrices = [...vipPrices];
+    const updatedPrices = { ...vipPrices };
+    const rolePrices = [...updatedPrices[activeRole]];
     
     // Convert to number if the field is price or duration_days
     if (field === 'price' || field === 'duration_days') {
-      updatedPrices[index][field] = Number(value);
+      rolePrices[index][field] = Number(value);
     } else {
-      updatedPrices[index][field] = value;
+      rolePrices[index][field] = value;
     }
     
+    updatedPrices[activeRole] = rolePrices;
     setVipPrices(updatedPrices);
   };
 
@@ -88,8 +125,11 @@ const VipSettings: React.FC = () => {
       setError(null);
       setSuccess(null);
       
+      // Flatten all role prices for validation and saving
+      const allPrices = Object.values(vipPrices).flat();
+      
       // Validate prices before saving
-      const invalidPrices = vipPrices.filter(price => 
+      const invalidPrices = allPrices.filter(price => 
         isNaN(price.price) || price.price < 0 || 
         isNaN(price.duration_days) || price.duration_days <= 0
       );
@@ -101,7 +141,7 @@ const VipSettings: React.FC = () => {
       }
       
       // Send updated prices to the API with is_daily_price set to true for all services
-      const pricesToSave = vipPrices.map(price => ({
+      const pricesToSave = allPrices.map(price => ({
         ...price,
         is_daily_price: true
       }));
@@ -130,6 +170,16 @@ const VipSettings: React.FC = () => {
   // Get a human-readable name for service type
   const getServiceTypeName = (serviceType: string): string => {
     return t(`vipSettings.serviceTypes.${serviceType}`, serviceType);
+  };
+
+  // Get a human-readable name for user role
+  const getRoleName = (role: UserRole): string => {
+    const roleNames = {
+      user: t('vipSettings.roles.user', 'Regular User'),
+      dealer: t('vipSettings.roles.dealer', 'Dealer'),
+      autosalon: t('vipSettings.roles.autosalon', 'Autosalon')
+    };
+    return roleNames[role];
   };
 
   // Get icon color for service type
@@ -166,9 +216,30 @@ const VipSettings: React.FC = () => {
     );
   }
 
+  const currentRolePrices = vipPrices[activeRole] || [];
+
   return (
     <div>
-      {/* No title needed here as it's already in the parent component */}
+      {/* Role Selection Tabs */}
+      <div className="mb-6">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            {USER_ROLES.map((role) => (
+              <button
+                key={role}
+                onClick={() => setActiveRole(role)}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeRole === role
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {getRoleName(role)}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
 
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-3">
@@ -188,8 +259,15 @@ const VipSettings: React.FC = () => {
         </div>
       )}
 
+      {/* Current Role Indicator */}
+      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-blue-700 text-sm font-medium">
+          {t('vipSettings.currentlyEditing', 'Currently editing prices for:')} <span className="font-bold">{getRoleName(activeRole)}</span>
+        </p>
+      </div>
+
       <div className="space-y-6">
-        {vipPrices.map((price, index) => (
+        {currentRolePrices.map((price, index) => (
           <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
             <div className="flex items-center gap-3 mb-4">
               <div className={`p-2 rounded-md ${getServiceTypeColor(price.service_type)}`}>
@@ -225,7 +303,10 @@ const VipSettings: React.FC = () => {
           </div>
         ))}
         
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-gray-600">
+            {t('vipSettings.saveAllRoles', 'Saving will update prices for all user roles.')}
+          </p>
           <button
             onClick={saveVipPrices}
             disabled={saving}

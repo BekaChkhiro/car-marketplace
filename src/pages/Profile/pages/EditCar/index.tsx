@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Star, X, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ImageUploadWithFeatured from '../../../../components/ImageUploadWithFeatured';
 import { Loading } from '../../../../components/ui';
 import { useEditCarForm } from './hooks/useEditCarForm';
@@ -18,6 +19,7 @@ import VIPStatus from './components/VIPStatus';
 const EditCar: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation('profile');
   const {
     formData,
     isLoading,
@@ -61,7 +63,7 @@ const EditCar: React.FC = () => {
               onClick={() => navigate('/profile/cars')}
               className="px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200"
             >
-              ჩემს განცხადებებზე დაბრუნება
+              {t('common.back')}
             </button>
           </div>
         </div>
@@ -82,8 +84,8 @@ const EditCar: React.FC = () => {
               <ArrowLeft size={24} className="text-gray-600" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">მანქანის რედაქტირება</h1>
-              <p className="text-sm text-gray-500">შეცვალეთ საჭირო ინფორმაცია</p>
+              <h1 className="text-2xl font-bold text-gray-900">{t('editCar.title')}</h1>
+              <p className="text-sm text-gray-500">{t('editCar.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -283,8 +285,8 @@ const EditCar: React.FC = () => {
                 <div className="flex items-center text-red-600 text-sm">
                   <AlertCircle size={16} className="mr-2" />
                   <span>
-                    არასაკმარისი ბალანსი VIP სერვისისთვის. საჭიროა: {getTotalVipPrice().toFixed(2)} ლარი, 
-                    ხელმისაწვდომია: {userBalance.toFixed(2)} ლარი
+                    {t('addCar.vipStatus.insufficientBalance')}. {t('cars.vip.modal.required')}: {getTotalVipPrice().toFixed(2)} {t('addCar.vipStatus.currency')}, 
+                    {t('cars.vip.modal.yourBalance')} {userBalance.toFixed(2)} {t('addCar.vipStatus.currency')}
                   </span>
                 </div>
               </div>
@@ -292,7 +294,7 @@ const EditCar: React.FC = () => {
             {!pricingLoaded && (
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center">
                 <div className="flex items-center text-blue-600 text-sm">
-                  <span>VIP ფასების ჩატვირთვა...</span>
+                  <span>{t('cars.vip.modal.loading')}</span>
                 </div>
               </div>
             )}
@@ -302,7 +304,7 @@ const EditCar: React.FC = () => {
                 className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
                 onClick={() => navigate('/profile/cars')}
               >
-                გაუქმება
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
@@ -313,7 +315,7 @@ const EditCar: React.FC = () => {
                     : 'bg-primary hover:bg-primary/90'
                 }`}
               >
-                {!pricingLoaded ? 'VIP ფასების ჩატვირთვა...' : hasInsufficientBalance() ? 'არასაკმარისი ბალანსი' : 'შენახვა'}
+                {!pricingLoaded ? t('cars.vip.modal.loading') : hasInsufficientBalance() ? t('addCar.vipStatus.insufficientBalance') : t('editCar.submit')}
               </button>
             </div>
           </div>

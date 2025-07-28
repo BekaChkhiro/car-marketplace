@@ -145,7 +145,15 @@
         "currency": "лари",
         "day": "день",
         "days": "дней",
-        "fixedDurationMessage": "Данный VIP пакет имеет фиксированную продолжительность:"
+        "fixedDurationMessage": "Данный VIP пакет имеет фиксированную продолжительность:",
+        "noVip": "Без VIP",
+        "additionalServicesOnly": "Только дополнительные услуги",
+        "additionalServicesOnlyDesc": "Приобретите только дополнительные услуги без VIP статуса",
+        "free": "Бесплатно",
+        "selectAtLeastOne": "Пожалуйста, выберите хотя бы один VIP пакет или дополнительную услугу",
+        "purchaseFailed": "Не удалось приобрести VIP пакет. Пожалуйста, попробуйте снова.",
+        "serviceDuration": "Длительность услуги:",
+        "buyServices": "Купить услуги"
       }
     }
   },
@@ -350,6 +358,7 @@
         "vip_plus": "VIP+",
         "super_vip": "SUPER VIP"
       },
+      "PriceSummary" : "Сводка цен",
       "descriptions": {
         "none": "Обычное объявление",
         "vip": "Выделенное объявление",
