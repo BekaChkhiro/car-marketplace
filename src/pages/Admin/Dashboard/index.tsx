@@ -18,6 +18,7 @@ import {
 import authService from '../../../api/services/authService';
 import carService from '../../../api/services/carService';
 import partService, { Part } from '../../../api/services/partService';
+import autoRenewalService from '../../../api/services/autoRenewalService';
 import { User } from '../../../api/types/auth.types';
 import { Car as CarType } from '../../../api/types/car.types';
 import { Link } from 'react-router-dom';
@@ -109,6 +110,56 @@ const AdminDashboard: React.FC = () => {
         setCars(carsData.cars || []);
         // Extract the parts array from the partsData object
         setParts(partsData.parts || []);
+        
+        // Auto-renewal API calls - log results to console
+        console.log('=== AUTO-RENEWAL INFORMATION ===');
+        console.log('Current user:', user);
+        console.log('User role:', user?.role);
+        
+        // Check if token exists
+        const token = localStorage.getItem('bigway_access_token');
+        console.log('Token exists:', !!token);
+        console.log('Token preview:', token ? token.substring(0, 20) + '...' : 'No token');
+        
+        // Only proceed if user is admin
+        if (user?.role !== 'admin') {
+          console.log('Skipping auto-renewal calls - user is not admin');
+          return;
+        }
+        
+        try {
+          // 1. Get auto-renewal stats
+          const statsData = await autoRenewalService.getStats();
+          console.log('Auto-Renewal Stats:', statsData);
+          
+          // 2. Get eligible cars
+          const eligibleData = await autoRenewalService.getEligible();
+          console.log('Eligible Cars for Auto-Renewal:', eligibleData);
+          console.log(`Total eligible cars: ${eligibleData.total}`);
+          console.log('Current system time:', eligibleData.currentTime);
+          
+          if (eligibleData.eligibleCars && eligibleData.eligibleCars.length > 0) {
+            console.log('Eligible car details:');
+            eligibleData.eligibleCars.forEach(car => {
+              console.log(`- Car #${car.id}: ${car.title || 'Untitled'}`);
+              console.log(`  Status: ${car.renewal_status}`);
+              console.log(`  Last processed: ${car.auto_renewal_last_processed || 'Never'}`);
+              console.log(`  Remaining days: ${car.auto_renewal_remaining_days}`);
+            });
+          }
+          
+          // Auto-renewal will run automatically at midnight (00:00) daily
+          console.log('Auto-renewal is scheduled to run daily at midnight (00:00)');
+          
+        } catch (autoRenewalError) {
+          console.error('Error with auto-renewal APIs:', autoRenewalError);
+          if (autoRenewalError.response) {
+            console.error('Response status:', autoRenewalError.response.status);
+            console.error('Response data:', autoRenewalError.response.data);
+          }
+        }
+        
+        console.log('=== END AUTO-RENEWAL INFORMATION ===');
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {

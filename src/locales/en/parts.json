@@ -114,5 +114,8 @@
   "noPermissionToEdit": "You do not have permission to edit this part",
   "editPartComingSoon": "Edit part functionality will be implemented soon",
   "backToMyParts": "Back to My Parts",
-  "savePart" : "Save"
+  "savePart" : "Save",
+  "left" : "left",
+  "day" : "day",
+  "autoRenew": "Auto-renew"
 }

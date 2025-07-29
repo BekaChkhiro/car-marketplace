@@ -21,6 +21,10 @@ export interface Car {
   vip_active?: boolean;
   color_highlighting_enabled?: boolean;
   color_highlighting_expiration_date?: string;
+  auto_renewal_enabled?: boolean;
+  auto_renewal_expiration_date?: string;
+  auto_renewal_days?: number;
+  auto_renewal_remaining_days?: number;
   seller_id: number;
   user_id?: number; // The ID of the user who owns this car
   author_name?: string; // Author's name

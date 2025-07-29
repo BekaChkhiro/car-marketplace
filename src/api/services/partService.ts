@@ -34,8 +34,12 @@ export interface Part {
   year?: number;
   quantity?: number;
   vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  vip_expiration_date?: string;
   color_highlighting?: boolean;
-  auto_renewal?: boolean;
+  auto_renewal_enabled?: boolean;
+  auto_renewal_expiration_date?: string;
+  auto_renewal_days?: number;
+  auto_renewal_remaining_days?: number;
   // Seller information
   first_name?: string;
   last_name?: string;

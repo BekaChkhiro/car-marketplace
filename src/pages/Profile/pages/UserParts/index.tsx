@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Star, Crown } from 'lucide-react';
+import { Star, Crown, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
 import { useToast } from '../../../../context/ToastContext';
 import partService, { Part } from '../../../../api/services/partService';
@@ -37,6 +37,27 @@ const UserParts: React.FC = () => {
         setParts(data.parts);
         setTotalCount(data.totalCount);
         setTotalPages(data.totalPages);
+        
+        // Debug auto-renewal data for parts
+        console.log('UserParts loaded parts:', data.parts.length);
+        console.log('Parts with auto-renewal:', data.parts.filter(part => part.auto_renewal_enabled).map(part => ({ 
+          id: part.id, 
+          title: part.title,
+          auto_renewal_enabled: part.auto_renewal_enabled, 
+          auto_renewal_expiration_date: part.auto_renewal_expiration_date, 
+          auto_renewal_remaining_days: part.auto_renewal_remaining_days 
+        })));
+        
+        // Debug first part properties
+        if (data.parts.length > 0) {
+          console.log('First part properties:', Object.keys(data.parts[0]));
+          console.log('First part auto-renewal properties:', {
+            auto_renewal_enabled: data.parts[0].auto_renewal_enabled,
+            auto_renewal_expiration_date: data.parts[0].auto_renewal_expiration_date,
+            auto_renewal_days: data.parts[0].auto_renewal_days,
+            auto_renewal_remaining_days: data.parts[0].auto_renewal_remaining_days
+          });
+        }
       } catch (error) {
         console.error('[UserParts] Error loading parts:', error);
         showToast(t('loadPartsError'), 'error');
@@ -209,6 +230,17 @@ const UserParts: React.FC = () => {
                           <div className="text-sm font-medium text-primary">
                             {formatCurrency(part.price)}
                           </div>
+                              {/* Auto-renewal status */}
+                              {part.auto_renewal_enabled && part.auto_renewal_expiration_date && new Date(part.auto_renewal_expiration_date) > new Date() && (
+                                <div className="flex items-center text-xs mt-1">
+                                  <div className="flex items-center px-2 py-1 bg-green-50 text-green-700 rounded-md border border-green-200">
+                                    <RefreshCw size={12} className="mr-1" />
+                                    <span className="font-medium">
+                                      {t('autoRenewal', 'ავტო-განახლება')}: {part.auto_renewal_remaining_days || 0} {t('daysLeft', 'დღე დარჩენილია')}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
                         </td>
                         
                         {/* Status */}
