@@ -79,6 +79,15 @@
     "actions": {
       "save": "Сохранить",
       "saving": "Сохранение..."
+    },
+    "roles": {
+      "user": "Обычный пользователь",
+      "dealer": "Дилер",
+      "autosalon": "Автосалон"
+    },
+    "categories": {
+      "cars": "Автомобили",
+      "parts": "Запчасти"
     }
   },
   "dashboard": {

@@ -6,6 +6,7 @@ import { useToast } from '../../../context/ToastContext';
 import { useLoading } from '../../../context/LoadingContext';
 import { Container, Button, Loading } from '../../../components/ui';
 import partService from '../../../api/services/partService';
+import balanceService from '../../../api/services/balanceService';
 import ImageUploadWithFeatured from '../../../components/ImageUploadWithFeatured';
 import MultiLanguageDescription from './components/MultiLanguageDescription';
 import VIPStatus from './components/VIPStatus';
@@ -23,8 +24,11 @@ interface FormData {
   description_en: string;
   description_ka: string;
   vip_status: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  vip_days: number;
   color_highlighting?: boolean;
+  color_highlighting_days: number;
   auto_renewal?: boolean;
+  auto_renewal_days: number;
   currency?: string; // Currency code (GEL, USD, etc.)
   author_name: string;
   author_phone: string;
@@ -48,8 +52,11 @@ const AddPart: React.FC = () => {
     description_en: '',
     description_ka: '',
     vip_status: 'none',
+    vip_days: 1,
     color_highlighting: false,
+    color_highlighting_days: 1,
     auto_renewal: false,
+    auto_renewal_days: 1,
     author_name: user ? `${user.first_name} ${user.last_name}` : '',
     author_phone: user?.phone || ''
   });
@@ -60,22 +67,25 @@ const AddPart: React.FC = () => {
   const [brands, setBrands] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [models, setModels] = useState<any[]>([]);
+  const [userBalance, setUserBalance] = useState<number>(0);
   
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
-  // Load brands and categories on component mount
+  // Load brands, categories, and user balance on component mount
   useEffect(() => {
     const loadReferenceData = async () => {
       try {
-        const [brandsData, categoriesData] = await Promise.all([
+        const [brandsData, categoriesData, balance] = await Promise.all([
           partService.getBrands(),
-          partService.getPartCategories()
+          partService.getPartCategories(),
+          balanceService.getBalance().catch(() => 0) // Default to 0 if balance fetch fails
         ]);
         
         setBrands(brandsData);
         setCategories(categoriesData);
+        setUserBalance(balance);
       } catch (error) {
         console.error('Error loading reference data:', error);
         showToast(t('loadFormDataError'), 'error');
@@ -297,20 +307,52 @@ const AddPart: React.FC = () => {
         return;
       }
       
-      // Create part data object with form data and images
+      // Create part data object with form data and images (without VIP status initially)
       // Pass the featured image index to the API
       const result = await partService.createPart({
         ...processedFormData,
         images,
-        featuredImageIndex,
-        vip_status: formData.vip_status,
-        color_highlighting: formData.color_highlighting,
-        auto_renewal: formData.auto_renewal
+        featuredImageIndex
+        // VIP status will be purchased separately after part creation
       });
       
       console.log('Part created successfully:', result);
       
-      showToast(t('partCreated'), 'success');
+      // If VIP status is selected (not 'none') or additional services are enabled, purchase VIP status
+      const hasVipStatus = formData.vip_status !== 'none';
+      const hasAdditionalServices = formData.color_highlighting || formData.auto_renewal;
+      
+      if (hasVipStatus || hasAdditionalServices) {
+        try {
+          console.log('Purchasing VIP status for part:', {
+            partId: result.id,
+            vipStatus: formData.vip_status,
+            days: formData.vip_days,
+            colorHighlighting: formData.color_highlighting,
+            colorHighlightingDays: formData.color_highlighting_days,
+            autoRenewal: formData.auto_renewal,
+            autoRenewalDays: formData.auto_renewal_days
+          });
+          
+          await partService.purchaseVipStatus(
+            result.id,
+            formData.vip_status,
+            formData.vip_days,
+            formData.color_highlighting || false,
+            formData.color_highlighting_days,
+            formData.auto_renewal || false,
+            formData.auto_renewal_days
+          );
+          
+          console.log('VIP status purchased successfully for part');
+          showToast(t('partCreated') + ' (VIP status purchased)', 'success');
+        } catch (vipError) {
+          console.error('Error purchasing VIP status:', vipError);
+          showToast(t('partCreated') + ' (VIP purchase failed)', 'warning');
+        }
+      } else {
+        showToast(t('partCreated'), 'success');
+      }
       // Navigate to profile parts page with language prefix
       const currentLang = localStorage.getItem('i18nextLng') || 'ka';
       navigate(`/${currentLang}/profile/parts`);
@@ -337,7 +379,7 @@ const AddPart: React.FC = () => {
         </div>
       </Container>
     );
-  }
+  }  
   
   return (
     <Container>
@@ -511,6 +553,12 @@ const AddPart: React.FC = () => {
           <div className="mb-6">
             <VIPStatus
               vipStatus={formData.vip_status}
+              vipDays={formData.vip_days}
+              colorHighlighting={formData.color_highlighting || false}
+              colorHighlightingDays={formData.color_highlighting_days}
+              autoRenewal={formData.auto_renewal || false}
+              autoRenewalDays={formData.auto_renewal_days}
+              userBalance={userBalance}
               onChange={(field, value) => handleChange(field, value)}
             />
           </div>

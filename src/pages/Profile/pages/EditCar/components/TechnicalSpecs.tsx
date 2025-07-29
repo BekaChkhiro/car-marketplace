@@ -1,7 +1,9 @@
 import React from 'react';
 import { Wrench, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import { TRANSMISSION_OPTIONS, FUEL_TYPE_OPTIONS, ENGINE_SIZE_OPTIONS, INTERIOR_MATERIAL_OPTIONS } from '../types';
+import { useTranslatedOptions } from '../../../../../hooks/useTranslatedOptions';
 import CylinderSwitcher from '../../../../../components/CylinderSwitcher';
 import DriveTypeSwitcher from '../../../../../components/DriveTypeSwitcher';
 import SteeringWheelSwitcher from '../../../../../components/SteeringWheelSwitcher';
@@ -16,6 +18,8 @@ interface TransmissionSwitcherProps {
 }
 
 const TransmissionSwitcher: React.FC<TransmissionSwitcherProps> = ({ value, onChange, className = '' }) => {
+  const { t } = useTranslation('profile');
+  
   return (
     <div className={`flex flex-col sm:flex-row items-start sm:items-center  justify-between gap-2 ${className}`}>
       <button
@@ -28,7 +32,7 @@ const TransmissionSwitcher: React.FC<TransmissionSwitcherProps> = ({ value, onCh
         onClick={() => onChange('manual')}
       >
         <Settings size={16} className={value === 'manual' ? 'text-white' : 'text-gray-500'} />
-        <span>მექანიკური</span>
+        <span>{t('addCar.technicalSpecs.manual')}</span>
       </button>
       <button
         type="button"
@@ -40,7 +44,7 @@ const TransmissionSwitcher: React.FC<TransmissionSwitcherProps> = ({ value, onCh
         onClick={() => onChange('automatic')}
       >
         <Settings size={16} className={value === 'automatic' ? 'text-white' : 'text-gray-500'} />
-        <span>ავტომატური</span>
+        <span>{t('addCar.technicalSpecs.automatic')}</span>
       </button>
     </div>
   );
@@ -69,6 +73,9 @@ interface TechnicalSpecsProps {
 }
 
 const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChange, errors = {} }) => {
+  const { t } = useTranslation('profile');
+  const translatedOptions = useTranslatedOptions();
+  
   return (
     <div className="bg-white rounded-xl p-6 border ">
       <div className="flex items-center gap-3 mb-6 ">
@@ -76,8 +83,8 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           <Wrench size={20} className="text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">ტექნიკური მახასიათებლები</h2>
-          <p className="text-sm text-gray-500">მანქანის ტექნიკური დეტალები</p>
+          <h2 className="text-lg font-semibold text-gray-900">{t('addCar.technicalSpecs.title')}</h2>
+          <p className="text-sm text-gray-500">{t('addCar.technicalSpecs.subtitle')}</p>
         </div>
       </div>
       
@@ -85,7 +92,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* ძრავის მოცულობა */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ძრავის მოცულობა (ლიტრი)
+            {t('addCar.technicalSpecs.engineSize')}
             {errors?.engine_size && (
               <span className="text-red-500 ml-1 text-xs">{errors.engine_size}</span>
             )}
@@ -98,20 +105,16 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               : ''}
             onChange={(value) => onChange('engine_size', value)}
             options={ENGINE_SIZE_OPTIONS}
-            placeholder={specifications.engine_size !== undefined
-              ? (typeof specifications.engine_size === 'number'
-                ? (Number.isInteger(specifications.engine_size) ? specifications.engine_size + '.0' : parseFloat(specifications.engine_size.toString()).toString())
-                : String(specifications.engine_size))
-              : ''}
+            placeholder={t('addCar.technicalSpecs.selectEngineSize')}
             error={errors?.engine_size}
           />
-          <p className="text-xs text-gray-500 mt-1">აირჩიეთ ძრავის მოცულობა ლიტრებში.</p>
+          <p className="text-xs text-gray-500 mt-1">{t('addCar.technicalSpecs.engineSizeHint')}</p>
         </div>
 
         {/* ცილინდრები */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ცილინდრების რაოდენობა
+            {t('addCar.technicalSpecs.cylinders')}
           </label>
           <div className="relative">
             <input
@@ -119,7 +122,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               value={specifications.cylinders || ''}
               onChange={(e) => onChange('cylinders', Number(e.target.value))}
               className="w-full px-2 py-2.5 text-sm sm:text-md border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
-              placeholder="მაგ: 4"
+              placeholder={t('addCar.technicalSpecs.cylindersPlaceholder')}
               min="1"
               max="16"
             />
@@ -131,27 +134,27 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
               />
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-1">მიუთითეთ ძრავის ცილინდრების რაოდენობა.</p>
+          <p className="text-xs text-gray-500 mt-1">{t('addCar.technicalSpecs.cylindersHint')}</p>
         </div>
 
         {/* გარბენი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            გარბენი (კმ)
+            {t('addCar.technicalSpecs.mileage')}
           </label>
           <input
             type="number"
             value={specifications.mileage || ''}
             onChange={(e) => onChange('mileage', e.target.value)}
             className="w-full px-4 py-2.5 border-2 rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            placeholder="მაგ: 100000"
+            placeholder={t('addCar.technicalSpecs.mileagePlaceholder')}
           />
         </div>
         
         {/* გადაცემათა კოლოფი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            გადაცემათა კოლოფი
+            {t('addCar.technicalSpecs.transmission')}
             {errors?.transmission && (
               <span className="text-red-500 ml-1 text-xs">{errors.transmission}</span>
             )}
@@ -166,7 +169,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* საწვავის ტიპი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            საწვავის ტიპი
+            {t('addCar.technicalSpecs.fuelType')}
             {errors?.fuel_type && (
               <span className="text-red-500 ml-1 text-xs">{errors.fuel_type}</span>
             )}
@@ -174,8 +177,8 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           <CustomSelect
             value={specifications.fuel_type || ''}
             onChange={(value) => onChange('fuel_type', value)}
-            options={FUEL_TYPE_OPTIONS}
-            placeholder="აირჩიეთ საწვავის ტიპი"
+            options={translatedOptions.fuelTypes}
+            placeholder={t('addCar.technicalSpecs.selectFuelType')}
             error={errors?.fuel_type}
           />
         </div>
@@ -185,7 +188,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* წამყვანი თვლები */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            წამყვანი თვლები
+            {t('addCar.technicalSpecs.driveType')}
             {errors?.drive_type && (
               <span className="text-red-500 ml-1 text-xs">{errors.drive_type}</span>
             )}
@@ -200,7 +203,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* საჭე */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            საჭე
+            {t('addCar.technicalSpecs.steeringWheel')}
             {errors?.steering_wheel && (
               <span className="text-red-500 ml-1 text-xs">{errors.steering_wheel}</span>
             )}
@@ -215,7 +218,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* ფერი */}
         <div className="group">
           <label className="block text-sm  font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            ფერი
+            {t('addCar.technicalSpecs.color')}
             {errors?.color && (
               <span className="text-red-500 ml-1 text-xs">{errors.color}</span>
             )}
@@ -223,7 +226,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           <ColorDropdown
             value={specifications.color || ''}
             onChange={(value) => onChange('color', value)}
-            placeholder="აირჩიეთ ფერი"
+            placeholder={t('addCar.technicalSpecs.selectColor')}
             error={errors?.color}
           />
         </div>
@@ -231,16 +234,16 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* სალონის მასალა */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            სალონის მასალა
+            {t('addCar.technicalSpecs.interiorMaterial')}
             {errors?.interior_material && (
               <span className="text-red-500 ml-1 text-xs">{errors.interior_material}</span>
             )}
           </label>
           <CustomSelect
-            options={INTERIOR_MATERIAL_OPTIONS}
+            options={translatedOptions.interiorMaterials}
             value={specifications.interior_material || ''}
             onChange={(value) => onChange('interior_material', value)}
-            placeholder={specifications.interior_material || ''}
+            placeholder={t('addCar.technicalSpecs.selectInteriorMaterial')}
             error={errors?.interior_material}
           />
         </div>
@@ -248,7 +251,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* სალონის ფერი */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            სალონის ფერი
+            {t('addCar.technicalSpecs.interiorColor')}
             {errors?.interior_color && (
               <span className="text-red-500 ml-1 text-xs">{errors.interior_color}</span>
             )}
@@ -256,7 +259,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
           <InteriorColorDropdown
             value={specifications.interior_color || ''}
             onChange={(value) => onChange('interior_color', value)}
-            placeholder="აირჩიეთ სალონის ფერი"
+            placeholder={t('addCar.technicalSpecs.selectInteriorColor')}
             error={errors?.interior_color}
           />
         </div>
@@ -264,7 +267,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
         {/* უსაფრთხოების ბალიშების რაოდენობა */}
         <div className="group">
           <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-            უსაფრთხოების ბალიშების რაოდენობა
+            {t('addCar.technicalSpecs.airbagsCount')}
             {errors?.airbags_count && (
               <span className="text-red-500 ml-1 text-xs">{errors.airbags_count}</span>
             )}
@@ -287,7 +290,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
             ]}
             value={specifications.airbags_count?.toString() || ''}
             onChange={(value) => onChange('airbags_count', Number(value))}
-            placeholder="აირჩიეთ აირბეგების რაოდენობა"
+            placeholder={t('addCar.technicalSpecs.selectAirbagsCount')}
             error={errors?.airbags_count}
           />
         </div>

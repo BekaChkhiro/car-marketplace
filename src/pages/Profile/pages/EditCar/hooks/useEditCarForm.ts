@@ -6,6 +6,9 @@ import { Car, UpdateCarFormData } from '../../../../../api/types/car.types';
 import carService from '../../../../../api/services/carService';
 import { CarFeatures } from '../../AddCar/types';
 import { validateCarForm, validateImage } from '../utils/validation';
+import balanceService from '../../../../../api/services/balanceService';
+import vipPricingService from '../../../../../api/services/vipPricingService';
+import vipService from '../../../../../api/services/vipService';
 
 export const useEditCarForm = (carId: number) => {
   const navigate = useNavigate();
@@ -18,6 +21,10 @@ export const useEditCarForm = (carId: number) => {
   const [existingImages, setExistingImages] = useState<any[]>([]);
   const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [userBalance, setUserBalance] = useState<number>(0);
+  const [vipPricing, setVipPricing] = useState<any[]>([]);
+  const [additionalServicesPricing, setAdditionalServicesPricing] = useState<any[]>([]);
+  const [pricingLoaded, setPricingLoaded] = useState<boolean>(false);
   
   // Initialize form data with empty values, will be populated once car data is fetched
   const initialFormData = (): UpdateCarFormData => ({
@@ -32,6 +39,12 @@ export const useEditCarForm = (carId: number) => {
     description_ka: '',
     description_en: '',
     description_ru: '',
+    vip_status: 'none', // Default VIP status is none
+    vip_days: 1, // Default VIP days
+    color_highlighting: false,
+    color_highlighting_days: 1,
+    auto_renewal: false,
+    auto_renewal_days: 1,
     author_name: '',
     author_phone: '',
     location: {
@@ -89,8 +102,33 @@ export const useEditCarForm = (carId: number) => {
       }
     };
 
+    const fetchBalanceAndPricing = async () => {
+      try {
+        const [balance, pricingData] = await Promise.all([
+          balanceService.getBalance(),
+          vipPricingService.getAllPricing()
+        ]);
+        const processedBalance = typeof balance === 'number' ? balance : parseFloat(balance) || 0;
+        setUserBalance(processedBalance);
+        setVipPricing(pricingData.packages);
+        setAdditionalServicesPricing(pricingData.additionalServices);
+        setPricingLoaded(true);
+        
+        console.log('Loaded VIP pricing data:', {
+          packages: pricingData.packages,
+          additionalServices: pricingData.additionalServices,
+          userBalance: processedBalance
+        });
+      } catch (error) {
+        console.error('Error fetching balance and pricing:', error);
+        setUserBalance(0);
+        setPricingLoaded(true); // Still set to true to show that loading attempt is complete
+      }
+    };
+
     if (carId) {
       fetchCar();
+      fetchBalanceAndPricing();
     }
   }, [carId]);
 
@@ -191,6 +229,12 @@ export const useEditCarForm = (carId: number) => {
       description_ka: car.description_ka || '',
       description_en: car.description_en || '',
       description_ru: car.description_ru || '',
+      vip_status: car.vip_status || 'none',
+      vip_days: 1, // Default for editing
+      color_highlighting: false, // Default for editing
+      color_highlighting_days: 1,
+      auto_renewal: false, // Default for editing
+      auto_renewal_days: 1,
       author_name: car.author_name || '',
       author_phone: car.author_phone || '',
       location: {
@@ -336,6 +380,136 @@ export const useEditCarForm = (carId: number) => {
     }));
   };
 
+  // VIP pricing functions
+  const getVipPrice = (status: string): number => {
+    if (status === 'none') {
+      const freePricing = vipPricing.find(p => p.service_type === 'free');
+      return freePricing ? Number(freePricing.price) : 0;
+    }
+
+    // Only use database pricing, no fallbacks
+    if (!pricingLoaded || !vipPricing || vipPricing.length === 0) {
+      console.warn('VIP pricing not loaded yet, returning 0');
+      return 0;
+    }
+
+    const pricing = vipPricing.find(p => p.service_type === status);
+    const price = pricing ? Number(pricing.price) : 0;
+    
+    console.log(`VIP price for ${status}:`, { pricing, price });
+    return price;
+  };
+
+  const getAdditionalServicesPrice = (): number => {
+    if (!pricingLoaded || !additionalServicesPricing || additionalServicesPricing.length === 0) {
+      console.warn('Additional services pricing not loaded yet, returning 0');
+      return 0;
+    }
+    
+    let price = 0;
+    
+    if (formData.color_highlighting) {
+      const colorPricing = additionalServicesPricing.find(s => s.service_type === 'color_highlighting');
+      const dailyPrice = colorPricing ? Number(colorPricing.price) : 0;
+      price += dailyPrice * (formData.color_highlighting_days || 1);
+      console.log('Color highlighting price calculation:', { dailyPrice, days: formData.color_highlighting_days, total: dailyPrice * (formData.color_highlighting_days || 1) });
+    }
+    
+    if (formData.auto_renewal) {
+      const renewalPricing = additionalServicesPricing.find(s => s.service_type === 'auto_renewal');
+      const dailyPrice = renewalPricing ? Number(renewalPricing.price) : 0;
+      price += dailyPrice * (formData.auto_renewal_days || 1);
+      console.log('Auto renewal price calculation:', { dailyPrice, days: formData.auto_renewal_days, total: dailyPrice * (formData.auto_renewal_days || 1) });
+    }
+    
+    return price;
+  };
+
+  // Get daily price for individual service (not multiplied by days)
+  const getAdditionalServicePrice = (serviceType: string): number => {
+    if (!pricingLoaded || !additionalServicesPricing || additionalServicesPricing.length === 0) {
+      console.warn('Additional services pricing not loaded yet, returning 0');
+      return 0;
+    }
+    
+    const pricing = additionalServicesPricing.find(s => s.service_type === serviceType);
+    const price = pricing ? Number(pricing.price) : 0;
+    
+    console.log(`Additional service price for ${serviceType}:`, { pricing, price });
+    return price;
+  };
+
+  const getTotalVipPrice = (): number => {
+    const vipStatus = formData.vip_status || 'none';
+    const vipDays = formData.vip_days || 30;
+    const dailyVipPrice = getVipPrice(vipStatus);
+    const basePrice = dailyVipPrice * vipDays;
+    const additionalPrice = getAdditionalServicesPrice();
+    const totalPrice = basePrice + additionalPrice;
+    
+    console.log('VIP Price Calculation Debug:', {
+      vipStatus,
+      vipDays,
+      dailyVipPrice,
+      basePrice,
+      additionalPrice,
+      totalPrice,
+      colorHighlighting: formData.color_highlighting,
+      colorHighlightingDays: formData.color_highlighting_days,
+      autoRenewal: formData.auto_renewal,
+      autoRenewalDays: formData.auto_renewal_days,
+      vipPricingLoaded: vipPricing.length > 0,
+      additionalServicesPricingLoaded: additionalServicesPricing.length > 0
+    });
+    
+    return totalPrice;
+  };
+
+  const hasSufficientBalance = (): boolean => {
+    // If pricing not loaded yet, assume sufficient balance to avoid blocking UI
+    if (!pricingLoaded) {
+      return true;
+    }
+    
+    if (formData.vip_status === 'none' && getVipPrice('none') === 0) {
+      return true; // Free status
+    }
+    
+    const totalCost = getTotalVipPrice();
+    // Add small tolerance for floating point precision (0.01)
+    const hasBalance = userBalance >= (totalCost - 0.01);
+    
+    console.log('Balance check:', {
+      userBalance,
+      totalCost,
+      hasBalance,
+      difference: userBalance - totalCost
+    });
+    
+    return hasBalance;
+  };
+
+  // Check if current VIP selection has sufficient balance
+  const hasInsufficientBalance = (): boolean => {
+    // If pricing not loaded yet, don't show insufficient balance
+    if (!pricingLoaded) {
+      return false;
+    }
+    
+    const totalCost = getTotalVipPrice();
+    // Add small tolerance for floating point precision (0.01)
+    const insufficient = totalCost > 0 && userBalance < (totalCost - 0.01);
+    
+    console.log('Insufficient balance check:', {
+      userBalance,
+      totalCost,
+      insufficient,
+      difference: userBalance - totalCost
+    });
+    
+    return insufficient;
+  };
+
   const handleFeaturesChange = (field: keyof CarFeatures, value: boolean) => {
     setFormData((prev: UpdateCarFormData) => {
       // Create a new features array with the updated value
@@ -473,6 +647,68 @@ export const useEditCarForm = (carId: number) => {
     
     try {
       showLoading();
+      
+      // First, process VIP purchases if any VIP services are selected
+      const totalVipCost = getTotalVipPrice();
+      const hasVipSelection = formData.vip_status !== 'none' || formData.color_highlighting || formData.auto_renewal;
+      
+      if (hasVipSelection && totalVipCost > 0) {
+        console.log('Processing VIP purchase before car update:', {
+          vip_status: formData.vip_status,
+          vip_days: formData.vip_days,
+          color_highlighting: formData.color_highlighting,
+          color_highlighting_days: formData.color_highlighting_days,
+          auto_renewal: formData.auto_renewal,
+          auto_renewal_days: formData.auto_renewal_days,
+          totalCost: totalVipCost
+        });
+        
+        // Check balance before purchase
+        if (userBalance < totalVipCost) {
+          hideLoading();
+          showToast('არასაკმარისი ბალანსი VIP სერვისისთვის', 'error');
+          return;
+        }
+        
+        try {
+          // Use balanceService for all VIP purchases, including those with additional services
+          if (formData.vip_status === 'none' && !formData.color_highlighting && !formData.auto_renewal) {
+            hideLoading();
+            showToast('არასაკმარისი სერვისები არჩეულია', 'error');
+            return;
+          }
+
+          // Purchase VIP status or additional services
+          const result = await balanceService.purchaseVipStatus(
+            carId,
+            formData.vip_status as 'none' | 'vip' | 'vip_plus' | 'super_vip',
+            formData.vip_days || 1,
+            {
+              colorHighlighting: formData.color_highlighting,
+              colorHighlightingDays: formData.color_highlighting_days,
+              autoRenewal: formData.auto_renewal,
+              autoRenewalDays: formData.auto_renewal_days
+            }
+          );
+          
+          if (!result.success) {
+            throw new Error(result.message || 'VIP status purchase failed');
+          }
+          
+          
+          // Update user balance after successful VIP purchase
+          setUserBalance(prev => prev - totalVipCost);
+          
+          showToast('VIP სერვისი წარმატებით შეძენილია', 'success');
+        } catch (vipError: any) {
+          console.error('VIP purchase failed:', vipError);
+          hideLoading();
+          showToast(vipError.message || 'VIP სერვისის შეძენა ვერ მოხერხდა', 'error');
+          return;
+        }
+      }
+      
+      // Update the car data
       const updatedCar = await carService.updateCar(carId, submitData);
       console.log('მიღებული პასუხი API-დან:', updatedCar);
       hideLoading();
@@ -580,6 +816,7 @@ export const useEditCarForm = (carId: number) => {
     existingImages,
     featuredImageIndex,
     isUploading,
+    userBalance,
     setFeaturedImageIndex,
     handleChange,
     handleFeaturesChange,
@@ -588,6 +825,11 @@ export const useEditCarForm = (carId: number) => {
     handleImageUpload,
     removeImage,
     removeExistingImage,
-    setPrimaryImage
+    setPrimaryImage,
+    getTotalVipPrice,
+    hasSufficientBalance,
+    hasInsufficientBalance,
+    getAdditionalServicePrice,
+    pricingLoaded
   };
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Star, Crown, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
 import { useToast } from '../../../../context/ToastContext';
 import partService, { Part } from '../../../../api/services/partService';
@@ -36,6 +37,27 @@ const UserParts: React.FC = () => {
         setParts(data.parts);
         setTotalCount(data.totalCount);
         setTotalPages(data.totalPages);
+        
+        // Debug auto-renewal data for parts
+        console.log('UserParts loaded parts:', data.parts.length);
+        console.log('Parts with auto-renewal:', data.parts.filter(part => part.auto_renewal_enabled).map(part => ({ 
+          id: part.id, 
+          title: part.title,
+          auto_renewal_enabled: part.auto_renewal_enabled, 
+          auto_renewal_expiration_date: part.auto_renewal_expiration_date, 
+          auto_renewal_remaining_days: part.auto_renewal_remaining_days 
+        })));
+        
+        // Debug first part properties
+        if (data.parts.length > 0) {
+          console.log('First part properties:', Object.keys(data.parts[0]));
+          console.log('First part auto-renewal properties:', {
+            auto_renewal_enabled: data.parts[0].auto_renewal_enabled,
+            auto_renewal_expiration_date: data.parts[0].auto_renewal_expiration_date,
+            auto_renewal_days: data.parts[0].auto_renewal_days,
+            auto_renewal_remaining_days: data.parts[0].auto_renewal_remaining_days
+          });
+        }
       } catch (error) {
         console.error('[UserParts] Error loading parts:', error);
         showToast(t('loadPartsError'), 'error');
@@ -139,7 +161,7 @@ const UserParts: React.FC = () => {
                         {/* Part Image and Title */}
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-16 w-16">
+                            <div className="flex-shrink-0 h-16 w-16 relative">
                               <img 
                                 className="h-16 w-16 object-cover rounded-md" 
                                 src={
@@ -149,12 +171,46 @@ const UserParts: React.FC = () => {
                                 }
                                 alt={part.title} 
                               />
+                              {/* VIP Badge on image */}
+                              {part.vip_status && part.vip_status !== 'none' && (
+                                <div 
+                                  className={`absolute -top-1 -right-1 py-0.5 px-1 rounded text-xs font-bold flex items-center gap-0.5 ${
+                                    part.vip_status === 'super_vip' ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white' : 
+                                    part.vip_status === 'vip_plus' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' : 
+                                    'bg-primary text-white'
+                                  } shadow-sm z-10`}
+                                >
+                                  <Star size={8} fill="currentColor" strokeWidth={0} />
+                                  <span className="text-xs">
+                                    {part.vip_status === 'super_vip' ? 'SUPER' : 
+                                     part.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                <Link to={`/parts/${part.id}`} className="hover:text-primary">
-                                  {part.title}
-                                </Link>
+                              <div className="flex items-center">
+                                <div className="text-sm font-medium text-gray-900">
+                                  <Link to={`/parts/${part.id}`} className="hover:text-primary">
+                                    {part.title}
+                                  </Link>
+                                </div>
+                                {/* VIP Badge next to title */}
+                                {part.vip_status && part.vip_status !== 'none' && (
+                                  <div 
+                                    className={`ml-2 py-0.5 px-1.5 rounded text-xs font-bold flex items-center gap-1 ${
+                                      part.vip_status === 'super_vip' ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white' : 
+                                      part.vip_status === 'vip_plus' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' : 
+                                      'bg-primary text-white'
+                                    } shadow-sm`}
+                                  >
+                                    <Star size={10} fill="currentColor" strokeWidth={0} />
+                                    <span className="text-xs">
+                                      {part.vip_status === 'super_vip' ? t('superVip', 'SUPER VIP') : 
+                                       part.vip_status === 'vip_plus' ? t('vipPlus', 'VIP+') : t('vip', 'VIP')}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                               <div className="text-sm text-gray-500">
                                 Added on {new Date(part.created_at).toLocaleDateString()}
@@ -174,6 +230,17 @@ const UserParts: React.FC = () => {
                           <div className="text-sm font-medium text-primary">
                             {formatCurrency(part.price)}
                           </div>
+                              {/* Auto-renewal status */}
+                              {part.auto_renewal_enabled && part.auto_renewal_expiration_date && new Date(part.auto_renewal_expiration_date) > new Date() && (
+                                <div className="flex items-center text-xs mt-1">
+                                  <div className="flex items-center px-2 py-1 bg-green-50 text-green-700 rounded-md border border-green-200">
+                                    <RefreshCw size={12} className="mr-1" />
+                                    <span className="font-medium">
+                                      {t('autoRenewal', 'ავტო-განახლება')}: {part.auto_renewal_remaining_days || 0} {t('daysLeft', 'დღე დარჩენილია')}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
                         </td>
                         
                         {/* Status */}
@@ -185,7 +252,31 @@ const UserParts: React.FC = () => {
                         
                         {/* Actions */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
+                          <div className="flex items-center gap-2">
+                            {/* VIP Status Button */}
+                            {part.vip_status && part.vip_status !== 'none' ? (
+                              <button
+                                className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 ${
+                                  part.vip_status === 'super_vip' ? 'bg-purple-100 hover:bg-purple-200 text-purple-700' :
+                                  part.vip_status === 'vip_plus' ? 'bg-orange-100 hover:bg-orange-200 text-orange-700' : 
+                                  'bg-blue-100 hover:bg-blue-200 text-blue-700'
+                                }`}
+                                title={`VIP Status: ${part.vip_status === 'super_vip' ? 'SUPER VIP' : part.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}`}
+                              >
+                                <Crown size={14} fill="currentColor" />
+                                <span className="text-xs font-medium">
+                                  {part.vip_status === 'super_vip' ? 'SUPER' : 
+                                   part.vip_status === 'vip_plus' ? 'VIP+' : 'VIP'}
+                                </span>
+                              </button>
+                            ) : (
+                              <button
+                                className="p-1.5 hover:bg-yellow-100 rounded-lg transition-colors"
+                                title="Add VIP Status"
+                              >
+                                <Crown size={14} className="text-gray-600 hover:text-yellow-600" fill="none" />
+                              </button>
+                            )}
                             <Link 
                               to={`/${localStorage.getItem('i18nextLng') || 'ka'}/profile/parts/edit/${part.id}`}
                               className="text-indigo-600 hover:text-indigo-900"

@@ -1,5 +1,6 @@
 import api from '../config/api';
 import { getStoredToken as getAccessToken } from '../utils/tokenStorage';
+import vipPricingService from './vipPricingService';
 
 /**
  * Interface for Transaction object
@@ -71,10 +72,11 @@ export interface PurchaseVipRequest {
  */
 export interface PurchaseVipResponse {
   success: boolean;
-  newBalance: number;
-  vipStatus: string;
-  vipExpiration: string;
-  message: string;
+  message?: string;
+  vipStatus?: string;
+  vipExpiration?: string;
+  newBalance?: number;
+  totalPrice?: number; // Total price including additional services
   requiredAmount?: number;
   currentBalance?: number;
 }
@@ -412,7 +414,12 @@ class BalanceService {
    * @param days Number of days for VIP status
    * @returns Purchase result
    */
-  async purchaseVipStatus(carId: number, vipStatus: 'vip' | 'vip_plus' | 'super_vip', days: number): Promise<PurchaseVipResponse> {
+  async purchaseVipStatus(carId: number, vipStatus: 'none' | 'vip' | 'vip_plus' | 'super_vip', days: number, additionalServices?: {
+    colorHighlighting?: boolean;
+    colorHighlightingDays?: number;
+    autoRenewal?: boolean;
+    autoRenewalDays?: number;
+  }): Promise<PurchaseVipResponse> {
     try {
       // დავრწმუნდეთ, რომ days არის მთელი რიცხვი და დადებითი
       // CRITICAL FIX: სწორი დღეების რაოდენობის გადაცემა
@@ -441,27 +448,60 @@ class BalanceService {
         // ვრწმუნდებით რომ days პარამეტრი გადაეცემა როგორც რიცხვი და არა სტრიქონი
         const requestData = { 
           vipStatus, 
-          days: validDays // validDays უკვე არის რიცხვითი ტიპი
+          days: validDays, // validDays უკვე არის რიცხვითი ტიპი
+          ...(additionalServices || {})
         };
         
         // ვრწმუნდებით რომ მონაცემები სწორადაა გადაცემული
-        console.log('CRITICAL - SENDING REQUEST TO SERVER:');
-        console.log('Request data:', JSON.stringify(requestData));
-        console.log('vipStatus:', requestData.vipStatus, '(type:', typeof requestData.vipStatus + ')');
-        console.log('days:', requestData.days, '(type:', typeof requestData.days + ')');
+        console.log('🔍 CRITICAL - SENDING REQUEST TO SERVER:');
+        console.log('🔍 Request data:', JSON.stringify(requestData, null, 2));
+        console.log('🔍 vipStatus:', requestData.vipStatus, '(type:', typeof requestData.vipStatus + ')');
+        console.log('🔍 days:', requestData.days, '(type:', typeof requestData.days + ')');
+        console.log('🔍 additionalServices original:', additionalServices);
+        console.log('🔍 colorHighlighting in requestData:', requestData.colorHighlighting, '(type:', typeof requestData.colorHighlighting + ')');
+        console.log('🔍 colorHighlightingDays in requestData:', requestData.colorHighlightingDays, '(type:', typeof requestData.colorHighlightingDays + ')');
         
-        // გამოვთვალოთ ჯამური ფასი კლიენტის მხარეს
+        // გამოვთვალოთ ჯამური ფასი კლიენტის მხარეს - განახლებული ფასები შესაბამისი ბაზიდან
         let pricePerDay = 0;
-        if (vipStatus === 'vip') pricePerDay = 2.5;
+        if (vipStatus === 'none') pricePerDay = 0; // Standard package, no VIP upgrade
+        else if (vipStatus === 'vip') pricePerDay = 2; // Updated to match database pricing
         else if (vipStatus === 'vip_plus') pricePerDay = 5;
-        else if (vipStatus === 'super_vip') pricePerDay = 8;
+        else if (vipStatus === 'super_vip') pricePerDay = 7; // Updated to match database pricing
         
-        const totalPrice = pricePerDay * validDays;
-        console.log(`Expected price: ${pricePerDay} * ${validDays} = ${totalPrice}`);
+        // ვიღებთ დამატებითი სერვისების ფასებს
+        const additionalServicesPricing = await vipPricingService.getAdditionalServicesPricing();
+        
+        // ვთვლით დამატებითი სერვისების ფასებს
+        let additionalServicesPrice = 0;
+        if (additionalServices?.colorHighlighting) {
+          additionalServicesPrice += additionalServicesPricing.colorHighlighting * (additionalServices.colorHighlightingDays || validDays);
+        }
+        if (additionalServices?.autoRenewal) {
+          additionalServicesPrice += additionalServicesPricing.autoRenewal * (additionalServices.autoRenewalDays || validDays);
+        }
+        
+        // ვთვლით ჯამური ფასს: VIP სტატუსის ფასი + დამატებითი სერვისების ფასები
+        const vipPrice = pricePerDay * validDays;
+        const totalPrice = vipPrice + additionalServicesPrice;
+        
+        console.log('VIP pricing details:', {
+          vipStatus,
+          vipDays: validDays,
+          vipPricePerDay: pricePerDay,
+          vipTotal: vipPrice,
+          colorHighlighting: additionalServices?.colorHighlighting,
+          colorHighlightingDays: additionalServices?.colorHighlightingDays,
+          colorHighlightingPrice: additionalServices?.colorHighlighting ? additionalServicesPricing.colorHighlighting * (additionalServices.colorHighlightingDays || validDays) : 0,
+          autoRenewal: additionalServices?.autoRenewal,
+          autoRenewalDays: additionalServices?.autoRenewalDays,
+          autoRenewalPrice: additionalServices?.autoRenewal ? additionalServicesPricing.autoRenewal * (additionalServices.autoRenewalDays || validDays) : 0,
+          additionalServicesTotal: additionalServicesPrice,
+          totalPrice
+        });
         
         response = await api.post<PurchaseVipResponse>(
-          `/api/balance/purchase-vip/${carId}`,
-          requestData,
+          `/api/balance/purchase-vip`,
+          { carId, ...requestData },
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -477,7 +517,8 @@ class BalanceService {
         // CRITICAL FIX: დღეების რაოდენობა უნდა იყოს მთელი რიცხვი და არა სტრიქონი
         const requestData = { 
           vipStatus, 
-          days: validDays
+          days: validDays,
+          ...(additionalServices || {})
         };
         
         // ვრწმუნდებით რომ მონაცემები სწორადაა გადაცემული
@@ -486,11 +527,12 @@ class BalanceService {
         console.log('vipStatus:', requestData.vipStatus, '(type:', typeof requestData.vipStatus + ')');
         console.log('days:', requestData.days, '(type:', typeof requestData.days + ')');
         
-        // გამოვთვალოთ ჯამური ფასი კლიენტის მხარეს
+        // გამოვთვალოთ ჯამური ფასი კლიენტის მხარეს - განახლებული ფასები შესაბამისი ბაზიდან
         let pricePerDay = 0;
-        if (vipStatus === 'vip') pricePerDay = 2.5;
+        if (vipStatus === 'none') pricePerDay = 0; // Standard package, no VIP upgrade
+        else if (vipStatus === 'vip') pricePerDay = 2; // Updated to match database pricing
         else if (vipStatus === 'vip_plus') pricePerDay = 5;
-        else if (vipStatus === 'super_vip') pricePerDay = 8;
+        else if (vipStatus === 'super_vip') pricePerDay = 7; // Updated to match database pricing
         
         const totalPrice = pricePerDay * validDays;
         console.log(`Expected price for fallback: ${pricePerDay} * ${validDays} = ${totalPrice}`);

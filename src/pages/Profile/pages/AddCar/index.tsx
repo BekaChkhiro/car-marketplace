@@ -22,13 +22,16 @@ const AddCar: React.FC = () => {
     images,
     featuredImageIndex,
     isUploading,
+    userBalance,
     handleChange,
     handleSpecificationsChange,
     handleFeaturesChange,
     handleImageUpload,
     removeImage,
     setFeaturedImageIndex,
-    handleSubmit
+    handleSubmit,
+    getTotalVipPrice,
+    hasSufficientBalance
   } = useCarForm();
 
   return (
@@ -107,6 +110,12 @@ const AddCar: React.FC = () => {
 
           <VIPStatus
             vipStatus={formData.vip_status}
+            vipDays={formData.vip_days}
+            colorHighlighting={formData.color_highlighting}
+            colorHighlightingDays={formData.color_highlighting_days}
+            autoRenewal={formData.auto_renewal}
+            autoRenewalDays={formData.auto_renewal_days}
+            userBalance={userBalance}
             onChange={handleChange}
           />
 
@@ -121,9 +130,20 @@ const AddCar: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200"
+                disabled={!hasSufficientBalance()}
+                className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition-all duration-200 ${
+                  hasSufficientBalance() 
+                    ? 'bg-primary hover:bg-primary/90 cursor-pointer' 
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
+                title={!hasSufficientBalance() ? `Insufficient balance. Required: ${getTotalVipPrice()} GEL, Your balance: ${(userBalance || 0).toFixed(2)} GEL` : ''}
               >
                 {t('addCar.submit')}
+                {!hasSufficientBalance() && (
+                  <span className="ml-2 text-xs">
+                    ({t('cars.vip.modal.yourBalance')} {(userBalance || 0).toFixed(2)} {t('cars.vip.modal.currency')}, {t('cars.vip.modal.required')}: {getTotalVipPrice().toFixed(2)} {t('cars.vip.modal.currency')})
+                  </span>
+                )}
               </button>
             </div>
           </div>

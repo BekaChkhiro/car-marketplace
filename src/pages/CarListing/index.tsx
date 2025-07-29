@@ -90,56 +90,12 @@ const CarListing: React.FC = () => {
     }
   }, [filters]);
 
-  // Fetch all VIP cars regardless of filters
+  // We don't need to fetch VIP cars separately anymore
+  // The backend now returns cars with their actual VIP status
   useEffect(() => {
-    const fetchVipCars = async () => {
-      try {
-        setVipLoading(true);
-        
-        console.log('[CarListing] Fetching all VIP listings');
-        
-        // Get all VIP cars - combining all three VIP types
-        const vipTypes: VipStatus[] = ['vip', 'vip_plus', 'super_vip'];
-        const allVipCars: Car[] = [];
-        
-        // Fetch cars with each VIP status and combine them
-        for (const vipType of vipTypes) {
-          try {
-            const { cars: vipCarsOfType } = await vipService.getCarsByVipStatus(vipType, 100, 0);
-            console.log(`[CarListing] Found ${vipCarsOfType.length} cars with ${vipType} status`);
-            allVipCars.push(...vipCarsOfType);
-          } catch (err) {
-            console.error(`[CarListing] Error fetching ${vipType} cars:`, err);
-          }
-        }
-        
-        // Sort VIP cars by VIP status
-        const sortedVipCars = [...allVipCars].sort((a, b) => {
-          // VIP status priority: super_vip > vip_plus > vip
-          const vipOrder = {
-            'super_vip': 3,
-            'vip_plus': 2,
-            'vip': 1
-          };
-          
-          const aVipValue = vipOrder[a.vip_status || 'vip'] || 0;
-          const bVipValue = vipOrder[b.vip_status || 'vip'] || 0;
-          
-          return bVipValue - aVipValue; // Higher VIP status comes first
-        });
-        
-        console.log(`[CarListing] Total VIP cars found: ${sortedVipCars.length}`);
-        setVipCars(sortedVipCars);
-      } catch (error) {
-        console.error('[CarListing] Error fetching VIP cars:', error);
-        showToast('VIP განცხადებების ჩატვირთვა ვერ მოხერხდა', 'error');
-      } finally {
-        setVipLoading(false);
-      }
-    };
-    
-    fetchVipCars();
-  }, [showToast]);
+    // Just set VIP loading to false since we're not fetching separately
+    setVipLoading(false);
+  }, []);
 
   // Fetch car data with filters
   useEffect(() => {
@@ -173,47 +129,29 @@ const CarListing: React.FC = () => {
         const { cars: carData, meta } = await carService.getCars(cleanFilters);
         
         // Log cars to see if any have vip_status already
-        console.log('[CarListing] Raw car data from API:', carData.slice(0, 3).map(car => ({ 
-          id: car.id, 
-          brand: car.brand, 
-          model: car.model, 
-          vip_status: car.vip_status 
+        console.log('[CarListing] Raw car data from API (first 3):', carData.slice(0, 3).map(car => ({
+          id: car.id,
+          brand: car.brand,
+          model: car.model,
+          vip_status: car.vip_status,
+          vip_active: car.vip_active,
+          color_highlighting_enabled: car.color_highlighting_enabled
         })));
         
-        // Create a map of all VIP cars by ID for easy lookup
-        const vipCarMap = new Map();
-        vipCars.forEach(vipCar => {
-          vipCarMap.set(vipCar.id, vipCar);
-        });
-        
-        // Check if active filters are applied (other than sorting, pagination)
-        const hasActiveFilters = Object.keys(cleanFilters).some(key => 
-          !['page', 'limit', 'sortBy', 'order'].includes(key)
+        // Split cars into VIP and non-VIP groups based on their actual VIP status
+        const vipCars = carData.filter(car => 
+          car.vip_status && 
+          car.vip_status !== 'none' && 
+          car.vip_active === true
+        );
+        const regularCars = carData.filter(car => 
+          !car.vip_status || 
+          car.vip_status === 'none' || 
+          car.vip_active !== true
         );
         
-        let displayCars;
-        
-        // Whether filtering or not, always ensure VIP cars are at the top
-        // First, preserve VIP status for any filtered cars
-        const carsWithVipStatus = carData.map(car => {
-          // If this car has VIP status in our VIP cars, use that data to preserve VIP status
-          if (vipCarMap.has(car.id)) {
-            const vipCar = vipCarMap.get(car.id);
-            return {
-              ...car,
-              vip_status: vipCar.vip_status,
-              vip_expiration_date: vipCar.vip_expiration_date
-            };
-          }
-          return car;
-        });
-        
-        // For filtering, split cars into VIP and non-VIP groups
-        const vipFilteredCars = carsWithVipStatus.filter(car => car.vip_status);
-        const regularFilteredCars = carsWithVipStatus.filter(car => !car.vip_status);
-        
         // Sort VIP cars by their status priority
-        const sortedVipFilteredCars = [...vipFilteredCars].sort((a, b) => {
+        const sortedVipCars = [...vipCars].sort((a, b) => {
           // VIP status priority: super_vip > vip_plus > vip
           const vipOrder = {
             'super_vip': 3,
@@ -226,17 +164,20 @@ const CarListing: React.FC = () => {
         });
         
         // Always combine with VIP cars at the top
-        displayCars = [...sortedVipFilteredCars, ...regularFilteredCars];
+        const displayCars = [...sortedVipCars, ...regularCars];
+        
+        console.log('[CarListing] Final car list (first 3):', displayCars.slice(0, 3).map(car => ({
+          id: car.id,
+          vip_status: car.vip_status,
+          vip_active: car.vip_active,
+          color_highlighting_enabled: car.color_highlighting_enabled
+        })));
         
         console.log('[CarListing] Displaying cars with VIP cars at top:', displayCars.length, 
-          `(VIP: ${sortedVipFilteredCars.length}, Regular: ${regularFilteredCars.length})`);
+          `(VIP: ${sortedVipCars.length}, Regular: ${regularCars.length})`);
         
         setCars(displayCars);
         setTotalCars(meta?.total || carData.length);
-        
-        // Count how many cars in the display list have VIP status
-        const vipStatusCount = displayCars.filter(car => car.vip_status).length;
-        console.log(`[CarListing] Final display cars: ${displayCars.length} (with ${vipStatusCount} VIP status cars)`);
         const categoriesResponse = await carService.getCategories();
         setCategories(categoriesResponse);
       } catch (error) {
@@ -248,7 +189,7 @@ const CarListing: React.FC = () => {
     };
 
     fetchData();
-  }, [filters, showToast, vipCars]);  // Added vipCars as a dependency
+  }, [filters, showToast]);
 
   // Handle filter changes
   const handleFilterChange = (newFilters: Partial<CarFilters>) => {

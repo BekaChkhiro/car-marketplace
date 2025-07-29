@@ -64,6 +64,11 @@ export interface NewCarFormData {
   description_ru?: string;
   vin_code?: string;  // Vehicle Identification Number
   vip_status: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  vip_days: number;
+  color_highlighting: boolean;
+  color_highlighting_days: number;
+  auto_renewal: boolean;
+  auto_renewal_days: number;
   author_name: string;  // Author's name for contact
   author_phone: string;  // Author's phone number for contact
   location: {

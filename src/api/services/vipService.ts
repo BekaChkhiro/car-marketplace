@@ -1,5 +1,6 @@
 import api from '../config/api';
 import { getAccessToken } from '../utils/tokenStorage';
+import { Car } from '../types/car.types';
 
 export type VipStatus = 'none' | 'vip' | 'vip_plus' | 'super_vip';
 
@@ -118,6 +119,40 @@ class VipService {
   }
 
   /**
+   * Purchase comprehensive VIP package including additional services
+   * @param carId Car ID
+   * @param vipPackage VIP package details
+   * @returns Purchase result
+   */
+  async purchaseVipPackage(carId: number, vipPackage: {
+    vip_status: VipStatus;
+    vip_days: number;
+    color_highlighting: boolean;
+    color_highlighting_days: number;
+    auto_renewal: boolean;
+    auto_renewal_days: number;
+  }): Promise<any> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const response = await api.post(`/api/vip/purchase-package/${carId}`, vipPackage, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error purchasing VIP package:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get all available VIP status types
    * @returns Array of VIP status types
    */
@@ -171,29 +206,94 @@ class VipService {
   }
 
   /**
-   * Get cars by VIP status
+   * Get cars by VIP status with detailed logging
    * @param vipStatus VIP status to filter by
-   * @param limit Optional limit
-   * @param offset Optional offset
-   * @returns Cars with specified VIP status
+   * @param limit Maximum number of cars to return
+   * @param offset Offset for pagination
+   * @returns Cars with specified VIP status and total count
    */
   async getCarsByVipStatus(
     vipStatus: VipStatus,
     limit: number = 10,
     offset: number = 0
-  ): Promise<{ cars: any[], total: number }> {
+  ): Promise<{ cars: Car[], total: number }> {
     try {
-      const response = await api.get(`/api/vip/cars/${vipStatus}`, {
-        params: { limit, offset }
-      });
+      console.log(`[VIP Service] Fetching ${vipStatus} cars, limit: ${limit}, offset: ${offset}`);
       
-      return {
-        cars: response.data.data,
-        total: response.data.total
-      };
+      // First try the dedicated VIP endpoint
+      try {
+        const response = await api.get(`/api/vip/cars/${vipStatus}`, {
+          params: { limit, offset }
+        });
+
+        console.log(`[VIP Service] Received ${vipStatus} cars from VIP endpoint:`, {
+          status: response.status,
+          count: response.data?.data?.length || 0,
+          sample: response.data?.data?.[0] ? {
+            id: response.data.data[0].id,
+            brand: response.data.data[0].brand,
+            model: response.data.data[0].model,
+            vip_status: response.data.data[0].vip_status,
+            hasVipStatus: 'vip_status' in (response.data.data[0] || {})
+          } : 'No cars in response',
+          meta: response.data?.meta
+        });
+
+        if (response.data && response.data.data && response.data.meta) {
+          return {
+            cars: response.data.data,
+            total: response.data.meta.total
+          };
+        }
+      } catch (vipError) {
+        console.warn(`[VIP Service] VIP endpoint failed, falling back to regular cars endpoint:`, vipError);
+        // Fall through to regular endpoint
+      }
+
+      // Fallback to regular cars endpoint with VIP filter
+      const response = await api.get('/api/cars', {
+        params: {
+          vip_status: vipStatus,
+          limit,
+          offset,
+          include_vip: true // Ensure we get all VIP-related fields
+        }
+      });
+
+      console.log(`[VIP Service] Received ${vipStatus} cars from regular endpoint:`, {
+        status: response.status,
+        count: response.data?.data?.length || 0,
+        sample: response.data?.data?.[0] ? {
+          id: response.data.data[0].id,
+          brand: response.data.data[0].brand,
+          model: response.data.data[0].model,
+          vip_status: response.data.data[0].vip_status,
+          hasVipStatus: 'vip_status' in (response.data.data[0] || {})
+        } : 'No cars in response',
+        meta: response.data?.meta
+      });
+
+      if (response.data && response.data.data && response.data.meta) {
+        return {
+          cars: response.data.data,
+          total: response.data.meta.total
+        };
+      }
+
+      // Fallback for different response format
+      if (Array.isArray(response.data)) {
+        return {
+          cars: response.data,
+          total: response.data.length
+        };
+      }
+
+      console.warn('[VIP Service] Unexpected response format:', response.data);
+      return { cars: [], total: 0 };
+      
     } catch (error) {
-      console.error('Error fetching cars by VIP status:', error);
-      throw error;
+      console.error(`[VIP Service] Error fetching ${vipStatus} cars:`, error);
+      return { cars: [], total: 0 };
     }
   }
 
@@ -209,8 +309,7 @@ class VipService {
       if (!token) {
         throw new Error('Authentication required');
       }
-
-      // Calling updateVipStatus with 'none' status effectively disables VIP
+      
       const response = await api.put(
         `/api/vip/update/${carId}`,
         { vipStatus: 'none' },

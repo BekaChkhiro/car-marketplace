@@ -11,7 +11,7 @@ const CarGrid: React.FC<CarGridProps> = ({ cars, categories }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       {cars.map((car) => (
-        <CarCard key={car.id} car={car} categories={categories} />
+        <CarCard key={car.id} car={car} categories={categories} showVipBadge />
       ))}
     </div>
   );

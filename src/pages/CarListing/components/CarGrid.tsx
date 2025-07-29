@@ -15,6 +15,8 @@ interface CarGridProps {
 
 const CarGrid: React.FC<CarGridProps> = ({ cars, categories, inWishlistPage = false, onRemoveFromWishlist, className = '' }) => {
   const { t } = useTranslation([namespaces.carListing]);
+  
+  // CarGrid is working correctly!
   if (!cars || cars.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">

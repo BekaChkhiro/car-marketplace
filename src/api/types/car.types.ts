@@ -18,6 +18,13 @@ export interface Car {
   featured: boolean;
   vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
   vip_expiration_date?: string;
+  vip_active?: boolean;
+  color_highlighting_enabled?: boolean;
+  color_highlighting_expiration_date?: string;
+  auto_renewal_enabled?: boolean;
+  auto_renewal_expiration_date?: string;
+  auto_renewal_days?: number;
+  auto_renewal_remaining_days?: number;
   seller_id: number;
   user_id?: number; // The ID of the user who owns this car
   author_name?: string; // Author's name
@@ -174,6 +181,12 @@ export interface CreateCarFormData {
   description_ka: string;
   description_en?: string;
   description_ru?: string;
+  vip_status?: 'none' | 'vip' | 'vip_plus' | 'super_vip';
+  vip_days?: number;
+  color_highlighting?: boolean;
+  color_highlighting_days?: number;
+  auto_renewal?: boolean;
+  auto_renewal_days?: number;
   specifications: Partial<CarSpecifications>;
   features: string[];
   images: File[];

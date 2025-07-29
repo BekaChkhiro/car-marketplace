@@ -76,18 +76,20 @@ const DealerProfile: React.FC = () => {
 
         // Fetch dealer cars using main cars API with filters
         try {
-          const carsResponse = await carService.getCars(filters);
+          // Include seller_id in the API call
+          const carsResponse = await carService.getCars({
+            ...filters,
+            seller_id: parseInt(dealerId)
+          });
           console.log('Cars response:', carsResponse);
 
           if (carsResponse && carsResponse.cars) {
-            console.log('Cars found:', carsResponse.cars);
-
-            // Filter cars to only show ones from this dealer (workaround for backend issue)
-            const dealerCars = carsResponse.cars.filter(car => car.seller_id === parseInt(dealerId));
-            console.log('Filtered dealer cars:', dealerCars);
-
-            setCars(dealerCars);
-            setTotalCars(dealerCars.length);
+            console.log('Dealer cars found:', carsResponse.cars);
+            
+            // Update cars state with the response
+            setCars(carsResponse.cars);
+            // Use the total from meta or fallback to the length of the returned cars array
+            setTotalCars(carsResponse.meta?.total || carsResponse.cars.length);
           }
         } catch (carError) {
           console.error('Error fetching dealer cars:', carError);

@@ -152,5 +152,16 @@
   "პიკაპი": "Pickup",
   "მინივენი": "Minivan",
   "ლიმუზინი": "Limousine",
-  "კროსოვერი": "Crossover"
+  "კროსოვერი": "Crossover",
+  "ძრავი და კომპონენტები": "Engine and Components",
+  "გადაცემათა კოლოფი, ხიდი, კარდანი": "Transmission, Axle, Driveshaft",
+  "სავალი ნაწილები და მართვა": "Running Gear and Steering",
+  "ძარის ნაწილები": "Body Parts",
+  "ინტერიერი": "Interior",
+  "მაშუქები (ფარები)": "Lights (Headlights)",
+  "დანადგარები და ხელსაწყოები": "Instruments and Tools",
+  "ელექტროობა": "Electrical",
+  "ზეთები და სითხეები": "Oils and Fluids",
+  "ფილტრები": "Filters",
+  "აქსესუარები, ავტოქიმია": "Accessories, Car Chemistry"
 }
