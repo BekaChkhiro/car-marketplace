@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Star, ArrowRight } from 'lucide-react';
+import { Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import vipService, { VipStatus } from '../../../api/services/vipService';
@@ -21,6 +21,29 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleItemsCount, setVisibleItemsCount] = useState(4);
   const [isMobile, setIsMobile] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (cars.length <= visibleItemsCount) return;
+      
+      if (e.key === 'ArrowLeft') {
+        setCurrentSlide((prev) => {
+          const maxSlide = cars.length - visibleItemsCount;
+          return prev <= 0 ? maxSlide : prev - 1;
+        });
+      } else if (e.key === 'ArrowRight') {
+        setCurrentSlide((prev) => {
+          const maxSlide = cars.length - visibleItemsCount;
+          return prev >= maxSlide ? 0 : prev + 1;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [cars.length, visibleItemsCount]);
 
   // Handle window resize to adjust visible items count and detect mobile
   useEffect(() => {
@@ -63,7 +86,16 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
             vipCarsData[0]?.specifications?.mileage !== undefined && 
             vipCarsData[0]?.specifications?.fuel_type && 
             vipCarsData[0]?.location?.city) {
-          console.log(`[VipCarousel] Using VIP cars data directly for ${vipType}`);
+          console.log(`[VipCarousel] Using VIP cars data directly for ${vipType}`, {
+            count: vipCarsData.length,
+            sample: vipCarsData[0] ? {
+              id: vipCarsData[0].id,
+              vip_status: vipCarsData[0].vip_status,
+              brand: vipCarsData[0].brand,
+              model: vipCarsData[0].model
+            } : null,
+            allVipStatuses: [...new Set(vipCarsData.map(car => car.vip_status))]
+          });
           setCars(vipCarsData);
         } else {
           // Otherwise, fetch each car's complete data individually
@@ -99,14 +131,14 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
 
   // Auto-advance slides every 4 seconds
   useEffect(() => {
-    if (cars.length <= visibleItemsCount) return;
+    if (cars.length <= visibleItemsCount || isPaused) return;
     
     const interval = setInterval(() => {
       nextSlide();
     }, 4000);
     
     return () => clearInterval(interval);
-  }, [cars.length, currentSlide, visibleItemsCount]);
+  }, [cars.length, currentSlide, visibleItemsCount, isPaused]);
 
   const nextSlide = () => {
     if (cars.length <= visibleItemsCount) return;
@@ -185,22 +217,56 @@ const VipCarousel: React.FC<VipCarouselProps> = ({ vipType, limit = 8 }) => {
           <p className="text-red-500">{error}</p>
         </div>
       ) : (
-        <div className="relative overflow-hidden">
+        <div 
+          className="relative overflow-hidden"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* Navigation Arrows */}
+          {cars.length > visibleItemsCount && (
+            <>
+              <button
+                onClick={prevSlide}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/95 hover:bg-white text-gray-800 p-2 md:p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl"
+                aria-label="Previous cars"
+              >
+                <ChevronLeft size={20} className="md:w-6 md:h-6" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/95 hover:bg-white text-gray-800 p-2 md:p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl"
+                aria-label="Next cars"
+              >
+                <ChevronRight size={20} className="md:w-6 md:h-6" />
+              </button>
+            </>
+          )}
+          
           <div 
             className="flex gap-4 transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${currentSlide * (100 / visibleItemsCount)}%)` }}
           >
-            {cars.map((car) => (
-              <div key={car.id} className={`flex-none ${
-                visibleItemsCount === 2 ? 'w-1/2' : 
-                visibleItemsCount === 3 ? 'w-1/3' : 
-                visibleItemsCount === 4 ? 'w-1/4' : 
-                'w-1/2'}`}>
-                <div className="h-full">
-                  <CarCard car={car} categories={categories} showVipBadge />
+            {cars.map((car, index) => {
+              if (index === 0) {
+                console.log(`[VipCarousel] Rendering ${vipType} section - First car:`, {
+                  id: car.id,
+                  vip_status: car.vip_status,
+                  expectedType: vipType,
+                  matches: car.vip_status === vipType
+                });
+              }
+              return (
+                <div key={car.id} className={`flex-none ${
+                  visibleItemsCount === 2 ? 'w-1/2' : 
+                  visibleItemsCount === 3 ? 'w-1/3' : 
+                  visibleItemsCount === 4 ? 'w-1/4' : 
+                  'w-1/2'}`}>
+                  <div className="h-full">
+                    <CarCard car={car} categories={categories} showVipBadge />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

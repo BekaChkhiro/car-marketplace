@@ -5,12 +5,6 @@ import { useToast } from '../../../context/ToastContext';
 import { User } from '../../../api/types/auth.types';
 import { useTranslation } from 'react-i18next';
 
-// Extended user interface with status field which might not be in the original User type
-interface UserWithStatus extends User {
-  status?: string;
-  created_at?: string;
-  updated_at?: string;
-}
 
 // Delete confirmation dialog state
 interface DeleteConfirmationState {
@@ -22,7 +16,7 @@ const UsersPage = () => {
   const { showToast } = useToast();
   const { t } = useTranslation('admin');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [users, setUsers] = useState<UserWithStatus[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -91,61 +85,23 @@ const UsersPage = () => {
       if (usersData && Array.isArray(usersData)) {
         console.log('Received user data:', usersData);
         
-        // Determine if we're using mock data (mock users have IDs 1, 2, 3)
-        const isMockData = usersData.length > 0 && usersData.some(user => [1, 2, 3].includes(user.id));
-        
-        // Add status field if not present (assuming all users are active by default)
-        const usersWithStatus = usersData.map(user => ({
+        // Add default status if not present
+        const usersWithDefaults = usersData.map(user => ({
           ...user,
-          // Add a default status since it's not in the User type
-          status: user.status || 'active',
-          // Add default dates if not present (for mock data)
-          created_at: user.created_at || new Date().toISOString(),
-          updated_at: user.updated_at || new Date().toISOString()
+          status: user.status || 'active'
         }));
         
-        setUsers(usersWithStatus);
-        setTotalUsers(usersWithStatus.length);
+        setUsers(usersWithDefaults);
+        setTotalUsers(usersWithDefaults.length);
         setError(null);
-        
-        // If we're showing mock data, inform the user
-        if (isMockData) {
-          console.log('Using mock data for users');
-          showToast(t('users.error') + '. ' + t('common.mockData'), 'warning');
-        }
       } else {
         console.error('Invalid user data received:', usersData);
         throw new Error('Invalid user data received');
       }
     } catch (err: any) {
       console.error('Error fetching users:', err);
-      
-      // Try to get mock data directly if the fetch failed
-      try {
-        console.log('Attempting to use mock data after error...');
-        const mockData = await authService.getAllUsers();
-        if (mockData && Array.isArray(mockData) && mockData.length > 0) {
-          console.log('Successfully retrieved mock data:', mockData);
-          
-          const usersWithStatus = mockData.map(user => ({
-            ...user,
-            status: user.status || 'active',
-            created_at: user.created_at || new Date().toISOString(),
-            updated_at: user.updated_at || new Date().toISOString()
-          }));
-          
-          setUsers(usersWithStatus);
-          setTotalUsers(usersWithStatus.length);
-          setError(t('users.error') + '. ' + t('common.mockData'));
-          showToast(t('users.error') + '. ' + t('common.mockData'), 'warning');
-        } else {
-          throw new Error('Failed to retrieve mock data');
-        }
-      } catch (mockErr) {
-        console.error('Failed to use mock data:', mockErr);
-        setError(err.message || 'Failed to load users');
-        showToast(t('users.error'), 'error');
-      }
+      setError(err.message || 'Failed to load users');
+      showToast(t('users.error'), 'error');
     } finally {
       setLoading(false);
     }
@@ -219,11 +175,6 @@ const UsersPage = () => {
       ) : error ? (
         <div className="bg-red-50 p-4 rounded-xl text-red-600 text-center">
           <p className="mb-2">{error}</p>
-          {users.length > 0 && (
-            <p className="text-amber-600 mb-2">
-              {t('common.mockData')}
-            </p>
-          )}
           <button 
             onClick={fetchUsers} 
             className="ml-4 underline hover:text-red-800"
@@ -251,6 +202,7 @@ const UsersPage = () => {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.lastName')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.email')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.status')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('analytics.cars')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('users.registrationDate')}</th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{t('users.actions')}</th>
                 </tr>
@@ -286,6 +238,9 @@ const UsersPage = () => {
                         {user.status === 'active' ? t('common.active') : t('common.blocked')}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                      {user.car_count || 0}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.created_at
                         ? new Date(user.created_at).toLocaleDateString('ka-GE')
@@ -315,7 +270,7 @@ const UsersPage = () => {
                 {/* If no users match the filter criteria */}
                 {getFilteredUsers().length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
                       {t('users.noUsersFound')}
                     </td>
                   </tr>
@@ -374,6 +329,9 @@ const UsersPage = () => {
                         {user.status === 'active' ? t('common.active') : t('common.blocked')}
                       </span>
                     </p>
+                    
+                    <p className="text-xs text-gray-500">Cars:</p>
+                    <p className="text-xs font-medium">{user.car_count || 0}</p>
                     
                     <p className="text-xs text-gray-500">{t('users.registrationDate')}:</p>
                     <p className="text-xs font-medium">

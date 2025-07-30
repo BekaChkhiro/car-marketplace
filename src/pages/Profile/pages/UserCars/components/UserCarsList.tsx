@@ -191,12 +191,18 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
   // VIP სტატუსის გათიშვის ფუნქცია
   const handleDisableVip = async (carId: number) => {
     try {
+      console.log(`[UserCarsList] Attempting to disable VIP for car ${carId}`);
       setLoading(carId);
-      await vipService.disableVipStatus(carId);
+      const result = await vipService.disableVipStatus(carId);
+      console.log(`[UserCarsList] VIP disable result:`, result);
       showToast(t('profile:cars.vip.disabled'), 'success');
       onVipUpdate(); // განაახლეთ მშობელი კომპონენტი
     } catch (error) {
-      console.error('Error disabling VIP status:', error);
+      console.error('[UserCarsList] Error disabling VIP status:', error);
+      // Log more details about the error
+      if (error?.response?.data) {
+        console.error('[UserCarsList] Server error response:', error.response.data);
+      }
       showToast(t('profile:cars.vip.disableError'), 'error');
     } finally {
       setLoading(null);

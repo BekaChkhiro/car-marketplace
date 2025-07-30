@@ -14,6 +14,7 @@ export interface User {
   profile_completed?: boolean;
   google_id?: string;
   dealer_id?: number;
+  car_count?: number;
 }
 
 export interface Tokens {

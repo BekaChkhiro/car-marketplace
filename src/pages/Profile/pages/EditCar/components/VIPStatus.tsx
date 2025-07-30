@@ -42,6 +42,19 @@ const VIPStatus: React.FC<VIPStatusProps> = ({
     fetchVipPricing();
   }, []);
 
+  // Debug log to see what props are received
+  useEffect(() => {
+    console.log('VIPStatus component received props:', {
+      carId,
+      vipStatus,
+      vipDays,
+      colorHighlighting,
+      colorHighlightingDays,
+      autoRenewal,
+      autoRenewalDays
+    });
+  }, [carId, vipStatus, vipDays, colorHighlighting, colorHighlightingDays, autoRenewal, autoRenewalDays]);
+
   const fetchVipPricing = async () => {
     try {
       // Force refresh user-specific pricing to get latest data

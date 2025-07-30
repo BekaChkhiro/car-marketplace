@@ -273,18 +273,25 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
     console.log('VIP/Highlighting properties:', Object.fromEntries(vipProps));
   }, [car]);
 
-  // Check if the car should be highlighted based on VIP status or highlighting service
-  const hasHighlighting = (car.color_highlighting_enabled === true) ||
-    (car.vip_status && car.vip_status !== 'none');
+  // Check expiration dates
+  const isVipExpired = car.vip_expiration_date ? new Date(car.vip_expiration_date) <= new Date() : true;
+  const isColorHighlightingExpired = car.color_highlighting_expiration_date ? 
+    new Date(car.color_highlighting_expiration_date) <= new Date() : true;
+
+  // Check if the car should be highlighted based only on highlighting service
+  const hasHighlighting = car.color_highlighting_enabled === true && !isColorHighlightingExpired;
 
   // Determine if we should show the VIP badge
   const showVipBadgeActual = showVipBadge &&
     car.vip_status &&
-    car.vip_status !== 'none';
+    car.vip_status !== 'none' &&
+    !isVipExpired;
   
   console.log(`[CarCard] Car ${car.id} - Display check:`, {
     showVipBadge: showVipBadge,
     vip_status: car.vip_status,
+    vip_expiration_date: car.vip_expiration_date,
+    isVipExpired: isVipExpired,
     showVipBadgeActual: showVipBadgeActual,
     hasHighlighting: hasHighlighting
   });

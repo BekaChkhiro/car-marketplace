@@ -119,6 +119,35 @@ class VipService {
   }
 
   /**
+   * Get VIP auto-renewal status for a car
+   * @param carId Car ID
+   * @returns VIP auto-renewal status
+   */
+  async getVipAutoRenewalStatus(carId: number): Promise<any> {
+    try {
+      const token = getAccessToken();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const response = await api.get(`/api/vip/auto-renewal/${carId}/status`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return response.data?.data || {};
+    } catch (error) {
+      console.error('Error fetching VIP auto-renewal status:', error);
+      return {
+        autoRenewalEnabled: false,
+        autoRenewalDays: 1
+      };
+    }
+  }
+
+  /**
    * Purchase comprehensive VIP package including additional services
    * @param carId Car ID
    * @param vipPackage VIP package details
@@ -239,10 +268,10 @@ class VipService {
           meta: response.data?.meta
         });
 
-        if (response.data && response.data.data && response.data.meta) {
+        if (response.data && response.data.data) {
           return {
             cars: response.data.data,
-            total: response.data.meta.total
+            total: response.data.total || response.data.data.length
           };
         }
       } catch (vipError) {
@@ -304,12 +333,15 @@ class VipService {
    */
   async disableVipStatus(carId: number): Promise<VipStatusResponse> {
     try {
+      console.log(`[VipService] Disabling VIP status for car ${carId}`);
       const token = getAccessToken();
       
       if (!token) {
+        console.error('[VipService] No access token available');
         throw new Error('Authentication required');
       }
       
+      console.log(`[VipService] Making PUT request to /api/vip/update/${carId}`);
       const response = await api.put(
         `/api/vip/update/${carId}`,
         { vipStatus: 'none' },
@@ -320,9 +352,14 @@ class VipService {
         }
       );
       
-      return response.data.data;
+      console.log(`[VipService] VIP disable response:`, response.data);
+      return response.data.data || response.data;
     } catch (error) {
-      console.error('Error disabling VIP status:', error);
+      console.error('[VipService] Error disabling VIP status:', error);
+      if (error?.response) {
+        console.error('[VipService] Response status:', error.response.status);
+        console.error('[VipService] Response data:', error.response.data);
+      }
       throw error;
     }
   }

@@ -4,51 +4,6 @@ import { setStoredToken, removeStoredToken, getRefreshToken } from '../utils/tok
 import { clearUserData } from '../../utils/userStorage';
 import { clearPreferences } from '../../utils/userPreferences';
 
-// Mock data for users when server connection fails
-const mockUsers: User[] = [
-  {
-    id: 1,
-    username: 'admin',
-    email: 'admin@example.com',
-    first_name: 'Admin',
-    last_name: 'User',
-    role: 'admin',
-    phone: '+1234567890',
-    age: 30,
-    gender: 'male',
-    status: 'active',
-    created_at: '2023-01-15T10:30:00Z',
-    updated_at: '2023-05-20T14:45:00Z'
-  },
-  {
-    id: 2,
-    username: 'user1',
-    email: 'user1@example.com',
-    first_name: 'Regular',
-    last_name: 'User',
-    role: 'user',
-    phone: '+1234567891',
-    age: 25,
-    gender: 'female',
-    status: 'active',
-    created_at: '2023-02-10T09:15:00Z',
-    updated_at: '2023-06-05T11:20:00Z'
-  },
-  {
-    id: 3,
-    username: 'user2',
-    email: 'user2@example.com',
-    first_name: 'Another',
-    last_name: 'User',
-    role: 'user',
-    phone: '+1234567892',
-    age: 35,
-    gender: 'other',
-    status: 'დაბლოკილი',
-    created_at: '2023-03-22T16:40:00Z',
-    updated_at: '2023-07-12T08:30:00Z'
-  }
-];
 
 class AuthService {
   private async fetchWithRetry<T>(request: () => Promise<T>, maxRetries = 3, silent = false): Promise<T> {
@@ -241,49 +196,31 @@ class AuthService {
   }
 
   // Admin methods
-  // Flag to track if we've already shown the server error message
-  private hasShownServerError = false;
-
   async getAllUsers(): Promise<User[]> {
     try {
-      // Only log the first attempt to reduce console noise
-      if (!this.hasShownServerError) {
-        console.log('Attempting to fetch users from server...');
-      }
+      console.log('Fetching users from server...');
       
       const response = await this.fetchWithRetry(
         () => api.get<{ users: User[] }>('/api/auth/users'),
-        3,
-        this.hasShownServerError // Silent mode if we've already shown errors
+        3
       );
       
-      // Reset the flag if successful
-      this.hasShownServerError = false;
       console.log('Successfully fetched users from server');
       return response.data.users;
     } catch (error: any) {
-      // Only show detailed error messages the first time
-      if (!this.hasShownServerError) {
-        console.warn('Failed to fetch users from server, using mock data instead:', error.message || 'Unknown error');
-        
-        // Log more detailed error information for debugging
-        if (error.response) {
-          console.error('Error response:', {
-            status: error.response.status,
-            data: error.response.data
-          });
-        } else {
-          console.error('Network error or server unavailable:', error);
-        }
-        
-        console.log('Using mock user data as fallback');
-        
-        // Set the flag to avoid showing the same error messages repeatedly
-        this.hasShownServerError = true;
+      console.error('Failed to fetch users from server:', error.message || 'Unknown error');
+      
+      // Log more detailed error information for debugging
+      if (error.response) {
+        console.error('Error response:', {
+          status: error.response.status,
+          data: error.response.data
+        });
+      } else {
+        console.error('Network error or server unavailable:', error);
       }
       
-      // Return mock data as fallback
-      return [...mockUsers]; // Return a copy to prevent mutation issues
+      throw error;
     }
   }
 
@@ -292,7 +229,7 @@ class AuthService {
       const response = await this.fetchWithRetry(() => api.get<User>(`/api/auth/users/${id}`));
       return response.data;
     } catch (error: any) {
-      console.warn(`Failed to fetch user with ID ${id} from server, using mock data instead:`, error.message || 'Unknown error');
+      console.error(`Failed to fetch user with ID ${id} from server:`, error.message || 'Unknown error');
       
       // Log more detailed error information for debugging
       if (error.response) {
@@ -302,12 +239,7 @@ class AuthService {
         });
       }
       
-      // Return mock user as fallback
-      const mockUser = mockUsers.find(user => user.id === id);
-      if (mockUser) {
-        return {...mockUser}; // Return a copy to prevent mutation issues
-      }
-      throw new Error(`User with ID ${id} not found`);
+      throw error;
     }
   }
 
@@ -318,7 +250,7 @@ class AuthService {
       );
       return response.data.user;
     } catch (error: any) {
-      console.warn(`Failed to update role for user with ID ${userId} from server, using mock data instead:`, error.message || 'Unknown error');
+      console.error(`Failed to update role for user with ID ${userId}:`, error.message || 'Unknown error');
       
       // Log more detailed error information for debugging
       if (error.response) {
@@ -328,23 +260,7 @@ class AuthService {
         });
       }
       
-      // Create a copy of mockUsers to avoid mutating the original array
-      const updatedMockUsers = [...mockUsers];
-      const mockUserIndex = updatedMockUsers.findIndex(user => user.id === userId);
-      
-      if (mockUserIndex !== -1) {
-        // Create a new user object with the updated role
-        updatedMockUsers[mockUserIndex] = {
-          ...updatedMockUsers[mockUserIndex],
-          role: role
-        };
-        
-        // Update the original mockUsers array
-        mockUsers[mockUserIndex] = {...updatedMockUsers[mockUserIndex]};
-        
-        return {...mockUsers[mockUserIndex]};
-      }
-      throw new Error(`User with ID ${userId} not found`);
+      throw error;
     }
   }
 
@@ -355,7 +271,7 @@ class AuthService {
       );
       return true;
     } catch (error: any) {
-      console.warn(`Failed to delete user with ID ${userId} from server, falling back to mock data:`, error.message || 'Unknown error');
+      console.error(`Failed to delete user with ID ${userId}:`, error.message || 'Unknown error');
       
       // Log more detailed error information for debugging
       if (error.response) {
@@ -365,21 +281,7 @@ class AuthService {
         });
       }
       
-      // In mock mode, check if the user exists in mockUsers
-      const userIndex = mockUsers.findIndex(user => user.id === userId);
-      
-      if (userIndex !== -1) {
-        // If user exists in mock data, remove them
-        mockUsers.splice(userIndex, 1);
-        console.log(`Removed user ${userId} from mock data`);
-      } else {
-        // If user doesn't exist in mock data, consider this a success
-        // since the user is already not present
-        console.log(`User ${userId} not found in mock data, considering deletion successful`);
-      }
-      
-      // Return true in both cases - the user either was deleted or doesn't exist anyway
-      return true;
+      throw error;
     }
   }
 }
