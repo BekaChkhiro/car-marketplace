@@ -138,45 +138,11 @@ const CarListing: React.FC = () => {
           color_highlighting_enabled: car.color_highlighting_enabled
         })));
         
-        // Split cars into VIP and non-VIP groups based on their actual VIP status
-        const vipCars = carData.filter(car => 
-          car.vip_status && 
-          car.vip_status !== 'none' && 
-          car.vip_active === true
-        );
-        const regularCars = carData.filter(car => 
-          !car.vip_status || 
-          car.vip_status === 'none' || 
-          car.vip_active !== true
-        );
+        // Cars are now sorted by the backend with VIP priority
+        // super_vip > vip_plus > vip > others (by creation date)
+        console.log('[CarListing] Cars are pre-sorted by backend with VIP priority');
         
-        // Sort VIP cars by their status priority
-        const sortedVipCars = [...vipCars].sort((a, b) => {
-          // VIP status priority: super_vip > vip_plus > vip
-          const vipOrder = {
-            'super_vip': 3,
-            'vip_plus': 2,
-            'vip': 1
-          };
-          const aVipValue = vipOrder[a.vip_status || 'vip'] || 0;
-          const bVipValue = vipOrder[b.vip_status || 'vip'] || 0;
-          return bVipValue - aVipValue; // Higher VIP status comes first
-        });
-        
-        // Always combine with VIP cars at the top
-        const displayCars = [...sortedVipCars, ...regularCars];
-        
-        console.log('[CarListing] Final car list (first 3):', displayCars.slice(0, 3).map(car => ({
-          id: car.id,
-          vip_status: car.vip_status,
-          vip_active: car.vip_active,
-          color_highlighting_enabled: car.color_highlighting_enabled
-        })));
-        
-        console.log('[CarListing] Displaying cars with VIP cars at top:', displayCars.length, 
-          `(VIP: ${sortedVipCars.length}, Regular: ${regularCars.length})`);
-        
-        setCars(displayCars);
+        setCars(carData);
         setTotalCars(meta?.total || carData.length);
         const categoriesResponse = await carService.getCategories();
         setCategories(categoriesResponse);

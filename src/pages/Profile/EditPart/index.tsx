@@ -115,10 +115,10 @@ const EditPart: React.FC = () => {
           description_en: partData.description_en || '',
           description_ka: partData.description_ka || '',
           vip_status: (partData as any).vip_status || 'none',
-          vip_days: (partData as any).vip_days || 1,
-          color_highlighting: (partData as any).color_highlighting || false,
-          color_highlighting_days: (partData as any).color_highlighting_days || 1,
-          auto_renewal: (partData as any).auto_renewal || false,
+          vip_days: 1, // Always 1 for editing
+          color_highlighting: (partData as any).color_highlighting_enabled || false,
+          color_highlighting_days: 1, // Days for new purchase if enabling
+          auto_renewal: (partData as any).auto_renewal_enabled || false,
           auto_renewal_days: (partData as any).auto_renewal_days || 1,
           author_name: partData.author_name || user ? `${user.first_name} ${user.last_name}` : '',
           author_phone: partData.author_phone || user?.phone || ''

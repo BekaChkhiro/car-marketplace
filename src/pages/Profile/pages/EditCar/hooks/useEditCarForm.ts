@@ -25,6 +25,7 @@ export const useEditCarForm = (carId: number) => {
   const [vipPricing, setVipPricing] = useState<any[]>([]);
   const [additionalServicesPricing, setAdditionalServicesPricing] = useState<any[]>([]);
   const [pricingLoaded, setPricingLoaded] = useState<boolean>(false);
+  const [vipDataLoaded, setVipDataLoaded] = useState<boolean>(false);
   
   // Initialize form data with empty values, will be populated once car data is fetched
   const initialFormData = (): UpdateCarFormData => ({
@@ -85,8 +86,28 @@ export const useEditCarForm = (carId: number) => {
           // დავლოგოთ მანქანის მონაცემები დებაგისთვის
           console.log('ჩატვირთული მანქანის მონაცემები:', car);
           console.log('ავტორის მონაცემები:', { სახელი: car.author_name, ტელეფონი: car.author_phone });
+          console.log('VIP Status Details:', {
+            vip_status: car.vip_status,
+            vip_active: car.vip_active,
+            vip_expiration_date: car.vip_expiration_date,
+            color_highlighting_enabled: car.color_highlighting_enabled,
+            auto_renewal_enabled: car.auto_renewal_enabled,
+            auto_renewal_days: car.auto_renewal_days
+          });
           
-          populateFormData(car);
+          // Fetch VIP auto-renewal status if car has VIP
+          let vipAutoRenewalData = null;
+          if (car.vip_status && car.vip_status !== 'none') {
+            try {
+              vipAutoRenewalData = await vipService.getVipAutoRenewalStatus(carId);
+              console.log('VIP auto-renewal data from API:', vipAutoRenewalData);
+            } catch (error) {
+              console.error('Failed to fetch VIP auto-renewal status:', error);
+            }
+          }
+          
+          populateFormData(car, vipAutoRenewalData);
+          setVipDataLoaded(true);
           
           // დავლოგოთ განახლებული ფორმის მონაცემები
           setTimeout(() => {
@@ -133,11 +154,15 @@ export const useEditCarForm = (carId: number) => {
   }, [carId]);
 
   // Convert car data to form data
-  const populateFormData = (car: Car) => {
+  const populateFormData = (car: Car, vipAutoRenewalData?: any) => {
     console.log('============= მანქანის მონაცემები ჩატვირთვისთვის =============');
     console.log('მანქანის ID:', car.id);
     console.log('მანქანის მოდელი:', car.model);
     console.log('მანქანის მონაცემები სრულად:', car);
+    console.log('VIP Status:', car.vip_status);
+    console.log('Color Highlighting Enabled:', car.color_highlighting_enabled);
+    console.log('Auto Renewal Enabled:', car.auto_renewal_enabled);
+    console.log('VIP Auto-renewal data:', vipAutoRenewalData);
     
     // შევქმნათ features მასივი
     let featuresArray: string[] = [];
@@ -230,11 +255,11 @@ export const useEditCarForm = (carId: number) => {
       description_en: car.description_en || '',
       description_ru: car.description_ru || '',
       vip_status: car.vip_status || 'none',
-      vip_days: 1, // Default for editing
-      color_highlighting: false, // Default for editing
-      color_highlighting_days: 1,
-      auto_renewal: false, // Default for editing
-      auto_renewal_days: 1,
+      vip_days: 1, // Always 1 for editing since we're not extending, just maintaining current status
+      color_highlighting: car.color_highlighting_enabled || false,
+      color_highlighting_days: 1, // Days for new purchase if enabling
+      auto_renewal: vipAutoRenewalData?.autoRenewalEnabled || car.auto_renewal_enabled || false,
+      auto_renewal_days: vipAutoRenewalData?.autoRenewalDays || car.auto_renewal_days || 1,
       author_name: car.author_name || '',
       author_phone: car.author_phone || '',
       location: {
@@ -441,7 +466,7 @@ export const useEditCarForm = (carId: number) => {
 
   const getTotalVipPrice = (): number => {
     const vipStatus = formData.vip_status || 'none';
-    const vipDays = formData.vip_days || 30;
+    const vipDays = formData.vip_days || 1;
     const dailyVipPrice = getVipPrice(vipStatus);
     const basePrice = dailyVipPrice * vipDays;
     const additionalPrice = getAdditionalServicesPrice();
@@ -830,6 +855,7 @@ export const useEditCarForm = (carId: number) => {
     hasSufficientBalance,
     hasInsufficientBalance,
     getAdditionalServicePrice,
-    pricingLoaded
+    pricingLoaded,
+    vipDataLoaded
   };
 };
