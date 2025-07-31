@@ -128,23 +128,22 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
     }
   }, [location.pathname, isAdvertisementsPath, expandedMenus]);
   return (
-    <div className="w-64 bg-white border-r border-gray-100  shadow-sm rounded-lg overflow-y-auto">
-      <div className="p-4 sm:p-6 border-b border-gray-100 flex items-left justify-center relative">
-        <h1 className="text-lg sm:text-xl  font-bold text-primary  mr-2">{t('admin:dashboard.title')}</h1>
-        {/* Close button for mobile - positioned absolute right */}
-        {onCloseMobileMenu && (
+    <div className="w-64 bg-white border-r border-gray-100 shadow-sm rounded-lg flex flex-col h-full">
+      {/* Mobile close button only */}
+      {onCloseMobileMenu && (
+        <div className="lg:hidden p-4 border-b border-gray-100 flex justify-end">
           <button 
             onClick={onCloseMobileMenu}
-            className="lg:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 absolute right-4"
+            className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
             aria-label="Close menu"
           >
             <X size={20} />
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="p-4">
-        <nav className="space-y-6">
+      <div className="p-4 flex-1 overflow-y-auto">
+        <nav className="space-y-4">
           {navSections.map((section, sectionIndex) => (
             <div key={section.title}>
               {/* Section Header */}
@@ -220,12 +219,14 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
               
               {/* Section Divider */}
               {sectionIndex < navSections.length - 1 && (
-                <div className="mt-4 border-t border-gray-200"></div>
+                <div className="mt-3 border-t border-gray-200"></div>
               )}
             </div>
           ))}
         </nav>
-      </div>      <div className="sticky bottom-0 left-0 right-0 p-4 sm:p-6 border-t border-gray-100 bg-white mt-8">
+      </div>
+      
+      <div className="border-t border-gray-100 bg-white p-4">
         <button
           onClick={() => {
             if (onCloseMobileMenu) onCloseMobileMenu();
