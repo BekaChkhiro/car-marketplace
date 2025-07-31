@@ -79,6 +79,17 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
   const handleClick = () => {
     console.log('Facebook login button clicked');
     
+    // Check if we're on HTTP and need to use OAuth flow instead
+    const isHttps = window.location.protocol === 'https:';
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (!isHttps && !isLocalhost) {
+      // For HTTP non-localhost environments, redirect to OAuth flow
+      const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      window.location.href = `${backendUrl}/api/auth/facebook`;
+      return;
+    }
+    
     if (!window.FB) {
       console.error('Facebook SDK not loaded or initialized');
       showToast('Facebook SDK not loaded. Please try again later.', 'error');
@@ -113,7 +124,14 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
       }, { scope: 'email' });
     } catch (error) {
       console.error('Error during Facebook login:', error);
-      showToast('Error during Facebook login. Please try again.', 'error');
+      // If FB.login fails due to HTTP, fallback to OAuth redirect
+      if (error.message && error.message.includes('http')) {
+        console.log('Falling back to OAuth redirect due to HTTPS requirement');
+        const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        window.location.href = `${backendUrl}/api/auth/facebook`;
+      } else {
+        showToast('Error during Facebook login. Please try again.', 'error');
+      }
     }
   };
 
