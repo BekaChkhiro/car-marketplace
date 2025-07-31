@@ -82,9 +82,13 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({ onSuccess }) 
     // Check if we're on HTTP and need to use OAuth flow instead
     const isHttps = window.location.protocol === 'https:';
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isProduction = window.location.hostname.includes('big-way') || 
+                        window.location.hostname.includes('onrender.com') || 
+                        (!isLocalhost && isHttps);
     
-    if (!isHttps && !isLocalhost) {
-      // For HTTP non-localhost environments, redirect to OAuth flow
+    // For production domains or HTTP non-localhost, use OAuth redirect
+    if (isProduction || (!isHttps && !isLocalhost)) {
+      console.log('Using OAuth redirect flow for production/HTTP environment');
       const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       window.location.href = `${backendUrl}/api/auth/facebook`;
       return;
