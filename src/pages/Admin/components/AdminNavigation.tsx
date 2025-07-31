@@ -61,45 +61,61 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
     return lang ? `/${lang}${path}` : path;
   };
 
-  // Top level nav items
-  const navItems = [
-    { icon: <LayoutDashboard size={20} />, label: t('admin:navigation.dashboard'), path: buildPath('/admin') },
-    { icon: <Users size={20} />, label: t('admin:navigation.users'), path: buildPath('/admin/users') },
-    { icon: <Car size={20} />, label: t('admin:navigation.cars'), path: buildPath('/admin/cars') },
-    { icon: <Building size={20} />, label: t('admin:navigation.autosalons'), path: buildPath('/admin/autosalons') },
-    { icon: <UserCheck size={20} />, label: t('admin:navigation.dealers'), path: buildPath('/admin/dealers') },
-    { icon: <Package size={20} />, label: t('admin:navigation.parts'), path: buildPath('/admin/parts') },
-    { icon: <CreditCard size={20} />, label: t('admin:navigation.transactions'), path: buildPath('/admin/transactions') },
-    { icon: <Award size={20} />, label: t('admin:navigation.vipListings'), path: buildPath('/admin/vip-listings') },
-    { icon: <Activity size={20} />, label: t('admin:navigation.analytics'), path: buildPath('/admin/analytics') },
-    { 
-      icon: <Image size={20} />, 
-      label: t('admin:navigation.advertisements'), 
-      path: buildPath('/admin/advertisements'),
-      hasSubmenu: true,
-      submenuId: 'advertisements',
-      submenu: [
-        { icon: <LayoutGrid size={18} />, label: t('admin:advertisements.allAdvertisements'), path: buildPath('/admin/advertisements/all') },
-        { icon: <SlidersHorizontal size={18} />, label: t('admin:advertisements.slider'), path: buildPath('/admin/advertisements/slider') },
-        { icon: <Rows size={18} />, label: t('admin:advertisements.banners'), path: buildPath('/admin/advertisements/banners') },
-        { icon: <BarChart2 size={18} />, label: t('advertisements.analytics.title'), path: buildPath('/admin/advertisements/analytics') },
+  // Navigation sections with items
+  const navSections = [
+    {
+      title: 'მთავარი',
+      items: [
+        { icon: <LayoutDashboard size={20} />, label: t('admin:navigation.dashboard'), path: buildPath('/admin') },
+        { icon: <Activity size={20} />, label: t('admin:navigation.analytics'), path: buildPath('/admin/analytics') },
       ]
     },
-    { 
-      icon: <Settings size={20} />, 
-      label: t('admin:navigation.settings'), 
-      path: buildPath('/admin/settings'),
-      hasSubmenu: true,
-      submenuId: 'settings',
-      submenu: [
-        { icon: <User size={18} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
-        { icon: <DollarSign size={18} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
-        { icon: <FileText size={18} />, label: 'წესები & პირობები', path: buildPath('/admin/terms') },
+    {
+      title: 'მომხმარებლები',
+      items: [
+        { icon: <Users size={20} />, label: t('admin:navigation.users'), path: buildPath('/admin/users') },
+        { icon: <Building size={20} />, label: t('admin:navigation.autosalons'), path: buildPath('/admin/autosalons') },
+        { icon: <UserCheck size={20} />, label: t('admin:navigation.dealers'), path: buildPath('/admin/dealers') },
       ]
     },
+    {
+      title: 'კონტენტის მართვა',
+      items: [
+        { icon: <Car size={20} />, label: t('admin:navigation.cars'), path: buildPath('/admin/cars') },
+        { icon: <Package size={20} />, label: t('admin:navigation.parts'), path: buildPath('/admin/parts') },
+        { icon: <Award size={20} />, label: t('admin:navigation.vipListings'), path: buildPath('/admin/vip-listings') },
+        { 
+          icon: <Image size={20} />, 
+          label: t('admin:navigation.advertisements'), 
+          path: buildPath('/admin/advertisements'),
+          hasSubmenu: true,
+          submenuId: 'advertisements',
+          submenu: [
+            { icon: <LayoutGrid size={18} />, label: t('admin:advertisements.allAdvertisements'), path: buildPath('/admin/advertisements/all') },
+            { icon: <SlidersHorizontal size={18} />, label: t('admin:advertisements.slider'), path: buildPath('/admin/advertisements/slider') },
+            { icon: <Rows size={18} />, label: t('admin:advertisements.banners'), path: buildPath('/admin/advertisements/banners') },
+            { icon: <BarChart2 size={18} />, label: t('advertisements.analytics.title'), path: buildPath('/admin/advertisements/analytics') },
+          ]
+        },
+      ]
+    },
+    {
+      title: 'ფინანსები',
+      items: [
+        { icon: <CreditCard size={20} />, label: t('admin:navigation.transactions'), path: buildPath('/admin/transactions') },
+        { icon: <DollarSign size={20} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
+      ]
+    },
+    {
+      title: 'კონფიგურაცია',
+      items: [
+        { icon: <User size={20} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
+        { icon: <FileText size={20} />, label: 'წესები & პირობები', path: buildPath('/admin/terms') },
+      ]
+    }
   ];
   
-  // Auto-expand advertisements and settings menus if we're in those sections
+  // Auto-expand advertisements menu if we're in that section
   React.useEffect(() => {
     let newExpandedMenus = [...expandedMenus];
     
@@ -107,14 +123,10 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
       newExpandedMenus.push('advertisements');
     }
     
-    if (isSettingsPath && !expandedMenus.includes('settings')) {
-      newExpandedMenus.push('settings');
-    }
-    
     if (newExpandedMenus.length !== expandedMenus.length) {
       setExpandedMenus(newExpandedMenus);
     }
-  }, [location.pathname, isAdvertisementsPath, isSettingsPath, expandedMenus]);
+  }, [location.pathname, isAdvertisementsPath, expandedMenus]);
   return (
     <div className="w-64 bg-white border-r border-gray-100  shadow-sm rounded-lg overflow-y-auto">
       <div className="p-4 sm:p-6 border-b border-gray-100 flex items-left justify-center relative">
@@ -132,67 +144,86 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
       </div>
 
       <div className="p-4">
-        <nav className="space-y-2">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path || 
-              (item.hasSubmenu && item.submenu?.some(subItem => location.pathname === subItem.path));
-            
-            const isExpanded = item.hasSubmenu && expandedMenus.includes(item.submenuId!);
-            
-            return (
-              <div key={item.path} className="flex flex-col">
-                {/* Main menu item */}
-                {item.hasSubmenu ? (
-                  <button
-                    onClick={() => toggleMenu(item.submenuId!)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-300 ${
-                      isActive ? 'bg-primary/10 text-primary font-medium' : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 ">
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </div>
-                    {isExpanded ? 
-                      <ChevronDown size={18} className="text-gray-400" /> : 
-                      <ChevronRight size={18} className="text-gray-400" />}
-                  </button>
-                ) : (
-                  <Link
-                    to={item.path}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-300 ${
-                      location.pathname === item.path
-                        ? 'bg-primary text-white'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </Link>
-                )}
-                
-                {/* Submenu items, shown when expanded */}
-                {item.hasSubmenu && item.submenu && isExpanded && (
-                  <div className="pl-4 mt-1 mb-1 space-y-1 overflow-hidden transition-all duration-300">
-                    {item.submenu.map(subItem => (
-                      <Link
-                        key={subItem.path}
-                        to={subItem.path}
-                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-sm transition-all duration-300 ${
-                          location.pathname === subItem.path
-                            ? 'bg-primary/10 text-primary font-medium'
-                            : 'text-gray-600 hover:bg-gray-100'
-                        }`}
-                      >
-                        {subItem.icon}
-                        <span>{subItem.label}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
+        <nav className="space-y-6">
+          {navSections.map((section, sectionIndex) => (
+            <div key={section.title}>
+              {/* Section Header */}
+              <div className="px-2 mb-3">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  {section.title}
+                </h3>
               </div>
-            );
-          })}
+              
+              {/* Section Items */}
+              <div className="space-y-1">
+                {section.items.map((item) => {
+                  const isActive = location.pathname === item.path || 
+                    (item.hasSubmenu && item.submenu?.some(subItem => location.pathname === subItem.path));
+                  
+                  const isExpanded = item.hasSubmenu && expandedMenus.includes(item.submenuId!);
+                  
+                  return (
+                    <div key={item.path} className="flex flex-col">
+                      {/* Main menu item */}
+                      {item.hasSubmenu ? (
+                        <button
+                          onClick={() => toggleMenu(item.submenuId!)}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all duration-200 ${
+                            isActive ? 'bg-primary/10 text-primary font-medium' : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            {item.icon}
+                            <span className="text-sm">{item.label}</span>
+                          </div>
+                          {isExpanded ? 
+                            <ChevronDown size={16} className="text-gray-400" /> : 
+                            <ChevronRight size={16} className="text-gray-400" />}
+                        </button>
+                      ) : (
+                        <Link
+                          to={item.path}
+                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-200 ${
+                            location.pathname === item.path
+                              ? 'bg-primary text-white shadow-sm'
+                              : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          {item.icon}
+                          <span className="text-sm">{item.label}</span>
+                        </Link>
+                      )}
+                      
+                      {/* Submenu items, shown when expanded */}
+                      {item.hasSubmenu && item.submenu && isExpanded && (
+                        <div className="pl-8 mt-1 mb-1 space-y-1">
+                          {item.submenu.map(subItem => (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-left text-sm transition-all duration-200 ${
+                                location.pathname === subItem.path
+                                  ? 'bg-primary/10 text-primary font-medium'
+                                  : 'text-gray-600 hover:bg-gray-50'
+                              }`}
+                            >
+                              {subItem.icon}
+                              <span>{subItem.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Section Divider */}
+              {sectionIndex < navSections.length - 1 && (
+                <div className="mt-4 border-t border-gray-200"></div>
+              )}
+            </div>
+          ))}
         </nav>
       </div>      <div className="sticky bottom-0 left-0 right-0 p-4 sm:p-6 border-t border-gray-100 bg-white mt-8">
         <button
