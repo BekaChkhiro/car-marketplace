@@ -28,6 +28,7 @@ import NewAdvertisementPage from './pages/Admin/Advertisements/pages/NewAdvertis
 import EditAdvertisementPage from './pages/Admin/Advertisements/pages/EditAdvertisement';
 import SettingsPage from './pages/Admin/Settings';
 import VipSettingsPage from './pages/Admin/VipSettings';
+import TermsManagement from './pages/Admin/Terms';
 import Analytics from './pages/Admin/Analytics';
 import TransactionsPage from './pages/Admin/Transactions';
 import VipListingsPage from './pages/Admin/VipListings';
@@ -123,6 +124,7 @@ const AppRoutes = () => {
         <Route path="analytics" element={<Analytics />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="vip-settings" element={<VipSettingsPage />} />
+        <Route path="terms" element={<TermsManagement />} />
       </Route>
 
       {/* Protected Profile Routes */}

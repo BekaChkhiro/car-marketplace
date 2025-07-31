@@ -22,7 +22,8 @@ import {
   Building,
   UserCheck,
   User,
-  DollarSign
+  DollarSign,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
   const isAdvertisementsPath = location.pathname.includes('/admin/advertisements');
   
   // Check if settings menu should be expanded based on current path
-  const isSettingsPath = location.pathname.includes('/admin/settings') || location.pathname.includes('/admin/vip-settings');
+  const isSettingsPath = location.pathname.includes('/admin/settings') || location.pathname.includes('/admin/vip-settings') || location.pathname.includes('/admin/terms');
   
   // Toggle submenu expansion
   const toggleMenu = (menu: string) => {
@@ -93,6 +94,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
       submenu: [
         { icon: <User size={18} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
         { icon: <DollarSign size={18} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
+        { icon: <FileText size={18} />, label: 'Terms & Conditions', path: buildPath('/admin/terms') },
       ]
     },
   ];
