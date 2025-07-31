@@ -94,7 +94,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
       submenu: [
         { icon: <User size={18} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
         { icon: <DollarSign size={18} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
-        { icon: <FileText size={18} />, label: 'Terms & Conditions', path: buildPath('/admin/terms') },
+        { icon: <FileText size={18} />, label: 'წესები & პირობები', path: buildPath('/admin/terms') },
       ]
     },
   ];
