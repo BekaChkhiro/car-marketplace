@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -12,7 +12,7 @@ import { formatCurrency } from '../../utils/formatters';
 import { formatDate } from '../../utils/dateUtils';
 import ImageGallery from './components/ImageGallery';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
-import { Phone, Mail, MapPin, Calendar, Tag, Info, User, DollarSign } from 'lucide-react';
+import { Phone, Mail, MapPin, Calendar, Tag, Info, User, DollarSign, Eye } from 'lucide-react';
 import { namespaces } from '../../i18n';
 
 const PartDetails: React.FC = () => {
@@ -31,6 +31,7 @@ const PartDetails: React.FC = () => {
   const [relatedParts, setRelatedParts] = useState<Part[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const viewsIncrementedRef = useRef(false);
 
   // Force re-render of related parts when currency changes
   useEffect(() => {
@@ -41,6 +42,9 @@ const PartDetails: React.FC = () => {
   }, [currency, relatedParts.length]);
 
   useEffect(() => {
+    // Reset view increment flag when part ID changes
+    viewsIncrementedRef.current = false;
+    
     const loadPartDetails = async () => {
       if (!id) return;
       
@@ -48,6 +52,16 @@ const PartDetails: React.FC = () => {
       try {
         const partData = await partService.getPartById(id);
         setPart(partData);
+        
+        // Increment view count only once per part ID and session to avoid multiple increments
+        const sessionKey = `part_viewed_${id}`;
+        const hasViewedInSession = sessionStorage.getItem(sessionKey);
+        
+        if (!viewsIncrementedRef.current && !hasViewedInSession) {
+          viewsIncrementedRef.current = true;
+          sessionStorage.setItem(sessionKey, 'true');
+          await partService.incrementViews(id);
+        }
         
         // Load related parts (same category or brand)
         setRelatedLoading(true);
@@ -73,7 +87,7 @@ const PartDetails: React.FC = () => {
     };
     
     loadPartDetails();
-  }, [id, showToast, t]);
+  }, [id]);
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
@@ -201,9 +215,10 @@ const PartDetails: React.FC = () => {
           <div className="p-6">
             <div className="flex justify-between items-start">
               <h1 className="text-3xl font-bold text-gray-800">{part.title}</h1>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getConditionBadgeClass(part.condition)}`}>
-                {getConditionLabel(part.condition)}
-              </span>
+              <div className="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">
+                <Eye className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium text-green-700">{(part as any).views_count || 0}</span>
+              </div>
             </div>
 
             <div className="mt-4 text-2xl font-bold text-primary flex items-center gap-2">
@@ -252,6 +267,14 @@ const PartDetails: React.FC = () => {
                   <p className="font-medium">{part.quantity}</p>
                 </div>
               )}
+              <div>
+                <h3 className="text-sm text-gray-500 flex items-center">
+                  {t('condition')}
+                </h3>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getConditionBadgeClass(part.condition)}`}>
+                  {getConditionLabel(part.condition)}
+                </span>
+              </div>
             </div>
 
             <div className="mt-8">

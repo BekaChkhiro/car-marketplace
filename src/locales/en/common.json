@@ -17,7 +17,12 @@
   "perDay": "per day",
   "search": "Search",
   "notAvailable": "Not available",
+  "views": "Views",
   "viewStatments": "View Statements",
   "ad" : "Advertisement",
-  "user":"User"
+  "user":"User",
+  "termsAndConditions": "Terms and Conditions",
+  "failedToLoadTerms": "Failed to load terms and conditions",
+  "errorLoadingTerms": "Error loading terms and conditions",
+  "termsAgreementFooter": "By agreeing to these terms and conditions, you confirm that you are a capable individual who has reached the age of 18 or a legal entity created in accordance with the legislation of Georgia and agree to these terms and conditions."
 }

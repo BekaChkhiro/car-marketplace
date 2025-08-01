@@ -759,6 +759,15 @@ class CarService {
       throw error;
     }
   }
+  
+  async incrementViews(carId: number): Promise<void> {
+    try {
+      await api.post(`/api/cars/${carId}/views`);
+    } catch (error: any) {
+      console.error('[CarService.incrementViews] Error:', error);
+      // Don't throw error to prevent blocking page load
+    }
+  }
 }
 
 // Create an instance of CarService and export it as default

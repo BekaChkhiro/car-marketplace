@@ -690,6 +690,37 @@
     "logo": "Logo",
     "uploadingImages": "Uploading images...",
     "imagesUploadedSuccessfully": "Images uploaded successfully",
-    "errorUploadingImages": "Error uploading images"
+    "errorUploadingImages": "Error uploading images",
+    "manageTermsAndConditions": "Terms and Conditions Management",
+    "manageTermsDescription": "Manage your platform's terms and conditions sections",
+    "addNewSection": "Add New Section",
+    "add": "Add",
+    "georgian": "Georgian",
+    "authenticationRequired": "Authentication required. Please log in.",
+    "georgianFieldsRequired": "Georgian title and content are required",
+    "sessionExpired": "Session expired. Please log in again.",
+    "failedToCreateSection": "Failed to create section",
+    "errorCreatingSection": "Error creating section",
+    "failedToUpdateSection": "Failed to update section",
+    "errorUpdatingSection": "Error updating section",
+    "confirmDeleteSection": "Are you sure you want to delete this section?",
+    "failedToDeleteSection": "Failed to delete section",
+    "errorDeletingSection": "Error deleting section",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "noContentProvided": "No content provided",
+    "noTermsSectionsYet": "No terms sections yet",
+    "startCreatingFirstSection": "Start by creating the first terms and conditions section.",
+    "addFirstSection": "Add First Section",
+    "failedToLoadTerms": "Failed to load terms and conditions",
+    "errorLoadingTerms": "Error loading terms and conditions",
+    "termsAndConditions": "Terms & Conditions"
+  },
+  "navigationSections": {
+    "main": "Main",
+    "users": "Users",
+    "contentManagement": "Content Management", 
+    "finance": "Finance",
+    "configuration": "Configuration"
   }
 }

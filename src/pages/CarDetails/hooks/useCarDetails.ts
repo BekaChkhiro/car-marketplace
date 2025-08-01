@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Car } from '../../../api/types/car.types';
 import carService from '../../../api/services/carService';
@@ -27,6 +27,7 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); // 'details', 'specs', 'seller'
   const [showFullGallery, setShowFullGallery] = useState(false);
+  const viewsIncrementedRef = useRef(false);
   const { showToast } = useToast();
   const { isAuthenticated, user } = useAuth();
 
@@ -42,6 +43,9 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
   }, []);
 
   useEffect(() => {
+    // Reset view increment flag when car ID changes
+    viewsIncrementedRef.current = false;
+    
     const fetchCar = async () => {
       setLoading(true);
       try {
@@ -65,6 +69,15 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
         }
         if (carData) {
           setCar(carData);
+          // Increment view count only once per car ID and session to avoid multiple increments
+          const sessionKey = `car_viewed_${id}`;
+          const hasViewedInSession = sessionStorage.getItem(sessionKey);
+          
+          if (!viewsIncrementedRef.current && !hasViewedInSession) {
+            viewsIncrementedRef.current = true;
+            sessionStorage.setItem(sessionKey, 'true');
+            await carService.incrementViews(Number(id));
+          }
           // Check wishlist status only if user is authenticated
           if (isAuthenticated) {
             try {
@@ -93,7 +106,7 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
     };
 
     fetchCar();
-  }, [id, showToast, isAuthenticated, refreshTrigger]);
+  }, [id, isAuthenticated, refreshTrigger]);
 
   const toggleFavorite = async () => {
     if (!car?.id) return;
