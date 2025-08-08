@@ -669,6 +669,36 @@
     "logo": "Логотип",
     "uploadingImages": "Загрузка изображений...",
     "imagesUploadedSuccessfully": "Изображения успешно загружены",
-    "errorUploadingImages": "Ошибка при загрузке изображений"
+    "errorUploadingImages": "Ошибка при загрузке изображений",
+    "manageTermsAndConditions": "Управление условиями использования",
+    "manageTermsDescription": "Управляйте разделами условий использования вашей платформы",
+    "addNewSection": "Добавить новый раздел",
+    "authenticationRequired": "Требуется аутентификация. Пожалуйста, войдите в систему.",
+    "georgianFieldsRequired": "Грузинский заголовок и содержание обязательны",
+    "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
+    "failedToCreateSection": "Не удалось создать раздел",
+    "errorCreatingSection": "Ошибка создания раздела",
+    "failedToUpdateSection": "Не удалось обновить раздел",
+    "errorUpdatingSection": "Ошибка обновления раздела",
+    "confirmDeleteSection": "Вы уверены, что хотите удалить этот раздел?",
+    "failedToDeleteSection": "Не удалось удалить раздел",
+    "errorDeletingSection": "Ошибка удаления раздела",
+    "moveUp": "Переместить вверх",
+    "moveDown": "Переместить вниз",
+    "noContentProvided": "Содержание не указано",
+    "noTermsSectionsYet": "Пока нет разделов условий",
+    "startCreatingFirstSection": "Начните с создания первого раздела условий использования.",
+    "addFirstSection": "Добавить первый раздел",
+    "failedToLoadTerms": "Не удалось загрузить условия использования",
+    "errorLoadingTerms": "Ошибка загрузки условий использования",
+    "georgian": "Грузинский",
+    "termsAndConditions": "Условия и Положения"
+  },
+  "navigationSections": {
+    "main": "Главная",
+    "users": "Пользователи",
+    "contentManagement": "Управление контентом",
+    "finance": "Финансы", 
+    "configuration": "Конфигурация"
   }
 }

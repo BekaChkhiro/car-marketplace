@@ -64,14 +64,14 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
   // Navigation sections with items
   const navSections = [
     {
-      title: 'მთავარი',
+      title: t('admin:navigationSections.main'),
       items: [
         { icon: <LayoutDashboard size={20} />, label: t('admin:navigation.dashboard'), path: buildPath('/admin') },
         { icon: <Activity size={20} />, label: t('admin:navigation.analytics'), path: buildPath('/admin/analytics') },
       ]
     },
     {
-      title: 'მომხმარებლები',
+      title: t('admin:navigationSections.users'),
       items: [
         { icon: <Users size={20} />, label: t('admin:navigation.users'), path: buildPath('/admin/users') },
         { icon: <Building size={20} />, label: t('admin:navigation.autosalons'), path: buildPath('/admin/autosalons') },
@@ -79,7 +79,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
       ]
     },
     {
-      title: 'კონტენტის მართვა',
+      title: t('admin:navigationSections.contentManagement'),
       items: [
         { icon: <Car size={20} />, label: t('admin:navigation.cars'), path: buildPath('/admin/cars') },
         { icon: <Package size={20} />, label: t('admin:navigation.parts'), path: buildPath('/admin/parts') },
@@ -100,17 +100,17 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ onCloseMobileMenu }) 
       ]
     },
     {
-      title: 'ფინანსები',
+      title: t('admin:navigationSections.finance'),
       items: [
         { icon: <CreditCard size={20} />, label: t('admin:navigation.transactions'), path: buildPath('/admin/transactions') },
         { icon: <DollarSign size={20} />, label: t('admin:navigation.vipPricing'), path: buildPath('/admin/vip-settings') },
       ]
     },
     {
-      title: 'კონფიგურაცია',
+      title: t('admin:navigationSections.configuration'),
       items: [
         { icon: <User size={20} />, label: t('admin:navigation.profile'), path: buildPath('/admin/settings') },
-        { icon: <FileText size={20} />, label: 'წესები & პირობები', path: buildPath('/admin/terms') },
+        { icon: <FileText size={20} />, label: t('admin:termsAndConditions'), path: buildPath('/admin/terms') },
       ]
     }
   ];

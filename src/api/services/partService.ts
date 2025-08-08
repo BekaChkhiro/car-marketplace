@@ -465,6 +465,15 @@ class PartService {
       throw error;
     }
   }
+  
+  async incrementViews(partId: string): Promise<void> {
+    try {
+      await api.post(`/api/parts/${partId}/views`);
+    } catch (error: any) {
+      console.error('[PartService.incrementViews] Error:', error);
+      // Don't throw error to prevent blocking page load
+    }
+  }
 }
 
 // Create an instance of PartService and export it as default

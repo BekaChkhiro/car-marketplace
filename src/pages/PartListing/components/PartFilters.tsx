@@ -132,7 +132,7 @@ const PartFiltersComponent: React.FC<FiltersProps> = ({
               value={searchTerm || ''}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('searchPlaceholder')}
-              className="flex-1 border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex-1 border border-gray-300 rounded-none rounded-l-md p-2 focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button
               type="submit"

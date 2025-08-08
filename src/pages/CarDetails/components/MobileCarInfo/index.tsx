@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Eye } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -26,16 +26,22 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
               {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
             </h1>
             
-            {/* Location if available */}
-            {car.location && (
-              <div className="flex items-center mt-1 text-gray-600 text-sm">
-                <MapPin className="w-4 h-4 mr-1 text-primary" />
-                <span>
-                  {car.location.city || ''}
-                  {car.location.country && `, ${car.location.country}`}
-                </span>
+            {/* Location and views */}
+            <div className="flex items-center gap-4 mt-1 text-gray-600 text-sm">
+              {car.location && (
+                <div className="flex items-center">
+                  <MapPin className="w-4 h-4 mr-1 text-primary" />
+                  <span>
+                    {car.location.city || ''}
+                    {car.location.country && `, ${car.location.country}`}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center">
+                <Eye className="w-4 h-4 mr-1 text-primary" />
+                <span>{(car as any).views_count || 0} {t('common:views')}</span>
               </div>
-            )}
+            </div>
           </div>
           
           <div className="price-badge text-xl sm:text-2xl font-bold text-primary bg-green-50 px-4 py-2 rounded-lg inline-block">

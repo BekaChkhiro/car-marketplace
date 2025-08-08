@@ -6,34 +6,43 @@ interface Term {
   id: number;
   title: string;
   content: string;
+  title_ka: string;
+  title_en: string | null;
+  title_ru: string | null;
+  content_ka: string;
+  content_en: string | null;
+  content_ru: string | null;
   section_order: number;
   created_at: string;
   updated_at: string;
 }
 
 const TermsAndConditions: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [terms, setTerms] = useState<Term[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Get current language, default to Georgian
+  const currentLanguage = i18n.language === 'en' ? 'en' : i18n.language === 'ru' ? 'ru' : 'ka';
 
   useEffect(() => {
     fetchTerms();
-  }, []);
+  }, [currentLanguage]);
 
   const fetchTerms = async () => {
     try {
       setLoading(true);
-      const response = await fetch(buildApiUrl('api/terms'));
+      const response = await fetch(buildApiUrl(`api/terms?lang=${currentLanguage}`));
       const data = await response.json();
       
       if (data.success) {
         setTerms(data.data);
       } else {
-        setError('Failed to load terms and conditions');
+        setError(t('common:failedToLoadTerms'));
       }
     } catch (err) {
-      setError('Error loading terms and conditions');
+      setError(t('common:errorLoadingTerms'));
     } finally {
       setLoading(false);
     }
@@ -52,7 +61,9 @@ const TermsAndConditions: React.FC = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-12 max-w-5xl">
-        <h1 className="text-3xl font-bold mb-8 text-primary">წესები და პირობები</h1>
+        <h1 className="text-3xl font-bold mb-8 text-primary">
+          {t('common:termsAndConditions')}
+        </h1>
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
           {error}
         </div>
@@ -62,7 +73,7 @@ const TermsAndConditions: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
-      <h1 className="text-3xl font-bold mb-8 text-primary">წესები და პირობები</h1>
+      <h1 className="text-3xl font-bold mb-8 text-primary">{t('common:termsAndConditions')}</h1>
 
       <div className="space-y-8 text-gray-700 leading-relaxed">
         {terms.map((term) => (
@@ -78,9 +89,7 @@ const TermsAndConditions: React.FC = () => {
 
         <section className="border-t pt-6">
           <p className="text-sm text-gray-600 leading-relaxed">
-            წესებსა და პირობებზე თანხმობით თქვენ ადასტურებთ, რომ ხართ ქმედუნარიანი, 18
-            წელს მიღწეული ფიზიკური პირი ან საქართველოს კანონმდებლობის შესაბამისად
-            შექმნილი იურიდიული პირი და ეთანხმებით წინამდებარე წესებს და პირობებს.
+            {t('common:termsAgreementFooter')}
           </p>
         </section>
 

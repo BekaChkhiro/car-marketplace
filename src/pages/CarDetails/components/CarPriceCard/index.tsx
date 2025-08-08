@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Calendar, Tag, Car as CarIcon, Package } from 'lucide-react';
+import { MapPin, Calendar, Tag, Car as CarIcon, Package, Eye } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -135,9 +135,16 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
       <div className="bg-white rounded-xl shadow-md border border-green-100 car-detail-card overflow-hidden">
         {/* Car Title */}
         <div className="p-4 border-b border-green-100">
-          <h1 className="text-xl font-bold text-gray-800">
-            {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-xl font-bold text-gray-800 flex-1">
+              {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
+            </h1>
+            {/* Views count */}
+            <div className="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">
+              <Eye className="w-4 h-4 text-green-600" />
+              <span className="text-sm font-medium text-green-700">{(car as any).views_count || 0}</span>
+            </div>
+          </div>
         </div>
 
         {/* Car Details */}
