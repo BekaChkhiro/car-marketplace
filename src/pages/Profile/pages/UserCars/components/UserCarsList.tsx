@@ -319,7 +319,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-primary">
-                        {formatPrice(car.price)}
+                        {formatPrice(car.price, car.currency as 'GEL' | 'USD')}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -485,7 +485,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     {/* VIP სტატუსის ბეჯი გამორთულია */}
                   </div>
                   <div className="text-md font-semibold text-primary mb-1">
-                    {formatPrice(car.price)}
+                    {formatPrice(car.price, car.currency as 'GEL' | 'USD')}
                   </div>
                   <div className={`inline-flex items-center mr-2 py-1 rounded-full text-xs font-medium ${statusStyle.bgColor} ${statusStyle.textColor}`}>
                     {statusStyle.icon}

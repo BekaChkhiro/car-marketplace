@@ -136,12 +136,12 @@ const AddCar: React.FC = () => {
                     ? 'bg-primary hover:bg-primary/90 cursor-pointer' 
                     : 'bg-gray-400 cursor-not-allowed'
                 }`}
-                title={!hasSufficientBalance() ? `Insufficient balance. Required: ${getTotalVipPrice()} GEL, Your balance: ${(userBalance || 0).toFixed(2)} GEL` : ''}
+                title={!hasSufficientBalance() ? `Insufficient balance. Required: ${getTotalVipPrice()} GEL, Your balance: ${Math.round(userBalance || 0)} GEL` : ''}
               >
                 {t('addCar.submit')}
                 {!hasSufficientBalance() && (
                   <span className="ml-2 text-xs">
-                    ({t('cars.vip.modal.yourBalance')} {(userBalance || 0).toFixed(2)} {t('cars.vip.modal.currency')}, {t('cars.vip.modal.required')}: {getTotalVipPrice().toFixed(2)} {t('cars.vip.modal.currency')})
+                    ({t('cars.vip.modal.yourBalance')} {Math.round(userBalance || 0)} {t('cars.vip.modal.currency')}, {t('cars.vip.modal.required')}: {Math.round(getTotalVipPrice())} {t('cars.vip.modal.currency')})
                   </span>
                 )}
               </button>

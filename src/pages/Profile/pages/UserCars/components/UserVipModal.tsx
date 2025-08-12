@@ -148,7 +148,7 @@ const UserVipModal: React.FC<UserVipModalProps> = ({
   // Helper function to format price - shows "Free" if price is 0
   const formatPrice = (price: number | string): string => {
     const numPrice = typeof price === 'string' ? parseFloat(price) || 0 : price || 0;
-    return numPrice === 0 ? t('profile:cars.vip.modal.free') : `${numPrice.toFixed(2)} ${t('profile:cars.vip.modal.currency')}`;
+    return numPrice === 0 ? t('profile:cars.vip.modal.free') : `${Math.round(numPrice)} ${t('profile:cars.vip.modal.currency')}`;
   };
 
   // ჯამური ფასის გამოთვლა (VIP + additional services)

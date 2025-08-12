@@ -125,8 +125,8 @@ class CurrencyService {
     const formatter = new Intl.NumberFormat('ka-GE', {
       style: 'currency',
       currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     });
     
     try {
@@ -134,7 +134,7 @@ class CurrencyService {
     } catch (error) {
       // Fallback formatting
       const symbol = currency === 'GEL' ? '₾' : currency === 'USD' ? '$' : '';
-      return `${symbol}${amount.toFixed(2)}`;
+      return `${symbol}${Math.round(amount)}`;
     }
   }
 

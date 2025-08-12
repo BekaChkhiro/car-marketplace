@@ -408,7 +408,15 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
           </div>
           <div className="flex flex-col items-end gap-0.5 sm:gap-1">
             <span className="text-xs sm:text-base md:text-lg font-bold text-primary">
-              {formatPrice(car.price)}
+              {(() => {
+                console.log('CarCard car currency data:', { 
+                  id: car.id, 
+                  price: car.price, 
+                  currency: car.currency, 
+                  car: car 
+                });
+                return formatPrice(car.price, car.currency as 'GEL' | 'USD');
+              })()}
             </span>
           </div>
         </div>

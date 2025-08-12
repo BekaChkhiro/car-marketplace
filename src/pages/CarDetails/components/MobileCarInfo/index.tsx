@@ -1,9 +1,12 @@
 import React from 'react';
-import { MapPin, Phone, MessageCircle, Eye } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Eye, Calendar, Tag, Car as CarIcon, Package } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
 import ContactButtons from '../sellerInfo/components/ContactButtons';
+import DealerInfoCard from '../CarPriceCard/DealerInfoCard';
+import AutosalonInfoCard from '../CarPriceCard/AutosalonInfoCard';
+import RegularUserInfoCard from '../CarPriceCard/RegularUserInfoCard';
 import { useTranslation } from 'react-i18next';
 import { namespaces } from '../../../../i18n';
 
@@ -15,6 +18,107 @@ interface MobileCarInfoProps {
 const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
   const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
+
+  // Category mapping for translation
+  const categoryMapping: { [key: string]: string } = {
+    'სედანი': 'sedan',
+    'ჯიპი': 'suv',
+    'კუპე': 'coupe',
+    'ჰეტჩბექი': 'hatchback',
+    'უნივერსალი': 'wagon',
+    'კაბრიოლეტი': 'convertible',
+    'პიკაპი': 'pickup',
+    'მინივენი': 'minivan',
+    'ლიმუზინი': 'limousine',
+    'კროსოვერი': 'crossover',
+    'sedan': 'sedan',
+    'suv': 'suv',
+    'coupe': 'coupe',
+    'hatchback': 'hatchback',
+    'wagon': 'wagon',
+    'convertible': 'convertible',
+    'pickup': 'pickup',
+    'minivan': 'minivan',
+    'limousine': 'limousine',
+    'crossover': 'crossover'
+  };
+
+  const getCategoryTranslation = (category: string | undefined): string => {
+    if (!category) return t('common:notAvailable');
+    const mappedCategory = categoryMapping[category.toLowerCase()] || categoryMapping[category];
+    return mappedCategory ? t(`carDetails:categories.${mappedCategory}`, category) : category;
+  };
+
+  // Location mapping for translation
+  const locationMapping: { [key: string]: string } = {
+    'თბილისი': 'tbilisi',
+    'ბათუმი': 'batumi',
+    'ქუთაისი': 'kutaisi',
+    'რუსთავი': 'rustavi',
+    'გორი': 'gori',
+    'ზუგდიდი': 'zugdidi',
+    'ფოთი': 'poti',
+    'ხაშური': 'khashuri',
+    'სამტრედია': 'samtredia',
+    'სენაკი': 'senaki',
+    'საქართველო': 'georgia',
+    'გერმანია': 'germany',
+    'აშშ': 'usa',
+    'იაპონია': 'japan',
+    'დიდი ბრიტანეთი': 'uk',
+    'საფრანგეთი': 'france',
+    'იტალია': 'italy',
+    'ესპანეთი': 'spain',
+    'ნიდერლანდები': 'netherlands',
+    'ჩინეთი': 'china',
+    'კანადა': 'canada',
+    'თურქეთი': 'turkey',
+    'პოლონეთი': 'poland',
+    'სომხეთი': 'armenia',
+    'tbilisi': 'tbilisi',
+    'batumi': 'batumi',
+    'kutaisi': 'kutaisi',
+    'rustavi': 'rustavi',
+    'gori': 'gori',
+    'zugdidi': 'zugdidi',
+    'poti': 'poti',
+    'khashuri': 'khashuri',
+    'samtredia': 'samtredia',
+    'senaki': 'senaki',
+    'georgia': 'georgia',
+    'germany': 'germany',
+    'usa': 'usa',
+    'japan': 'japan',
+    'uk': 'uk',
+    'france': 'france',
+    'italy': 'italy',
+    'spain': 'spain',
+    'netherlands': 'netherlands',
+    'china': 'china',
+    'canada': 'canada',
+    'turkey': 'turkey',
+    'poland': 'poland',
+    'armenia': 'armenia'
+  };
+
+  const getLocationTranslation = (location: string | undefined): string => {
+    if (!location) return '';
+    const mappedLocation = locationMapping[location.toLowerCase()] || locationMapping[location];
+    return mappedLocation ? t(`carDetails:locations.${mappedLocation}`, location) : location;
+  };
+
+  // Helper function to determine seller type and render appropriate card
+  const renderSellerInfo = () => {
+    if (car.seller_type === 'dealer' && car.dealer) {
+      return <DealerInfoCard dealer={car.dealer} authorPhone={car.author_phone} />;
+    }
+    
+    if (car.seller_type === 'autosalon' && car.autosalon) {
+      return <AutosalonInfoCard autosalon={car.autosalon} authorPhone={car.author_phone} />;
+    }
+    
+    return <RegularUserInfoCard authorName={car.author_name} authorPhone={car.author_phone} />;
+  };
 
   return (
     <div className="block md:hidden mt-4 space-y-4">
@@ -45,7 +149,7 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
           </div>
           
           <div className="price-badge text-xl sm:text-2xl font-bold text-primary bg-green-50 px-4 py-2 rounded-lg inline-block">
-            {formatPrice(car.price || 0)}
+            {formatPrice(car.price || 0, car.currency as 'GEL' | 'USD')}
           </div>
         </div>
       </div>
@@ -69,38 +173,83 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
           ))}
         </div>
       </div>
-      
-      {/* Mobile Contact Buttons */}
+
+      {/* Additional Car Details - დესკტოპიდან ყველა დეტალი */}
       <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
         <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
-          {t('carDetails:priceCard.contactSeller')}
+          {t('carDetails:specs.specifications')}
         </h3>
         
-        {/* Author Name */}
-        <div className="mb-3">
-          <h4 className="text-sm text-gray-600 mb-1">ავტორი:</h4>
-          <p className="text-base font-medium text-gray-800">
-            {car.author_name || 'მანქანის მფლობელი'}
-          </p>
+        {/* Main Specs Grid */}
+        <div className="grid grid-cols-1 gap-3">
+          {/* Brand */}
+          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
+            <div className="bg-primary/10 p-2 rounded-lg mr-3">
+              <CarIcon className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.brand')}</span>
+              <span className="font-semibold text-gray-900">{car.brand || '-'}</span>
+            </div>
+          </div>
+
+          {/* Model */}
+          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
+            <div className="bg-primary/10 p-2 rounded-lg mr-3">
+              <Tag className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.model')}</span>
+              <span className="font-semibold text-gray-900">{car.model || '-'}</span>
+            </div>
+          </div>
+
+          {/* Category */}
+          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
+            <div className="bg-primary/10 p-2 rounded-lg mr-3">
+              <Package className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.category')}</span>
+              <span className="font-semibold text-gray-900">
+                {getCategoryTranslation(car.category_name) || getCategoryTranslation(car.specifications?.body_type)}
+              </span>
+            </div>
+          </div>
+
+          {/* Year */}
+          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
+            <div className="bg-primary/10 p-2 rounded-lg mr-3">
+              <Calendar className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.year')}</span>
+              <span className="font-semibold text-gray-900">{car.year || '-'}</span>
+            </div>
+          </div>
+
+          {/* Location with enhanced design */}
+          <div className="flex items-center p-3 bg-green-50/50 rounded-xl border border-green-100">
+            <div className="bg-primary/10 p-2 rounded-lg mr-3">
+              <MapPin className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 block">{t('carDetails:specs.location')}</span>
+              <span className="font-semibold text-gray-900">
+                {car.location ? (
+                  <>
+                    {getLocationTranslation(car.location.city)}
+                    {car.location.country && `, ${getLocationTranslation(car.location.country)}`}
+                  </>
+                ) : '-'}
+              </span>
+            </div>
+          </div>
         </div>
-        
-        {/* Seller Phone */}
-        <div className="mb-4">
-          <h4 className="text-sm text-gray-600 mb-1">ტელეფონი:</h4>
-          <p className="text-base font-medium text-primary">
-            {car.author_phone || '+995555123456'}
-          </p>
-        </div>
-        
-        {/* Call Button */}
-        <a 
-          href={`tel:${car.author_phone || '+995555123456'}`}
-          className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-        >
-          <Phone className="w-5 h-5" />
-          <span>{car.author_phone || '+995555123456'}</span>
-        </a>
       </div>
+      
+      {/* Seller Info & Contact - დესკტოპური ვერსიის ანალოგი */}
+      {renderSellerInfo()}
     </div>
   );
 };

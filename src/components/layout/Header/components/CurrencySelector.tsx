@@ -122,7 +122,7 @@ const CurrencySelector = () => {
                 </span>
                 {curr.id !== 'GEL' && rates['GEL'] && rates[curr.id] && (
                   <span className="text-xs text-gray-500">
-                    1 ₾ = {(rates[curr.id] / rates['GEL']).toFixed(4)} {curr.symbol}
+                    1 ₾ = {Math.round(rates[curr.id] / rates['GEL'])} {curr.symbol}
                   </span>
                 )}
               </span>

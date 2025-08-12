@@ -285,8 +285,8 @@ const EditCar: React.FC = () => {
                 <div className="flex items-center text-red-600 text-sm">
                   <AlertCircle size={16} className="mr-2" />
                   <span>
-                    {t('addCar.vipStatus.insufficientBalance')}. {t('cars.vip.modal.required')}: {getTotalVipPrice().toFixed(2)} {t('addCar.vipStatus.currency')}, 
-                    {t('cars.vip.modal.yourBalance')} {userBalance.toFixed(2)} {t('addCar.vipStatus.currency')}
+                    {t('addCar.vipStatus.insufficientBalance')}. {t('cars.vip.modal.required')}: {Math.round(getTotalVipPrice())} {t('addCar.vipStatus.currency')}, 
+                    {t('cars.vip.modal.yourBalance')} {Math.round(userBalance)} {t('addCar.vipStatus.currency')}
                   </span>
                 </div>
               </div>

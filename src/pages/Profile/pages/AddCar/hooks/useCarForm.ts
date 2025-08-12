@@ -588,7 +588,7 @@ export const useCarForm = () => {
       
       // Show success message with VIP info
       const successMessage = totalVipCost > 0 && formData.vip_status !== 'none'
-        ? `Car added successfully! VIP ${formData.vip_status.toUpperCase()} package purchased for ${formData.vip_days} days (${totalVipCost.toFixed(2)} GEL).`
+        ? `Car added successfully! VIP ${formData.vip_status.toUpperCase()} package purchased for ${formData.vip_days} days (${Math.round(totalVipCost)} GEL).`
         : 'მანქანა წარმატებით დაემატა!';
       showToast(successMessage, 'success');
       

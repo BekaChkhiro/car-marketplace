@@ -105,7 +105,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
   // Helper function to format price - shows "Free" if price is 0
   const formatPrice = (price: number | string): string => {
     const numPrice = typeof price === 'string' ? parseFloat(price) || 0 : price || 0;
-    return numPrice === 0 ? t('addPart.vipStatus.free') : `${numPrice.toFixed(2)} ${t('addPart.vipStatus.currency')}`;
+    return numPrice === 0 ? t('addPart.vipStatus.free') : `${Math.round(numPrice)} ${t('addPart.vipStatus.currency')}`;
   };
 
   // VIP პაკეტის ფასის ფორმატირება - ყოველთვის დღიური ფასი
@@ -275,7 +275,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
             </div>
             <p className="text-sm text-gray-600 mb-3">{t('addPart.vipStatus.colorHighlightingDescription')}</p>
             <div className="flex items-center justify-between text-sm font-medium text-blue-700 mb-3">
-              <span>{getAdditionalServicePrice('color_highlighting').toString() === '0.00' ? t('addPart.vipStatus.free') : `${getAdditionalServicePrice('color_highlighting')} ${t("addPart.vipStatus.currency")}/${t('profile:cars.vip.modal.day')}`}</span>
+              <span>{getAdditionalServicePrice('color_highlighting') === 0 ? t('addPart.vipStatus.free') : `${Math.round(getAdditionalServicePrice('color_highlighting'))} ${t("addPart.vipStatus.currency")}/${t('profile:cars.vip.modal.day')}`}</span>
             </div>
             
             {/* Days input for Color Highlighting */}
@@ -319,7 +319,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
             </div>
             <p className="text-sm text-gray-600 mb-3">{t('addPart.vipStatus.autoRenewalDescription')}</p>
             <div className="flex items-center justify-between text-sm font-medium text-green-700 mb-3">
-              <span>{getAdditionalServicePrice('auto_renewal').toString() === '0.00' ? t('addPart.vipStatus.free') : `${getAdditionalServicePrice('auto_renewal')} ${t("addPart.vipStatus.currency")}/${t('profile:cars.vip.modal.day')}`}</span>
+              <span>{getAdditionalServicePrice('auto_renewal') === 0 ? t('addPart.vipStatus.free') : `${Math.round(getAdditionalServicePrice('auto_renewal'))} ${t("addPart.vipStatus.currency")}/${t('profile:cars.vip.modal.day')}`}</span>
             </div>
             
             {/* Days input for Auto Renewal */}

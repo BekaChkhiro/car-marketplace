@@ -42,7 +42,7 @@ const SellerProfile = ({ seller }: SellerProfileProps) => {
             {rating !== undefined && (
               <div className="inline-flex items-center gap-1 sm:gap-1.5 text-gray-dark text-xs sm:text-sm font-medium bg-yellow-50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
                 <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 fill-current" />
-                <span>{rating.toFixed(1)}</span>
+                <span>{Math.round(rating)}</span>
               </div>
             )}
           </div>

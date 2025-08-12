@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import type { NewCarFormData } from '../types';
 import CustomSelect from '../../../../../components/common/CustomSelect';
 import { CITY_OPTIONS, COUNTRY_OPTIONS, LOCATION_TYPE_OPTIONS } from '../types';
-import CurrencySwitcher from '../../../../../components/CurrencySwitcher';
 import { carService } from '../../../../../api';
 
 interface Brand {
@@ -236,28 +235,27 @@ const BasicInfo = ({ formData, onChange, onSpecificationsChange, errors = {} }: 
             </div>
 
             <div className='w-full sm:w-1/3'>
-              <label className="block text-sm     font-medium text-gray-700 mb-2">
-                {t('addCar.basicInfo.price')} *
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('addCar.basicInfo.price')} * (USD)
                 {errors?.price && (
                   <span className="text-red-500 ml-1 text-xs">{errors.price}</span>
                 )}
               </label>
               <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                  $
+                </div>
                 <input
                   type="number"
                   value={formData.price || ''}
-                  onChange={(e) => onChange('price', Number(e.target.value))}
-                  className="w-full px-2 sm:px-4 py-2.5 border-2 text-sm text-md rounded-lg text-base bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-24"
-                  placeholder={t('addCar.basicInfo.pricePlaceholder')}
+                  onChange={(e) => {
+                    onChange('price', Number(e.target.value));
+                    onChange('currency', 'USD');
+                  }}
+                  className="w-full pl-8 pr-4 py-2.5 border-2 text-sm rounded-lg bg-white hover:border-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                  placeholder="0.00"
                   min="0"
                 />
-                <div className="absolute right-1 sm:right-2  top-1/2  transform -translate-y-1/2">
-                  <CurrencySwitcher 
-                    value={formData.currency as 'GEL' | 'USD'} 
-                    onChange={(value) => onChange('currency', value)}
-                    className="border-0 shadow-sm"
-                  />
-                </div>
               </div>
             </div>
           </div>

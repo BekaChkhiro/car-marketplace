@@ -87,7 +87,7 @@ export const useTranslatedOptions = () => {
     ],
     
     engineSizes: Array.from({ length: 261 }, (_, i) => {
-      const value = ((i + 1) * 0.05).toFixed(2);
+      const value = Math.round((i + 1) * 0.05).toString();
       return { value, label: value };
     }),
     

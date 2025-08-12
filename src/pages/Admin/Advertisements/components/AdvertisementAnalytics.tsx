@@ -87,8 +87,8 @@ const AdvertisementAnalyticsTable: React.FC = () => {
   const totalImpressions = analytics.reduce((sum, ad) => sum + (typeof ad.impressions === 'number' ? ad.impressions : 0), 0);
   const totalClicks = analytics.reduce((sum, ad) => sum + (typeof ad.clicks === 'number' ? ad.clicks : 0), 0);
   const averageCTR = analytics.length > 0 && totalImpressions > 0
-    ? (totalClicks / totalImpressions * 100).toFixed(2) 
-    : "0.00";
+    ? Math.round(totalClicks / totalImpressions * 100).toString()
+    : "0";
   
   if (isLoading) {
     return (
@@ -323,7 +323,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                               className={`h-full rounded-full ${typeof item.ctr === 'number' ? (item.ctr >= 5 ? 'bg-green-500' : item.ctr >= 2 ? 'bg-yellow-500' : 'bg-red-500') : 'bg-red-500'}`}
                             />
                           </div>
-                          <span className="text-sm font-medium text-gray-700">{typeof item.ctr === 'number' ? item.ctr.toFixed(2) : '0.00'}%</span>
+                          <span className="text-sm font-medium text-gray-700">{typeof item.ctr === 'number' ? Math.round(item.ctr) : '0'}%</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -442,7 +442,7 @@ const AdvertisementAnalyticsTable: React.FC = () => {
                                   {ctrRating}
                                 </span>
                                 <span className="ml-2 text-gray-800 font-semibold">
-                                  {typeof item.ctr === 'number' ? item.ctr.toFixed(2) : '0.00'}%
+                                  {typeof item.ctr === 'number' ? Math.round(item.ctr) : '0'}%
                                 </span>
                               </div>
                             </div>

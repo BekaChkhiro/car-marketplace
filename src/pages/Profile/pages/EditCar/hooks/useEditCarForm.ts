@@ -664,6 +664,8 @@ export const useEditCarForm = (carId: number) => {
     
     // დებაგის ლოგები მონაცემთა გაგზავნამდე
     console.log('გასაგზავნი ფორმის მონაცემები:', submitData);
+    console.log('Currency in submitData:', submitData.currency);
+    console.log('Price in submitData:', submitData.price);
     console.log('მომზადებული specifications:', preparedSpecifications);
     console.log('ავტორის ინფორმაცია:', { 
       author_name: formData.author_name, 

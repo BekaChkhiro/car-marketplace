@@ -65,7 +65,7 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
       return currencyService.formatPrice(amount, currency);
     }
     
-    return amount.toFixed(2);
+    return Math.round(amount).toString();
   };
 
   return (

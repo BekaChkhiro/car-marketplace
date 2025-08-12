@@ -204,7 +204,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-xl border border-green-200 shadow-md">
               <div className="flex justify-center items-center">
                 <span className="text-4xl font-bold text-primary">
-                  {formatPrice(price)}
+                  {formatPrice(price, car.currency as 'GEL' | 'USD')}
                 </span>
               </div>
             </div>
