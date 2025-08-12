@@ -683,7 +683,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     <Eye size={16} className="text-gray-600 hover:text-blue-600" />
                   </button>
                   <button
-                    onClick={() => navigate(`/${currentLang}/profile/edit-car/${car.id}`)}
+                    onClick={() => navigate(`/${currentLang}/profile/cars/edit/${car.id}`)}
                     className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
                     title={t('profile:cars.actions.edit')}
                   >
