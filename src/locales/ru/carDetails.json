@@ -73,7 +73,8 @@
     "cylinders": "Количество цилиндров",
     "interiorMaterial": "Материал салона",
     "airbagsCount": "Количество подушек безопасности",
-    "location": "Местоположение"
+    "location": "Местоположение",
+    "noDescription": "Описание недоступно"
   },
   "colors": {
     "black": "Черный",

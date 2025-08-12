@@ -4,7 +4,7 @@ import {
   Calendar, Gauge, Fuel, Shield, 
   Zap, Truck, Sliders, Tag, CheckCircle, XCircle,
   Settings, List, Grid, Droplet, Layers, Compass, Palette, 
-  Sofa, Circle, HeartPulse
+  Sofa, Circle, HeartPulse, FileText
 } from 'lucide-react';
 import { KeySpec } from '../../hooks/useCarDetails';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +16,8 @@ interface CarSpecsProps {
 }
 
 const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
-  const [activeTab, setActiveTab] = useState<'specs'|'features'>('specs');
-  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
+  const [activeTab, setActiveTab] = useState<'specs'|'features'|'description'>('specs');
+  const { t, i18n } = useTranslation([namespaces.carDetails, namespaces.common]);
 
   // Helper function to translate colors
   const translateColor = (color: string | undefined) => {
@@ -359,6 +359,15 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
             <span className="text-sm sm:text-base">{t('carDetails:specs.features')}</span>
           </div>
         </button>
+        <button
+          className={`tab-button whitespace-nowrap ${activeTab === 'description' ? 'active' : 'text-gray-600'}`}
+          onClick={() => setActiveTab('description')}
+        >
+          <div className="flex items-center gap-1 sm:gap-2">
+            <FileText size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span className="text-sm sm:text-base">{t('carDetails:specs.description')}</span>
+          </div>
+        </button>
       </div>
       
       {activeTab === 'specs' && (
@@ -416,6 +425,45 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
                 <span className={`text-xs sm:text-sm font-medium ml-2 ${feature.value ? 'text-gray-800' : 'text-gray-500'}`}>{feature.name}</span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+      
+      {activeTab === 'description' && (
+        <div className="animate-fade-in">
+          <div className="prose prose-sm sm:prose max-w-none">
+            {(() => {
+              // Get the appropriate description based on current language
+              const currentLang = i18n.language;
+              let description = '';
+              
+              if (currentLang === 'ka') {
+                description = car.description_ka || '';
+              } else if (currentLang === 'en') {
+                description = car.description_en || car.description_ka || '';
+              } else if (currentLang === 'ru') {
+                description = car.description_ru || car.description_ka || '';
+              } else {
+                description = car.description_ka || '';
+              }
+              
+              if (!description || description.trim() === '') {
+                return (
+                  <div className="text-center py-8 text-gray-500">
+                    <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p>{t('carDetails:specs.noDescription')}</p>
+                  </div>
+                );
+              }
+              
+              return (
+                <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {description}
+                  </p>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}

@@ -73,7 +73,8 @@
     "cylinders": "Cylinders",
     "interiorMaterial": "Interior Material",
     "airbagsCount": "Number of Airbags",
-    "location": "Location"
+    "location": "Location",
+    "noDescription": "No description available"
   },
   "colors": {
     "black": "Black",
