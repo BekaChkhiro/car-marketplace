@@ -19,6 +19,19 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   const [activeTab, setActiveTab] = useState<'specs'|'features'|'description'>('specs');
   const { t, i18n } = useTranslation([namespaces.carDetails, namespaces.common]);
 
+  // Reset to specs tab if description tab is active on mobile
+  React.useEffect(() => {
+    const checkMobile = () => {
+      if (window.innerWidth < 768 && activeTab === 'description') {
+        setActiveTab('specs');
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [activeTab]);
+
   // Helper function to translate colors
   const translateColor = (color: string | undefined) => {
     if (!color) return t('common:notAvailable', 'არ არის');
@@ -360,7 +373,7 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
           </div>
         </button>
         <button
-          className={`tab-button whitespace-nowrap ${activeTab === 'description' ? 'active' : 'text-gray-600'}`}
+          className={`tab-button whitespace-nowrap hidden md:flex ${activeTab === 'description' ? 'active' : 'text-gray-600'}`}
           onClick={() => setActiveTab('description')}
         >
           <div className="flex items-center gap-1 sm:gap-2">

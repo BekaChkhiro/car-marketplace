@@ -7,6 +7,7 @@ import NotFoundState from './components/NotFoundState';
 import CarHeader from './components/CarHeader';
 import CarGallery from './components/CarGallery';
 import MobileCarInfo from './components/MobileCarInfo';
+import MobileCarDescription from './components/MobileCarDescription';
 import CarSpecs from './components/CarSpecs';
 import CarPriceCard from './components/CarPriceCard';
 import SimilarCarsSection from './components/SimilarCarsSection';
@@ -141,6 +142,9 @@ const CarDetails: React.FC = () => {
 
             {/* Mobile/Tablet Title, Price, and Key Specs - only shown on mobile and tablet */}
             <MobileCarInfo car={car} keySpecs={keySpecs} />
+            
+            {/* Mobile Car Description - only shown on mobile */}
+            <MobileCarDescription car={car} />
             
             {/* Car Specifications */}
             <CarSpecs car={car} />
