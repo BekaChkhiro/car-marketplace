@@ -30,6 +30,7 @@ export interface Car {
   author_name?: string; // Author's name
   author_phone?: string; // Author's contact phone
   vin_code?: string; // Vehicle Identification Number
+  views_count?: number; // Number of times this car has been viewed
   created_at: string;
   updated_at: string;
   category_name?: string; // დავამატეთ კატეგორიის სახელი

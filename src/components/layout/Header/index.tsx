@@ -9,7 +9,9 @@ import CurrencySelector from './components/CurrencySelector';
 import LanguageSelector from './components/LanguageSelector';
 import AuthButtons from './components/AuthButtons';
 import CarsDropdown from './components/CarsDropdown';
-import { Home, Car, Info, Phone, Heart, Settings, User, ChevronRight, LogOut } from 'lucide-react';
+import LoginModal from './auth/LoginModal';
+import RegisterModal from './auth/RegisterModal';
+import { Home, Car, Info, Phone, Heart, Settings, User, ChevronRight, LogOut, CreditCard } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
 // Define interfaces for menu items
@@ -44,6 +46,9 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [touchFeedback, setTouchFeedback] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'menu' | 'profile'>('menu');
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   // Languages are now managed by the LanguageSelector component internally
 
@@ -115,6 +120,10 @@ const Header = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+    // Reset to menu tab when opening menu
+    if (!mobileMenuOpen) {
+      setActiveTab('menu');
+    }
   };
 
   // Prevent body scroll when mobile menu is open
@@ -242,145 +251,217 @@ const Header = () => {
               </svg>
             </button>
           </div>
+          
+          {/* Tabs */}
+          {isAuthenticated && (
+            <div className="flex border-b border-gray-200">
+              <button
+                onClick={() => setActiveTab('menu')}
+                className={`flex-1 py-3 px-4 text-sm font-medium text-center transition-colors ${
+                  activeTab === 'menu'
+                    ? 'text-primary border-b-2 border-primary bg-primary/5'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {t('menu')}
+              </button>
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`flex-1 py-3 px-4 text-sm font-medium text-center transition-colors ${
+                  activeTab === 'profile'
+                    ? 'text-primary border-b-2 border-primary bg-primary/5'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {t('profile')}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="px-3 py-2">
-          {/* Main Navigation */}
-          <div className="mb-4">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('menu')}</h3>
-            <nav className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
-              <ul>
-                {menuItems.map((item) => (
-                  <li key={item.id} className="border-b border-gray-100 last:border-0">
-                    {item.component ? (
-                      <div
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          provideTouchFeedback(langPath(item.href || '/cars'));
-                        }}
-                        className={`py-3 px-3 ${isActive(item.href || '/cars') ? 'bg-gray-50' : ''}`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          {item.icon && <item.icon size={18} className={`${isActive(item.href || '/cars') ? 'text-primary' : 'text-gray-500'}`} />}
-                          <span className="flex-1">{t('cars')}</span>
-                          <ChevronRight size={16} className="text-gray-400" />
-                        </div>
-                      </div>
-                    ) : (
-                      <Link
-                        to={langPath(item.href || '/')}
-                        className={`py-3 px-3 flex items-center space-x-3 ${isActive(item.href || '/') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === item.href ? 'animate-quick-pulse' : ''}`}
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          provideTouchFeedback(item.href || '/');
-                        }}
-                      >
-                        {item.icon && <item.icon size={18} className={isActive(item.href || '/') ? 'text-primary' : 'text-gray-500'} />}
-                        <span>{item.text}</span>
-                        <ChevronRight size={16} className="text-gray-400 ml-auto" />
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
+          {/* Menu Tab Content */}
+          {(!isAuthenticated || activeTab === 'menu') && (
+            <>
+              {/* Main Navigation */}
+              <div className="mb-4">
+                <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('menu')}</h3>
+                <nav className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
+                  <ul>
+                    {menuItems.map((item) => (
+                      <li key={item.id} className="border-b border-gray-100 last:border-0">
+                        {item.component ? (
+                          <div
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              provideTouchFeedback(langPath(item.href || '/cars'));
+                            }}
+                            className={`py-3 px-3 ${isActive(item.href || '/cars') ? 'bg-gray-50' : ''}`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              {item.icon && <item.icon size={18} className={`${isActive(item.href || '/cars') ? 'text-primary' : 'text-gray-500'}`} />}
+                              <span className="flex-1">{t('cars')}</span>
+                              <ChevronRight size={16} className="text-gray-400" />
+                            </div>
+                          </div>
+                        ) : (
+                          <Link
+                            to={langPath(item.href || '/')}
+                            className={`py-3 px-3 flex items-center space-x-3 ${isActive(item.href || '/') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === item.href ? 'animate-quick-pulse' : ''}`}
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              provideTouchFeedback(item.href || '/');
+                            }}
+                          >
+                            {item.icon && <item.icon size={18} className={isActive(item.href || '/') ? 'text-primary' : 'text-gray-500'} />}
+                            <span>{item.text}</span>
+                            <ChevronRight size={16} className="text-gray-400 ml-auto" />
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
 
-          {/* Action Buttons */}
-          <div className="mb-4">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('actions')}</h3>
-            <div className="flex space-x-2 px-1">
-              <Link
-                to={langPath('/add-car')}
-                className="flex items-center justify-center py-2.5 px-3 bg-primary text-white rounded-md text-sm font-medium flex-1 shadow-sm hover:bg-primary/90 transition-colors"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  provideTouchFeedback('/add-car');
-                }}
-              >
-                <span>+ {t('addCar')}</span>
-              </Link>
-              <Link
-                to={langPath('/wishlist')}
-                className={`flex items-center justify-center py-2.5 px-3 bg-gray-100 text-gray-700 rounded-md text-sm font-medium flex-1 hover:bg-gray-200 transition-colors ${isActive('/wishlist') ? 'border-l-4 border-primary pl-2' : ''} ${touchFeedback === '/wishlist' ? 'animate-quick-pulse' : ''}`}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  provideTouchFeedback('/wishlist');
-                }}
-              >
-                <Heart size={16} className="mr-1.5" />
-                <span>{t('favorites')}</span>
-              </Link>
-            </div>
-          </div>
 
-          {/* Account Section */}
-          <div className="mb-4">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('account')}</h3>
-            <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    to={langPath('/profile')}
-                    className={`py-3 px-3 flex items-center space-x-3 border-b border-gray-100 ${isActive('/profile') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile' ? 'animate-quick-pulse' : ''}`}
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      provideTouchFeedback('/profile');
-                    }}
-                  >
-                    <User size={18} className={isActive('/profile') ? 'text-primary' : 'text-gray-500'} />
-                    <span>{t('profile')}</span>
-                    <ChevronRight size={16} className="text-gray-400 ml-auto" />
-                  </Link>
-                  <Link
-                    to={langPath('/profile/settings')}
-                    className={`py-3 px-3 flex items-center space-x-3 border-b border-gray-100 ${isActive('/profile/settings') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile/settings' ? 'animate-quick-pulse' : ''}`}
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      provideTouchFeedback('/profile/settings');
-                    }}
-                  >
-                    <Settings size={18} className={isActive('/profile/settings') ? 'text-primary' : 'text-gray-500'} />
-                    <span>{t('settings')}</span>
-                    <ChevronRight size={16} className="text-gray-400 ml-auto" />
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      logout();
-                    }}
-                    className="w-full py-3 px-3 flex items-center space-x-3 text-gray-700 hover:bg-gray-50"
-                  >
-                    <LogOut size={18} className="text-gray-500" />
-                    <span>{t('logout')}</span>
-                  </button>
-                </>
-              ) : (
-                <div className="p-3">
-                  <AuthButtons />
+              {/* Account Section for non-authenticated users */}
+              {!isAuthenticated && (
+                <div className="mb-4">
+                  <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('account')}</h3>
+                  <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
+                    <div className="p-3">
+                      <AuthButtons 
+                        isMobile={true} 
+                        onClose={() => setMobileMenuOpen(false)}
+                        onLoginOpen={() => setIsLoginOpen(true)}
+                        onRegisterOpen={() => setIsRegisterOpen(true)}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
-            </div>
-          </div>
 
-          {/* Settings */}
-          <div className="mb-2">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('settings')}</h3>
-            <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100 p-3">
-              <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-700 mr-2">{t('currency')}:</span>
-                  <CurrencySelector />
+              {/* Settings */}
+              <div className="mb-2">
+                <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('settings')}</h3>
+                <div className="bg-white rounded-md overflow-visible shadow-sm border border-gray-100 p-4 space-y-5">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">{t('currency')}</span>
+                      <CurrencySelector />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">{t('language')}</span>
+                      <LanguageSelector />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center">
-                <span className="text-sm text-gray-700 mr-2">{t('language')}:</span>
-                <LanguageSelector />
+            </>
+          )}
+
+          {/* Profile Tab Content */}
+          {isAuthenticated && activeTab === 'profile' && (
+            <>
+              {/* Profile Navigation */}
+              <div className="mb-4">
+                <h3 className="text-xs uppercase text-gray-500 font-medium px-3 py-2">{t('profile')}</h3>
+                <nav className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
+                  <ul>
+                    <li className="border-b border-gray-100">
+                      <Link
+                        to={langPath('/profile')}
+                        className={`py-3 px-3 flex items-center space-x-3 ${isActive('/profile') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile' ? 'animate-quick-pulse' : ''}`}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          provideTouchFeedback('/profile');
+                        }}
+                      >
+                        <User size={18} className={isActive('/profile') ? 'text-primary' : 'text-gray-500'} />
+                        <span>{t('profile')}</span>
+                        <ChevronRight size={16} className="text-gray-400 ml-auto" />
+                      </Link>
+                    </li>
+                    <li className="border-b border-gray-100">
+                      <Link
+                        to={langPath('/profile/cars')}
+                        className={`py-3 px-3 flex items-center space-x-3 ${isActive('/profile/cars') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile/cars' ? 'animate-quick-pulse' : ''}`}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          provideTouchFeedback('/profile/cars');
+                        }}
+                      >
+                        <Car size={18} className={isActive('/profile/cars') ? 'text-primary' : 'text-gray-500'} />
+                        <span>{t('myCars')}</span>
+                        <ChevronRight size={16} className="text-gray-400 ml-auto" />
+                      </Link>
+                    </li>
+                    <li className="border-b border-gray-100">
+                      <Link
+                        to={langPath('/profile/balance')}
+                        className={`py-3 px-3 flex items-center space-x-3 ${isActive('/profile/balance') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile/balance' ? 'animate-quick-pulse' : ''}`}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          provideTouchFeedback('/profile/balance');
+                        }}
+                      >
+                        <CreditCard size={18} className={isActive('/profile/balance') ? 'text-primary' : 'text-gray-500'} />
+                        <span>{t('balance')}</span>
+                        <ChevronRight size={16} className="text-gray-400 ml-auto" />
+                      </Link>
+                    </li>
+                    <li className="border-b border-gray-100">
+                      <Link
+                        to={langPath('/profile/settings')}
+                        className={`py-3 px-3 flex items-center space-x-3 ${isActive('/profile/settings') ? 'text-primary bg-gray-50' : 'text-gray-700'} ${touchFeedback === '/profile/settings' ? 'animate-quick-pulse' : ''}`}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          provideTouchFeedback('/profile/settings');
+                        }}
+                      >
+                        <Settings size={18} className={isActive('/profile/settings') ? 'text-primary' : 'text-gray-500'} />
+                        <span>{t('settings')}</span>
+                        <ChevronRight size={16} className="text-gray-400 ml-auto" />
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          logout();
+                        }}
+                        className="w-full py-3 px-3 flex items-center space-x-3 text-gray-700 hover:bg-gray-50"
+                      >
+                        <LogOut size={18} className="text-gray-500" />
+                        <span>{t('logout')}</span>
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
+
+      {/* Mobile Login/Register Modals */}
+      <LoginModal 
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onShowRegister={() => {
+          setIsLoginOpen(false);
+          setIsRegisterOpen(true);
+        }}
+      />
+      <RegisterModal 
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        onSwitchToLogin={() => {
+          setIsRegisterOpen(false);
+          setIsLoginOpen(true);
+        }}
+      />
     </header>
   );
 };

@@ -6,7 +6,14 @@ import LoginModal from '../auth/LoginModal';
 import RegisterModal from '../auth/RegisterModal';
 import { useAuth } from '../../../../context/AuthContext';
 
-const AuthButtons = () => {
+interface AuthButtonsProps {
+  isMobile?: boolean;
+  onClose?: () => void;
+  onLoginOpen?: () => void;
+  onRegisterOpen?: () => void;
+}
+
+const AuthButtons = ({ isMobile = false, onClose, onLoginOpen, onRegisterOpen }: AuthButtonsProps) => {
   const { t } = useTranslation('header');
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -73,37 +80,56 @@ const AuthButtons = () => {
     );
   }
 
+  const handleLoginClick = () => {
+    if (isMobile && onClose && onLoginOpen) {
+      // For mobile: close menu and use parent modal handler
+      onClose();
+      setTimeout(() => {
+        onLoginOpen();
+      }, 100);
+    } else {
+      // For desktop: use local modal state
+      setIsLoginOpen(true);
+    }
+  };
+
   return (
     <>
-      <div className="flex items-center space-x-3">
+      <div className={`flex items-center ${isMobile ? 'w-full' : 'space-x-3'}`}>
         <button 
-          onClick={() => setIsLoginOpen(true)}
-          className="flex items-center space-x-2 text-sm font-medium bg-primary text-white 
+          onClick={handleLoginClick}
+          className={`flex items-center justify-center space-x-2 text-sm font-medium bg-primary text-white 
             px-4 py-2 rounded-xl hover:bg-secondary transition-all duration-300 
             transform hover:scale-105 shadow-sm hover:shadow-md 
-            border-2 border-transparent hover:border-secondary"
+            border-2 border-transparent hover:border-secondary ${
+              isMobile ? 'w-full py-3' : ''
+            }`}
         >
           <User className="w-5 h-5" />
           <span>{t('login')}</span>
         </button>
       </div>
 
-      <LoginModal 
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onShowRegister={() => {
-          setIsLoginOpen(false);
-          setIsRegisterOpen(true);
-        }}
-      />
-      <RegisterModal 
-        isOpen={isRegisterOpen}
-        onClose={() => setIsRegisterOpen(false)}
-        onSwitchToLogin={() => {
-          setIsRegisterOpen(false);
-          setIsLoginOpen(true);
-        }}
-      />
+      {!isMobile && (
+        <>
+          <LoginModal 
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onShowRegister={() => {
+              setIsLoginOpen(false);
+              setIsRegisterOpen(true);
+            }}
+          />
+          <RegisterModal 
+            isOpen={isRegisterOpen}
+            onClose={() => setIsRegisterOpen(false)}
+            onSwitchToLogin={() => {
+              setIsRegisterOpen(false);
+              setIsLoginOpen(true);
+            }}
+          />
+        </>
+      )}
     </>
   );
 };

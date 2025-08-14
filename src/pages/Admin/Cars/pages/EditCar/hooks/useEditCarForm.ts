@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../../../../../context/ToastContext';
-import { useLoading } from '../../../../../context/LoadingContext';
-import { Car, UpdateCarFormData } from '../../../../../api/types/car.types';
-import carService from '../../../../../api/services/carService';
-import { CarFeatures } from '../../AddCar/types';
+import { useToast } from '../../../../../../context/ToastContext';
+import { useLoading } from '../../../../../../context/LoadingContext';
+import { Car, UpdateCarFormData } from '../../../../../../api/types/car.types';
+import carService from '../../../../../../api/services/carService';
+import { CarFeatures } from '../types';
 import { validateCarForm, validateImage } from '../utils/validation';
-import balanceService from '../../../../../api/services/balanceService';
-import vipPricingService from '../../../../../api/services/vipPricingService';
-import vipService from '../../../../../api/services/vipService';
+import balanceService from '../../../../../../api/services/balanceService';
+import vipPricingService from '../../../../../../api/services/vipPricingService';
+import vipService from '../../../../../../api/services/vipService';
 
 export const useEditCarForm = (carId: number) => {
   const navigate = useNavigate();
@@ -357,8 +357,6 @@ export const useEditCarForm = (carId: number) => {
   };
 
   const handleChange = (field: string, value: any) => {
-    console.log('[useEditCarForm] handleChange called:', { field, value });
-    
     // Handle location fields
     if (['city', 'state', 'country', 'location_type'].includes(field)) {
       setFormData((prev: UpdateCarFormData) => ({
@@ -375,14 +373,10 @@ export const useEditCarForm = (carId: number) => {
       return;
     }
 
-    setFormData((prev: UpdateCarFormData) => {
-      const newFormData = {
-        ...prev,
-        [field]: value
-      };
-      console.log('[useEditCarForm] FormData updated:', { field, value, newFormData });
-      return newFormData;
-    });
+    setFormData((prev: UpdateCarFormData) => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleSpecificationsChange = (field: string, value: any) => {
@@ -555,7 +549,7 @@ export const useEditCarForm = (carId: number) => {
         aliasKey = 'has_heated_seats';
       } else if (field === 'has_seat_memory') {
         aliasKey = 'has_seat_memory';
-      } else if (field === 'has_disability_adapted') {
+      } else if (field === 'is_disability_adapted') {
         aliasKey = 'is_disability_adapted';
       } else if (featureKey === 'is_disability_adapted') {
         // Using featureKey instead of field to avoid TypeScript errors

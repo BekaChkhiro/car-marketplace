@@ -142,7 +142,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
             {/* Views count */}
             <div className="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">
               <Eye className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">{(car as any).views_count || 0}</span>
+              <span className="text-sm font-medium text-green-700">{car.views_count || 0}</span>
             </div>
           </div>
         </div>

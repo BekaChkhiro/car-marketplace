@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, RefreshCw, Eye, Edit, Trash2, Calendar, Gauge, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Car } from '../../../../api/types/car.types';
 import CarItem from './CarItem';
@@ -21,6 +21,7 @@ const CarsList: React.FC<CarsListProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
   const navigate = useNavigate();
+  const { lang } = useParams<{ lang: string }>();
   
   const carsPerPage = 10;
   
@@ -192,13 +193,13 @@ const CarsList: React.FC<CarsListProps> = ({
                     </div>
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={() => navigate(`/cars/${car.id}`)}
+                        onClick={() => navigate(`/${lang}/cars/${car.id}`)}
                         className="p-2 text-blue-700 bg-blue-50 rounded-lg flex items-center"
                       >
                         <Eye size={16} className="mr-1" /> 
                       </button>
                       <button 
-                        onClick={() => navigate(`/admin/cars/edit/${car.id}`)}
+                        onClick={() => navigate(`/${lang}/admin/cars/edit/${car.id}`)}
                         className="p-2 text-indigo-700 bg-indigo-50 rounded-lg flex items-center"
                       >
                         <Edit size={16} className="mr-1" /> 

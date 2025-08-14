@@ -18,8 +18,6 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   errors
 }) => {
   const { t } = useTranslation('profile');
-  
-  console.log('[AuthorInfo] Current values:', { authorName, authorPhone });
   return (
     <div className="bg-white rounded-xl p-6 border">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('addCar.authorInfo.title')}</h2>
@@ -33,10 +31,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
             type="text"
             id="author_name"
             value={authorName}
-            onChange={(e) => {
-              console.log('[AuthorInfo] Name changed to:', e.target.value);
-              onAuthorNameChange(e.target.value);
-            }}
+            onChange={(e) => onAuthorNameChange(e.target.value)}
             className={`w-full px-3 py-2 border ${
               errors?.author_name ? 'border-red-500' : 'border-gray-300'
             } rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary`}
@@ -54,10 +49,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
             type="tel"
             id="author_phone"
             value={authorPhone}
-            onChange={(e) => {
-              console.log('[AuthorInfo] Phone changed to:', e.target.value);
-              onAuthorPhoneChange(e.target.value);
-            }}
+            onChange={(e) => onAuthorPhoneChange(e.target.value)}
             className={`w-full px-3 py-2 border ${
               errors?.author_phone ? 'border-red-500' : 'border-gray-300'
             } rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary`}

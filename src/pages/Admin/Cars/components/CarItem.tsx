@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Calendar, Gauge, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Car } from '../../../../api/types/car.types';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
@@ -13,6 +13,7 @@ interface CarItemProps {
 const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
+  const { lang } = useParams<{ lang: string }>();
   
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -117,14 +118,14 @@ const CarItem: React.FC<CarItemProps> = ({ car, onDelete }) => {
       <td className="px-6 py-4 text-right">
         <div className="flex items-center gap-2 justify-end">
           <button 
-            onClick={() => navigate(`/cars/${car.id}`)}
+            onClick={() => navigate(`/${lang}/cars/${car.id}`)}
             className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
             title={t('cars.view')}
           >
             <Eye size={16} className="text-gray-600 group-hover:text-blue-600" />
           </button>
           <button 
-            onClick={() => navigate(`/admin/cars/edit/${car.id}`)}
+            onClick={() => navigate(`/${lang}/admin/cars/edit/${car.id}`)}
             className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
             title={t('cars.edit')}
           >

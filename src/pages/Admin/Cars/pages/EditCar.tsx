@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { CarForm, LoadingState, ErrorState } from '../components';
 
 const AdminEditCar: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, lang } = useParams<{ id: string; lang: string }>();
   const navigate = useNavigate();
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ const AdminEditCar: React.FC = () => {
       await carService.updateCar(Number(id), data);
       setUpdateSuccess(true);
       setTimeout(() => {
-        navigate('/admin/cars');
+        navigate(`/${lang}/admin/cars`);
       }, 1500);
     } catch (err: any) {
       setError(err.message || 'მანქანის განახლება ვერ მოხერხდა');
@@ -65,15 +65,15 @@ const AdminEditCar: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center mb-4">
           <button 
-            onClick={() => navigate('/admin/cars')}
+            onClick={() => navigate(`/${lang}/admin/cars`)}
             className="flex items-center text-gray-600 hover:text-blue-600 transition-colors mr-2"
           >
             <ArrowLeft size={16} className="mr-1" />
           </button>
           <div className="text-sm breadcrumbs">
             <ul className="flex space-x-2 text-gray-500">
-              <li><a href="/admin" className="hover:text-blue-600">ადმინ პანელი</a></li>
-              <li><a href="/admin/cars" className="hover:text-blue-600">მანქანები</a></li>
+              <li><a href={`/${lang}/admin`} className="hover:text-blue-600">ადმინ პანელი</a></li>
+              <li><a href={`/${lang}/admin/cars`} className="hover:text-blue-600">მანქანები</a></li>
               <li className="text-gray-700 font-medium">რედაქტირება</li>
             </ul>
           </div>
@@ -120,7 +120,7 @@ const AdminEditCar: React.FC = () => {
         </div>
       )}
 
-      {/* Form Card */}
+      {/* Form Card with working CarForm */}
       {car && (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
           <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 ">

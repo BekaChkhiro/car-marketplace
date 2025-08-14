@@ -143,7 +143,7 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
               )}
               <div className="flex items-center">
                 <Eye className="w-4 h-4 mr-1 text-primary" />
-                <span>{(car as any).views_count || 0} {t('common:views')}</span>
+                <span>{car.views_count || 0} {t('common:views')}</span>
               </div>
             </div>
           </div>
@@ -154,99 +154,6 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
         </div>
       </div>
       
-      {/* Key Specs */}
-      <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
-          {t('common:mainSpecifications')}
-        </h3>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {keySpecs.map((spec, index) => (
-            <div key={index} className="spec-item flex items-center p-2 sm:p-3 bg-green-50 rounded-lg">
-              <div className="spec-item-icon mr-3">
-                {spec.icon}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-600">{spec.label}</span>
-                <span className="font-medium text-primary text-sm sm:text-base">{spec.value}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Additional Car Details - დესკტოპიდან ყველა დეტალი */}
-      <div className="bg-white rounded-xl shadow-md p-4 sm:p-5 border border-green-100 car-detail-card">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b border-green-100 pb-2">
-          {t('carDetails:specs.specifications')}
-        </h3>
-        
-        {/* Main Specs Grid */}
-        <div className="grid grid-cols-1 gap-3">
-          {/* Brand */}
-          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
-            <div className="bg-primary/10 p-2 rounded-lg mr-3">
-              <CarIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-500 block">{t('carDetails:specs.brand')}</span>
-              <span className="font-semibold text-gray-900">{car.brand || '-'}</span>
-            </div>
-          </div>
-
-          {/* Model */}
-          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
-            <div className="bg-primary/10 p-2 rounded-lg mr-3">
-              <Tag className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-500 block">{t('carDetails:specs.model')}</span>
-              <span className="font-semibold text-gray-900">{car.model || '-'}</span>
-            </div>
-          </div>
-
-          {/* Category */}
-          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
-            <div className="bg-primary/10 p-2 rounded-lg mr-3">
-              <Package className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-500 block">{t('carDetails:specs.category')}</span>
-              <span className="font-semibold text-gray-900">
-                {getCategoryTranslation(car.category_name) || getCategoryTranslation(car.specifications?.body_type)}
-              </span>
-            </div>
-          </div>
-
-          {/* Year */}
-          <div className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100">
-            <div className="bg-primary/10 p-2 rounded-lg mr-3">
-              <Calendar className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-500 block">{t('carDetails:specs.year')}</span>
-              <span className="font-semibold text-gray-900">{car.year || '-'}</span>
-            </div>
-          </div>
-
-          {/* Location with enhanced design */}
-          <div className="flex items-center p-3 bg-green-50/50 rounded-xl border border-green-100">
-            <div className="bg-primary/10 p-2 rounded-lg mr-3">
-              <MapPin className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-500 block">{t('carDetails:specs.location')}</span>
-              <span className="font-semibold text-gray-900">
-                {car.location ? (
-                  <>
-                    {getLocationTranslation(car.location.city)}
-                    {car.location.country && `, ${getLocationTranslation(car.location.country)}`}
-                  </>
-                ) : '-'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
       
       {/* Seller Info & Contact - დესკტოპური ვერსიის ანალოგი */}
       {renderSellerInfo()}

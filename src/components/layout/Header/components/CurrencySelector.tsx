@@ -78,58 +78,78 @@ const CurrencySelector = () => {
 
   return (
     <div className="relative currency-selector">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-      >
-        <span>{currentCurrency.symbol}</span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      {/* Desktop: Dropdown */}
+      <div className="hidden md:block">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors touch-manipulation py-2"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
+          <span>{currentCurrency.symbol}</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100">
-          <div className="px-4 py-1 text-xs text-gray-500 border-b border-gray-100">
-            {lastUpdated ? (
-              <span>განახლდა: {new Date(lastUpdated).toLocaleString('ka-GE')}</span>
-            ) : (
-              <span>მიმდინარეობს განახლება...</span>
-            )}
-          </div>
-          {currencies.map((curr) => (
-            <button
-              key={curr.id}
-              onClick={() => handleCurrencyChange(curr.id)}
-              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                currency === curr.id ? 'text-primary font-medium' : 'text-gray-700'
-              }`}
-            >
-              <span className="flex items-center justify-between">
-                <span className="flex items-center space-x-2">
-                  <span>{curr.symbol}</span>
-                  <span>{curr.name}</span>
-                </span>
-                {curr.id !== 'GEL' && rates['GEL'] && rates[curr.id] && (
-                  <span className="text-xs text-gray-500">
-                    1 {curr.symbol} = {(rates[curr.id] / rates['GEL']).toFixed(2)} ₾
+        {isOpen && (
+          <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-[60]">
+            <div className="px-4 py-1 text-xs text-gray-500 border-b border-gray-100">
+              {lastUpdated ? (
+                <span>განახლდა: {new Date(lastUpdated).toLocaleString('ka-GE')}</span>
+              ) : (
+                <span>მიმდინარეობს განახლება...</span>
+              )}
+            </div>
+            {currencies.map((curr) => (
+              <button
+                key={curr.id}
+                onClick={() => handleCurrencyChange(curr.id)}
+                className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors touch-manipulation ${
+                  currency === curr.id ? 'text-primary font-medium bg-primary/5' : 'text-gray-700'
+                }`}
+              >
+                <span className="flex items-center justify-between">
+                  <span className="flex items-center space-x-2">
+                    <span className="text-base">{curr.symbol}</span>
+                    <span className="font-medium">{curr.name}</span>
                   </span>
-                )}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
+                  {curr.id !== 'GEL' && rates['GEL'] && rates[curr.id] && (
+                    <span className="text-xs text-gray-500">
+                      1 {curr.symbol} = {(rates[curr.id] / rates['GEL']).toFixed(2)} ₾
+                    </span>
+                  )}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Mobile: Button Toggle */}
+      <div className="md:hidden flex items-center bg-gray-100 rounded-lg p-1">
+        {currencies.map((curr) => (
+          <button
+            key={curr.id}
+            onClick={() => handleCurrencyChange(curr.id)}
+            className={`px-2 py-1 text-xs font-medium rounded transition-all touch-manipulation ${
+              currency === curr.id
+                ? 'bg-white text-primary shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            {curr.symbol}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

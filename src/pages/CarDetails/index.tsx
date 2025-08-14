@@ -109,7 +109,7 @@ const CarDetails: React.FC = () => {
     <>
       {/* Top advertisement banner - at the very beginning of the page without any background */}
       <div className="w-full py-3 flex justify-center">
-        <AdvertisementDisplay placement="car_details_top" className="w-[728px] h-[140px] rounded-md overflow-hidden" />
+        <AdvertisementDisplay placement="car_details_top" className="w-[calc(100vw-32px)] max-w-[728px] h-[140px] rounded-md overflow-hidden" />
       </div>
       
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -161,7 +161,7 @@ const CarDetails: React.FC = () => {
         
         {/* Bottom advertisement banner */}
         <div className="w-full my-6 md:my-8 flex justify-center">
-          <AdvertisementDisplay placement="car_details_bottom" className="w-[728px] h-[140px] rounded-md overflow-hidden" />
+          <AdvertisementDisplay placement="car_details_bottom" className="w-[calc(100vw-32px)] max-w-[728px] h-[140px] rounded-md overflow-hidden" />
         </div>
         
         {/* Similar Cars Section */}

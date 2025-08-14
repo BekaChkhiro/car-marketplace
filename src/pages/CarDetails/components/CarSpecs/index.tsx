@@ -186,28 +186,28 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   // Get key specifications with enhanced styling
   const keySpecs: KeySpec[] = [
     { 
-      icon: <Gauge className="w-5 h-5 text-primary" />, 
+      icon: <Gauge className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.mileage'), 
       value: car.specifications?.mileage ? `${car.specifications.mileage.toLocaleString()} ${t('carDetails:specs.km')}` : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
-      icon: <Fuel className="w-5 h-5 text-primary" />, 
+      icon: <Fuel className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.fuel'), 
       value: translateFuelType(car.specifications?.fuel_type),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
-      icon: <Shield className="w-5 h-5 text-primary" />, 
+      icon: <Shield className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.transmission'), 
       value: translateTransmission(car.specifications?.transmission),
       color: 'bg-green-50',
       textColor: 'text-primary'
     },
     { 
-      icon: <Tag className="w-5 h-5 text-primary" />, 
+      icon: <Tag className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.category'), 
       value: translateCategory(car.category_name),
       color: 'bg-green-50',
@@ -223,28 +223,28 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   // Additional specifications
   const additionalSpecs: KeySpec[] = [
     { 
-      icon: <Tag className="w-5 h-5 text-primary" />, 
+      icon: <Tag className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.brand'), 
       value: translateBrand(car.brand),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Tag className="w-5 h-5 text-primary" />, 
+      icon: <Tag className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.model'), 
       value: translateModel(car.model),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Tag className="w-5 h-5 text-primary" />, 
+      icon: <Tag className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.vinCode'), 
       value: (car.vin_code && car.vin_code.trim()) ? car.vin_code : t('carDetails:specs.notSpecified'),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Droplet className="w-5 h-5 text-primary" />, 
+      icon: <Droplet className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.engineSize'), 
       value: car.specifications?.engine_size ? `${car.specifications.engine_size !== undefined
         ? (typeof car.specifications.engine_size === 'number' 
@@ -257,49 +257,49 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Layers className="w-5 h-5 text-primary" />, 
+      icon: <Layers className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.cylinders'), 
       value: car.specifications?.cylinders ? car.specifications.cylinders.toString() : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Truck className="w-5 h-5 text-primary" />, 
+      icon: <Truck className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.driveType'), 
       value: translateDriveType(car.specifications?.drive_type),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Compass className="w-5 h-5 text-primary" />, 
+      icon: <Compass className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.steeringWheel'), 
       value: translateSteering(car.specifications?.steering_wheel),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Palette className="w-5 h-5 text-primary" />, 
+      icon: <Palette className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.color'), 
       value: translateColor(car.specifications?.color),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Sofa className="w-5 h-5 text-primary" />, 
+      icon: <Sofa className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.interiorMaterial'), 
       value: translateInteriorMaterial(car.specifications?.interior_material),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <Circle className="w-5 h-5 text-primary" />, 
+      icon: <Circle className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.interiorColor'), 
       value: translateColor(car.specifications?.interior_color),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
     { 
-      icon: <HeartPulse className="w-5 h-5 text-primary" />, 
+      icon: <HeartPulse className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />, 
       label: t('carDetails:specs.airbagsCount'), 
       value: car.specifications?.airbags_count ? car.specifications.airbags_count.toString() : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50/50',
@@ -353,32 +353,32 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
   return (
     <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow-md p-4 sm:p-6 border border-green-100 car-detail-card">
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-4 sm:mb-6 overflow-x-auto hide-scrollbar">
+      <div className="flex border-b border-gray-200 mb-4 sm:mb-6">
         <button
-          className={`tab-button whitespace-nowrap ${activeTab === 'specs' ? 'active' : 'text-gray-600'}`}
+          className={`tab-button flex-1 text-center sm:whitespace-nowrap ${activeTab === 'specs' ? 'active' : 'text-gray-600'}`}
           onClick={() => setActiveTab('specs')}
         >
-          <div className="flex items-center gap-1 sm:gap-2">
-            <Settings size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span className="text-sm sm:text-base">{t('carDetails:specs.specifications')}</span>
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
+            <Settings size={14} className="sm:size-4 md:w-[18px] md:h-[18px]" />
+            <span className="text-xs sm:text-sm md:text-base">{t('carDetails:specs.specifications')}</span>
           </div>
         </button>
         <button
-          className={`tab-button whitespace-nowrap ${activeTab === 'features' ? 'active' : 'text-gray-600'}`}
+          className={`tab-button flex-1 text-center sm:whitespace-nowrap ${activeTab === 'features' ? 'active' : 'text-gray-600'}`}
           onClick={() => setActiveTab('features')}
         >
-          <div className="flex items-center gap-1 sm:gap-2">
-            <List size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span className="text-sm sm:text-base">{t('carDetails:specs.features')}</span>
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
+            <List size={14} className="sm:size-4 md:w-[18px] md:h-[18px]" />
+            <span className="text-xs sm:text-sm md:text-base">{t('carDetails:specs.features')}</span>
           </div>
         </button>
         <button
           className={`tab-button whitespace-nowrap hidden md:flex ${activeTab === 'description' ? 'active' : 'text-gray-600'}`}
           onClick={() => setActiveTab('description')}
         >
-          <div className="flex items-center gap-1 sm:gap-2">
-            <FileText size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span className="text-sm sm:text-base">{t('carDetails:specs.description')}</span>
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
+            <FileText size={14} className="sm:size-4 md:w-[18px] md:h-[18px]" />
+            <span className="text-xs sm:text-sm md:text-base">{t('carDetails:specs.description')}</span>
           </div>
         </button>
       </div>
@@ -390,14 +390,14 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
             {keySpecs.map((spec, index) => (
               <div 
                 key={index} 
-                className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100"
+                className="flex items-center p-2 sm:p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100"
               >
-                <div className="bg-primary/10 p-2 rounded-lg mr-3">
+                <div className="bg-primary/10 p-1.5 sm:p-2 rounded-lg mr-2 sm:mr-3">
                   {spec.icon}
                 </div>
                 <div>
-                  <span className="text-xs text-gray-500 block">{spec.label}</span>
-                  <span className="font-semibold text-gray-900">{spec.value}</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 block">{spec.label}</span>
+                  <span className="font-semibold text-gray-900 text-xs sm:text-sm md:text-base">{spec.value}</span>
                 </div>
               </div>
             ))}
@@ -407,14 +407,14 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
             {additionalSpecs.map((spec, index) => (
               <div 
                 key={index} 
-                className="flex items-center p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100"
+                className="flex items-center p-2 sm:p-3 bg-green-50/50 rounded-xl transition-all hover:bg-green-50 border border-green-100"
               >
-                <div className="bg-primary/10 p-2 rounded-lg mr-3">
+                <div className="bg-primary/10 p-1.5 sm:p-2 rounded-lg mr-2 sm:mr-3">
                   {spec.icon}
                 </div>
                 <div>
-                  <span className="text-xs text-gray-500 block">{spec.label}</span>
-                  <span className="font-semibold text-gray-900">{spec.value}</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 block">{spec.label}</span>
+                  <span className="font-semibold text-gray-900 text-xs sm:text-sm md:text-base">{spec.value}</span>
                 </div>
               </div>
             ))}
@@ -428,14 +428,14 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
             {carFeatures.map((feature, index) => (
               <div 
                 key={index} 
-                className={`flex items-center p-3 sm:p-4 rounded-lg ${feature.value ? 'bg-green-50 border border-green-100' : 'bg-gray-50'} feature-badge ${feature.value ? 'active' : ''}`}
+                className={`flex items-center p-2 sm:p-3 md:p-4 rounded-lg ${feature.value ? 'bg-green-50 border border-green-100' : 'bg-gray-50'} feature-badge ${feature.value ? 'active' : ''}`}
               >
                 {feature.value ? (
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />
                 ) : (
-                  <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                  <XCircle className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-gray-400" />
                 )}
-                <span className={`text-xs sm:text-sm font-medium ml-2 ${feature.value ? 'text-gray-800' : 'text-gray-500'}`}>{feature.name}</span>
+                <span className={`text-[10px] sm:text-xs md:text-sm font-medium ml-2 ${feature.value ? 'text-gray-800' : 'text-gray-500'}`}>{feature.name}</span>
               </div>
             ))}
           </div>

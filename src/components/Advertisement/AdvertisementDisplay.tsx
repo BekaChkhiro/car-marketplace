@@ -91,7 +91,7 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
   if (!advertisement) {
     // Display placeholder with "რეკლამა" text and phone number when no ad is available
     const placeholderContent = (
-      <div className={`flex flex-col items-center justify-center bg-[#009c6d] w-[calc(100% - 24px)] mx-auto sm:w-[728px] h-[90px] sm:h-[140px] rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] ${className}`} style={{ padding: '10px 15px' }}>
+      <div className={`flex flex-col items-center justify-center bg-[#009c6d] w-[calc(100vw-32px)] max-w-[728px] mx-auto h-[90px] sm:h-[140px] rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] ${className}`} style={{ padding: '10px 15px' }}>
         <div className="text-white font-medium text-lg sm:text-xl">{t("ad")}</div>
         <div className="text-white text-sm sm:text-md mt-2">+995 595 03 88 88</div>
       </div>
@@ -113,7 +113,7 @@ const AdvertisementDisplay: React.FC<AdvertisementDisplayProps> = ({ placement, 
   
   const content = (
     <motion.div 
-      className={`relative overflow-hidden w-[calc(100% - 24px)] mx-auto sm:w-[728px] h-[90px] sm:h-[140px] rounded-lg shadow-md ${className} cursor-pointer`}
+      className={`relative overflow-hidden w-[calc(100vw-32px)] max-w-[728px] mx-auto h-[90px] sm:h-[140px] rounded-lg shadow-md ${className} cursor-pointer`}
       initial={{ opacity: 0.9 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

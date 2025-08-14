@@ -16,6 +16,7 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import UsersPage from './pages/Admin/Users';
 import CarsPage from './pages/Admin/Cars';
 import AdminEditCar from './pages/Admin/Cars/pages/EditCar';
+import AdminNewEditCar from './pages/Admin/Cars/pages/EditCar/index';
 import AdminParts from './pages/Admin/Parts';
 import AdvertisingSpaces from './pages/AdvertisingSpaces';
 // იმპორტი ცალკე ფაილიდან, რომელიც ექსპორტირებას აკეთებს index.tsx-იდან
@@ -106,7 +107,8 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="cars" element={<CarsPage />} />
-        <Route path="cars/edit/:id" element={<AdminEditCar />} />
+        <Route path="cars/:id/edit" element={<AdminEditCar />} />
+        <Route path="cars/edit/:id" element={<AdminNewEditCar />} />
         <Route path="autosalons" element={<AutosalonsAdmin />} />
         <Route path="dealers" element={<DealersAdmin />} />
         <Route path="parts" element={<AdminParts />} />
