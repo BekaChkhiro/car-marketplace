@@ -3,6 +3,7 @@ import { User, Mail, Phone, UserCircle, Calendar, UserCheck } from 'lucide-react
 import { useAuth } from '../../../../../context/AuthContext';
 import { useToast } from '../../../../../context/ToastContext';
 import { useTranslation } from 'react-i18next';
+import userService from '../../../../../api/services/userService';
 
 const ProfileEdit: React.FC = () => {
   const { t } = useTranslation(['profile']);
@@ -46,6 +47,9 @@ const ProfileEdit: React.FC = () => {
   }, [user]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [bulkSyncName, setBulkSyncName] = useState<boolean>(false);
+  const [bulkSyncPhone, setBulkSyncPhone] = useState<boolean>(false);
+  const [isBulkSyncing, setIsBulkSyncing] = useState<boolean>(false);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -161,6 +165,64 @@ const ProfileEdit: React.FC = () => {
             />
             <Phone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
           </div>
+        </div>
+
+        {/* Bulk sync to all listings */}
+        <div className="p-4 sm:p-5 border border-gray-200 rounded-xl bg-white/60">
+          <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-3">
+            {t('profileEdit.bulkSync.title', 'განახლება ყველა განცხადებაზე')}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-600 mb-3">
+            {t('profileEdit.bulkSync.subtitle', 'აირჩიეთ რომელი ველები აისახოს თქვენს ყველა განცხადებაზე როგორც საკონტაქტო ინფორმაცია.')}
+          </p>
+          <div className="flex flex-col gap-2 mb-3">
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300"
+                checked={bulkSyncName}
+                onChange={(e) => setBulkSyncName(e.target.checked)}
+              />
+              {t('profileEdit.bulkSync.name', 'განვაახლო სახელი (First/Last)')}
+            </label>
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300"
+                checked={bulkSyncPhone}
+                onChange={(e) => setBulkSyncPhone(e.target.checked)}
+              />
+              {t('profileEdit.bulkSync.phone', 'განვაახლო ტელეფონის ნომერი')}
+            </label>
+          </div>
+          <button
+            type="button"
+            disabled={isBulkSyncing}
+            onClick={async () => {
+              if (!bulkSyncName && !bulkSyncPhone) {
+                showToast(t('profileEdit.bulkSync.selectFields', 'გთხოვთ, მონიშნოთ ველი(ები) გასანახლებლად'), 'warning');
+                return;
+              }
+              try {
+                setIsBulkSyncing(true);
+                const confirmed = window.confirm(t('profileEdit.bulkSync.confirm', 'დარწმუნებული ხართ, რომ გსურთ მონიშნული ველების განახლება ყველა თქვენს განცხადებაზე?'));
+                if (!confirmed) {
+                  setIsBulkSyncing(false);
+                  return;
+                }
+                const { updated } = await userService.syncContactToCars({ syncName: bulkSyncName, syncPhone: bulkSyncPhone });
+                showToast(t('profileEdit.bulkSync.success', 'განცხადებები წარმატებით განახლდა') + ` (${updated})`, 'success');
+              } catch (e: any) {
+                const msg = e?.response?.data?.message || t('profileEdit.bulkSync.error', 'ვერ მოხერხდა განცხადებების განახლება');
+                showToast(msg, 'error');
+              } finally {
+                setIsBulkSyncing(false);
+              }
+            }}
+            className="w-full bg-white text-primary border border-primary py-2.5 rounded-lg hover:bg-primary/5 transition-colors disabled:opacity-60"
+          >
+            {isBulkSyncing ? t('common.pleaseWait', 'გთხოვთ, დაიცადოთ...') : t('profileEdit.bulkSync.button', 'განახლება ყველა განცხადებაზე')}
+          </button>
         </div>
 
         <div>

@@ -57,6 +57,19 @@ class UserService {
       };
     }
   }
+
+  async syncContactToCars(options: { syncName?: boolean; syncPhone?: boolean }): Promise<{ updated: number }>{
+    try {
+      const response = await api.post('/api/user/sync-contact-to-cars', {
+        syncName: Boolean(options.syncName),
+        syncPhone: Boolean(options.syncPhone)
+      });
+      return { updated: response.data?.updated ?? 0 };
+    } catch (error: any) {
+      console.error('[UserService.syncContactToCars] Error:', error);
+      throw error;
+    }
+  }
 }
 
 export default new UserService();
