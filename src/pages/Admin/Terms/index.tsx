@@ -416,7 +416,7 @@ const TermsManagement: React.FC = () => {
                       className="text-lg font-semibold text-gray-900 flex-1 cursor-pointer hover:text-primary transition-colors"
                       onClick={() => expandedContent === term.id ? setExpandedContent(null) : setExpandedContent(term.id)}
                     >
-                      {term.title}
+                      {term.title || term.title_ka}
                     </h3>
                   </div>
 
@@ -553,9 +553,9 @@ const TermsManagement: React.FC = () => {
                     </div>
                   ) : (
                     <div className="prose prose-gray max-w-none">
-                      {term.content ? (
+                      {(term.content || term.content_ka) ? (
                         <div className="whitespace-pre-wrap text-gray-700 leading-relaxed text-sm">
-                          {term.content}
+                          {term.content || term.content_ka}
                         </div>
                       ) : (
                         <div className="text-gray-400 italic text-sm">{t('admin:noContentProvided')}</div>
