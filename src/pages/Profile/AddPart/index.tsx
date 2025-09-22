@@ -181,8 +181,8 @@ const AddPart: React.FC = () => {
           return false;
         }
         
-        // Size validation (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
+        // Size validation (10MB max)
+        if (file.size > 10 * 1024 * 1024) {
           showToast(t('imageErrors.fileTooLarge'), 'error');
           return false;
         }

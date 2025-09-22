@@ -569,7 +569,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onImageUpload,
   maxFiles = 10,
   acceptedTypes = ['image/jpeg', 'image/png'],
-  maxFileSize = 5 * 1024 * 1024, // 5MB
+  maxFileSize = 10 * 1024 * 1024, // 10MB
 }) => {
   // Image upload implementation with preview
 };
