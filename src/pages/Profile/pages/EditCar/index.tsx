@@ -27,6 +27,7 @@ const EditCar: React.FC = () => {
     errors,
     images,
     existingImages,
+    imagesToDelete,
     featuredImageIndex,
     isUploading,
     userBalance,
@@ -268,6 +269,7 @@ const EditCar: React.FC = () => {
             <ImageUploadWithFeatured
               files={images}
               existingImages={existingImages}
+              imagesToDelete={imagesToDelete}
               onFilesChange={handleImageUpload}
               onFileRemove={removeImage}
               onExistingImageRemove={removeExistingImage}

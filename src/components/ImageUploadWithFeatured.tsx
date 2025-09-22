@@ -7,6 +7,7 @@ import ImageProgress from './ImageProgress';
 interface ImageUploadWithFeaturedProps {
   files: File[];
   existingImages?: any[];
+  imagesToDelete?: number[]; // Images marked for deletion
   onFilesChange: (files: File[]) => void;
   onFileRemove: (index: number) => void;
   onExistingImageRemove?: (imageId: number) => void;
@@ -21,6 +22,7 @@ interface ImageUploadWithFeaturedProps {
 const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   files,
   existingImages = [],
+  imagesToDelete = [],
   onFilesChange,
   onFileRemove,
   onExistingImageRemove,
@@ -207,50 +209,82 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             <h4 className="text-sm font-medium text-gray-600">{t('imageUpload.existingPhotos')}</h4>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {existingImages.map((image, index) => (
-              <div
-                key={image.id}
-                className="relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <img
-                  src={image.medium_url || image.url}
-                  alt={`Car image ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                {onExistingImageRemove && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onExistingImageRemove(image.id);
-                    }}
-                    className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/90 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-                    title={t('imageUpload.removePhoto')}
-                  >
-                    <X size={18} />
-                  </button>
-                )}
-                {onSetPrimaryImage && !image.is_primary && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSetPrimaryImage(image.id);
-                    }}
-                    className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:text-primary"
-                    title={t('imageUpload.setAsPrimary')}
-                  >
-                    <Star size={18} fill="none" 
-                      className="transform transition-transform duration-300 hover:rotate-12"
-                    />
-                  </button>
-                )}
-                {image.is_primary && (
-                  <div className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center scale-110 opacity-100">
-                    <Star size={18} fill="white" />
-                  </div>
-                )}
-              </div>
-            ))}
+            {existingImages.map((image, index) => {
+              const isMarkedForDeletion = imagesToDelete.includes(image.id);
+              return (
+                <div
+                  key={image.id}
+                  className={`relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 ${
+                    isMarkedForDeletion ? 'opacity-50' : ''
+                  }`}
+                >
+                  <img
+                    src={image.medium_url || image.url}
+                    alt={`Car image ${index + 1}`}
+                    className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                      isMarkedForDeletion ? 'grayscale' : ''
+                    }`}
+                  />
+                  <div className={`absolute inset-0 ${
+                    isMarkedForDeletion
+                      ? 'bg-red-500/30'
+                      : 'bg-black/40 opacity-0 group-hover:opacity-100'
+                  } transition-opacity duration-300`} />
+
+                  {/* Red overlay with X for deleted images */}
+                  {isMarkedForDeletion && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="bg-red-500 rounded-full p-3">
+                        <X size={24} className="text-white" />
+                      </div>
+                    </div>
+                  )}
+
+                  {onExistingImageRemove && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onExistingImageRemove(image.id);
+                      }}
+                      className={`absolute top-2 right-2 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                        isMarkedForDeletion
+                          ? 'bg-green-500 text-white opacity-100 hover:bg-green-600'
+                          : 'bg-white/90 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-white'
+                      }`}
+                      title={isMarkedForDeletion ? t('imageUpload.restorePhoto') : t('imageUpload.removePhoto')}
+                    >
+                      {isMarkedForDeletion ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                          <path d="M3 3v5h5"></path>
+                        </svg>
+                      ) : (
+                        <X size={18} />
+                      )}
+                    </button>
+                  )}
+                  {onSetPrimaryImage && !image.is_primary && !isMarkedForDeletion && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSetPrimaryImage(image.id);
+                      }}
+                      className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-white/90 text-gray-400 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:text-primary"
+                      title={t('imageUpload.setAsPrimary')}
+                    >
+                      <Star size={18} fill="none"
+                        className="transform transition-transform duration-300 hover:rotate-12"
+                      />
+                    </button>
+                  )}
+                  {image.is_primary && !isMarkedForDeletion && (
+                    <div className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center scale-110 opacity-100">
+                      <Star size={18} fill="white" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

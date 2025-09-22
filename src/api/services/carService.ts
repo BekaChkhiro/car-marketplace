@@ -752,10 +752,53 @@ class CarService {
     try {
       const token = getAccessToken();
       const headers = { Authorization: `Bearer ${token}` };
-      
+
       await api.put(`/api/cars/${carId}/images/${imageId}/primary`, {}, { headers });
     } catch (error: any) {
       console.error('[CarService.setPrimaryImage] Error:', error);
+      throw error;
+    }
+  }
+
+  async addImagesToExistingCar(carId: number, images: File[]): Promise<any[]> {
+    try {
+      const token = getAccessToken();
+      const headers = { Authorization: `Bearer ${token}` };
+
+      console.log('[CarService.addImagesToExistingCar] Uploading images:', {
+        carId,
+        imageCount: images.length,
+        images: images.map(f => ({ name: f.name, size: f.size, type: f.type }))
+      });
+
+      // Create FormData for image upload
+      const formData = new FormData();
+      images.forEach((file, index) => {
+        console.log(`[CarService.addImagesToExistingCar] Adding image ${index}:`, file.name);
+        formData.append('images', file);
+      });
+
+      // Log FormData entries
+      console.log('[CarService.addImagesToExistingCar] FormData entries:');
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]);
+      }
+
+      // Set Content-Type like in createCar method
+      const response = await api.post(`/api/cars/${carId}/images`, formData, {
+        headers: {
+          ...headers,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      console.log('[CarService.addImagesToExistingCar] Response:', response.data);
+
+      // Return the uploaded images data
+      return response.data?.data || [];
+    } catch (error: any) {
+      console.error('[CarService.addImagesToExistingCar] Error:', error);
+      console.error('[CarService.addImagesToExistingCar] Error response:', error.response?.data);
       throw error;
     }
   }

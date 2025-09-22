@@ -19,6 +19,7 @@ export const useEditCarForm = (carId: number) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [images, setImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<any[]>([]);
+  const [imagesToDelete, setImagesToDelete] = useState<number[]>([]); // Track images marked for deletion
   const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [userBalance, setUserBalance] = useState<number>(0);
@@ -662,7 +663,7 @@ export const useEditCarForm = (carId: number) => {
       doors: formData.specifications?.doors || null
     };
     
-    // Prepare the data for submission
+    // Prepare the data for submission (without images, we'll handle them separately)
     const submitData = {
       ...formData,
       specifications: preparedSpecifications
@@ -741,16 +742,85 @@ export const useEditCarForm = (carId: number) => {
         }
       }
       
+      // Delete marked images before updating car data
+      if (imagesToDelete.length > 0) {
+        console.log('Deleting marked images:', imagesToDelete);
+        for (const imageId of imagesToDelete) {
+          try {
+            await carService.deleteCarImage(imageId);
+            console.log(`Successfully deleted image ${imageId}`);
+          } catch (error: any) {
+            console.error(`Failed to delete image ${imageId}:`, error);
+            // Continue with other deletions even if one fails
+          }
+        }
+      }
+
       // Update the car data
       const updatedCar = await carService.updateCar(carId, submitData);
       console.log('მიღებული პასუხი API-დან:', updatedCar);
+
+      // Upload new images if any
+      if (images.length > 0) {
+        console.log('Uploading new images:', images.length);
+        console.log('Images to upload:', images.map(img => ({
+          name: img.name,
+          size: img.size,
+          type: img.type
+        })));
+
+        try {
+          const uploadedImages = await carService.addImagesToExistingCar(carId, images);
+          console.log('New images uploaded successfully:', uploadedImages);
+
+          // Add the newly uploaded images to existing images
+          if (uploadedImages && uploadedImages.length > 0) {
+            console.log('Adding uploaded images to existing images state');
+            setExistingImages(prev => {
+              console.log('Previous existing images:', prev.length);
+              const updated = [...prev, ...uploadedImages];
+              console.log('Updated existing images:', updated.length);
+              return updated;
+            });
+            // Clear the new images array after successful upload
+            setImages([]);
+            console.log('Cleared new images array');
+          } else {
+            console.warn('No uploaded images returned from server');
+          }
+        } catch (imageError: any) {
+          console.error('Failed to upload new images:', imageError);
+          // Don't fail the entire update if image upload fails
+          showToast('მანქანა განახლდა, მაგრამ ახალი ფოტოების ატვირთვა ვერ მოხერხდა', 'warning');
+        }
+      } else {
+        console.log('No new images to upload');
+      }
+
+      // Refresh the car data to get updated images
+      try {
+        console.log('Refreshing car data to get all images...');
+        const updatedCarData = await carService.getCar(carId);
+        if (updatedCarData && updatedCarData.images) {
+          console.log('Setting existing images from refreshed data:', updatedCarData.images.length);
+          setExistingImages(updatedCarData.images);
+          // Also clear images marked for deletion
+          setImagesToDelete([]);
+        }
+      } catch (error) {
+        console.error('Failed to refresh car data:', error);
+      }
+
       hideLoading();
-      
+
       // Show success message
       showToast('მანქანის მონაცემები წარმატებით განახლდა!', 'success');
-      
-      // Navigate to the car details page
-      navigate(`/profile/cars`);
+
+      // Don't navigate immediately - let user see the updated images
+      // Navigate to the car details page after a short delay to ensure state updates
+      // setTimeout(() => {
+      //   navigate(`/profile/cars`);
+      // }, 1000);
     } catch (error: any) {
       hideLoading();
       showToast(error.message || 'მანქანის განახლება ვერ მოხერხდა', 'error');
@@ -760,7 +830,7 @@ export const useEditCarForm = (carId: number) => {
   const handleImageUpload = async (files: File[]) => {
     try {
       setIsUploading(true);
-      
+
       // Validate all files
       const validFiles = files.filter(file => {
         if (!validateImage(file)) {
@@ -770,7 +840,9 @@ export const useEditCarForm = (carId: number) => {
         return true;
       });
 
-      if (validFiles.length > 15) {
+      // Check total number of images (existing + new)
+      const totalImages = images.length + validFiles.length;
+      if (totalImages > 15) {
         showToast('მაქსიმუმ 15 სურათის ატვირთვაა შესაძლებელი', 'error');
         setIsUploading(false);
         return;
@@ -778,10 +850,10 @@ export const useEditCarForm = (carId: number) => {
 
       // Simulate a small delay to show the upload progress
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Set the images state to the valid files
-      setImages(validFiles);
-      
+
+      // Append the new files to existing images instead of replacing
+      setImages(prev => [...prev, ...validFiles]);
+
       // Set a timeout to turn off the uploading state
       setTimeout(() => {
         setIsUploading(false);
@@ -801,21 +873,17 @@ export const useEditCarForm = (carId: number) => {
     }
   };
 
-  // ფუნქცია არსებული ფოტოს წასაშლელად
-  const removeExistingImage = async (imageId: number) => {
-    try {
-      showLoading();
-      // API-ზე მოთხოვნა ფოტოს წასაშლელად
-      await carService.deleteCarImage(imageId);
-      
-      // წაშლის შემდეგ state-დან მოვაშოროთ ფოტო
-      setExistingImages(prev => prev.filter(img => img.id !== imageId));
-      
-      hideLoading();
-      showToast('ფოტო წარმატებით წაიშალა', 'success');
-    } catch (error: any) {
-      hideLoading();
-      showToast(error.message || 'ფოტოს წაშლა ვერ მოხერხდა', 'error');
+  // ფუნქცია არსებული ფოტოს წასაშლელად (მარკირება წასაშლელად)
+  const removeExistingImage = (imageId: number) => {
+    // Check if already marked for deletion
+    if (imagesToDelete.includes(imageId)) {
+      // Remove from deletion list (restore)
+      setImagesToDelete(prev => prev.filter(id => id !== imageId));
+      showToast('ფოტო აღდგენილია', 'info');
+    } else {
+      // Mark for deletion
+      setImagesToDelete(prev => [...prev, imageId]);
+      showToast('ფოტო მონიშნულია წასაშლელად', 'info');
     }
   };
 
@@ -847,6 +915,7 @@ export const useEditCarForm = (carId: number) => {
     errors,
     images,
     existingImages,
+    imagesToDelete, // Export images marked for deletion
     featuredImageIndex,
     isUploading,
     userBalance,
