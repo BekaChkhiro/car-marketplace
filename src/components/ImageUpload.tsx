@@ -28,10 +28,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      'image/jpeg': [],
+      'image/jpg': [],
+      'image/png': [],
+      'image/webp': []
     },
     maxFiles: maxFiles - files.length,
-    maxSize: 10 * 1024 * 1024 // 10MB
+    maxSize: 10 * 1024 * 1024, // 10MB
+    multiple: true
   });
 
   return (
@@ -46,7 +50,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
         }`}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} capture="environment" />
         <div className="flex flex-col items-center gap-2">
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
             isDragReject
@@ -117,7 +121,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               {...getRootProps()}
               className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-200 group"
             >
-              <input {...getInputProps()} />
+              <input {...getInputProps()} capture="environment" />
               <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors duration-200">
                 <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors duration-200" />
               </div>

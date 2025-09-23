@@ -113,11 +113,15 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
     onDropAccepted: () => setDraggedOver(false),
     onDropRejected: () => setDraggedOver(false),
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      'image/jpeg': [],
+      'image/jpg': [],
+      'image/png': [],
+      'image/webp': []
     },
     maxFiles: maxFiles - files.length,
     maxSize: 10 * 1024 * 1024, // 10MB
-    disabled: isUploading
+    disabled: isUploading,
+    multiple: true
   });
 
   return (
@@ -144,7 +148,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
         } ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} capture="environment" />
         <div className="flex flex-col items-center gap-3">
           <div className={`w-16 h-16 rounded-xl flex items-center justify-center transform transition-all duration-300 ${
             isDragReject
@@ -346,7 +350,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                 {...getRootProps()}
                 className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-300 group"
               >
-                <input {...getInputProps()} />
+                <input {...getInputProps()} capture="environment" />
                 <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors duration-300">
                   <UploadCloud className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors duration-300" />
                 </div>

@@ -423,7 +423,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                           </button>
                         )}
                         <button
-                          onClick={() => navigate(`/cars/${car.id}`)}
+                          onClick={() => navigate(`/${currentLang}/cars/${car.id}`)}
                           className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors group-hover:bg-blue-100"
                           title="ნახვა"
                         >
@@ -676,7 +676,7 @@ const UserCarsList: React.FC<UserCarsListProps> = ({ cars, onDelete, onVipUpdate
                     </button>
                   )}
                   <button
-                    onClick={() => navigate(`/cars/${car.id}`)}
+                    onClick={() => navigate(`/${currentLang}/cars/${car.id}`)}
                     className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
                     title="ნახვა"
                   >
