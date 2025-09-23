@@ -610,7 +610,7 @@ export const useCarForm = () => {
       // First validate all files
       const validFiles = files.filter(file => {
         if (!validateImage(file)) {
-          showToast('სურათის ფორმატი ან ზომა არასწორია. დაშვებულია მხოლოდ JPEG/PNG ფორმატი, მაქსიმუმ 5MB', 'error');
+          showToast('სურათის ფორმატი ან ზომა არასწორია. დაშვებულია მხოლოდ JPEG/PNG ფორმატი, მაქსიმუმ 10MB', 'error');
           return false;
         }
         return true;
