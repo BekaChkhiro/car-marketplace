@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <LayoutWrapper>
       <ScrollToTop />
       <Header />
-      <main className="w-[100%] lg:w-[90%] mx-auto py-6 px-4 lg:px-0">
+      <main className="w-[100%] lg:w-[90%] mx-auto py-6 px-1 lg:px-0">
         {children}
       </main>
       <Footer />

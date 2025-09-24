@@ -412,7 +412,7 @@ const VIPStatus: React.FC<VIPStatusProps> = ({
 
       <h4 className="font-medium mb-4">{t('addCar.vipStatus.title')}</h4>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
           className={`relative border-2 rounded-xl p-5 cursor-pointer transition-all transform hover:scale-105 ${vipStatus === 'none' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
             }`}
