@@ -180,9 +180,9 @@ export const useCarForm = () => {
     let processedValue = value;
     
     if (field === 'engine_size') {
-      // For engine size, we keep the original string value from the dropdown
-      // This ensures decimal values like '1.0', '2.0', '3.0' work properly
-      processedValue = value ? parseFloat(value) : undefined;
+      // For engine size, keep it as string to preserve decimal format ('1.0', '2.0', '3.0')
+      // This ensures the CustomSelect can match the correct option
+      processedValue = value || undefined;
       console.log(`Processing engine_size: ${value} -> ${processedValue}`);
     } 
     else if (field === 'mileage' || field === 'cylinders' || field === 'airbags_count' || field === 'horsepower') {
@@ -357,16 +357,15 @@ export const useCarForm = () => {
     
     // Ensure numeric fields are properly formatted
     if (cleanedData.specifications) {
-      // Handle engine size - keep the original value from dropdown
+      // Handle engine size - convert string to number for API
       if (cleanedData.specifications.engine_size !== undefined) {
-        // Convert to string first to check if it's empty
+        // Engine size is stored as string to preserve decimal format in dropdown
         const engineSizeStr = String(cleanedData.specifications.engine_size);
         if (engineSizeStr !== '' && engineSizeStr !== '0') {
-          // The engine size from dropdown is already in the correct format (e.g., "0.5", "1.0", "2.5")
           const engineSize = parseFloat(engineSizeStr);
           if (!isNaN(engineSize) && engineSize > 0) {
             cleanedData.specifications.engine_size = engineSize;
-            console.log(`Engine size: ${cleanedData.specifications.engine_size}L`);
+            console.log(`Engine size: ${cleanedData.specifications.engine_size}L (converted from string "${engineSizeStr}")`);
           } else {
             console.warn('Invalid engine size value:', cleanedData.specifications.engine_size);
             delete cleanedData.specifications.engine_size; // Remove instead of setting to 0

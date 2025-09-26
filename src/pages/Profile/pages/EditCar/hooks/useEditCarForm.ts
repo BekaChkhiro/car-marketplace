@@ -362,17 +362,28 @@ export const useEditCarForm = (carId: number) => {
     
     // Handle location fields
     if (['city', 'state', 'country', 'location_type'].includes(field)) {
-      setFormData((prev: UpdateCarFormData) => ({
-        ...prev,
-        location: {
-          ...prev.location || {},
-          [field]: typeof value === 'object' ? value.value : value,
-          is_in_transit: field === 'location_type' ? value === 'transit' : prev.location?.is_in_transit || false,
-          city: prev.location?.city || '',
-          country: prev.location?.country || 'საქართველო',
-          location_type: field === 'location_type' ? (typeof value === 'object' ? value.value : value) : (prev.location?.location_type || 'georgia')
-        }
-      }));
+      setFormData((prev: UpdateCarFormData) => {
+        const currentLocation = prev.location || {
+          city: '',
+          country: 'საქართველო',
+          location_type: 'georgia',
+          is_in_transit: false
+        };
+        const newValue = typeof value === 'object' ? value.value : value;
+
+        return {
+          ...prev,
+          location: {
+            ...currentLocation,
+            [field]: newValue,
+            is_in_transit: field === 'location_type' ? newValue === 'transit' : currentLocation.is_in_transit,
+            // Don't override existing city/country unless they are specifically being changed
+            city: field === 'city' ? newValue : currentLocation.city,
+            country: field === 'country' ? newValue : currentLocation.country,
+            location_type: field === 'location_type' ? newValue : currentLocation.location_type
+          }
+        };
+      });
       return;
     }
 

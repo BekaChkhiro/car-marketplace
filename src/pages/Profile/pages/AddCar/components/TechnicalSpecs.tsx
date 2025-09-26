@@ -98,7 +98,7 @@ const TechnicalSpecs: React.FC<TechnicalSpecsProps> = ({ specifications, onChang
             )}
           </label>
           <CustomSelect
-            value={specifications.engine_size?.toString() || ''}
+            value={String(specifications.engine_size || '')}
             onChange={(value) => onChange('engine_size', value)}
             options={ENGINE_SIZE_OPTIONS}
             placeholder={t('addCar.technicalSpecs.selectEngineSize')}

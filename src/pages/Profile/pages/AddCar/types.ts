@@ -78,7 +78,9 @@ export interface NewCarFormData {
     location_type: string;
     is_in_transit: boolean;
   };
-  specifications: CarSpecifications;
+  specifications: CarSpecifications & {
+    engine_size?: string | number; // Allow string for form handling, convert to number on submit
+  };
   features?: CarFeatures;
   images?: File[];
 }
