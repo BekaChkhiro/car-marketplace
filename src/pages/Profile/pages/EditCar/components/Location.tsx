@@ -22,7 +22,7 @@ const Location: React.FC<LocationProps> = ({
 }) => {
   const { t } = useTranslation('profile');
   const translatedOptions = useTranslatedOptions();
-  // Set default values based on location type
+  // Set default values based on location type - only when location type changes
   useEffect(() => {
     if (location_type === 'transit') {
       onChange('city', 'ტრანზიტში');
@@ -36,12 +36,12 @@ const Location: React.FC<LocationProps> = ({
     } else if (location_type === 'georgia') {
       // For georgia type, always set country to საქართველო
       onChange('country', 'საქართველო');
-      // Set default city if not already set
+      // Only set default city if not already set (don't override user selections)
       if (!city) {
         onChange('city', 'თბილისი');
       }
     }
-  }, [location_type, city, country]);
+  }, [location_type]); // Remove city and country from dependencies to prevent infinite loops
 
   return (
     <div className="bg-white rounded-xl p-6 border">
