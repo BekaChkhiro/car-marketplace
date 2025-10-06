@@ -22,6 +22,7 @@
     "verifyDocuments": "Verify all documents",
     "carOwner": "Car Owner"
   },
+  "viewSeller": "View Seller",
   "header": {
     "title": "Car Details",
     "shareButton": "Share this car",

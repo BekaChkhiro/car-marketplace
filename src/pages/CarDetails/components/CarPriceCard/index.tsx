@@ -218,7 +218,13 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
     }
     
     // For now, fallback to regular user until backend is updated
-    return <RegularUserInfoCard authorName={car.author_name} authorPhone={car.author_phone} />;
+    return (
+      <RegularUserInfoCard
+        authorName={car.author_name}
+        authorPhone={car.author_phone}
+        sellerId={car.seller_id || car.user_id}
+      />
+    );
   };
 
   return (

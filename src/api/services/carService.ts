@@ -814,6 +814,22 @@ class CarService {
       // Don't throw error to prevent blocking page load
     }
   }
+
+  async getCarsBySeller(sellerId: number, filters?: CarFilters): Promise<{ cars: Car[], meta: any }> {
+    try {
+      // Combine seller_id filter with any other filters
+      const combinedFilters: CarFilters = {
+        ...filters,
+        seller_id: sellerId
+      };
+
+      // Use the existing getCars method with seller_id filter
+      return await this.getCars(combinedFilters);
+    } catch (error: any) {
+      console.error('[CarService.getCarsBySeller] Error:', error);
+      throw error;
+    }
+  }
 }
 
 // Create an instance of CarService and export it as default

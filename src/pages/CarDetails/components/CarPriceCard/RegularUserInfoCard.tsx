@@ -1,16 +1,19 @@
 import React from 'react';
 import { Phone, User, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { namespaces } from '../../../../i18n';
 
 interface RegularUserInfoCardProps {
   authorName?: string;
   authorPhone?: string;
+  sellerId?: number;
 }
 
-const RegularUserInfoCard: React.FC<RegularUserInfoCardProps> = ({ 
-  authorName, 
-  authorPhone 
+const RegularUserInfoCard: React.FC<RegularUserInfoCardProps> = ({
+  authorName,
+  authorPhone,
+  sellerId
 }) => {
   const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
 
@@ -46,6 +49,16 @@ const RegularUserInfoCard: React.FC<RegularUserInfoCardProps> = ({
             <span className="font-semibold text-primary">{phoneNumber}</span>
           </div>
         </div>
+
+        {/* View Seller Button */}
+        {sellerId && (
+          <Link
+            to={`/ka/sellers/${sellerId}`}
+            className="w-full flex justify-center items-center bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-medium min-h-[48px]"
+          >
+            {t('carDetails:viewSeller', 'View Seller')}
+          </Link>
+        )}
 
         {/* Call Button */}
         <a
