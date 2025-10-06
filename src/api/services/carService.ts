@@ -15,7 +15,10 @@ class CarService {
         // Map client-side filter names to server-side expected names
         if (filters.page) serverFilters.page = filters.page;
         if (filters.limit) serverFilters.limit = filters.limit;
-        if (filters.sortBy) serverFilters.sort = filters.sortBy;
+        // Map 'newest' to 'created_at' for the backend, otherwise pass sortBy as is
+        if (filters.sortBy) {
+          serverFilters.sortBy = filters.sortBy === 'newest' ? 'created_at' : filters.sortBy;
+        }
         if (filters.order) serverFilters.order = filters.order;
         
         // Exclude specific car ID
