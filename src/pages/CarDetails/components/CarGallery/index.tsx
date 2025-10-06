@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Eye, ChevronLeft, ChevronRight, Camera, Maximize, ZoomIn } from 'lucide-react';
 import ImageGallery from '../imageGallery/ImageGallery';
+import FullScreenModal from '../imageGallery/components/FullScreenModal';
 import './styles.css';
 import { useTranslation } from 'react-i18next';
 import { namespaces } from '../../../../i18n';
@@ -16,6 +17,7 @@ const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => 
   const [isLoading, setIsLoading] = useState(true);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const thumbnailsRef = useRef<HTMLDivElement>(null);
 
   // Handle image loading
@@ -88,11 +90,12 @@ const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => 
                 <div className="w-12 h-12 border-4 border-green-200 border-t-primary rounded-full animate-spin"></div>
               </div>
             )}
-            <img 
-              src={imageUrls[currentImageIndex]} 
-              alt="Car" 
-              className="w-full h-[250px] sm:h-[350px] md:h-[450px] object-cover transition-all duration-300"
+            <img
+              src={imageUrls[currentImageIndex]}
+              alt="Car"
+              className="w-full h-[250px] sm:h-[350px] md:h-[450px] object-cover transition-all duration-300 cursor-pointer"
               onLoad={handleImageLoad}
+              onClick={() => setIsModalOpen(true)}
             />
             
             {/* Image navigation buttons */}
@@ -113,14 +116,6 @@ const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => 
                   <ChevronRight size={20} />
                 </button>
                 
-                {/* Full screen button */}
-                <button
-                  onClick={toggleGallery}
-                  className="absolute top-2 right-2 bg-white/70 hover:bg-white p-2 rounded-full text-primary shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
-                  aria-label="View fullscreen"
-                >
-                  <Maximize size={16} />
-                </button>
                 
                 {/* Image counter */}
                 <div className="absolute bottom-2 left-2 bg-white/70 text-primary px-3 py-1 rounded-full text-xs font-medium shadow-sm">
@@ -169,19 +164,14 @@ const CarGallery: React.FC<CarGalleryProps> = ({ imageUrls, toggleGallery }) => 
         </div>
       )}
       
-      {/* View all images button */}
-      {imageUrls.length > 0 && (
-        <div className="px-4 py-3 flex justify-center sm:justify-end border-t border-green-50">
-          <button 
-            onClick={toggleGallery}
-            className="flex items-center gap-2 text-sm font-medium text-white bg-primary hover:bg-green-600 transition-colors px-4 py-2 rounded-lg shadow-sm"
-            aria-label="View all images"
-          >
-            <Eye className="w-4 h-4" />
-            <span>{t('carDetails:header.viewAll')}</span>
-          </button>
-        </div>
-      )}
+
+      {/* Fullscreen Modal */}
+      <FullScreenModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        images={imageUrls}
+        initialIndex={currentImageIndex}
+      />
     </div>
   );
 };
