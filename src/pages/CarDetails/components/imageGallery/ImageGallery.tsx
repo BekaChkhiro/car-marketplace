@@ -79,9 +79,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
       <FullScreenModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        currentImage={images[currentIndex]}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
+        images={images}
+        initialIndex={currentIndex}
       />
     </div>
   );
