@@ -91,7 +91,39 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   const { currency, setCurrency } = useCurrency();
   const { formatPrice } = usePrice();
 
-  const images = car.images?.map(img => img.url) || [];
+  const [images, setImages] = useState<string[]>([]);
+
+  // Handle image URLs - both uploaded and local File objects
+  useEffect(() => {
+    const imageUrls: string[] = [];
+    const blobUrls: string[] = [];
+
+    car.images?.forEach(img => {
+      // If img has a url property, it's already uploaded
+      if (img.url) {
+        imageUrls.push(img.url);
+      }
+      // If img is a File object, create a temporary blob URL
+      else if (img instanceof File) {
+        const blobUrl = URL.createObjectURL(img);
+        imageUrls.push(blobUrl);
+        blobUrls.push(blobUrl);
+      }
+    });
+
+    setImages(imageUrls);
+
+    // Preload all images to eliminate delay when navigating
+    imageUrls.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
+
+    // Cleanup blob URLs on unmount or when images change
+    return () => {
+      blobUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [car.images]);
 
   // Helper function to translate fuel types
   const translateFuelType = (fuelType?: string) => {
