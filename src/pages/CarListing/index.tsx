@@ -175,11 +175,11 @@ const CarListing: React.FC = () => {
   // Handle sort change
   const handleSortChange = (sortValue: string) => {
     // Parse the sort value to extract sortBy and order
-    let sortBy: string = 'newest';
-    let order: 'asc' | 'desc' = 'desc';
+    let sortBy: string;
+    let order: 'asc' | 'desc';
 
     if (sortValue === 'newest') {
-      sortBy = 'created_at';
+      sortBy = 'newest';
       order = 'desc';
     } else if (sortValue.startsWith('price')) {
       sortBy = 'price';
@@ -190,6 +190,10 @@ const CarListing: React.FC = () => {
     } else if (sortValue.startsWith('mileage')) {
       sortBy = 'mileage';
       order = sortValue.endsWith('asc') ? 'asc' : 'desc';
+    } else {
+      // Fallback
+      sortBy = 'newest';
+      order = 'desc';
     }
 
     handleFilterChange({ sortBy, order, page: 1 });
@@ -246,10 +250,10 @@ const CarListing: React.FC = () => {
           {/* Main content area */}
           <div className="w-full lg:w-3/4 space-y-6">
             {/* Sorting header with total count */}
-            <SortingHeader 
-              total={totalCars} 
-              sortBy={filters.sortBy === 'created_at' && filters.order === 'desc' ? 'newest' : 
-                `${filters.sortBy}-${filters.order}`} 
+            <SortingHeader
+              total={totalCars}
+              sortBy={filters.sortBy === 'newest' || !filters.sortBy ? 'newest' :
+                `${filters.sortBy}-${filters.order}`}
               onSortChange={handleSortChange}
             />
             
