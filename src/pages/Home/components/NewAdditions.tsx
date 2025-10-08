@@ -191,12 +191,16 @@ const NewAdditions: React.FC = () => {
       {/* Indicator dots for visual guidance */}
       {newCars.length > visibleItemsCount && !loading && (
         <div className='flex justify-center items-center'>
-          <div className="flex justify-center gap-2 mt-4 bg-white px-3 py-2 rounded-lg">
+          <div className="flex justify-center gap-2 mt-4 bg-white px-3 py-2 rounded-lg" role="tablist" aria-label={t('carouselNavigation', { defaultValue: 'Carousel navigation' })}>
           {Array.from({ length: newCars.length - visibleItemsCount + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-primary' : 'bg-gray-300'}`}
+              aria-label={t('goToSlide', { number: index + 1, defaultValue: `Go to slide ${index + 1}` })}
+              aria-current={currentSlide === index ? 'true' : 'false'}
+              role="tab"
+              title={t('goToSlide', { number: index + 1, defaultValue: `Go to slide ${index + 1}` })}
             />
           ))}
           </div>

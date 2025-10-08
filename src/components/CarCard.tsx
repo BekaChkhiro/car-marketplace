@@ -113,11 +113,11 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
 
     setImages(imageUrls);
 
-    // Preload all images to eliminate delay when navigating
-    imageUrls.forEach(url => {
+    // Preload first image only for better performance
+    if (imageUrls.length > 0) {
       const img = new Image();
-      img.src = url;
-    });
+      img.src = imageUrls[0];
+    }
 
     // Cleanup blob URLs on unmount or when images change
     return () => {
@@ -358,6 +358,9 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             src={images[currentImageIndex]}
             alt={`${car.brand} ${car.model}`}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            width="290"
+            height="212"
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -400,14 +403,18 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
             <button
               onClick={prevImage}
               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-200"
+              aria-label={t('car:previousImage', { defaultValue: 'Previous image' })}
+              title={t('car:previousImage', { defaultValue: 'Previous image' })}
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft size={18} aria-hidden="true" />
             </button>
             <button
               onClick={nextImage}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-200"
+              aria-label={t('car:nextImage', { defaultValue: 'Next image' })}
+              title={t('car:nextImage', { defaultValue: 'Next image' })}
             >
-              <ChevronRight size={18} />
+              <ChevronRight size={18} aria-hidden="true" />
             </button>
 
             {/* Image indicators */}

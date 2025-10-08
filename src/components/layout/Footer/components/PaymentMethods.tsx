@@ -14,8 +14,8 @@ const PaymentMethods: React.FC = () => {
     <div className="payment-methods">
       <h3 className="text-lg font-semibold mb-4">{t('paymentMethods.title')}</h3>
       <div className="flex items-center space-x-4">
-        <img src={visaLogo} alt={t('paymentMethods.visa')} className="h-8" />
-        <img src={mastercardLogo} alt={t('paymentMethods.mastercard')} className="h-8" />
+        <img src={visaLogo} alt={t('paymentMethods.visa')} className="h-8" width="99" height="32" />
+        <img src={mastercardLogo} alt={t('paymentMethods.mastercard')} className="h-8" width="50" height="32" />
       </div>
     </div>
   );
