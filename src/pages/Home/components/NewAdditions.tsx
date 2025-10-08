@@ -21,25 +21,42 @@ const NewAdditions: React.FC = () => {
 
   // Handle window resize to adjust visible items count and detect mobile
   useEffect(() => {
+    let rafId: number;
+
     const handleResize = () => {
-      const mobile = window.innerWidth < 640;
-      setIsMobile(mobile);
-      
-      // Always show 2 items per row on mobile
-      if (mobile) {
-        setVisibleItemsCount(2);
-      } else if (window.innerWidth < 1024) {
-        setVisibleItemsCount(2);
-      } else if (window.innerWidth < 1280) {
-        setVisibleItemsCount(3);
-      } else {
-        setVisibleItemsCount(4);
+      // Cancel any pending RAF to debounce
+      if (rafId) {
+        cancelAnimationFrame(rafId);
       }
+
+      // Use RAF to batch layout reads and prevent forced reflow
+      rafId = requestAnimationFrame(() => {
+        const width = window.innerWidth;
+        const mobile = width < 640;
+
+        // Batch state updates to prevent multiple re-renders
+        setIsMobile(mobile);
+
+        // Determine visible items count based on width
+        let count = 4;
+        if (mobile || width < 1024) {
+          count = 2;
+        } else if (width < 1280) {
+          count = 3;
+        }
+
+        setVisibleItemsCount(count);
+      });
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -169,15 +186,18 @@ const NewAdditions: React.FC = () => {
         </div>
       ) : (
         <div className="relative overflow-hidden">
-          <div 
+          <div
             className="flex gap-4 transition-transform duration-500 ease-out"
-            style={{ transform: `translateX(-${currentSlide * (100 / visibleItemsCount)}%)` }}
+            style={{
+              transform: `translateX(-${currentSlide * (100 / visibleItemsCount)}%)`,
+              willChange: 'transform'
+            }}
           >
             {newCars.map((car) => (
               <div key={car.id} className={`flex-none ${
-                visibleItemsCount === 2 ? 'w-1/2' : 
-                visibleItemsCount === 3 ? 'w-1/3' : 
-                visibleItemsCount === 4 ? 'w-1/4' : 
+                visibleItemsCount === 2 ? 'w-1/2' :
+                visibleItemsCount === 3 ? 'w-1/3' :
+                visibleItemsCount === 4 ? 'w-1/4' :
                 'w-1/2'}`}>
                 <div className="h-full">
                   <CarCard car={car} categories={categories} showVipBadge />
@@ -191,12 +211,16 @@ const NewAdditions: React.FC = () => {
       {/* Indicator dots for visual guidance */}
       {newCars.length > visibleItemsCount && !loading && (
         <div className='flex justify-center items-center'>
-          <div className="flex justify-center gap-2 mt-4 bg-white px-3 py-2 rounded-lg">
+          <div className="flex justify-center gap-2 mt-4 bg-white px-3 py-2 rounded-lg" role="tablist" aria-label={t('carouselNavigation', { defaultValue: 'Carousel navigation' })}>
           {Array.from({ length: newCars.length - visibleItemsCount + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-primary' : 'bg-gray-300'}`}
+              aria-label={t('goToSlide', { number: index + 1, defaultValue: `Go to slide ${index + 1}` })}
+              aria-current={currentSlide === index ? 'true' : 'false'}
+              role="tab"
+              title={t('goToSlide', { number: index + 1, defaultValue: `Go to slide ${index + 1}` })}
             />
           ))}
           </div>
