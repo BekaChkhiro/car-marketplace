@@ -13,8 +13,8 @@ const Footer: React.FC = () => {
     const { t } = useTranslation([namespaces.footer, namespaces.common]);
 
   return (
-    <footer className="relative bg-white text-gray-dark pt-8 sm:pt-12 md:pt-16 border-t min-h-[400px]">
-      <div className="w-[90%] mx-auto px-4 py-4">
+    <footer className="relative bg-white text-gray-dark pt-8 sm:pt-12 md:pt-16 border-t">
+      <div className="w-[90%] mx-auto px-4 py-4" style={{ minHeight: '350px' }}>
         {/* Main footer content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12">
           {/* About section takes full width on mobile for better readability */}
