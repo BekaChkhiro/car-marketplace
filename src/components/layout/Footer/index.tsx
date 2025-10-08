@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="relative bg-white text-gray-dark pt-8 sm:pt-12 md:pt-16 border-t">
-      <div className="w-[90%] mx-auto px-4 py-4" style={{ minHeight: '350px' }}>
+      <div className="w-[90%] mx-auto px-4 py-4 min-h-[350px] lg:min-h-[450px]">
         {/* Main footer content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12">
           {/* About section takes full width on mobile for better readability */}
