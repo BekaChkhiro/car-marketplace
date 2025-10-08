@@ -56,11 +56,47 @@
       #root{min-height:100vh;display:flex;flex-direction:column}
       .animate-spin{animation:spin 1s linear infinite}
       @keyframes spin{to{transform:rotate(360deg)}}
-      /* Prevent layout shift */
+      /* Layout utilities */
+      .relative{position:relative}
+      .absolute{position:absolute}
+      .flex{display:flex}
+      .grid{display:grid}
+      .hidden{display:none}
+      .overflow-hidden{overflow:hidden}
+      .gap-4{gap:1rem}
+      /* Spacing */
+      .p-4{padding:1rem}
+      .pt-8{padding-top:2rem}
+      .mb-4{margin-bottom:1rem}
+      /* Colors & Backgrounds */
+      .bg-white{background-color:#fff}
+      .bg-gray-100{background-color:#f3f4f6}
+      .text-gray-800{color:#1f2937}
+      /* Typography */
+      .text-xl{font-size:1.25rem}
+      .text-lg{font-size:1.125rem}
+      .font-bold{font-weight:700}
+      /* Border & Shadow */
+      .rounded-lg{border-radius:0.5rem}
+      .shadow-md{box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1)}
+      .border-b{border-bottom-width:1px}
+      /* Images & Cards */
       img{max-width:100%;height:auto;display:block}
-      /* Reserve space for header */
+      .h-32{height:8rem}
+      .h-40{height:10rem}
+      .w-full{width:100%}
+      .object-cover{object-fit:cover}
+      /* Header */
       header{min-height:64px}
-      @media(min-width:640px){header{min-height:80px}}
+      @media(min-width:640px){
+        header{min-height:80px}
+        .sm\:h-40{height:10rem}
+        .sm\:text-xl{font-size:1.25rem}
+        .sm\:p-6{padding:1.5rem}
+      }
+      @media(min-width:768px){
+        .md\:h-48{height:12rem}
+      }
     </style>
 
     <!-- Load fonts with display=swap to prevent render blocking -->
