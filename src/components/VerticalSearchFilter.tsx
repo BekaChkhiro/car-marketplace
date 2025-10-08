@@ -371,18 +371,19 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
           />
         </div>
 
-        <div className="flex gap-3 mt-3">
+        <div className="flex flex-col sm:flex-row gap-3 mt-3">
           <button
             type="button"
             onClick={() => setShowAdvancedFilters(true)}
-            className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-primary border-2 border-primary font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-md hover:shadow-lg w-1/3"
+            className="flex items-center justify-center gap-2 px-3 py-3 bg-white text-primary border-2 border-primary font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-md hover:shadow-lg flex-shrink-0 sm:w-auto"
+            aria-label="Advanced filters"
           >
             <Filter size={18} />
-            <span className="hidden sm:inline">{t('filter:advancedFilters')}</span>
+            <span className="sm:hidden md:inline text-sm">{t('filter:advancedFilters')}</span>
           </button>
           <button
             type="submit"
-            className="w-2/3 px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg"
+            className="flex-1 px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg"
           >
             {t('common:search')}
           </button>
