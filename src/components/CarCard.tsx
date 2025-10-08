@@ -92,19 +92,41 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   const { formatPrice } = usePrice();
 
   const [images, setImages] = useState<string[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+
+  // Intersection observer for lazy loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { rootMargin: '50px' }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   // Handle image URLs - both uploaded and local File objects
   useEffect(() => {
+    if (!isVisible) return;
+
     const imageUrls: string[] = [];
     const blobUrls: string[] = [];
 
     car.images?.forEach(img => {
-      // If img has a url property, it's already uploaded
       if (img.url) {
         imageUrls.push(img.url);
-      }
-      // If img is a File object, create a temporary blob URL
-      else if (img instanceof File) {
+      } else if (img instanceof File) {
         const blobUrl = URL.createObjectURL(img);
         imageUrls.push(blobUrl);
         blobUrls.push(blobUrl);
@@ -113,17 +135,10 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
 
     setImages(imageUrls);
 
-    // Preload first image only for better performance
-    if (imageUrls.length > 0) {
-      const img = new Image();
-      img.src = imageUrls[0];
-    }
-
-    // Cleanup blob URLs on unmount or when images change
     return () => {
       blobUrls.forEach(url => URL.revokeObjectURL(url));
     };
-  }, [car.images]);
+  }, [car.images, isVisible]);
 
   // Helper function to translate fuel types
   const translateFuelType = (fuelType?: string) => {
@@ -329,7 +344,9 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
   });
 
   return (
-    <div onClick={handleClick}
+    <div
+      ref={cardRef}
+      onClick={handleClick}
       className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg relative group cursor-pointer	${hasHighlighting ? 'border-2 border-green-500' : 'border border-gray-200'
         }`}
     >
@@ -353,7 +370,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, categories: propCategories, isOw
 
       {/* Image carousel */}
       <div className="relative h-32 sm:h-40 md:h-48 lg:h-52 bg-gray-100">
-        {images.length > 0 ? (
+        {isVisible && images.length > 0 ? (
           <img
             src={images[currentImageIndex]}
             alt={`${car.brand} ${car.model}`}
