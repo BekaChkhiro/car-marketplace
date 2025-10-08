@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { namespaces } from '../../../../i18n';
 
 // Import images directly
-import visaLogo from '../../../../assets/images/visa-logo.webp';
+import visaLogo from '../../../../assets/images/visa-logo-small.webp';
 // Use the simplified SVG for MasterCard to avoid namespace issues
 import mastercardLogo from '../../../../assets/images/simple-mastercard.svg';
 
