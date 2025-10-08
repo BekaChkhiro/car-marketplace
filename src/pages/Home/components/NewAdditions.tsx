@@ -185,7 +185,7 @@ const NewAdditions: React.FC = () => {
           <p className="text-red-500">{error}</p>
         </div>
       ) : (
-        <div className="relative overflow-hidden" style={{ minHeight: isMobile ? '380px' : '450px' }}>
+        <div className="relative overflow-hidden" style={{ minHeight: isMobile ? '380px' : visibleItemsCount === 4 ? '480px' : '450px' }}>
           <div
             className="flex gap-4 transition-transform duration-500 ease-out"
             style={{

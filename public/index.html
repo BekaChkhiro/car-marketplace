@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) - Deferred for better performance -->
+    <!-- Google tag (gtag.js) - Delayed for optimal performance -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
 
-      // Defer GTM loading until after page load
-      window.addEventListener('load', function() {
+      // Load GTM after user interaction OR after 3 seconds (whichever comes first)
+      var gtmLoaded = false;
+      function loadGTM() {
+        if (gtmLoaded) return;
+        gtmLoaded = true;
+
         var script = document.createElement('script');
         script.src = 'https://www.googletagmanager.com/gtag/js?id=G-6EBJR4KKPN';
         script.async = true;
@@ -17,7 +21,15 @@
           gtag('js', new Date());
           gtag('config', 'G-6EBJR4KKPN');
         };
+      }
+
+      // Load on first user interaction
+      ['mousedown', 'touchstart', 'scroll', 'keydown'].forEach(function(event) {
+        window.addEventListener(event, loadGTM, { once: true, passive: true });
       });
+
+      // Fallback: load after 3 seconds if no interaction
+      setTimeout(loadGTM, 3000);
     </script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/images/logo-optimized.png" />
@@ -88,6 +100,25 @@
       .object-cover{object-fit:cover}
       /* Header */
       header{min-height:64px}
+      /* Buttons & Interactions */
+      .cursor-pointer{cursor:pointer}
+      .hover\:opacity-90:hover{opacity:0.9}
+      .transition-opacity{transition-property:opacity;transition-duration:150ms}
+      .transition-all{transition-property:all;transition-duration:150ms}
+      .transition-transform{transition-property:transform;transition-duration:150ms}
+      /* Flexbox utilities */
+      .flex-col{flex-direction:column}
+      .items-center{align-items:center}
+      .justify-center{justify-content:center}
+      .justify-between{justify-content:space-between}
+      .space-x-2>*+*{margin-left:0.5rem}
+      .gap-2{gap:0.5rem}
+      /* Common sizes */
+      .h-16{height:4rem}
+      .mr-2{margin-right:0.5rem}
+      .px-4{padding-left:1rem;padding-right:1rem}
+      .py-3{padding-top:0.75rem;padding-bottom:0.75rem}
+      /* Desktop optimizations */
       @media(min-width:640px){
         header{min-height:80px}
         .sm\:h-40{height:10rem}
@@ -96,6 +127,10 @@
       }
       @media(min-width:768px){
         .md\:h-48{height:12rem}
+      }
+      @media(min-width:1024px){
+        .lg\:h-52{height:13rem}
+        .lg\:min-h-\[450px\]{min-height:450px}
       }
     </style>
 
