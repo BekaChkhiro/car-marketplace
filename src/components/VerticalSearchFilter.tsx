@@ -28,6 +28,8 @@ interface FormData {
   seats: string;
   condition: string;
   steeringWheel: string;
+  location: string;
+  transmission: string;
 }
 
 interface Brand {
@@ -66,7 +68,9 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     driveType: '',
     seats: '',
     condition: '',
-    steeringWheel: ''
+    steeringWheel: '',
+    location: '',
+    transmission: ''
   });
   
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -196,6 +200,8 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     if (formData.seats) params.append('seats', formData.seats);
     if (formData.condition) params.append('condition', formData.condition);
     if (formData.steeringWheel) params.append('steering_wheel', formData.steeringWheel);
+    if (formData.location) params.append('location', formData.location);
+    if (formData.transmission) params.append('transmission', formData.transmission);
     
     // Save filters to localStorage to maintain them across both pages
     try {
@@ -216,7 +222,9 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
         drive_type: formData.driveType || undefined,
         seats: formData.seats || undefined,
         condition: formData.condition || undefined,
-        steering_wheel: formData.steeringWheel || undefined
+        steering_wheel: formData.steeringWheel || undefined,
+        location: formData.location || undefined,
+        transmission: formData.transmission || undefined
       }));
       console.log('[VerticalSearchFilter] Saved filters to localStorage');
     } catch (error) {
@@ -347,7 +355,9 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
             driveType: formData.driveType,
             seats: formData.seats,
             condition: formData.condition,
-            steeringWheel: formData.steeringWheel
+            steeringWheel: formData.steeringWheel,
+            location: formData.location,
+            transmission: formData.transmission
           }}
         />
       </div>

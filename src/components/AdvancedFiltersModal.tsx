@@ -25,6 +25,8 @@ export interface AdvancedFilters {
   seats: string;
   condition: string;
   steeringWheel: string;
+  location: string;
+  transmission: string;
 }
 
 const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
@@ -43,7 +45,9 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     driveType: '',
     seats: '',
     condition: '',
-    steeringWheel: ''
+    steeringWheel: '',
+    location: '',
+    transmission: ''
   }
 }) => {
   const { t } = useTranslation([namespaces.common, namespaces.filter]);
@@ -86,7 +90,26 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     t('filter:steeringWheels.right'),
     t('filter:steeringWheels.left')
   ]);
-  
+
+  const [locations] = useState<string[]>([
+    t('filter:locations.tbilisi'),
+    t('filter:locations.batumi'),
+    t('filter:locations.kutaisi'),
+    t('filter:locations.rustavi'),
+    t('filter:locations.gori'),
+    t('filter:locations.zugdidi'),
+    t('filter:locations.poti'),
+    t('filter:locations.telavi'),
+    t('filter:locations.other')
+  ]);
+
+  const [transmissions] = useState<string[]>([
+    t('filter:transmissions.automatic'),
+    t('filter:transmissions.manual'),
+    t('filter:transmissions.variator'),
+    t('filter:transmissions.semiAutomatic')
+  ]);
+
   const [seats] = useState<string[]>(['2', '3', '4', '5', '6', '7', '8', '9+']);
   const modalRef = useRef<HTMLDivElement>(null);
   
@@ -165,7 +188,9 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
       driveType: '',
       seats: '',
       condition: '',
-      steeringWheel: ''
+      steeringWheel: '',
+      location: '',
+      transmission: ''
     });
   };
   
@@ -203,6 +228,44 @@ const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         </div>
         
         <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {/* Location */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('filter:location')}
+            </label>
+            <CustomSelect
+              options={[
+                { value: '', label: t('filter:anyOption') },
+                ...locations.map(location => ({
+                  value: location,
+                  label: location
+                }))
+              ]}
+              value={filters.location}
+              onChange={value => handleChange('location', value)}
+              placeholder={t('filter:anyOption')}
+            />
+          </div>
+
+          {/* Transmission */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('filter:transmission')}
+            </label>
+            <CustomSelect
+              options={[
+                { value: '', label: t('filter:anyOption') },
+                ...transmissions.map(transmission => ({
+                  value: transmission,
+                  label: transmission
+                }))
+              ]}
+              value={filters.transmission}
+              onChange={value => handleChange('transmission', value)}
+              placeholder={t('filter:anyOption')}
+            />
+          </div>
+
           {/* Year Range */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
