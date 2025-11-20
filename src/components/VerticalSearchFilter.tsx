@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Car, Settings2, MapPin, Sliders, ChevronDown, ChevronUp, Filter } from 'lucide-react';
+import { Car, Settings2, ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from '../api/config/axios';
@@ -15,8 +15,6 @@ interface FormData {
   category: string;
   priceFrom: string;
   priceTo: string;
-  transmission: string;
-  location: string;
   // Advanced filters
   yearFrom: string;
   yearTo: string;
@@ -56,8 +54,6 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     category: '',
     priceFrom: '',
     priceTo: '',
-    transmission: '',
-    location: '',
     // Advanced filters
     yearFrom: '',
     yearTo: '',
@@ -79,20 +75,6 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
   const [categories, setCategories] = useState<Category[]>([]);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const years = Array.from({ length: 35 }, (_, i) => (new Date().getFullYear() - i).toString());
-  const transmissions = [t('filter:automatic'), t('filter:manual'), t('filter:variator'), t('filter:semiAutomatic')];
-  const locationOptions = [
-    { value: 'tbilisi', label: t('filter:locations.tbilisi') },
-    { value: 'batumi', label: t('filter:locations.batumi') },
-    { value: 'kutaisi', label: t('filter:locations.kutaisi') },
-    { value: 'rustavi', label: t('filter:locations.rustavi') },
-    { value: 'gori', label: t('filter:locations.gori') },
-    { value: 'zugdidi', label: t('filter:locations.zugdidi') },
-    { value: 'poti', label: t('filter:locations.poti') },
-    { value: 'telavi', label: t('filter:locations.telavi') },
-    { value: 'other', label: t('filter:locations.other') }
-  ];
   
   useEffect(() => {
     const fetchData = async () => {
@@ -200,8 +182,6 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
     }
     if (formData.priceFrom) params.append('priceFrom', formData.priceFrom);
     if (formData.priceTo) params.append('priceTo', formData.priceTo);
-    if (formData.transmission) params.append('transmission', formData.transmission);
-    if (formData.location) params.append('location', formData.location);
     
     // Add advanced filter parameters - ensuring parameter names match what CarListing expects
     if (formData.yearFrom) params.append('yearFrom', formData.yearFrom);
@@ -225,8 +205,6 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
         category: formData.category || undefined,
         priceFrom: formData.priceFrom || undefined,
         priceTo: formData.priceTo || undefined,
-        transmission: formData.transmission || undefined,
-        location: formData.location || undefined,
         yearFrom: formData.yearFrom || undefined,
         yearTo: formData.yearTo || undefined,
         engineSizeFrom: formData.engineSizeFrom || undefined,
@@ -331,43 +309,6 @@ const VerticalSearchFilter: React.FC<VerticalSearchFilterProps> = ({ onFilterCha
             toValue={formData.priceTo}
             placeholder={{ from: t('filter:priceFrom'), to: t('filter:priceTo') }}
             onChange={handleRangeChange}
-          />
-        </div>
-        
-        {/* Transmission */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('filter:transmission')}
-          </label>
-          <CustomSelect
-            options={[
-              { value: '', label: t('filter:anyOption') },
-              ...transmissions.map(type => ({
-                value: type,
-                label: type
-              }))
-            ]}
-            value={formData.transmission}
-            onChange={value => handleChange('transmission', value)}
-            placeholder={t('filter:anyOption')}
-            icon={<Sliders size={18} />}
-          />
-        </div>
-        
-        {/* Location */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('filter:location')}
-          </label>
-          <CustomSelect
-            options={[
-              { value: '', label: t('filter:anyOption') },
-              ...locationOptions
-            ]}
-            value={formData.location}
-            onChange={value => handleChange('location', value)}
-            placeholder={t('filter:anyOption')}
-            icon={<MapPin size={18} />}
           />
         </div>
 

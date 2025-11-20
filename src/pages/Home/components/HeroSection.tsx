@@ -9,8 +9,6 @@ interface FormData {
   category: string;
   priceFrom: string;
   priceTo: string;
-  transmission: string;
-  location: string;
 }
 
 const HeroSection: React.FC = () => {
@@ -19,9 +17,7 @@ const HeroSection: React.FC = () => {
     model: '',
     category: '',
     priceFrom: '',
-    priceTo: '',
-    transmission: '',
-    location: ''
+    priceTo: ''
   });
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
@@ -40,8 +36,8 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className='flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 lg:gap-8 p-0 sm:p-4 h-auto lg:h-[680px] w-full'>
-      <div className='w-full lg:w-3/4 h-[200px] sm:h-[380px] md:h-[550px] lg:h-full'>
+    <section className='flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 lg:gap-8 p-0 sm:p-4 h-auto lg:h-[500px] w-full'>
+      <div className='w-full lg:w-3/4 h-[150px] sm:h-[280px] md:h-[400px] lg:h-full'>
         <FeaturedSlider />
       </div>
       <div className='w-full lg:w-1/4 h-auto mt-4 lg:mt-0'>
