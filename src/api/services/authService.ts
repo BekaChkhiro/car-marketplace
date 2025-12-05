@@ -17,6 +17,17 @@ class AuthService {
           console.warn(`API request failed (attempt ${i + 1}/${maxRetries}):`, error.message || 'Unknown error');
         }
         
+        // If server returns 401 (unauthorized), clear tokens and stop retrying
+        if (error.response?.status === 401) {
+          if (!silent) {
+            console.error('Authentication failed (401), clearing tokens and stopping retry attempts');
+          }
+          removeStoredToken();
+          clearUserData();
+          clearPreferences();
+          break;
+        }
+
         // If server returns 500 or network error, immediately stop retrying and throw the error
         if (error.response?.status === 500 || error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
           if (!silent) {

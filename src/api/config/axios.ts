@@ -150,6 +150,16 @@ api.interceptors.response.use(
     }
 
     // Handle 401 errors (Unauthorized)
+    // Don't retry refresh token endpoint - if it fails, just clear tokens and reject
+    const isRefreshTokenRequest = isEndpointMatch(originalRequest.url, '/api/auth/refresh-token');
+    if (error.response?.status === 401 && isRefreshTokenRequest) {
+      removeStoredToken();
+      window.dispatchEvent(new CustomEvent('auth:required', {
+        detail: { message: 'სესია ამოიწურა. გთხოვთ თავიდან შეხვიდეთ სისტემაში.' }
+      }));
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         try {
@@ -186,8 +196,13 @@ api.interceptors.response.use(
         processQueue(null, response.data.token);
         return api(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false;
         processQueue(refreshError, null);
         removeStoredToken();
+        // Dispatch auth required event to notify AuthContext
+        window.dispatchEvent(new CustomEvent('auth:required', {
+          detail: { message: 'სესია ამოიწურა. გთხოვთ თავიდან შეხვიდეთ სისტემაში.' }
+        }));
         return Promise.reject(refreshError);
       }
     }
