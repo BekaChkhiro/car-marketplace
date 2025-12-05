@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -31,7 +31,6 @@ const PartDetails: React.FC = () => {
   const [relatedParts, setRelatedParts] = useState<Part[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [showContactInfo, setShowContactInfo] = useState(false);
-  const viewsIncrementedRef = useRef(false);
 
   // Force re-render of related parts when currency changes
   useEffect(() => {
@@ -42,27 +41,25 @@ const PartDetails: React.FC = () => {
   }, [currency, relatedParts.length]);
 
   useEffect(() => {
-    // Reset view increment flag when part ID changes
-    viewsIncrementedRef.current = false;
-    
+    let isCancelled = false;
+
     const loadPartDetails = async () => {
       if (!id) return;
-      
+
       setLoading(true);
       try {
         const partData = await partService.getPartById(id);
+
+        if (isCancelled) return;
+
         setPart(partData);
-        
-        // Increment view count only once per part ID and session to avoid multiple increments
-        const sessionKey = `part_viewed_${id}`;
-        const hasViewedInSession = sessionStorage.getItem(sessionKey);
-        
-        if (!viewsIncrementedRef.current && !hasViewedInSession) {
-          viewsIncrementedRef.current = true;
-          sessionStorage.setItem(sessionKey, 'true');
+
+        // Increment view count on every page load/refresh
+        // Only increment if not cancelled (prevents double increment in StrictMode)
+        if (!isCancelled) {
           await partService.incrementViews(id);
         }
-        
+
         // Load related parts (same category or brand)
         setRelatedLoading(true);
         try {
@@ -72,21 +69,33 @@ const PartDetails: React.FC = () => {
             excludeId: partData.id
           };
           const relatedData = await partService.getParts(filters);
-          setRelatedParts(relatedData.parts || []);
+          if (!isCancelled) {
+            setRelatedParts(relatedData.parts || []);
+          }
         } catch (error) {
           console.error('[PartDetails] Error loading related parts:', error);
         } finally {
-          setRelatedLoading(false);
+          if (!isCancelled) {
+            setRelatedLoading(false);
+          }
         }
       } catch (error) {
         console.error('[PartDetails] Error loading part details:', error);
-        showToast(t('failedToLoadPartDetails'), 'error');
+        if (!isCancelled) {
+          showToast(t('failedToLoadPartDetails'), 'error');
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     };
-    
+
     loadPartDetails();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [id]);
 
   const handleDeleteClick = () => {
