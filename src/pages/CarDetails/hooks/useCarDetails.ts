@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Car } from '../../../api/types/car.types';
 import carService from '../../../api/services/carService';
@@ -27,7 +27,6 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); // 'details', 'specs', 'seller'
   const [showFullGallery, setShowFullGallery] = useState(false);
-  const viewsIncrementedRef = useRef(false);
   const { showToast } = useToast();
   const { isAuthenticated, user } = useAuth();
 
@@ -43,9 +42,8 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
   }, []);
 
   useEffect(() => {
-    // Reset view increment flag when car ID changes
-    viewsIncrementedRef.current = false;
-    
+    let isCancelled = false;
+
     const fetchCar = async () => {
       setLoading(true);
       try {
@@ -54,13 +52,13 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
           setLoading(false);
           return;
         }
-        
+
         const carData = await carService.getCar(Number(id));
         console.log("Car details full response:", carData);
         console.log("Car details data structure:", JSON.stringify(carData, null, 2));
         console.log("Car author info:", carData.author_name, carData.author_phone);
         console.log("VIN Code in API response:", carData.vin_code);
-        
+
         // Check if the car object has vin_code property
         if (Object.prototype.hasOwnProperty.call(carData, 'vin_code')) {
           console.log("VIN code property exists in response");
@@ -68,14 +66,12 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
           console.log("VIN code property DOES NOT exist in response");
         }
         if (carData) {
+          if (isCancelled) return;
           setCar(carData);
-          // Increment view count only once per car ID and session to avoid multiple increments
-          const sessionKey = `car_viewed_${id}`;
-          const hasViewedInSession = sessionStorage.getItem(sessionKey);
-          
-          if (!viewsIncrementedRef.current && !hasViewedInSession) {
-            viewsIncrementedRef.current = true;
-            sessionStorage.setItem(sessionKey, 'true');
+
+          // Increment view count on every page load/refresh
+          // Only increment if not cancelled (prevents double increment in StrictMode)
+          if (!isCancelled) {
             await carService.incrementViews(Number(id));
           }
           // Check wishlist status only if user is authenticated
@@ -101,11 +97,17 @@ export const useCarDetails = (refreshTrigger: boolean = false) => {
         console.error('Error fetching car details:', error);
         showToast('Error loading car details', 'error');
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     };
 
     fetchCar();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [id, isAuthenticated, refreshTrigger]);
 
   const toggleFavorite = async () => {
