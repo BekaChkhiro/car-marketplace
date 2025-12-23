@@ -136,7 +136,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
               : 'border-gray-300 hover:border-primary hover:bg-primary/5'
           }`}
         >
-          <input {...getInputProps()} capture="environment" />
+          <input {...getInputProps()} />
           <div
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
               isDragReject
@@ -224,7 +224,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                 {...getRootProps()}
                 className="aspect-[3/2] rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-300 group"
               >
-                <input {...getInputProps()} capture="environment" />
+                <input {...getInputProps()} />
                 <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors duration-300">
                   <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors duration-300" />
                 </div>
