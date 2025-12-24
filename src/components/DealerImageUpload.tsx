@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon, Building } from 'lucide-react';
+import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon, Building, Camera, Images } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ImageProgress from './ImageProgress';
 
@@ -29,11 +29,17 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
   const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error'>();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [draggedOver, setDraggedOver] = useState(false);
+  const [showMobileOptions, setShowMobileOptions] = useState(false);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+
+  // Check if device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const simulateUpload = () => {
     setUploadStatus('uploading');
     setUploadProgress(0);
-    
+
     const interval = setInterval(() => {
       setUploadProgress(prev => {
         if (prev >= 100) {
@@ -51,41 +57,67 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
     // Filter out duplicates and invalid files
     let filesAdded = 0;
     let filesRejected = 0;
-    
+
     const filesToAdd = acceptedFiles.filter(newFile => {
       // Check if the file already exists in the files array
-      const isDuplicate = files.some(existingFile => 
+      const isDuplicate = files.some(existingFile =>
         existingFile.name === newFile.name && existingFile.size === newFile.size
       );
-      
+
       if (isDuplicate) {
         filesRejected++;
         return false;
       }
-      
+
       if (files.length + filesAdded >= maxFiles) {
         filesRejected++;
         return false;
       }
-      
+
       if (newFile.size > 10 * 1024 * 1024) {  // 10MB limit
         filesRejected++;
         return false;
       }
-      
+
       filesAdded++;
       return true;
     });
-    
+
     if (filesToAdd.length > 0) {
       onFilesChange([...files, ...filesToAdd]);
       simulateUpload();
     }
-    
+
     if (filesRejected > 0) {
       console.warn(`${filesRejected} files could not be uploaded (duplicate or excess amount)`);
     }
   }, [files, maxFiles, onFilesChange]);
+
+  const handleMobileUploadClick = (e: React.MouseEvent) => {
+    if (isMobile) {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowMobileOptions(true);
+    }
+  };
+
+  const handleCameraClick = () => {
+    setShowMobileOptions(false);
+    cameraInputRef.current?.click();
+  };
+
+  const handleGalleryClick = () => {
+    setShowMobileOptions(false);
+    galleryInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      onDrop(Array.from(selectedFiles));
+    }
+    e.target.value = '';
+  };
 
   const handleRemove = (index: number) => {
     onFileRemove(index);
@@ -115,6 +147,73 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
 
   return (
     <div className="space-y-3">
+      {/* Hidden inputs for mobile camera/gallery */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        capture="environment"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
+      {/* Mobile options modal */}
+      {showMobileOptions && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center sm:items-center"
+          onClick={() => setShowMobileOptions(false)}
+        >
+          <div
+            className="bg-white w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 space-y-4 animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-center text-gray-900">
+              {t('selectSource') || 'აირჩიეთ წყარო'}
+            </h3>
+            <div className="space-y-3">
+              <button
+                onClick={handleCameraClick}
+                className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">{t('camera') || 'კამერა'}</p>
+                  <p className="text-sm text-gray-500">{t('takePhoto') || 'გადაიღეთ ფოტო'}</p>
+                </div>
+              </button>
+              <button
+                onClick={handleGalleryClick}
+                className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Images className="w-6 h-6 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">{t('gallery') || 'გალერია'}</p>
+                  <p className="text-sm text-gray-500">{t('chooseFromGallery') || 'აირჩიეთ გალერიიდან'}</p>
+                </div>
+              </button>
+            </div>
+            <button
+              onClick={() => setShowMobileOptions(false)}
+              className="w-full py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
+            >
+              {t('cancel') || 'გაუქმება'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg flex items-center gap-3 mb-4">
@@ -125,7 +224,8 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
 
       {files.length === 0 ? (
         <div
-          {...getRootProps()}
+          {...(isMobile ? {} : getRootProps())}
+          onClick={isMobile ? handleMobileUploadClick : undefined}
           className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-xl p-6 cursor-pointer transition-all duration-300 ${
             isDragReject
               ? 'border-red-400 bg-red-50'
@@ -136,7 +236,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
               : 'border-gray-300 hover:border-primary hover:bg-primary/5'
           }`}
         >
-          <input {...getInputProps()} />
+          {!isMobile && <input {...getInputProps()} />}
           <div
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
               isDragReject
@@ -212,19 +312,20 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                   }`}
                   title={featuredIndex === index ? t('mainPhoto') : t('setAsMainPhoto')}
                 >
-                  <Star size={18} fill={featuredIndex === index ? 'white' : 'none'} 
+                  <Star size={18} fill={featuredIndex === index ? 'white' : 'none'}
                     className="transform transition-transform duration-300 hover:rotate-12"
                   />
                 </button>
               </div>
             ))}
-            
+
             {files.length < maxFiles && (
               <div
-                {...getRootProps()}
+                {...(isMobile ? {} : getRootProps())}
+                onClick={isMobile ? handleMobileUploadClick : undefined}
                 className="aspect-[3/2] rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-300 group"
               >
-                <input {...getInputProps()} />
+                {!isMobile && <input {...getInputProps()} />}
                 <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors duration-300">
                   <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors duration-300" />
                 </div>
@@ -251,7 +352,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
       )}
 
       {(uploadStatus || isUploading) && (
-        <ImageProgress 
+        <ImageProgress
           status={isUploading ? 'uploading' : uploadStatus || 'uploading'}
           progress={isUploading ? 50 : uploadProgress}
           error={error}

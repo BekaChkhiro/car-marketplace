@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
-import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon } from 'lucide-react';
+import { UploadCloud, X, AlertCircle, Star, Image as ImageIcon, Camera, Images } from 'lucide-react';
 import ImageProgress from './ImageProgress';
 
 interface ImageUploadWithFeaturedProps {
@@ -37,6 +37,39 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error'>();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [draggedOver, setDraggedOver] = useState(false);
+  const [showMobileOptions, setShowMobileOptions] = useState(false);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+
+  // Check if device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  const handleMobileUploadClick = (e: React.MouseEvent) => {
+    if (isMobile) {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowMobileOptions(true);
+    }
+  };
+
+  const handleCameraClick = () => {
+    setShowMobileOptions(false);
+    cameraInputRef.current?.click();
+  };
+
+  const handleGalleryClick = () => {
+    setShowMobileOptions(false);
+    galleryInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      onDrop(Array.from(selectedFiles));
+    }
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
+  };
 
   const simulateUpload = () => {
     setUploadStatus('uploading');
@@ -126,6 +159,74 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Hidden inputs for mobile camera/gallery */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        capture="environment"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
+      {/* Mobile options modal */}
+      {showMobileOptions && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center sm:items-center"
+          onClick={() => setShowMobileOptions(false)}
+        >
+          <div
+            className="bg-white w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 space-y-4 animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-center text-gray-900">
+              {t('imageUpload.selectSource') || 'აირჩიეთ წყარო'}
+            </h3>
+            <div className="space-y-3">
+              <button
+                onClick={handleCameraClick}
+                className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">{t('imageUpload.camera') || 'კამერა'}</p>
+                  <p className="text-sm text-gray-500">{t('imageUpload.takePhoto') || 'გადაიღეთ ფოტო'}</p>
+                </div>
+              </button>
+              <button
+                onClick={handleGalleryClick}
+                className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Images className="w-6 h-6 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">{t('imageUpload.gallery') || 'გალერია'}</p>
+                  <p className="text-sm text-gray-500">{t('imageUpload.chooseFromGallery') || 'აირჩიეთ გალერიიდან'}</p>
+                </div>
+              </button>
+            </div>
+            <button
+              onClick={() => setShowMobileOptions(false)}
+              className="w-full py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
+            >
+              {t('imageUpload.cancel') || 'გაუქმება'}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center transform transition-transform duration-300 group-hover:rotate-12">
           <ImageIcon size={20} className="text-primary" />
@@ -137,7 +238,8 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
       </div>
 
       <div
-        {...getRootProps()}
+        {...(isMobile ? {} : getRootProps())}
+        onClick={isMobile ? handleMobileUploadClick : undefined}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
           isDragReject
             ? 'border-red-500 bg-red-50'
@@ -148,7 +250,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
         } ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
-        <input {...getInputProps()} />
+        {!isMobile && <input {...getInputProps()} />}
         <div className="flex flex-col items-center gap-3">
           <div className={`w-16 h-16 rounded-xl flex items-center justify-center transform transition-all duration-300 ${
             isDragReject
@@ -347,10 +449,11 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             
             {files.length < maxFiles && (
               <div
-                {...getRootProps()}
+                {...(isMobile ? {} : getRootProps())}
+                onClick={isMobile ? handleMobileUploadClick : undefined}
                 className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-300 group"
               >
-                <input {...getInputProps()} />
+                {!isMobile && <input {...getInputProps()} />}
                 <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors duration-300">
                   <UploadCloud className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors duration-300" />
                 </div>
