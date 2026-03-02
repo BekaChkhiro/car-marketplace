@@ -15,6 +15,14 @@ import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import { Phone, Mail, MapPin, Calendar, Tag, Info, User, DollarSign, Eye } from 'lucide-react';
 import { namespaces } from '../../i18n';
 
+// Helper to check if a phone number is a valid real number (not the OAuth placeholder)
+const isValidPhone = (phone: string | undefined | null): boolean => {
+  if (!phone) return false;
+  // Filter out the OAuth default placeholder phone
+  if (phone === '+0000000000' || phone === '0000000000') return false;
+  return true;
+};
+
 const PartDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -310,12 +318,14 @@ const PartDetails: React.FC = () => {
                       </div>
                       <div>
                         <h4 className="font-semibold text-lg text-gray-800">
-                          {part.first_name && part.last_name ? `${part.first_name} ${part.last_name}` : part.username || (user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : user?.username || t('unknownUser'))}
+                          {part.first_name && part.last_name ? `${part.first_name} ${part.last_name}` : part.username || t('unknownUser')}
                         </h4>
-                        <a href={`tel:${part.phone || part.author_phone || user?.phone}`} className="text-primary flex items-center hover:text-primary/80 transition-colors">
-                          <Phone size={14} className="mr-1" />
-                          {part.phone || part.author_phone || user?.phone || t('phoneNumberUnavailable')}
-                        </a>
+                        {(isValidPhone(part.phone) || isValidPhone(part.author_phone)) && (
+                          <a href={`tel:${isValidPhone(part.phone) ? part.phone : part.author_phone}`} className="text-primary flex items-center hover:text-primary/80 transition-colors">
+                            <Phone size={14} className="mr-1" />
+                            {isValidPhone(part.phone) ? part.phone : part.author_phone}
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -323,14 +333,14 @@ const PartDetails: React.FC = () => {
                   <div className="px-5 py-4 border-t border-gray-100">
                     {showContactInfo ? (
                       <div className="flex flex-col gap-3">
-                        {part.phone && (
-                          <a href={`tel:${part.phone}`} className="flex items-center text-gray-700 hover:text-primary transition-colors">
+                        {(isValidPhone(part.phone) || isValidPhone(part.author_phone)) ? (
+                          <a href={`tel:${isValidPhone(part.phone) ? part.phone : part.author_phone}`} className="flex items-center text-gray-700 hover:text-primary transition-colors">
                             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
                               <Phone size={18} className="text-primary" />
                             </div>
-                            <span className="font-medium">{part.phone}</span>
+                            <span className="font-medium">{isValidPhone(part.phone) ? part.phone : part.author_phone}</span>
                           </a>
-                        )}
+                        ) : null}
                       </div>
                     ) : (
                       <Button
@@ -340,7 +350,7 @@ const PartDetails: React.FC = () => {
                         onClick={handleContactSellerClick}
                       >
                         <Phone size={18} />
-                        <span className="font-medium">{part.phone || part.author_phone || user?.phone || t('contactSeller')}</span>
+                        <span className="font-medium">{isValidPhone(part.phone) ? part.phone : isValidPhone(part.author_phone) ? part.author_phone : t('contactSeller')}</span>
                       </Button>
                     )}
                   </div>
