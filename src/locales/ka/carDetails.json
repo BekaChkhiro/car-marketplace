@@ -75,6 +75,7 @@
     "cylinders": "ცილინდრების რაოდენობა",
     "interiorMaterial": "სალონის მასალა",
     "airbagsCount": "უსაფრთხოების ბალიშების რაოდენობა",
+    "listingDate": "განცხადების თარიღი",
     "noDescription": "აღწერა არ არის მითითებული"
   },
   "colors": {

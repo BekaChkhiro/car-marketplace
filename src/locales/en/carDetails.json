@@ -74,6 +74,7 @@
     "cylinders": "Cylinders",
     "interiorMaterial": "Interior Material",
     "airbagsCount": "Number of Airbags",
+    "listingDate": "Listing Date",
     "location": "Location",
     "noDescription": "No description available"
   },
