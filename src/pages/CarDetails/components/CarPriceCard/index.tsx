@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapPin, Calendar, Clock, Tag, Car as CarIcon, Package, Eye } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -17,7 +18,9 @@ interface CarPriceCardProps {
 
 const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
-  const { t, i18n } = useTranslation([namespaces.carDetails, namespaces.common]);
+  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
+  const { lang } = useParams<{ lang: string }>();
+  const currentLang = lang || 'ka';
 
   // Format price (no discount available in the Car type)
   const price = car.price || 0;
@@ -246,7 +249,7 @@ const CarPriceCard: React.FC<CarPriceCardProps> = ({ car, keySpecs }) => {
           {car.created_at && (
             <div className="flex items-center gap-1.5 mt-2 text-sm text-gray-500">
               <Clock className="w-3.5 h-3.5" />
-              <span>{t('carDetails:specs.listingDate')}: {new Date(car.created_at).toLocaleDateString(i18n.language === 'ka' ? 'ka-GE' : i18n.language === 'ru' ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span>{t('carDetails:specs.listingDate')}: {new Date(car.created_at).toLocaleDateString(currentLang === 'ka' ? 'ka-GE' : currentLang === 'ru' ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
           )}
         </div>
