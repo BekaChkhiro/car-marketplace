@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, MessageCircle, Eye, Calendar, Tag, Car as CarIcon, Package } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Eye, Calendar, Clock, Tag, Car as CarIcon, Package } from 'lucide-react';
 import { Car } from '../../../../api/types/car.types';
 import { usePrice } from '../../../../context/usePrice';
 import { KeySpec } from '../../hooks/useCarDetails';
@@ -17,7 +17,7 @@ interface MobileCarInfoProps {
 
 const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
   const { formatPrice } = usePrice();
-  const { t } = useTranslation([namespaces.carDetails, namespaces.common]);
+  const { t, i18n } = useTranslation([namespaces.carDetails, namespaces.common]);
 
   // Category mapping for translation
   const categoryMapping: { [key: string]: string } = {
@@ -221,7 +221,15 @@ const MobileCarInfo: React.FC<MobileCarInfoProps> = ({ car, keySpecs }) => {
             <h1 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">
               {car.title || `${car.brand || ''} ${car.model || ''} ${car.year || ''}`}
             </h1>
-            
+
+            {/* Listing date */}
+            {car.created_at && (
+              <div className="flex items-center gap-1.5 mb-2 text-sm text-gray-500">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{t('carDetails:specs.listingDate')}: {new Date(car.created_at).toLocaleDateString(i18n.language === 'ka' ? 'ka-GE' : i18n.language === 'ru' ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              </div>
+            )}
+
             {/* Location and views */}
             <div className="flex items-center gap-4 mt-1 text-gray-600 text-sm">
               {car.location && (

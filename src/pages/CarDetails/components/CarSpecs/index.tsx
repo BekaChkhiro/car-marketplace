@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Car } from '../../../../api/types/car.types';
 import {
-  Calendar, Clock, Gauge, Fuel, Shield,
+  Calendar, Gauge, Fuel, Shield,
   Zap, Truck, Sliders, Tag, CheckCircle, XCircle,
   Settings, List, Grid, Droplet, Layers, Compass, Palette,
   Sofa, Circle, HeartPulse, FileText
@@ -302,13 +302,6 @@ const CarSpecs: React.FC<CarSpecsProps> = ({ car }) => {
       icon: <HeartPulse className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />,
       label: t('carDetails:specs.airbagsCount'),
       value: car.specifications?.airbags_count ? car.specifications.airbags_count.toString() : t('common:notAvailable', 'არ არის'),
-      color: 'bg-green-50/50',
-      textColor: 'text-gray-900'
-    },
-    {
-      icon: <Clock className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary" />,
-      label: t('carDetails:specs.listingDate'),
-      value: car.created_at ? new Date(car.created_at).toLocaleDateString(i18n.language === 'ka' ? 'ka-GE' : i18n.language === 'ru' ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : t('common:notAvailable', 'არ არის'),
       color: 'bg-green-50/50',
       textColor: 'text-gray-900'
     },
