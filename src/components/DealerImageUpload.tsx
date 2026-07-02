@@ -181,6 +181,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
             </h3>
             <div className="space-y-3">
               <button
+                type="button"
                 onClick={handleCameraClick}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
               >
@@ -193,6 +194,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                 </div>
               </button>
               <button
+                type="button"
                 onClick={handleGalleryClick}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
               >
@@ -206,6 +208,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
               </button>
             </div>
             <button
+              type="button"
               onClick={() => setShowMobileOptions(false)}
               className="w-full py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
             >
@@ -290,6 +293,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemove(index);
@@ -300,6 +304,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
                   <X size={18} />
                 </button>
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     onFeaturedIndexChange(index);
@@ -340,6 +345,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
               {files.length} / {maxFiles} {t('logo')}
             </span>
             <button
+              type="button"
               onClick={handleRemoveAll}
               className="text-xs text-red-500 hover:text-red-600 font-medium transition-colors duration-300 px-3 py-1.5 rounded-md hover:bg-red-50"
             >

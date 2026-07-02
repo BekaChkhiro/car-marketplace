@@ -107,6 +107,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </h3>
             <div className="space-y-3">
               <button
+                type="button"
                 onClick={handleCameraClick}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
               >
@@ -119,6 +120,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 </div>
               </button>
               <button
+                type="button"
                 onClick={handleGalleryClick}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
               >
@@ -132,6 +134,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               </button>
             </div>
             <button
+              type="button"
               onClick={() => setShowMobileOptions(false)}
               className="w-full py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
             >
@@ -206,6 +209,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 </p>
               </div>
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onRemove(index);
@@ -240,6 +244,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             {files.length} / {maxFiles} სურათი
           </span>
           <button
+            type="button"
             onClick={() => onUpload([])}
             className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors duration-200 px-3 py-1 rounded-md hover:bg-red-50"
           >

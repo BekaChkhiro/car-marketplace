@@ -238,12 +238,14 @@ const VIPStatus: React.FC<VIPStatusProps> = ({ vipStatus, vipDays, colorHighligh
 
             <div className="flex justify-end space-x-4">
               <button
+                type="button"
                 onClick={() => setShowConfirmModal(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
               >
                 {t('addCar.vipStatus.cancel')}
               </button>
               <button
+                type="button"
                 onClick={confirmPurchase}
                 disabled={isPurchasing || userBalance < getTotalPrice(selectedVipStatus, vipDays)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"

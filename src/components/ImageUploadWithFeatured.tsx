@@ -193,6 +193,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             </h3>
             <div className="space-y-3">
               <button
+                type="button"
                 onClick={handleCameraClick}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
               >
@@ -205,6 +206,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                 </div>
               </button>
               <button
+                type="button"
                 onClick={handleGalleryClick}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
               >
@@ -218,6 +220,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
               </button>
             </div>
             <button
+              type="button"
               onClick={() => setShowMobileOptions(false)}
               className="w-full py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
             >
@@ -347,6 +350,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
 
                   {onExistingImageRemove && (
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         onExistingImageRemove(image.id);
@@ -370,6 +374,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                   )}
                   {onSetPrimaryImage && !image.is_primary && !isMarkedForDeletion && (
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         onSetPrimaryImage(image.id);
@@ -418,6 +423,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemove(index);
@@ -428,6 +434,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
                   <X size={18} />
                 </button>
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     onFeaturedIndexChange(index);
@@ -476,6 +483,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
               )}
             </div>
             <button
+              type="button"
               onClick={handleRemoveAll}
               className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-red-50"
             >
