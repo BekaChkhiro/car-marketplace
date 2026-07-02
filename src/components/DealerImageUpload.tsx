@@ -224,8 +224,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
 
       {files.length === 0 ? (
         <div
-          {...(isMobile ? {} : getRootProps())}
-          onClick={isMobile ? handleMobileUploadClick : undefined}
+          {...(isMobile ? { onClick: handleMobileUploadClick } : getRootProps())}
           className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-xl p-6 cursor-pointer transition-all duration-300 ${
             isDragReject
               ? 'border-red-400 bg-red-50'
@@ -321,8 +320,7 @@ const DealerImageUpload: React.FC<DealerImageUploadProps> = ({
 
             {files.length < maxFiles && (
               <div
-                {...(isMobile ? {} : getRootProps())}
-                onClick={isMobile ? handleMobileUploadClick : undefined}
+                {...(isMobile ? { onClick: handleMobileUploadClick } : getRootProps())}
                 className="aspect-[3/2] rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-300 group"
               >
                 {!isMobile && <input {...getInputProps()} />}

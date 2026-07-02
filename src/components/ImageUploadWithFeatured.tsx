@@ -238,8 +238,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
       </div>
 
       <div
-        {...(isMobile ? {} : getRootProps())}
-        onClick={isMobile ? handleMobileUploadClick : undefined}
+        {...(isMobile ? { onClick: handleMobileUploadClick } : getRootProps())}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
           isDragReject
             ? 'border-red-500 bg-red-50'
@@ -449,8 +448,7 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
             
             {files.length < maxFiles && (
               <div
-                {...(isMobile ? {} : getRootProps())}
-                onClick={isMobile ? handleMobileUploadClick : undefined}
+                {...(isMobile ? { onClick: handleMobileUploadClick } : getRootProps())}
                 className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-all duration-300 group"
               >
                 {!isMobile && <input {...getInputProps()} />}
