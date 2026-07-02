@@ -17,6 +17,8 @@ interface ImageUploadWithFeaturedProps {
   error?: string;
   maxFiles?: number;
   isUploading?: boolean;
+  title?: string;
+  subtitle?: string;
 }
 
 const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
@@ -31,7 +33,9 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
   featuredIndex,
   onFeaturedIndexChange,
   error,
-  isUploading
+  isUploading,
+  title,
+  subtitle
 }) => {
   const { t } = useTranslation('profile');
   const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error'>();
@@ -235,8 +239,8 @@ const ImageUploadWithFeatured: React.FC<ImageUploadWithFeaturedProps> = ({
           <ImageIcon size={20} className="text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{t('addCar.images.title')}</h2>
-          <p className="text-sm text-gray-500">{t('addCar.images.subtitle')}</p>
+          <h2 className="text-lg font-semibold text-gray-900">{title || t('addCar.images.title')}</h2>
+          <p className="text-sm text-gray-500">{subtitle || t('addCar.images.subtitle')}</p>
         </div>
       </div>
 

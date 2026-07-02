@@ -534,6 +534,8 @@ const AddPart: React.FC = () => {
                 onFeaturedIndexChange={setFeaturedImageIndex}
                 error={errors.images}
                 isUploading={isUploading}
+                title={t('partImages')}
+                subtitle={t('partImagesSubtitle')}
               />
             </div>
           </div>
