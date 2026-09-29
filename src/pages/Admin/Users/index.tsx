@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User as UserIcon, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { User as UserIcon, ChevronDown, ChevronUp, MoreVertical, Edit, Trash2, AlertCircle, Eye } from 'lucide-react';
 import authService from '../../../api/services/authService';
 import { useToast } from '../../../context/ToastContext';
 import { User } from '../../../api/types/auth.types';
@@ -15,6 +16,10 @@ interface DeleteConfirmationState {
 const UsersPage = () => {
   const { showToast } = useToast();
   const { t } = useTranslation('admin');
+  const navigate = useNavigate();
+  const { lang } = useParams<{ lang: string }>();
+
+  const openUser = (userId: number) => navigate(`/${lang}/admin/users/${userId}`);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -215,7 +220,12 @@ const UsersPage = () => {
                         <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                           <UserIcon size={18} />
                         </div>
-                        <span className="text-sm font-medium text-gray-900">{user.username}</span>
+                        <button
+                          onClick={() => openUser(user.id)}
+                          className="text-sm font-medium text-gray-900 hover:text-primary hover:underline text-left"
+                        >
+                          {user.username}
+                        </button>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -249,7 +259,14 @@ const UsersPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                       <div className="flex justify-end gap-2">
-                        <button 
+                        <button
+                          onClick={() => openUser(user.id)}
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
+                          title={t('users.view')}
+                        >
+                          <Eye size={18} />
+                        </button>
+                        <button
                           className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
                           title={t('users.edit')}
                         >
@@ -288,10 +305,22 @@ const UsersPage = () => {
                     <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                       <UserIcon size={18} />
                     </div>
-                    <span className="text-sm font-medium text-gray-900">{user.username}</span>
+                    <button
+                      onClick={() => openUser(user.id)}
+                      className="text-sm font-medium text-gray-900 hover:text-primary hover:underline text-left"
+                    >
+                      {user.username}
+                    </button>
                   </div>
                   <div className="flex gap-2">
-                    <button 
+                    <button
+                      onClick={() => openUser(user.id)}
+                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
+                      title={t('users.view')}
+                    >
+                      <Eye size={18} />
+                    </button>
+                    <button
                       className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
                       title={t('users.edit')}
                     >

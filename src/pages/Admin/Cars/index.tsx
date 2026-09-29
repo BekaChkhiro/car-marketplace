@@ -8,6 +8,9 @@ import CarsList from './components/CarsList';
 import LoadingState from './components/LoadingState';
 import ErrorState from './components/ErrorState';
 
+// ადმინი ყველა განცხადებას ერთად იღებს და კლიენტის მხარეს ფურცლავს.
+export const ADMIN_PAGE_SIZE = 1000;
+
 const AdminCars: React.FC = () => {
   const { t } = useTranslation('admin');
   const [cars, setCars] = useState<Car[]>([]);
@@ -22,7 +25,9 @@ const AdminCars: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await carService.getCars();
+      // უპარამეტროდ სერვერი მხოლოდ 12-ს აბრუნებს (ნაგულისხმევი გვერდის ზომა),
+      // CarsList კი თვითონ პაგინირებს — ამიტომ სრული სია გვჭირდება.
+      const response = await carService.getCars({ limit: ADMIN_PAGE_SIZE });
       setCars(response.cars);
     } catch (error) {
       setError(t('cars.error'));

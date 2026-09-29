@@ -55,6 +55,7 @@ const EditPart = lazy(() => import('./pages/Profile/EditPart'));
 const AdminLayout = lazy(() => import('./pages/Admin/components/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'));
 const UsersPage = lazy(() => import('./pages/Admin/Users'));
+const AdminUserDetail = lazy(() => import('./pages/Admin/Users/UserDetail'));
 const CarsPage = lazy(() => import('./pages/Admin/Cars'));
 const AdminEditCar = lazy(() => import('./pages/Admin/Cars/pages/EditCar'));
 const AdminNewEditCar = lazy(() => import('./pages/Admin/Cars/pages/EditCar/index'));
@@ -124,6 +125,7 @@ const AppRoutes = () => {
         <Route index element={<AdminDashboard />} />
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UsersPage />} />
+        <Route path="users/:id" element={<AdminUserDetail />} />
         <Route path="cars" element={<CarsPage />} />
         <Route path="cars/:id/edit" element={<AdminEditCar />} />
         <Route path="cars/edit/:id" element={<AdminNewEditCar />} />

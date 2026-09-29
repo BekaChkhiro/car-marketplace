@@ -133,6 +133,8 @@
     "error": "Failed to load users"
   },
   "cars": {
+    "deleteSuccess": "Listing deleted successfully",
+    "deleteError": "Failed to delete listing",
     "title": "Cars Management",
     "searchCars": "Search cars...",
     "brand": "Brand",
