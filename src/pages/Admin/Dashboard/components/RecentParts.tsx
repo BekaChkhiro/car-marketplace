@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Package, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import { Package, ChevronRight, AlertTriangle, Eye } from 'lucide-react';
 import { Part } from '../../../../api/services/partService';
 import { useTranslation } from 'react-i18next';
 
@@ -10,12 +10,14 @@ interface RecentPartsProps {
 
 const RecentParts: React.FC<RecentPartsProps> = ({ parts }) => {
   const { t } = useTranslation('admin');
+  // ყველა მარშრუტი ენის პრეფიქსის ქვეშაა, პრეფიქსის გარეშე ბმული 404-ს იძლევა.
+  const { lang } = useParams<{ lang: string }>();
   return (
     <div className="bg-white rounded-xl shadow-sm p-5">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">{t('dashboard.recentlyAdded')}</h3>
-        <Link to="/admin/parts" className="text-primary text-sm flex items-center hover:underline">
-          {t('dashboard.viewAllListings')} <ChevronRight size={16} />
+        <Link to={`/${lang}/admin/parts`} className="text-primary text-sm flex items-center hover:underline">
+          {t('dashboard.viewAllParts')} <ChevronRight size={16} />
         </Link>
       </div>
       
@@ -24,7 +26,7 @@ const RecentParts: React.FC<RecentPartsProps> = ({ parts }) => {
           <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-3">
             <AlertTriangle size={20} className="text-gray-400" />
           </div>
-          <p className="text-gray-500">{t('dashboard.noListingsFound')}</p>
+          <p className="text-gray-500">{t('dashboard.noPartsFound')}</p>
         </div>
       ) : (
         <div className="space-y-4 mt-6 sm:mt-0">
@@ -49,14 +51,21 @@ const RecentParts: React.FC<RecentPartsProps> = ({ parts }) => {
                   part.condition === 'used' ? 'bg-yellow-100 text-yellow-800' : 
                   'bg-gray-100 text-gray-800'
                 }`}>
-                  {part.condition === 'new' ? t('dashboard.new') : 
-                   part.condition === 'used' ? t('dashboard.used') : t('common.other')}
+                  {part.condition === 'new' ? t('common.new') :
+                   part.condition === 'used' ? t('common.used') : t('common.other')}
                 </span>
                 {part.vip_status && part.vip_status !== 'none' && (
                   <span className="px-2 py-1 ml-2 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    {t('vip')}
+                    {t('cars.vip')}
                   </span>
                 )}
+                <Link
+                  to={`/${lang}/parts/${part.id}`}
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                  title={t('common.view')}
+                >
+                  <Eye size={16} className="text-gray-500" />
+                </Link>
               </div>
             </div>
           ))}

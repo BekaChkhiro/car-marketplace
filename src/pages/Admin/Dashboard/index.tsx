@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
   Users, 
@@ -28,11 +28,13 @@ import { namespaces } from 'i18n';
 // Recent cars component
 const RecentCars = ({ cars }: { cars: CarType[] }) => {
   const { t } = useTranslation('admin');
+  // ყველა მარშრუტი ენის პრეფიქსის ქვეშაა, პრეფიქსის გარეშე ბმული 404-ს იძლევა.
+  const { lang } = useParams<{ lang: string }>();
   return (
     <div className="bg-white rounded-xl shadow-sm p-5">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">{t('dashboard.recentlyAdded')}</h3>
-        <Link to="/admin/cars" className="text-primary text-sm flex items-center hover:underline">
+        <Link to={`/${lang}/admin/cars`} className="text-primary text-sm flex items-center hover:underline">
           {t('dashboard.viewAllListings')} <ChevronRight size={16} />
         </Link>
       </div>
@@ -69,10 +71,10 @@ const RecentCars = ({ cars }: { cars: CarType[] }) => {
                   {car.status === 'available' ? t('available') : 
                    car.status === 'sold' ? t('common.sold') : t('common.pending')}
                 </span>
-                <Link 
-                  to={`/cars/${car.id}`} 
+                <Link
+                  to={`/${lang}/cars/${car.id}`}
                   className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                  title={t('dashboard.view')}
+                  title={t('common.view')}
                 >
                   <Eye size={16} className="text-gray-500" />
                 </Link>
@@ -250,16 +252,16 @@ const AdminDashboard: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <Package size={24} className="text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.totalListings')}</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.totalParts')}</h3>
                 </div>
                 <p className="text-3xl font-bold text-primary">{parts.length}</p>
                 <div className="flex gap-3 mt-3">
                   <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                    {t('dashboard.new')}: {newParts}
+                    {t('common.new')}: {newParts}
                   </span>
                   {usedParts > 0 && (
                     <span className="text-sm text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
-                      {t('used')}: {usedParts}
+                      {t('common.used')}: {usedParts}
                     </span>
                   )}
                 </div>

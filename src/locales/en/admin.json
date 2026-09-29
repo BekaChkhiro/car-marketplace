@@ -92,6 +92,9 @@
     }
   },
   "dashboard": {
+    "totalParts": "Total parts",
+    "viewAllParts": "View all parts",
+    "noPartsFound": "No parts found",
     "title": "Admin Panel",
     "welcome": "Welcome",
     "overview": "Overview",
@@ -626,6 +629,11 @@
     }
   },
   "common": {
+    "new": "New",
+    "used": "Used",
+    "other": "Other",
+    "sold": "Sold",
+    "pending": "Pending",
     "yes": "Yes",
     "no": "No",
     "save": "Save",
